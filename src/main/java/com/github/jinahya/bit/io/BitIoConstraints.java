@@ -22,7 +22,12 @@ package com.github.jinahya.bit.io;
 
 import java.util.function.BiConsumer;
 
-import static com.github.jinahya.bit.io.BitIoConstants.*;
+import static com.github.jinahya.bit.io.BitIoConstants.MIN_SIZE;
+import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_BYTE;
+import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_CHAR;
+import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_INTEGER;
+import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_LONG;
+import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_SHORT;
 import static java.lang.Math.pow;
 import static java.util.Objects.requireNonNull;
 
