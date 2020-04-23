@@ -20,6 +20,67 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+
+import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class BitInputAdapterTest {
 
+    // --------------------------------------------------------------------------------------------------------- readInt
+    @DisplayName("readInt(false, size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#illegalSizeForIntSigned"})
+    @ParameterizedTest
+    void assertReadIntSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> adapter.readInt(false, size));
+    }
+
+    @DisplayName("readInt(true, size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#illegalSizeForIntUnsigned"})
+    @ParameterizedTest
+    void assertReadIntUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> adapter.readInt(true, size));
+    }
+
+    @DisplayName("readInt(false, size)")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeForIntSigned"})
+    @ParameterizedTest
+    void testReadIntSigned(final int size) throws IOException {
+        final int value = adapter.readInt(false, size);
+        assertEquals(value < 0 ? -1 : 0, value >> (size - 1));
+    }
+
+    @DisplayName("readInt(true, size)")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeForIntUnsigned"})
+    @ParameterizedTest
+    void testReadIntUnsigned(final int size) throws IOException {
+        final int value = adapter.readInt(true, size);
+        assertTrue(value >= 0);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @DisplayName("readLong(false, size)")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeForLongSigned"})
+    @ParameterizedTest
+    void testReadLongSigned(final int size) throws IOException {
+        final long value = adapter.readLong(false, size);
+        assertEquals(value < 0L ? -1L : 0L, value >> (size - 1));
+    }
+
+    @DisplayName("readLong(true, size)")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeForLongUnsigned"})
+    @ParameterizedTest
+    void testReadLongUnsigned(final int size) throws IOException {
+        final long value = adapter.readLong(true, size);
+        assertTrue(value >= 0L);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    private final BitInputAdapter adapter = new BitInputAdapter(() -> () -> current().nextInt(0, 256));
 }

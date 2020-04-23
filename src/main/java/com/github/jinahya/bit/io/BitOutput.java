@@ -79,7 +79,7 @@ public interface BitOutput {
             return;
         }
         assert unsigned;
-        if (size > Integer.SIZE) {
+        if (size >= Integer.SIZE) {
             writeInt(false, Integer.SIZE, (int) ((value >> Integer.SIZE) & 0xFFFFFFFFL));
             size -= Integer.SIZE;
         }

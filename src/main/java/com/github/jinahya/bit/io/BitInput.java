@@ -80,7 +80,7 @@ public interface BitInput {
             return value;
         }
         assert unsigned;
-        if (size > Integer.SIZE) {
+        if (size >= Integer.SIZE) {
             value = (readInt(false, Integer.SIZE) & 0xFFFFFFFFL);
             size -= Integer.SIZE;
         }
