@@ -33,8 +33,8 @@ import static java.util.Objects.requireNonNull;
  * A byte input which reads bytes from a readable byte channel.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ChannelByteInput
  * @see ChannelByteOutput2
+ * @see ChannelByteInput
  */
 class ChannelByteInput2 extends ByteInputAdapter<ReadableByteChannel> {
 
@@ -53,6 +53,7 @@ class ChannelByteInput2 extends ByteInputAdapter<ReadableByteChannel> {
         this.bufferSupplier = requireNonNull(bufferSupplier, "bufferSupplier is null");
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public int read(final ReadableByteChannel source) throws IOException {
         final ByteBuffer buffer = buffer();
@@ -70,12 +71,6 @@ class ChannelByteInput2 extends ByteInputAdapter<ReadableByteChannel> {
     private ByteBuffer buffer() {
         if (buffer == null) {
             buffer = bufferSupplier.get();
-        }
-        if (buffer == null) {
-            throw new RuntimeException("null buffer supplied");
-        }
-        if (buffer.capacity() == 0) {
-            throw new RuntimeException("zero-capacity buffer supplied");
         }
         return buffer;
     }

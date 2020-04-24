@@ -51,18 +51,7 @@ class ChannelByteOutput2 extends ByteOutputAdapter<WritableByteChannel> {
         if (targetSupplier == null) {
             throw new NullPointerException("targetSupplier is null");
         }
-        return new ChannelByteOutput2(targetSupplier, () -> allocate(1)) {
-            @Override
-            protected void write(final WritableByteChannel target, final int value) throws IOException {
-                super.write(target, value);
-                // the buffer's capacity is 1, just write it to the target channel
-                for (final ByteBuffer buffer = buffer(); !buffer.hasRemaining(); ) {
-                    buffer.flip(); // limit -> position, position -> zero
-                    final int written = target.write(buffer);
-                    buffer.compact();
-                }
-            }
-        };
+        return new ChannelByteOutput2(targetSupplier, () -> allocate(1));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -85,15 +74,9 @@ class ChannelByteOutput2 extends ByteOutputAdapter<WritableByteChannel> {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    ByteBuffer buffer() {
+    private ByteBuffer buffer() {
         if (buffer == null) {
             buffer = bufferSupplier.get();
-        }
-        if (buffer == null) {
-            throw new RuntimeException("null buffer supplied");
-        }
-        if (buffer.capacity() == 0) {
-            throw new RuntimeException("zero-capacity buffer supplied");
         }
         return buffer;
     }

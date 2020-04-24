@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 @ExtendWith({MockitoExtension.class})
 @Slf4j
-class BitInputTest {
+public class BitInputTest {
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -84,11 +83,6 @@ class BitInputTest {
     @ParameterizedTest
     void assertSkipThrowsIllegalArgumentExceptionWhenBitsIsNotPositive() {
         assertThrows(IllegalArgumentException.class, () -> input.skip(current().nextInt() | Integer.MIN_VALUE));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    @BeforeEach
-    private void stub() {
     }
 
     // -----------------------------------------------------------------------------------------------------------------

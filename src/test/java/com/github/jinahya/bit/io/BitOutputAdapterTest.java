@@ -21,11 +21,13 @@ package com.github.jinahya.bit.io;
  */
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BitOutputAdapterTest {
@@ -59,7 +61,7 @@ class BitOutputAdapterTest {
         adapter.writeInt(true, size, value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------- writeLong
     @DisplayName("writeLong(false, size)")
     @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeAndValueForLongSigned"})
     @ParameterizedTest
@@ -72,6 +74,24 @@ class BitOutputAdapterTest {
     @ParameterizedTest
     void testWriteLongUnsigned(final int size, final long value) throws IOException {
         adapter.writeLong(true, size, value);
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- align
+    @DisplayName("align(bytes) throws IllegalArgumentException when bytes is not positive ")
+    @Test
+    void assertAlignThrowsIllegalArgumentExceptionWhenBytesIsNotPositive() {
+        assertThrows(IllegalArgumentException.class, () -> adapter.align(0));
+        assertThrows(IllegalArgumentException.class, () -> adapter.align(current().nextInt() | Integer.MIN_VALUE));
+    }
+
+    /**
+     * Tests {@link BitOutputAdapter#align(int)} method.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Test
+    void testAlign() throws IOException {
+        adapter.align(current().nextInt(1, 128));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

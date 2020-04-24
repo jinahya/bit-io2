@@ -32,24 +32,28 @@ import java.util.function.Supplier;
 public class ArrayByteInput extends ByteInputAdapter<byte[]> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public ArrayByteInput(final Supplier<byte[]> supplier) {
-        super(supplier);
+
+    /**
+     * Creates a new instance with specified source supplier.
+     *
+     * @param sourceSupplier the source supplier.
+     */
+    public ArrayByteInput(final Supplier<byte[]> sourceSupplier) {
+        super(sourceSupplier);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param source the array of byte on which the byte is read.
+     * @return {@inheritDoc}
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public int read(final byte[] source) throws IOException {
         return source[index++] & 0xFF;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    @Override
-    byte[] source() {
-        final byte[] source = super.source();
-        if (source.length == 0) {
-            throw new RuntimeException("zero-length source supplied");
-        }
-        return source;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

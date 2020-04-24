@@ -33,11 +33,25 @@ import java.util.function.Supplier;
 public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public BufferByteInput(final Supplier<? extends ByteBuffer> supplier) {
-        super(supplier);
+
+    /**
+     * Creates a new instance with specified source supplier.
+     *
+     * @param sourceSupplier the source supplier.
+     */
+    public BufferByteInput(final Supplier<? extends ByteBuffer> sourceSupplier) {
+        super(sourceSupplier);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param source {@inheritDoc}
+     * @return {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public int read(final ByteBuffer source) throws IOException {
         return source.get() & 0xFF;

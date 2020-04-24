@@ -40,7 +40,6 @@ public interface BitInput {
      *
      * @return {@code true} for {@code 0b1}, {@code false} for {@code 0b0}
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeBoolean(boolean)
      */
     default boolean readBoolean() throws IOException {
         return readInt(true, 1) == 0x01;
@@ -54,7 +53,6 @@ public interface BitInput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @return an {@code int} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeInt(boolean, int, int)
      */
     int readInt(boolean unsigned, int size) throws IOException;
 
@@ -66,7 +64,6 @@ public interface BitInput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @return a {@code long} value of specified bit size.
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeLong(boolean, int, long)
      */
     default long readLong(final boolean unsigned, int size) throws IOException {
         requireValidSizeLong(unsigned, size);

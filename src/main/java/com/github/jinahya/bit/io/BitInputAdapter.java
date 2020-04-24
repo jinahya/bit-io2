@@ -31,8 +31,10 @@ import static java.util.Objects.requireNonNull;
 public class BitInputAdapter implements BitInput {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static BitInput of(final ByteInput byteInput) {
-        return new BitInputAdapter(() -> byteInput);
+    public static BitInputAdapter of(final ByteInput input) {
+        final BitInputAdapter instance = new BitInputAdapter(() -> null);
+        instance.input = requireNonNull(input, "input is null");
+        return instance;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -57,16 +59,17 @@ public class BitInputAdapter implements BitInput {
         }
         for (int i = size >> SIZE_EXPONENT_BYTE; i > 0; i--) {
             value <<= Byte.SIZE;
-            value |= unsigned8(Byte.SIZE);
+            value |= octet(Byte.SIZE);
         }
         final int remainder = size & (Byte.SIZE - 1);
         if (remainder > 0) {
             value <<= remainder;
-            value |= unsigned8(remainder);
+            value |= octet(remainder);
         }
         return value;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public long align(int bytes) throws IOException {
         if (bytes <= 0) {
@@ -86,8 +89,8 @@ public class BitInputAdapter implements BitInput {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    int unsigned8(final int size) throws IOException {
-        requireValidSizeUnsigned8(size);
+    private int octet(final int size) throws IOException {
+        requireValidSizeUnsigned8(size); // TODO: 2020-04-24 remove!!!
         if (available == 0) {
             octet = input().read();
             assert octet >= 0 && octet < 256;
@@ -96,17 +99,15 @@ public class BitInputAdapter implements BitInput {
         }
         final int required = size - available;
         if (required > 0) {
-            return (unsigned8(available) << required) | unsigned8(required);
+            return (octet(available) << required) | octet(required);
         }
         return (octet >> (available -= size)) & ((1 << size) - 1);
     }
 
-    ByteInput input() {
+    // -----------------------------------------------------------------------------------------------------------------
+    private ByteInput input() {
         if (input == null) {
             input = inputSupplier.get();
-        }
-        if (input == null) {
-            throw new RuntimeException("null input supplied");
         }
         return input;
     }
@@ -116,13 +117,15 @@ public class BitInputAdapter implements BitInput {
 
     private transient ByteInput input;
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * The current octet.
      */
     private int octet;
 
     /**
-     * The number of available bits in {@link #octet} for reading.
+     * The number of available bits in {@link #octet}.
      */
     private int available = 0;
 

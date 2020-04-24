@@ -40,7 +40,6 @@ public interface BitOutput {
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see BitInput#readBoolean()
      */
     default void writeBoolean(boolean value) throws IOException {
         writeInt(true, 1, value ? 0x01 : 0x00);
@@ -54,7 +53,6 @@ public interface BitOutput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see BitInput#readInt(boolean, int)
      */
     void writeInt(boolean unsigned, int size, int value) throws IOException;
 
@@ -66,7 +64,6 @@ public interface BitOutput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see BitInput#readLong(boolean, int)
      */
     default void writeLong(final boolean unsigned, int size, long value) throws IOException {
         requireValidSizeLong(unsigned, size);
@@ -113,7 +110,6 @@ public interface BitOutput {
      * @return the number of bits padded while aligning.
      * @throws IllegalArgumentException if {@code bytes} is not positive.
      * @throws IOException              if an I/O error occurs.
-     * @see BitInput#align(int)
      */
     long align(int bytes) throws IOException;
 }

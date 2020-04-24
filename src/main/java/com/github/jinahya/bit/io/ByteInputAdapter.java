@@ -28,25 +28,43 @@ import static java.util.Objects.requireNonNull;
 public abstract class ByteInputAdapter<T> implements ByteInput {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance with specified source supplier.
+     *
+     * @param sourceSupplier the source supplier.
+     */
     public ByteInputAdapter(final Supplier<? extends T> sourceSupplier) {
         super();
         this.sourceSupplier = requireNonNull(sourceSupplier, "sourceSupplier is null");
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public int read() throws IOException {
         return read(source());
     }
 
+    /**
+     * Reads an unsigned {@value Byte#SIZE}-bit integer from specified source.
+     *
+     * @param source the source from which a byte is read.
+     * @return an unsigned {@value Byte#SIZE}-bit integer from specified source.
+     * @throws IOException if an I/O error occurs.
+     */
     protected abstract int read(T source) throws IOException;
 
     // -----------------------------------------------------------------------------------------------------------------
-    T source() {
+    private T source() {
         if (source == null) {
             source = sourceSupplier.get();
-        }
-        if (source == null) {
-            throw new RuntimeException("null source supplied");
         }
         return source;
     }

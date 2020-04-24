@@ -30,9 +30,23 @@ import static java.util.Objects.requireNonNull;
 
 public class BitOutputAdapter implements BitOutput {
 
+    // -----------------------------------------------------------------------------------------------------------------
+    public static BitOutputAdapter of(final ByteOutput output) {
+        final BitOutputAdapter instance = new BitOutputAdapter(() -> null);
+        instance.output = requireNonNull(output, "output is null");
+        return instance;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance with specified output supplier.
+     *
+     * @param outputSupplier the output supplier.
+     */
     public BitOutputAdapter(final Supplier<? extends ByteOutput> outputSupplier) {
         super();
-        this.outputSupplier = requireNonNull(outputSupplier, "byteOutputSupplier is null");
+        this.outputSupplier = requireNonNull(outputSupplier, "outputSupplier is null");
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -51,10 +65,10 @@ public class BitOutputAdapter implements BitOutput {
         final int quotient = size >> SIZE_EXPONENT_BYTE;
         final int remainder = size & (Byte.SIZE - 1);
         if (remainder > 0) {
-            unsigned8(remainder, value >> (quotient << SIZE_EXPONENT_BYTE));
+            octet(remainder, value >> (quotient << SIZE_EXPONENT_BYTE));
         }
         for (int i = Byte.SIZE * (quotient - 1); i >= 0; i -= Byte.SIZE) {
-            unsigned8(Byte.SIZE, value >> i);
+            octet(Byte.SIZE, value >> i);
         }
     }
 
@@ -77,22 +91,12 @@ public class BitOutputAdapter implements BitOutput {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Writes an unsigned {@code int} value of specified bit size which is, in maximum, {@value java.lang.Byte#SIZE}.
-     *
-     * @param size  the number of lower bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both
-     *              inclusive.
-     * @param value the value to write.
-     * @throws IOException if an I/O error occurs.
-     * @see BitInputAdapter#unsigned8(int)
-     */
-    void unsigned8(final int size, int value) throws IOException {
-        requireValidSizeUnsigned8(size);
+    private void octet(final int size, int value) throws IOException {
+        requireValidSizeUnsigned8(size); // TODO: 2020-04-24 remove!!!
         final int required = size - available;
         if (required > 0) {
-            unsigned8(available, value >> required);
-            unsigned8(required, value);
+            octet(available, value >> required);
+            octet(required, value);
             return;
         }
         octet <<= size;
@@ -107,7 +111,8 @@ public class BitOutputAdapter implements BitOutput {
         }
     }
 
-    ByteOutput output() {
+    // -----------------------------------------------------------------------------------------------------------------
+    private ByteOutput output() {
         if (output == null) {
             output = outputSupplier.get();
         }
@@ -119,13 +124,15 @@ public class BitOutputAdapter implements BitOutput {
 
     private transient ByteOutput output;
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * The current octet.
      */
     private int octet;
 
     /**
-     * The number of available bits in {@link #octet} for writing.
+     * The number of available bits in {@link #octet}.
      */
     private int available = Byte.SIZE;
 

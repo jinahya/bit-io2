@@ -54,6 +54,14 @@ class ChannelByteOutput extends BufferByteOutput {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param target {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     protected void write(final ByteBuffer target, final int value) throws IOException {
         while (!target.hasRemaining()) {
@@ -68,12 +76,6 @@ class ChannelByteOutput extends BufferByteOutput {
     private WritableByteChannel channel() {
         if (channel == null) {
             channel = channelSupplier.get();
-        }
-        if (channel == null) {
-            throw new RuntimeException("null channel supplied");
-        }
-        if (false && !channel.isOpen()) {
-            throw new RuntimeException("closed channel supplied");
         }
         return channel;
     }

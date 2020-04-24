@@ -30,7 +30,7 @@ final class BitIoConstants {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * The minimum value for {@code size} paramter.
+     * The minimum value for {@code size} parameter.
      */
     static final int MIN_SIZE = 1;
 

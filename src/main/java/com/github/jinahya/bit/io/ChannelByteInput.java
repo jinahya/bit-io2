@@ -32,6 +32,7 @@ import static java.util.Objects.requireNonNull;
  * A byte input reads bytes from a readable byte channel.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ChannelByteOutput
  * @deprecated Use {@link ChannelByteInput2}.
  */
 @Deprecated
@@ -53,7 +54,6 @@ class ChannelByteInput extends BufferByteInput {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
     @Override
     public int read(final ByteBuffer source) throws IOException {
         while (!source.hasRemaining()) {
@@ -68,12 +68,6 @@ class ChannelByteInput extends BufferByteInput {
     private ReadableByteChannel channel() {
         if (channel == null) {
             channel = channelSupplier.get();
-        }
-        if (channel == null) {
-            throw new RuntimeException("null channel supplied");
-        }
-        if (false && !channel.isOpen()) {
-            throw new RuntimeException("closed channel supplied");
         }
         return channel;
     }
