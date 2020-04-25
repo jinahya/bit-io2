@@ -92,15 +92,15 @@ class ByteInputProducer {
         // does nothing.
     }
 
-    // --------------------------------------------------------------------------------------------------------- channel
-    @Produces
-    ChannelByteInput2 produceChannelByteInput(final InjectionPoint injectionPoint) {
-        return ChannelByteInput2.of(WhiteByteChannel::new);
-    }
-
-    void disposeChannelByteInput(@Disposes final ChannelByteInput2 byteInput) {
-        // does nothing.
-    }
+//    // --------------------------------------------------------------------------------------------------------- channel
+//    @Produces
+//    ChannelByteInput2 produceChannelByteInput(final InjectionPoint injectionPoint) {
+//        return ChannelByteInput2.of(WhiteByteChannel::new);
+//    }
+//
+//    void disposeChannelByteInput(@Disposes final ChannelByteInput2 byteInput) {
+//        // does nothing.
+//    }
 
     // ------------------------------------------------------------------------------------------------------------- raf
     @Produces

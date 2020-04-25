@@ -64,20 +64,21 @@ public interface BitOutput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readLong(boolean, int)
      */
     default void writeLong(final boolean unsigned, int size, long value) throws IOException {
         requireValidSizeLong(unsigned, size);
         if (!unsigned) {
             writeInt(true, 1, value < 0L ? 0x01 : 0x00);
-            size--;
-            if (size > 0) {
+            if (--size > 0) {
                 writeLong(true, size, value);
             }
             return;
         }
         assert unsigned;
         if (size >= Integer.SIZE) {
-            writeInt(false, Integer.SIZE, (int) ((value >> Integer.SIZE) & 0xFFFFFFFFL));
+//            writeInt(false, Integer.SIZE, (int) ((value >> (size - Integer.SIZE)) & 0xFFFFFFFFL));
+            writeInt(false, Integer.SIZE, (int) (value >> (size - Integer.SIZE)));
             size -= Integer.SIZE;
         }
         if (size > 0) {
@@ -112,4 +113,16 @@ public interface BitOutput {
      * @throws IOException              if an I/O error occurs.
      */
     long align(int bytes) throws IOException;
+
+    /**
+     * Aligns to a single byte by padding zero bits.
+     *
+     * @return the number of bits padded while aligning.
+     * @throws IOException if an I/O error occurs.
+     * @see #align(int)
+     * @see BitInput#align()
+     */
+    default long align() throws IOException {
+        return align(Byte.BYTES);
+    }
 }

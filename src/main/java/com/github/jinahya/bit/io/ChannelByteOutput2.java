@@ -26,7 +26,6 @@ import java.nio.channels.WritableByteChannel;
 import java.util.function.Supplier;
 
 import static java.nio.ByteBuffer.allocate;
-import static java.util.Objects.requireNonNull;
 
 /**
  * A byte output which writes bytes to a writable byte channel.
@@ -47,42 +46,29 @@ import static java.util.Objects.requireNonNull;
 class ChannelByteOutput2 extends ByteOutputAdapter<WritableByteChannel> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static ChannelByteOutput2 of(final Supplier<? extends WritableByteChannel> targetSupplier) {
-        if (targetSupplier == null) {
-            throw new NullPointerException("targetSupplier is null");
-        }
-        return new ChannelByteOutput2(targetSupplier, () -> allocate(1));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public ChannelByteOutput2(final Supplier<? extends WritableByteChannel> targetSupplier,
-                              final Supplier<? extends ByteBuffer> bufferSupplier) {
+    public ChannelByteOutput2(final Supplier<? extends WritableByteChannel> targetSupplier) {
         super(targetSupplier);
-        this.bufferSupplier = requireNonNull(bufferSupplier, "bufferSupplier is null");
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     @Override
     protected void write(final WritableByteChannel target, final int value) throws IOException {
         final ByteBuffer buffer = buffer();
-        while (!buffer.hasRemaining()) {
-            buffer.flip(); // limit -> position, position -> zero
-            final int written = target.write(buffer);
-            buffer.compact();
-        }
         buffer.put((byte) value);
+        for (buffer.flip(); buffer.hasRemaining(); ) {
+            target.write(buffer);
+        }
+        buffer.clear();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     private ByteBuffer buffer() {
         if (buffer == null) {
-            buffer = bufferSupplier.get();
+            buffer = allocate(1);
         }
         return buffer;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private final Supplier<? extends ByteBuffer> bufferSupplier;
-
     private transient ByteBuffer buffer;
 }

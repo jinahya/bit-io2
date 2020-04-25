@@ -64,6 +64,7 @@ public interface BitInput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @return a {@code long} value of specified bit size.
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeLong(boolean, int, long)
      */
     default long readLong(final boolean unsigned, int size) throws IOException {
         requireValidSizeLong(unsigned, size);
@@ -122,4 +123,16 @@ public interface BitInput {
      * @see BitOutput#align(int)
      */
     long align(int bytes) throws IOException;
+
+    /**
+     * Aligns to a single byte by discarding bits.
+     *
+     * @return the number of bits discarded while aligning.
+     * @throws IOException if an I/O error occurs.
+     * @see #align(int)
+     * @see BitOutput#align()
+     */
+    default long align() throws IOException {
+        return align(Byte.BYTES);
+    }
 }

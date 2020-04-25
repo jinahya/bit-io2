@@ -27,7 +27,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.function.Supplier;
 
 import static java.nio.ByteBuffer.allocate;
-import static java.util.Objects.requireNonNull;
 
 /**
  * A byte input which reads bytes from a readable byte channel.
@@ -39,18 +38,8 @@ import static java.util.Objects.requireNonNull;
 class ChannelByteInput2 extends ByteInputAdapter<ReadableByteChannel> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static ChannelByteInput2 of(final Supplier<? extends ReadableByteChannel> channelSupplier) {
-        if (channelSupplier == null) {
-            throw new NullPointerException("channelSupplier is null");
-        }
-        return new ChannelByteInput2(channelSupplier, () -> (ByteBuffer) allocate(1).position(1));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public ChannelByteInput2(final Supplier<? extends ReadableByteChannel> sourceSupplier,
-                             final Supplier<? extends ByteBuffer> bufferSupplier) {
+    public ChannelByteInput2(final Supplier<? extends ReadableByteChannel> sourceSupplier) {
         super(sourceSupplier);
-        this.bufferSupplier = requireNonNull(bufferSupplier, "bufferSupplier is null");
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -70,13 +59,11 @@ class ChannelByteInput2 extends ByteInputAdapter<ReadableByteChannel> {
     // -----------------------------------------------------------------------------------------------------------------
     private ByteBuffer buffer() {
         if (buffer == null) {
-            buffer = bufferSupplier.get();
+            buffer = (ByteBuffer) allocate(1).position(1);
         }
         return buffer;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private final Supplier<? extends ByteBuffer> bufferSupplier;
-
     private transient ByteBuffer buffer;
 }

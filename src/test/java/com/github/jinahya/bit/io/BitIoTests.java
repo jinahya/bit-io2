@@ -175,6 +175,14 @@ final class BitIoTests {
         return sizeForLongUnsigned().mapToObj(size -> arguments(size, randomValueForLongUnsigned(size)));
     }
 
+    static int randomSizeForLong(final boolean unsigned) {
+        return unsigned ? randomSizeForLongUnsigned() : randomSizeForLongSigned();
+    }
+
+    static long randomValueForLong(final boolean unsigned, final int size) {
+        return unsigned ? randomValueForLongUnsigned(size) : randomValueForLongSigned(size);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     static IntStream illegalBitsForSkip() {
         final IntStream.Builder builder = IntStream.builder();
