@@ -60,10 +60,10 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     }
 
     /**
-     * Reads an unsigned {@value Byte#SIZE}-bit integer from specified source.
+     * Reads an unsigned {@code 8}-bit value from specified source.
      *
      * @param source the source from which a byte is read.
-     * @return an unsigned {@value Byte#SIZE}-bit integer from specified source.
+     * @return an unsigned {@code 8}-bit value read from the {@code source}.
      * @throws IOException if an I/O error occurs.
      */
     protected abstract int read(T source) throws IOException;

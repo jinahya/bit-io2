@@ -60,10 +60,10 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
-     * Writes specified unsigned {@value Byte#SIZE}-bit integer to specified target.
+     * Writes specified unsigned {@code 8}-bit value to specified target.
      *
      * @param target the target.
-     * @param value  the unsigned {@value Byte#SIZE}-bit integer to write.
+     * @param value  the unsigned {@code 8}-bit value to write.
      * @throws IOException if an I/O error occurs.
      */
     protected abstract void write(T target, int value) throws IOException;

@@ -32,12 +32,22 @@ import java.util.function.Supplier;
  */
 public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Creates a new instance with specified target supplier.
+     *
+     * @param targetSupplier the target supplier.
+     */
     public StreamByteOutput(final Supplier<? extends OutputStream> targetSupplier) {
         super(targetSupplier);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * {@inheritDoc}
+     *
+     * @param target {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     protected void write(final OutputStream target, final int value) throws IOException {
         target.write(value);
