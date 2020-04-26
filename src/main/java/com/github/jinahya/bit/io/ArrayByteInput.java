@@ -45,7 +45,8 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code read(byte[])} method of {@code ArrayByteInput} class returns the byte on {@code source}
+     * at {@link #index} as an unsigned {@code int} and increments the value of {@link #index} by {@code 1}.
      *
      * @param source the array of byte on which the byte is read.
      * @return {@inheritDoc}

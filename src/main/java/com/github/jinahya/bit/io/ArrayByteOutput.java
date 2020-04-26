@@ -45,7 +45,8 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code write(byte[], int)} method of {@code ArrayByteOutput} class sets the {@code value} on
+     * {@code target} at {@link #index} and increments the value of {@link #index} by {@code 1}.
      *
      * @param target the array of byte on which the value is set.
      * @param value  {@inheritDoc}

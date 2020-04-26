@@ -28,9 +28,22 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsigned8;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * An implementation of {@link BitInput} adapting an instance of {@link ByteInput}.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see BitOutputAdapter
+ */
 public class BitInputAdapter implements BitInput {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance with specified byte input.
+     *
+     * @param input the byte input for reading bytes.
+     * @return a new instance.
+     */
     public static BitInputAdapter of(final ByteInput input) {
         final BitInputAdapter instance = new BitInputAdapter(() -> null);
         instance.input = requireNonNull(input, "input is null");
@@ -38,6 +51,12 @@ public class BitInputAdapter implements BitInput {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance with specified input supplier.
+     *
+     * @param inputSupplier the input supplier.
+     */
     public BitInputAdapter(final Supplier<? extends ByteInput> inputSupplier) {
         super();
         this.inputSupplier = requireNonNull(inputSupplier, "inputSupplier is null");

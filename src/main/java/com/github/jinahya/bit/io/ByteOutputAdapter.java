@@ -25,6 +25,13 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * An abstract class implements {@link ByteOutput} adapting various byte targets.
+ *
+ * @param <T> byte target parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ByteInputAdapter
+ */
 public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
     // -----------------------------------------------------------------------------------------------------------------

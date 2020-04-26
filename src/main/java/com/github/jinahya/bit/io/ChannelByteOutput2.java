@@ -29,15 +29,6 @@ import static java.nio.ByteBuffer.allocate;
 
 /**
  * A byte output which writes bytes to a writable byte channel.
- * <p>
- * Note that a flushing might be required when the {@code buffer}'s capacity is greater than {@code 1}.
- * <blockquote><pre>{@code
- * final WritableByteChannel channel = getTarget();
- * final ByteBuffer buffer = getBuffer();
- * for (buffer.flip(); buffer.hasRemaining(); ) {
- *     channel.write(buffer);
- * }
- * }</pre></blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ChannelByteOutput

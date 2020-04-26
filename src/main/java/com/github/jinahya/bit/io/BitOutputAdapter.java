@@ -28,9 +28,22 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsigned8;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * An implementation of {@link BitOutput} adapting an instance of {@link ByteOutput}.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see BitInputAdapter
+ */
 public class BitOutputAdapter implements BitOutput {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance with specified byte output.
+     *
+     * @param output the byte output for writing bytes.
+     * @return a new instance.
+     */
     public static BitOutputAdapter of(final ByteOutput output) {
         final BitOutputAdapter instance = new BitOutputAdapter(() -> null);
         instance.output = requireNonNull(output, "output is null");

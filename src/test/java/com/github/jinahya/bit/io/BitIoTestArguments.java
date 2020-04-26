@@ -26,22 +26,28 @@ import org.junit.jupiter.params.provider.Arguments;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
+import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForInt;
+import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForLong;
+import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForUnsignedInt;
+import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForUnsignedLong;
+import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForInt;
+import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForLong;
+import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForUnsignedInt;
+import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForUnsignedLong;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static java.util.stream.IntStream.range;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
- * Utilities for testing.
+ * Test parameters for {@link BitInput} and {@link BitOutput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-final class BitIoTests {
+final class BitIoTestArguments {
 
     // -----------------------------------------------------------------------------------------------------------------
-    static IntStream illegalSizeForIntSigned() {
+    static IntStream illegalSizeForInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -51,7 +57,7 @@ final class BitIoTests {
         return builder.build();
     }
 
-    static IntStream illegalSizeForIntUnsigned() {
+    static IntStream illegalSizeForUnsignedInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -61,61 +67,46 @@ final class BitIoTests {
         return builder.build();
     }
 
-    static int randomSizeForIntSigned() {
-        return requireValidSizeInt(false, current().nextInt(Integer.SIZE) + 1); // 1 - 32
+    static IntStream illegalSizeForInt(final boolean unsigned) {
+        return unsigned ? illegalSizeForUnsignedInt() : illegalSizeForInt();
     }
 
-    static IntStream sizeForIntSigned() {
+    // -----------------------------------------------------------------------------------------------------------------
+    static IntStream sizeForInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(1);
         builder.add(Integer.SIZE);
-        range(0, 128).map(i -> randomSizeForIntSigned()).forEach(builder::add);
+        range(0, 128).map(i -> randomSizeForInt()).forEach(builder::add);
         return builder.build();
     }
 
-    static int randomValueForIntSigned(final int size) {
-        return current().nextInt() >> (Integer.SIZE - requireValidSizeInt(false, size));
-    }
-
-    /**
-     * Returns a stream of arguments of {@code size} and {@code value} valid for {@link BitOutput#writeInt(boolean, int,
-     * int) writeInt(false, , )}.
-     *
-     * @return a stream of arguments.
-     */
-    static Stream<Arguments> sizeAndValueForIntSigned() {
-        return sizeForIntSigned().mapToObj(size -> arguments(size, randomValueForIntSigned(size)));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    static int randomSizeForIntUnsigned() {
-        return requireValidSizeInt(true, current().nextInt(1, Integer.SIZE)); // 0 - 31
-    }
-
-    static IntStream sizeForIntUnsigned() {
+    static IntStream sizeForUnsignedInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(1);
         builder.add(Integer.SIZE - 1);
-        range(0, 128).map(i -> randomSizeForIntUnsigned()).forEach(builder::add);
+        range(0, 128).map(i -> randomSizeForUnsignedInt()).forEach(builder::add);
         return builder.build();
     }
 
-    static int randomValueForIntUnsigned(final int size) {
-        return (current().nextInt() >>> 1) >> (Integer.SIZE - requireValidSizeInt(true, size));
-    }
-
-    /**
-     * Returns a stream of arguments of {@code size} and {@code value} valid for {@link BitOutput#writeInt(boolean, int,
-     * int) writeInt(true, , )}.
-     *
-     * @return a stream of arguments.
-     */
-    static Stream<Arguments> sizeAndValueForIntUnsigned() {
-        return sizeForIntUnsigned().mapToObj(size -> arguments(size, randomValueForIntUnsigned(size)));
+    static IntStream sizeForInt(final boolean unsigned) {
+        return unsigned ? sizeForUnsignedInt() : sizeForInt();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static IntStream illegalSizeForLongSigned() {
+    static Stream<Arguments> sizeAndValueForInt() {
+        return sizeForInt().mapToObj(size -> arguments(size, randomValueForInt(size)));
+    }
+
+    static Stream<Arguments> sizeAndValueForUnsignedInt() {
+        return sizeForUnsignedInt().mapToObj(size -> arguments(size, randomValueForUnsignedInt(size)));
+    }
+
+    static Stream<Arguments> sizeAndValueForInt(final boolean unsigned) {
+        return unsigned ? sizeAndValueForUnsignedInt() : sizeAndValueForInt();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    static IntStream illegalSizeForLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -125,7 +116,7 @@ final class BitIoTests {
         return builder.build();
     }
 
-    static IntStream illegalSizeForLongUnsigned() {
+    static IntStream illegalSizeForUnsignedLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -135,52 +126,42 @@ final class BitIoTests {
         return builder.build();
     }
 
-    static int randomSizeForLongSigned() {
-        return requireValidSizeLong(false, current().nextInt(Long.SIZE) + 1); // 1 - 64
+    static IntStream illegalSizeForLong(final boolean unsigned) {
+        return unsigned ? illegalSizeForUnsignedLong() : illegalSizeForLong();
     }
 
-    static IntStream sizeForLongSigned() {
+    // -----------------------------------------------------------------------------------------------------------------
+    static IntStream sizeForLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(1);
         builder.add(Long.SIZE);
-        range(0, 128).map(i -> randomSizeForLongSigned()).forEach(builder::add);
+        range(0, 128).map(i -> randomSizeForLong()).forEach(builder::add);
         return builder.build();
     }
 
-    static int randomSizeForLongUnsigned() {
-        return requireValidSizeLong(true, current().nextInt(1, Long.SIZE)); // 1 - 63
-    }
-
-    static IntStream sizeForLongUnsigned() {
+    static IntStream sizeForUnsignedLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(1);
         builder.add(Long.SIZE - 1);
-        range(0, 128).map(i -> randomSizeForLongUnsigned()).forEach(builder::add);
+        range(0, 128).map(i -> randomSizeForUnsignedLong()).forEach(builder::add);
         return builder.build();
     }
 
-    static long randomValueForLongSigned(final int size) {
-        return current().nextLong() >> (Long.SIZE - requireValidSizeLong(false, size));
+    static IntStream sizeForLong(final boolean unsigned) {
+        return unsigned ? sizeForUnsignedLong() : sizeForLong();
     }
 
-    static long randomValueForLongUnsigned(final int size) {
-        return (current().nextLong() >>> 1) >> (Long.SIZE - requireValidSizeLong(true, size));
+    // -----------------------------------------------------------------------------------------------------------------
+    static Stream<Arguments> sizeAndValueForLong() {
+        return sizeForLong().mapToObj(size -> arguments(size, randomValueForLong(size)));
     }
 
-    static Stream<Arguments> sizeAndValueForLongSigned() {
-        return sizeForLongSigned().mapToObj(size -> arguments(size, randomValueForLongSigned(size)));
+    static Stream<Arguments> sizeAndValueForUnsignedLong() {
+        return sizeForUnsignedLong().mapToObj(size -> arguments(size, randomValueForUnsignedLong(size)));
     }
 
-    static Stream<Arguments> sizeAndValueForLongUnsigned() {
-        return sizeForLongUnsigned().mapToObj(size -> arguments(size, randomValueForLongUnsigned(size)));
-    }
-
-    static int randomSizeForLong(final boolean unsigned) {
-        return unsigned ? randomSizeForLongUnsigned() : randomSizeForLongSigned();
-    }
-
-    static long randomValueForLong(final boolean unsigned, final int size) {
-        return unsigned ? randomValueForLongUnsigned(size) : randomValueForLongSigned(size);
+    static Stream<Arguments> sizeAndValueForLong(final boolean unsigned) {
+        return unsigned ? sizeAndValueForUnsignedLong() : sizeAndValueForLong();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -193,7 +174,7 @@ final class BitIoTests {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private BitIoTests() {
+    private BitIoTestArguments() {
         super();
     }
 }

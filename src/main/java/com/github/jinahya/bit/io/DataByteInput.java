@@ -32,12 +32,23 @@ import java.util.function.Supplier;
  */
 public class DataByteInput extends ByteInputAdapter<DataInput> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Creates a new instance with specified source supplier.
+     *
+     * @param sourceSupplier the source supplier.
+     */
     public DataByteInput(final Supplier<? extends DataInput> sourceSupplier) {
         super(sourceSupplier);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * {@inheritDoc} The {@code read(DataInput)} method of {@link DataByteInput} class invokes {@link
+     * DataInput#readUnsignedByte()} method on {@code source} and returns the result.
+     *
+     * @param source {@inheritDoc}
+     * @return {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     protected int read(final DataInput source) throws IOException {
         return source.readUnsignedByte();

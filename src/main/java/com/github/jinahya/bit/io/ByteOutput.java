@@ -31,8 +31,6 @@ import java.io.IOException;
 @FunctionalInterface
 public interface ByteOutput {
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * Writes specified unsigned {@value java.lang.Byte#SIZE}-bit value.
      *
