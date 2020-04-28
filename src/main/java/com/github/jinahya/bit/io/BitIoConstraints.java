@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import static com.github.jinahya.bit.io.BitIoConstants.MIN_SIZE;
 import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_BYTE;
@@ -134,9 +135,17 @@ final class BitIoConstraints {
         return requireValidSize(unsigned, SIZE_EXPONENT_BYTE, size);
     }
 
+    static <R> R requireValidSizeByte(final boolean unsigned, final int size,
+                                      final BiFunction<? super Boolean, ? super Integer, ? extends R> function) {
+        return requireNonNull(function, "consumer is null").apply(unsigned, requireValidSizeByte(unsigned, size));
+    }
+
     static void requireValidSizeByte(final boolean unsigned, final int size,
-                                     final BiConsumer<Boolean, Integer> consumer) {
-        requireNonNull(consumer, "consumer is null").accept(unsigned, requireValidSizeByte(unsigned, size));
+                                     final BiConsumer<? super Boolean, ? super Integer> consumer) {
+        requireValidSizeByte(unsigned, size, (u, s) -> {
+            requireNonNull(consumer, "consumer is null").accept(u, requireValidSizeByte(u, s));
+            return null;
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------

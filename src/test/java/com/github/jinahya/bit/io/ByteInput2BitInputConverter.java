@@ -25,19 +25,19 @@ import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ArgumentConverter;
 
 /**
- * A class for converting an instance of {@link ByteOutput} to an instance of {@link BitOutput}.
+ * A class for converting instances of {@link ByteInput} to instances of {@link BitInput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitInputConverter
+ * @see ByteOutput2BitOutputConverter
  */
-class BitOutputConverter implements ArgumentConverter {
+class ByteInput2BitInputConverter implements ArgumentConverter {
 
     // -----------------------------------------------------------------------------------------------------------------
     @Override
     public Object convert(final Object source, final ParameterContext context) throws ArgumentConversionException {
-        if (!(source instanceof ByteOutput)) {
-            throw new ArgumentConversionException("can't convert " + source);
+        if (!(source instanceof ByteInput)) {
+            throw new ArgumentConversionException("can't convert " + source + " into an instance of " + BitInput.class);
         }
-        return new BitOutputAdapter(() -> (ByteOutput) source);
+        return BitInputAdapter.of((ByteInput) source);
     }
 }

@@ -31,8 +31,6 @@ import java.util.function.Supplier;
  */
 public class ArrayByteInput extends ByteInputAdapter<byte[]> {
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * Creates a new instance with specified source supplier.
      *
@@ -41,8 +39,6 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
     public ArrayByteInput(final Supplier<byte[]> sourceSupplier) {
         super(sourceSupplier);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * {@inheritDoc} The {@code read(byte[])} method of {@code ArrayByteInput} class returns the byte on {@code source}
@@ -57,10 +53,8 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
         return source[index++] & 0xFF;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
-     * The next index in the {@code source} on which the byte is read.
+     * The next index in the {@code source} to read the octet.
      */
     protected int index;
 }

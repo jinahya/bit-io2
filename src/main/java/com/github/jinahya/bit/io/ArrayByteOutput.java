@@ -31,8 +31,6 @@ import java.util.function.Supplier;
  */
 public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * Creates a new instance with specified target supplier.
      *
@@ -41,8 +39,6 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
     public ArrayByteOutput(final Supplier<byte[]> targetSupplier) {
         super(targetSupplier);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * {@inheritDoc} The {@code write(byte[], int)} method of {@code ArrayByteOutput} class sets the {@code value} on
@@ -56,8 +52,6 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
     public void write(final byte[] target, final int value) throws IOException {
         target[index++] = (byte) value;
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * The next index in the {@code target} on which the byte is written.

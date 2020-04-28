@@ -20,21 +20,31 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 
-class ArrayByteOutputTest extends ByteOutputAdapterTest<ArrayByteOutput, byte[]> {
+import static java.util.concurrent.ThreadLocalRandom.current;
 
-    static ArrayByteOutput black() {
-        return new ArrayByteOutput(() -> null) {
-            @Override
-            public void write(final byte[] target, final int value) throws IOException {
-                assert target == null;
-                // does nothing
-            }
-        };
+/**
+ * A class for unit-testing {@link ByteInput} interface.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+class ByteInputTest {
+
+    /**
+     * Returns an instance of {@link ByteInput} whose {@link ByteInput#read()} method returns a random value.
+     *
+     * @return an instance of {@link ByteInput}.
+     * @see ByteOutputTest#black()
+     */
+    static ByteInput white() {
+        return () -> current().nextInt(0, 256);
     }
 
-    ArrayByteOutputTest() {
-        super(ArrayByteOutput.class, byte[].class);
+    @Test
+    void testWhite() throws IOException {
+        final int value = white().read();
     }
 }

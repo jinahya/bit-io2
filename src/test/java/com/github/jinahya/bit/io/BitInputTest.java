@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Slf4j
 public class BitInputTest {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------- readBoolean
 
     /**
      * Tests {@link BitInput#readBoolean()} method.

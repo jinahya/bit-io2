@@ -43,6 +43,7 @@ public class BitOutputAdapter implements BitOutput {
      *
      * @param output the byte output for writing bytes.
      * @return a new instance.
+     * @see BitInputAdapter#of(ByteInput)
      */
     public static BitOutputAdapter of(final ByteOutput output) {
         final BitOutputAdapter instance = new BitOutputAdapter(() -> null);

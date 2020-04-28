@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
 
 /**
  * An interface for reading values of an arbitrary number of bits.
@@ -46,7 +47,7 @@ public interface BitInput {
         return readInt(true, 1) == 0x01;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------ byte
 
     /**
      * Reads a {@code byte} value of specified number of bits.
@@ -65,7 +66,7 @@ public interface BitInput {
     /**
      * Reads a signed {@code byte} value of specified number of bits.
      *
-     * @param size the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE}, both inclusive.
+     * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return a signed {@code byte} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeByte(boolean, int, byte)
@@ -77,12 +78,12 @@ public interface BitInput {
     /**
      * Reads a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
      *
-     * @return an {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
+     * @return a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeByte8(byte)
      */
     default byte readByte8() throws IOException {
-        return readByte(false, Byte.SIZE);
+        return readByte(Byte.SIZE);
     }
 
     /**
@@ -98,7 +99,70 @@ public interface BitInput {
         return readByte(true, size);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------- short
+
+    /**
+     * Reads a {@code short} value of specified number of bits.
+     *
+     * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
+     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Short#SIZE} - (unsigned ?
+     *                 {@code 1} : {@code 0})), both inclusive.
+     * @return a {@code short} value of specified {@code size}.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeShort(boolean, int, short)
+     */
+    default short readShort(final boolean unsigned, final int size) throws IOException {
+        return (short) readInt(unsigned, requireValidSizeShort(unsigned, size));
+    }
+
+    /**
+     * Reads a signed {@code short} value of specified number of bits.
+     *
+     * @param size the number of bits to read; between {@code 1} and {@value java.lang.Short#SIZE}, both inclusive.
+     * @return a signed {@code short} value of specified bit {@code size}.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeShort(boolean, int, short)
+     */
+    default short readShort(final int size) throws IOException {
+        return readShort(false, size);
+    }
+
+    /**
+     * Reads a signed {@value java.lang.Short#SIZE}-bit {@code short} value.
+     *
+     * @return a signed {@value java.lang.Short#SIZE}-bit {@code short} value.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeShort16(short)
+     */
+    default short readShort16() throws IOException {
+        return readShort(Short.SIZE);
+    }
+
+    /**
+     * Reads a signed {@value java.lang.Short#SIZE}-bit {@code short} value in little endian byte order.
+     *
+     * @return a signed {@value java.lang.Short#SIZE}-bit {@code short} value in little endian byte order.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeShort16Le(short)
+     */
+    default short readShort16Le() throws IOException {
+        return (short) ((readByte8() & 0xFF) | (readByte8() << Byte.SIZE));
+    }
+
+    /**
+     * Reads an unsigned {@code short} value of specified number of bits.
+     *
+     * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Short#SIZE}
+     *             (exclusive).
+     * @return an unsigned {@code short} value of specified bit {@code size}.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeShort(boolean, int, short)
+     */
+    default short readUnsignedShort(final int size) throws IOException {
+        return readShort(true, size);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------- int
 
     /**
      * Reads an {@code int} value of specified number of bits.
@@ -108,6 +172,7 @@ public interface BitInput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @return an {@code int} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeInt(boolean, int, int)
      */
     int readInt(boolean unsigned, int size) throws IOException;
 
@@ -117,6 +182,7 @@ public interface BitInput {
      * @param size the number of bits to read; between {@code 1} and {@value Integer#SIZE}, both inclusive.
      * @return a signed {@code int} value.
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeInt(int, int)
      */
     default int readInt(final int size) throws IOException {
         return readInt(false, size);
@@ -127,9 +193,21 @@ public interface BitInput {
      *
      * @return a signed {@value Integer#SIZE}-bit {@code int} value.
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeInt32(int)
      */
     default int readInt32() throws IOException {
         return readInt(Integer.SIZE);
+    }
+
+    /**
+     * Reads a signed {@value Integer#SIZE}-bit {@code int} value in little endian byte order.
+     *
+     * @return a signed {@value Integer#SIZE}-bit {@code int} value.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeInt32Le(int)
+     */
+    default int readInt32Le() throws IOException {
+        return (readShort16Le() & 0xFFFF) | (readShort16Le() << Short.SIZE);
     }
 
     /**
@@ -143,7 +221,7 @@ public interface BitInput {
         return readInt(true, size);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------ long
 
     /**
      * Reads a {@code long} value of specified number of bits.
@@ -185,9 +263,32 @@ public interface BitInput {
      * @param size the number of bits to read; between {@code 1} and {@value Long#SIZE}, both inclusive.
      * @return a signed {@code long} value.
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeLong(int, long)
      */
     default long readLong(final int size) throws IOException {
         return readLong(false, size);
+    }
+
+    /**
+     * Reads a signed {@value Long#SIZE}-bit {@code long} value.
+     *
+     * @return a signed {@value Long#SIZE}-bit {@code long} value.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeLong64(long)
+     */
+    default long readLong64() throws IOException {
+        return readLong(Long.SIZE);
+    }
+
+    /**
+     * Reads a signed {@value Long#SIZE}-bit {@code long} value in little endian byte order.
+     *
+     * @return a signed {@value Long#SIZE}-bit {@code long} value.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeLong64Le(long)
+     */
+    default long readLong64Le() throws IOException {
+        return (readInt32Le() & 0xFFFFFFFFL) | (((long) readInt32Le()) << Integer.SIZE);
     }
 
     /**
@@ -196,6 +297,7 @@ public interface BitInput {
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value Long#SIZE} (exclusive).
      * @return an unsigned {@code long} value.
      * @throws IOException if an error occurs.
+     * @see BitOutput#writeUnsignedLong(int, long)
      */
     default long readUnsignedLong(final int size) throws IOException {
         return readLong(true, size);

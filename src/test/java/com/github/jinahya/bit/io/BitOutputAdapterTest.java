@@ -28,9 +28,39 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * A class for unit-testing {@link BitOutputAdapter} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see BitInputAdapterTest
+ */
 class BitOutputAdapterTest {
+
+    // -------------------------------------------------------------------------------------------------------------- of
+
+    /**
+     * Asserts {@link BitOutputAdapter#of(ByteOutput)} method throws a {@code NullPointerException} when {@code output}
+     * argument is {@code null}.
+     */
+    @DisplayName("of(output) throws NullPointerException when output is null")
+    @Test
+    void assertOfThrowNullPointerExceptionWhenOutputIsNull() {
+        assertThrows(NullPointerException.class, () -> BitOutputAdapter.of(null));
+    }
+
+    /**
+     * Tests {@link BitOutputAdapter#of(ByteOutput)} method.
+     */
+    @DisplayName("of(output)")
+    @Test
+    void testOf() throws IOException {
+        final BitOutputAdapter instance = BitOutputAdapter.of(ByteOutputTest.black());
+        assertNotNull(instance);
+        BitOutputInstanceTests.test(instance);
+    }
 
     // -------------------------------------------------------------------------------------------------------- writeInt
     @DisplayName("writeInt(false, size, value) throws IllegalArgumentException when size is illegal")
