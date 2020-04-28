@@ -64,6 +64,7 @@ final class BitIoConstraints {
      * @param size the size to check; must between {@code 1} and {@value java.lang.Short#SIZE}, both inclusive.
      * @return given size.
      */
+    // TODO: 2020-04-26 Remove!!!
     static int requireValidSizeUnsigned16(final int size) {
         if (size < MIN_SIZE) {
             throw new IllegalArgumentException("unsigned16.size(" + size + ") < 1");
@@ -122,8 +123,8 @@ final class BitIoConstraints {
         }
         final int max = maxSize(unsigned, exponent);
         if (size > max) {
-            throw new IllegalArgumentException("size(" + size + ") > " + max + "; unsigned=" + unsigned + "; exponent="
-                                               + exponent);
+            throw new IllegalArgumentException(
+                    "size(" + size + ") > " + max + "; unsigned: " + unsigned + "; exponent: " + exponent);
         }
         return size;
     }

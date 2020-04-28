@@ -25,32 +25,59 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * An abstract class implements {@link ByteOutput} adapting various byte targets.
+ *
+ * @param <T> byte target parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ByteInputAdapter
+ */
 public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public ByteOutputAdapter(final Supplier<? extends T> supplier) {
+
+    /**
+     * Creates a new instance with specified target supplier.
+     *
+     * @param targetSupplier the target supplier.
+     */
+    public ByteOutputAdapter(final Supplier<? extends T> targetSupplier) {
         super();
-        this.supplier = requireNonNull(supplier, "supplier is null");
+        this.targetSupplier = requireNonNull(targetSupplier, "targetSupplier is null");
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param value {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public void write(final int value) throws IOException {
         write(target(), value);
     }
 
+    /**
+     * Writes specified unsigned {@code 8}-bit value to specified target.
+     *
+     * @param target the target.
+     * @param value  the unsigned {@code 8}-bit value to write.
+     * @throws IOException if an I/O error occurs.
+     */
     protected abstract void write(T target, int value) throws IOException;
 
     // -----------------------------------------------------------------------------------------------------------------
-    T target() {
+    private T target() {
         if (target == null) {
-            target = supplier.get();
+            target = targetSupplier.get();
         }
         return target;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private final Supplier<? extends T> supplier;
+    private final Supplier<? extends T> targetSupplier;
 
     private transient T target;
 }

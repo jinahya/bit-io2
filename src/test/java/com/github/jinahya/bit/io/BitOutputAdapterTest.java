@@ -21,57 +21,77 @@ package com.github.jinahya.bit.io;
  */
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BitOutputAdapterTest {
 
     // -------------------------------------------------------------------------------------------------------- writeInt
     @DisplayName("writeInt(false, size, value) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#illegalSizeForIntSigned"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForInt"})
     @ParameterizedTest
     void assertWriteIntSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.writeInt(false, size, 0));
     }
 
     @DisplayName("writeInt(true, size, value) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#illegalSizeForIntUnsigned"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForUnsignedInt"})
     @ParameterizedTest
     void assertWriteIntUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.writeInt(true, size, 0));
     }
 
     @DisplayName("writeInt(false, size, value)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeAndValueForIntSigned"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForInt"})
     @ParameterizedTest
     void testWriteIntSigned(final int size, final int value) throws IOException {
         adapter.writeInt(false, size, value);
     }
 
     @DisplayName("writeInt(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeAndValueForIntUnsigned"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForUnsignedInt"})
     @ParameterizedTest
     void testWriteIntUnsigned(final int size, final int value) throws IOException {
         adapter.writeInt(true, size, value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------- writeLong
     @DisplayName("writeLong(false, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeAndValueForLongSigned"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForLong"})
     @ParameterizedTest
     void testWriteLongSigned(final int size, final long value) throws IOException {
         adapter.writeLong(false, size, value);
     }
 
     @DisplayName("writeLong(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#sizeAndValueForLongUnsigned"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForUnsignedLong"})
     @ParameterizedTest
     void testWriteLongUnsigned(final int size, final long value) throws IOException {
         adapter.writeLong(true, size, value);
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- align
+    @DisplayName("align(bytes) throws IllegalArgumentException when bytes is not positive ")
+    @Test
+    void assertAlignThrowsIllegalArgumentExceptionWhenBytesIsNotPositive() {
+        assertThrows(IllegalArgumentException.class, () -> adapter.align(0));
+        assertThrows(IllegalArgumentException.class, () -> adapter.align(current().nextInt() | Integer.MIN_VALUE));
+    }
+
+    /**
+     * Tests {@link BitOutputAdapter#align(int)} method.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Test
+    void testAlign() throws IOException {
+        adapter.align(current().nextInt(1, 128));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

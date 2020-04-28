@@ -46,7 +46,6 @@
     <maven.compiler.testSource>${maven.compiler.source}</maven.compiler.testSource>
     <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
-    <version.maven-javadoc-plugin>3.1.0</version.maven-javadoc-plugin>
     <version.maven-surefire>2.22.2</version.maven-surefire>
     <version.org.junit.jupiter>5.6.2</version.org.junit.jupiter>
     <version.org.mockito>3.3.3</version.org.mockito>
@@ -125,10 +124,9 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>${version.maven-javadoc-plugin}</version>
+          <version>3.2.0</version>
           <configuration>
             <doclint>all</doclint>
-            <show>package</show>
           </configuration>
         </plugin>
         <plugin>

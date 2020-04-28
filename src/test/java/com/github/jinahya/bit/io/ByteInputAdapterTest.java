@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,17 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
+import static java.util.Objects.requireNonNull;
 
-/**
- * An interface for reading bytes.
- *
- * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
- * @see ByteOutput
- */
-@FunctionalInterface
-public interface ByteInput {
+abstract class ByteInputAdapterTest<T extends ByteInputAdapter<U>, U> {
 
-    /**
-     * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.
-     *
-     * @return an unsigned {@value java.lang.Byte#SIZE}-bit value; between {@code 0} and {@code 255}, both inclusive.
-     * @throws IOException if an I/O error occurs.
-     */
-    int read() throws IOException;
+    ByteInputAdapterTest(final Class<T> adapterClass, final Class<U> sourceClass) {
+        super();
+        this.adapterClass = requireNonNull(adapterClass, "adapterClass is null");
+        this.sourceClass = requireNonNull(sourceClass, "sourceClass is null");
+    }
+
+    final Class<T> adapterClass;
+
+    final Class<U> sourceClass;
 }

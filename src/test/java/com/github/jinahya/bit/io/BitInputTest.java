@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 @ExtendWith({MockitoExtension.class})
 @Slf4j
-class BitInputTest {
+public class BitInputTest {
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -60,14 +59,14 @@ class BitInputTest {
 
     // -------------------------------------------------------------------------------------------------------- readLong
     @DisplayName("readLong(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#illegalSizeForLongSigned"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForLong"})
     @ParameterizedTest
     void assertReadLongSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readLong(false, size));
     }
 
     @DisplayName("readLong(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#illegalSizeForLongUnsigned"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForUnsignedLong"})
     @ParameterizedTest
     void assertReadLongUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readLong(true, size));
@@ -80,15 +79,10 @@ class BitInputTest {
      * not positive.
      */
     @DisplayName("skip(bits) throws IllegalArgumentException when bits is not positive")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTests#illegalBitsForSkip"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalBitsForSkip"})
     @ParameterizedTest
     void assertSkipThrowsIllegalArgumentExceptionWhenBitsIsNotPositive() {
         assertThrows(IllegalArgumentException.class, () -> input.skip(current().nextInt() | Integer.MIN_VALUE));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    @BeforeEach
-    private void stub() {
     }
 
     // -----------------------------------------------------------------------------------------------------------------

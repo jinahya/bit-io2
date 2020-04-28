@@ -20,40 +20,35 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.function.Supplier;
+import java.io.InputStream;
 
 /**
- * A byte output writes bytes to a {@link ByteBuffer}.
+ * An input stream whose {@link InputStream#read()} always returns zero.
  *
- * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
- * @see BufferByteInput
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see BlackOutputStream
+ * @see WhiteByteChannel
  */
-public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
+@Slf4j
+final class WhiteInputStream extends InputStream {
+
+    // -----------------------------------------------------------------------------------------------------------------
+    static final InputStream INSTANCE = new WhiteInputStream();
 
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * Creates a new instance with specified target supplier.
+     * Reads the next byte of data from the input stream. The {@code read()} method of {@code WhiteInputStream} class
+     * always returns {@code 0}.
      *
-     * @param targetSupplier the target supplier.
-     */
-    public BufferByteOutput(final Supplier<? extends ByteBuffer> targetSupplier) {
-        super(targetSupplier);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param target {@inheritDoc}
-     * @param value  {@inheritDoc}
-     * @throws IOException {@inheritDoc}
+     * @return {@code 0}.
+     * @throws IOException if an I/O error occurs.
      */
     @Override
-    protected void write(final ByteBuffer target, final int value) throws IOException {
-        target.put((byte) value);
+    public int read() throws IOException {
+        return 0;
     }
 }

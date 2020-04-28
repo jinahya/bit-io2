@@ -32,12 +32,23 @@ import java.util.function.Supplier;
  */
 class RandomAccessFileByteInput extends ByteInputAdapter<RandomAccessFile> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Creates a new instance with specified source supplier.
+     *
+     * @param sourceSupplier the source supplier.
+     */
     public RandomAccessFileByteInput(final Supplier<? extends RandomAccessFile> sourceSupplier) {
         super(sourceSupplier);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * {@inheritDoc} The {@code read(RandomAccessFile)} method of {@code RandomAccessFileByteInput} class invokes {@link
+     * RandomAccessFile#readUnsignedByte()} method on {@code source} and returns the result.
+     *
+     * @param source {@inheritDoc}
+     * @return {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     protected int read(final RandomAccessFile source) throws IOException {
         return source.readUnsignedByte();

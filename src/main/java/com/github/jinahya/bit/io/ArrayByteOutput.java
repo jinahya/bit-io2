@@ -32,29 +32,35 @@ import java.util.function.Supplier;
 public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance with specified target supplier.
+     *
+     * @param targetSupplier the target supplier.
+     */
     public ArrayByteOutput(final Supplier<byte[]> targetSupplier) {
         super(targetSupplier);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc} The {@code write(byte[], int)} method of {@code ArrayByteOutput} class sets the {@code value} on
+     * {@code target} at {@link #index} and increments the value of {@link #index} by {@code 1}.
+     *
+     * @param target the array of byte on which the value is set.
+     * @param value  {@inheritDoc}
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void write(final byte[] target, final int value) throws IOException {
         target[index++] = (byte) value;
     }
 
-    @Override
-    byte[] target() {
-        final byte[] target = super.target();
-        if (target.length == 0) {
-            throw new RuntimeException("zero-length target supplied");
-        }
-        return target;
-    }
-
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * The next index in the {@code target} on which the bytes is written.
+     * The next index in the {@code target} on which the byte is written.
      */
     protected int index;
 }

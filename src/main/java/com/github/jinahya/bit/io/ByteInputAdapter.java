@@ -25,28 +25,53 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * An abstract class implements {@link ByteInput} adapting various byte sources.
+ *
+ * @param <T> byte source parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ByteOutputAdapter
+ */
 public abstract class ByteInputAdapter<T> implements ByteInput {
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance with specified source supplier.
+     *
+     * @param sourceSupplier the source supplier.
+     */
     public ByteInputAdapter(final Supplier<? extends T> sourceSupplier) {
         super();
         this.sourceSupplier = requireNonNull(sourceSupplier, "sourceSupplier is null");
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public int read() throws IOException {
         return read(source());
     }
 
+    /**
+     * Reads an unsigned {@code 8}-bit value from specified source.
+     *
+     * @param source the source from which a byte is read.
+     * @return an unsigned {@code 8}-bit value read from the {@code source}.
+     * @throws IOException if an I/O error occurs.
+     */
     protected abstract int read(T source) throws IOException;
 
     // -----------------------------------------------------------------------------------------------------------------
-    T source() {
+    private T source() {
         if (source == null) {
             source = sourceSupplier.get();
-        }
-        if (source == null) {
-            throw new RuntimeException("null source supplied");
         }
         return source;
     }

@@ -26,19 +26,9 @@ import java.nio.channels.WritableByteChannel;
 import java.util.function.Supplier;
 
 import static java.nio.ByteBuffer.allocate;
-import static java.util.Objects.requireNonNull;
 
 /**
  * A byte output which writes bytes to a writable byte channel.
- * <p>
- * Note that a flushing might be required when the {@code buffer}'s capacity is greater than {@code 1}.
- * <blockquote><pre>{@code
- * final WritableByteChannel channel = getTarget();
- * final ByteBuffer buffer = getBuffer();
- * for (buffer.flip(); buffer.hasRemaining(); ) {
- *     channel.write(buffer);
- * }
- * }</pre></blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ChannelByteOutput
@@ -47,59 +37,29 @@ import static java.util.Objects.requireNonNull;
 class ChannelByteOutput2 extends ByteOutputAdapter<WritableByteChannel> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static ChannelByteOutput2 of(final Supplier<? extends WritableByteChannel> targetSupplier) {
-        if (targetSupplier == null) {
-            throw new NullPointerException("targetSupplier is null");
-        }
-        return new ChannelByteOutput2(targetSupplier, () -> allocate(1)) {
-            @Override
-            protected void write(final WritableByteChannel target, final int value) throws IOException {
-                super.write(target, value);
-                // the buffer's capacity is 1, just write it to the target channel
-                for (final ByteBuffer buffer = buffer(); !buffer.hasRemaining(); ) {
-                    buffer.flip(); // limit -> position, position -> zero
-                    final int written = target.write(buffer);
-                    buffer.compact();
-                }
-            }
-        };
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public ChannelByteOutput2(final Supplier<? extends WritableByteChannel> targetSupplier,
-                              final Supplier<? extends ByteBuffer> bufferSupplier) {
+    public ChannelByteOutput2(final Supplier<? extends WritableByteChannel> targetSupplier) {
         super(targetSupplier);
-        this.bufferSupplier = requireNonNull(bufferSupplier, "bufferSupplier is null");
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     @Override
     protected void write(final WritableByteChannel target, final int value) throws IOException {
         final ByteBuffer buffer = buffer();
-        while (!buffer.hasRemaining()) {
-            buffer.flip(); // limit -> position, position -> zero
-            final int written = target.write(buffer);
-            buffer.compact();
-        }
         buffer.put((byte) value);
+        for (buffer.flip(); buffer.hasRemaining(); ) {
+            target.write(buffer);
+        }
+        buffer.clear();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    ByteBuffer buffer() {
+    private ByteBuffer buffer() {
         if (buffer == null) {
-            buffer = bufferSupplier.get();
-        }
-        if (buffer == null) {
-            throw new RuntimeException("null buffer supplied");
-        }
-        if (buffer.capacity() == 0) {
-            throw new RuntimeException("zero-capacity buffer supplied");
+            buffer = allocate(1);
         }
         return buffer;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private final Supplier<? extends ByteBuffer> bufferSupplier;
-
     private transient ByteBuffer buffer;
 }

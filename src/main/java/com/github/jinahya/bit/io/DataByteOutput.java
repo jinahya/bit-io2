@@ -32,12 +32,23 @@ import java.util.function.Supplier;
  */
 public class DataByteOutput extends ByteOutputAdapter<DataOutput> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Creates a new instance with specified target supplier.
+     *
+     * @param targetSupplier the target supplier.
+     */
     public DataByteOutput(final Supplier<? extends DataOutput> targetSupplier) {
         super(targetSupplier);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * {@inheritDoc}. The {@code write(DataOutput, int)} method of {@code DataByteOutput} class invokes {@link
+     * DataOutput#writeByte(int)} method on {@code target} with {@code value}.
+     *
+     * @param target {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     protected void write(final DataOutput target, final int value) throws IOException {
         target.writeByte(value);

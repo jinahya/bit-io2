@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,19 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-/**
- * An interface for reading bytes.
- *
- * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
- * @see ByteOutput
- */
-@FunctionalInterface
-public interface ByteInput {
+class ArrayByteOutputTest extends ByteOutputAdapterTest<ArrayByteOutput, byte[]> {
 
-    /**
-     * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.
-     *
-     * @return an unsigned {@value java.lang.Byte#SIZE}-bit value; between {@code 0} and {@code 255}, both inclusive.
-     * @throws IOException if an I/O error occurs.
-     */
-    int read() throws IOException;
+    static ArrayByteOutput black() {
+        return new ArrayByteOutput(() -> null) {
+            @Override
+            public void write(byte[] target, int value) throws IOException {
+                assert target == null;
+                // empty
+            }
+        };
+    }
+
+    ArrayByteOutputTest() {
+        super(ArrayByteOutput.class, byte[].class);
+    }
 }

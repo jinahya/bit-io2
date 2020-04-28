@@ -27,32 +27,22 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.function.Supplier;
 
 import static java.nio.ByteBuffer.allocate;
-import static java.util.Objects.requireNonNull;
 
 /**
  * A byte input which reads bytes from a readable byte channel.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ChannelByteInput
  * @see ChannelByteOutput2
+ * @see ChannelByteInput
  */
 class ChannelByteInput2 extends ByteInputAdapter<ReadableByteChannel> {
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static ChannelByteInput2 of(final Supplier<? extends ReadableByteChannel> channelSupplier) {
-        if (channelSupplier == null) {
-            throw new NullPointerException("channelSupplier is null");
-        }
-        return new ChannelByteInput2(channelSupplier, () -> (ByteBuffer) allocate(1).position(1));
+    public ChannelByteInput2(final Supplier<? extends ReadableByteChannel> sourceSupplier) {
+        super(sourceSupplier);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    public ChannelByteInput2(final Supplier<? extends ReadableByteChannel> sourceSupplier,
-                             final Supplier<? extends ByteBuffer> bufferSupplier) {
-        super(sourceSupplier);
-        this.bufferSupplier = requireNonNull(bufferSupplier, "bufferSupplier is null");
-    }
-
     @Override
     public int read(final ReadableByteChannel source) throws IOException {
         final ByteBuffer buffer = buffer();
@@ -69,19 +59,11 @@ class ChannelByteInput2 extends ByteInputAdapter<ReadableByteChannel> {
     // -----------------------------------------------------------------------------------------------------------------
     private ByteBuffer buffer() {
         if (buffer == null) {
-            buffer = bufferSupplier.get();
-        }
-        if (buffer == null) {
-            throw new RuntimeException("null buffer supplied");
-        }
-        if (buffer.capacity() == 0) {
-            throw new RuntimeException("zero-capacity buffer supplied");
+            buffer = (ByteBuffer) allocate(1).position(1);
         }
         return buffer;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private final Supplier<? extends ByteBuffer> bufferSupplier;
-
     private transient ByteBuffer buffer;
 }

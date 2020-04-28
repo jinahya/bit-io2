@@ -32,12 +32,23 @@ import java.util.function.Supplier;
  */
 class RandomAccessFileByteOutput extends ByteOutputAdapter<RandomAccessFile> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Creates a new instance with specified target supplier.
+     *
+     * @param targetSupplier the target supplier.
+     */
     public RandomAccessFileByteOutput(final Supplier<? extends RandomAccessFile> targetSupplier) {
         super(targetSupplier);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * {@inheritDoc} The {@code write(RandomAccessFile, int)} method of {@link RandomAccessFile} class invokes {@link
+     * RandomAccessFile#writeByte(int)} method on {@code target} with {@code value}.
+     *
+     * @param target {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     protected void write(final RandomAccessFile target, final int value) throws IOException {
         target.writeByte(value);

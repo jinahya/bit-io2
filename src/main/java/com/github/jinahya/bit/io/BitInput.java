@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
 
 /**
@@ -40,11 +41,64 @@ public interface BitInput {
      *
      * @return {@code true} for {@code 0b1}, {@code false} for {@code 0b0}
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeBoolean(boolean)
      */
     default boolean readBoolean() throws IOException {
         return readInt(true, 1) == 0x01;
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Reads a {@code byte} value of specified number of bits.
+     *
+     * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
+     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} - (unsigned ?
+     *                 {@code 1} : {@code 0})), both inclusive.
+     * @return a {@code byte} value of specified {@code size}.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeByte(boolean, int, byte)
+     */
+    default byte readByte(final boolean unsigned, final int size) throws IOException {
+        return (byte) readInt(unsigned, requireValidSizeByte(unsigned, size));
+    }
+
+    /**
+     * Reads a signed {@code byte} value of specified number of bits.
+     *
+     * @param size the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE}, both inclusive.
+     * @return a signed {@code byte} value of specified bit {@code size}.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeByte(boolean, int, byte)
+     */
+    default byte readByte(final int size) throws IOException {
+        return readByte(false, size);
+    }
+
+    /**
+     * Reads a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
+     *
+     * @return an {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeByte8(byte)
+     */
+    default byte readByte8() throws IOException {
+        return readByte(false, Byte.SIZE);
+    }
+
+    /**
+     * Reads an unsigned {@code byte} value of specified number of bits.
+     *
+     * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Byte#SIZE}
+     *             (exclusive).
+     * @return an unsigned {@code byte} value of specified bit {@code size}.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeByte(boolean, int, byte)
+     */
+    default byte readUnsignedByte(final int size) throws IOException {
+        return readByte(true, size);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Reads an {@code int} value of specified number of bits.
@@ -54,9 +108,42 @@ public interface BitInput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @return an {@code int} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeInt(boolean, int, int)
      */
     int readInt(boolean unsigned, int size) throws IOException;
+
+    /**
+     * Reads a signed {@code int} value of specified bit size.
+     *
+     * @param size the number of bits to read; between {@code 1} and {@value Integer#SIZE}, both inclusive.
+     * @return a signed {@code int} value.
+     * @throws IOException if an I/O error occurs.
+     */
+    default int readInt(final int size) throws IOException {
+        return readInt(false, size);
+    }
+
+    /**
+     * Reads a signed {@value Integer#SIZE}-bit {@code int} value.
+     *
+     * @return a signed {@value Integer#SIZE}-bit {@code int} value.
+     * @throws IOException if an I/O error occurs.
+     */
+    default int readInt32() throws IOException {
+        return readInt(Integer.SIZE);
+    }
+
+    /**
+     * Reads an unsigned {@code int} value of specified bit size.
+     *
+     * @param size the number of bits to read; between {@code 1} (inclusive) and {@value Integer#SIZE} (exclusive).
+     * @return an unsigned {@code int} value.
+     * @throws IOException if an error occurs.
+     */
+    default int readUnsignedInt(final int size) throws IOException {
+        return readInt(true, size);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Reads a {@code long} value of specified number of bits.
@@ -92,6 +179,28 @@ public interface BitInput {
         return value;
     }
 
+    /**
+     * Reads a signed {@code long} value of specified bit size.
+     *
+     * @param size the number of bits to read; between {@code 1} and {@value Long#SIZE}, both inclusive.
+     * @return a signed {@code long} value.
+     * @throws IOException if an I/O error occurs.
+     */
+    default long readLong(final int size) throws IOException {
+        return readLong(false, size);
+    }
+
+    /**
+     * Reads an unsigned {@code long} value of specified bit size.
+     *
+     * @param size the number of bits to read; between {@code 1} (inclusive) and {@value Long#SIZE} (exclusive).
+     * @return an unsigned {@code long} value.
+     * @throws IOException if an error occurs.
+     */
+    default long readUnsignedLong(final int size) throws IOException {
+        return readLong(true, size);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
@@ -125,4 +234,16 @@ public interface BitInput {
      * @see BitOutput#align(int)
      */
     long align(int bytes) throws IOException;
+
+    /**
+     * Aligns to a single byte by discarding bits.
+     *
+     * @return the number of bits discarded while aligning.
+     * @throws IOException if an I/O error occurs.
+     * @see #align(int)
+     * @see BitOutput#align()
+     */
+    default long align() throws IOException {
+        return align(Byte.BYTES);
+    }
 }
