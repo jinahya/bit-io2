@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
@@ -93,7 +94,7 @@ final class BitIoTestValues {
         return unsigned ? randomValueForUnsignedShort(size) : randomValueForShort(size);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------- int
     static int randomSizeForInt() {
         return requireValidSizeInt(false, current().nextInt(Integer.SIZE) + 1); // 1 ~ 32
     }
@@ -106,7 +107,6 @@ final class BitIoTestValues {
         return unsigned ? randomSizeForUnsignedInt() : randomSizeForInt();
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     static int randomValueForInt(final int size) {
         return current().nextInt() >> (Integer.SIZE - requireValidSizeInt(false, size));
     }
@@ -119,7 +119,7 @@ final class BitIoTestValues {
         return unsigned ? randomValueForUnsignedInt(size) : randomValueForInt(size);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------ long
     static int randomSizeForLong() {
         return requireValidSizeLong(false, current().nextInt(Long.SIZE) + 1); // 1 ~ 64
     }
@@ -132,7 +132,6 @@ final class BitIoTestValues {
         return unsigned ? randomSizeForUnsignedLong() : randomSizeForLong();
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     static long randomValueForLong(final int size) {
         return current().nextLong() >> (Long.SIZE - requireValidSizeLong(false, size));
     }
@@ -143,6 +142,19 @@ final class BitIoTestValues {
 
     static long randomValueForLong(final boolean unsigned, final int size) {
         return unsigned ? randomValueForUnsignedLong(size) : randomValueForLong(size);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------ char
+    static int randomSizeForChar() {
+        return requireValidSizeChar(current().nextInt(Character.SIZE) + 1); // 1 ~ 16
+    }
+
+    static char randomValueForChar(final int size) {
+        return (char) (current().nextInt() >>> (Integer.SIZE - requireValidSizeChar(size)));
+    }
+
+    static char randomValueForChar16() {
+        return randomValueForChar(Character.SIZE);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  */
-final class BitIoConstraints {
+public final class BitIoConstraints {
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -130,9 +130,17 @@ final class BitIoConstraints {
         return size;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------ byte
     static int requireValidSizeByte(final boolean unsigned, final int size) {
         return requireValidSize(unsigned, SIZE_EXPONENT_BYTE, size);
+    }
+
+    public static int requireValidSizeByte(final int size) {
+        return requireValidSizeByte(false, size);
+    }
+
+    public static int requireValidSizeUnsignedByte(final int size) {
+        return requireValidSizeByte(true, size);
     }
 
     static <R> R requireValidSizeByte(final boolean unsigned, final int size,
@@ -154,10 +162,20 @@ final class BitIoConstraints {
         return requireValidSize(unsigned, SIZE_EXPONENT_SHORT, size);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     static int requireValidSizeInt(final boolean unsigned, final int size) {
         return requireValidSize(unsigned, SIZE_EXPONENT_INTEGER, size);
     }
 
+    static int requireValidSizeInt(final int size) {
+        return requireValidSizeInt(false, size);
+    }
+
+    public static int requireValidSizeUnsignedInt(final int size) {
+        return requireValidSizeInt(true, size);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     static int requireValidSizeLong(final boolean unsigned, final int size) {
         return requireValidSize(unsigned, SIZE_EXPONENT_LONG, size);
     }

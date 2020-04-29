@@ -23,8 +23,10 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An interface for reading values of an arbitrary number of bits.
@@ -234,7 +236,7 @@ public interface BitInput {
      * @see BitOutput#writeLong(boolean, int, long)
      */
     default long readLong(final boolean unsigned, int size) throws IOException {
-        requireValidSizeLong(unsigned, size);
+        size = requireValidSizeLong(unsigned, size);
         long value = 0L;
         if (!unsigned) {
             value -= readInt(true, 1);
@@ -303,6 +305,49 @@ public interface BitInput {
         return readLong(true, size);
     }
 
+    // ------------------------------------------------------------------------------------------------------------ char
+
+    /**
+     * Reads a {@code char} value of specified bit size.
+     *
+     * @param size the number of bits to read.
+     * @return a {@code char} value.
+     * @throws IOException if an I/O error occurs.
+     * @see #readUnsignedInt(int)
+     * @see #readChar16()
+     * @see BitOutput#writeChar(int, char)
+     */
+    default char readChar(final int size) throws IOException {
+        return (char) readUnsignedInt(requireValidSizeChar(size));
+    }
+
+    /**
+     * Reads a {@value java.lang.Character#SIZE}-bit {@code char} value.
+     *
+     * @return a {@code char} value.
+     * @throws IOException if an I/O error occurs.
+     * @see #readChar(int)
+     * @see BitOutput#writeChar16(char)
+     */
+    default char readChar16() throws IOException {
+        return readChar(Character.SIZE);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------ unit
+
+    /**
+     * Reads a value using specified bit unit.
+     *
+     * @param adapter the bit unit.
+     * @param <T>     value type parameter
+     * @return a value.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeValue(ValueAdapter, Object)
+     */
+    default <T> T readValue(final ValueAdapter<? extends T> adapter) throws IOException {
+        return requireNonNull(adapter, "adapter is null").read(this);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
@@ -310,21 +355,24 @@ public interface BitInput {
      *
      * @param bits the number of bit to skip; must be positive.
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#skip(int)
      */
     default void skip(int bits) throws IOException {
         if (bits <= 0) {
             throw new IllegalArgumentException("bits(" + bits + ") <= 0");
         }
         for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
-            readInt(false, Integer.SIZE);
+            readInt32();
         }
         assert bits < Integer.SIZE; // TODO: 2020-04-22 remove!!!
         if (bits > 0) {
-            readInt(true, bits);
+            readUnsignedInt(bits);
             bits -= bits; // TODO: 2020-04-22 remove!!!
         }
         assert bits == 0; // TODO: 2020-04-22 remove!!!
     }
+
+    // ----------------------------------------------------------------------------------------------------------- align
 
     /**
      * Aligns to specified number of bytes by discarding bits.

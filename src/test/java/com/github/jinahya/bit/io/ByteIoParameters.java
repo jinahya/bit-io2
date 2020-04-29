@@ -36,25 +36,25 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Slf4j
-final class ByteIoSources {
+final class ByteIoParameters {
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> sourceByteIoArray() {
+    static Stream<Arguments> arrayByteIoParameters() {
         final byte[][] holder = new byte[1][];
-        final ByteOutput output = new ArrayByteOutput(() -> (holder[0] = new byte[128]));
+        final ByteOutput output = new ArrayByteOutput(() -> (holder[0] = new byte[1048576]));
         final ByteInput input = new ArrayByteInput(() -> requireNonNull(holder[0], "holder[0] is null"));
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> sourceByteIoBuffer() {
+    static Stream<Arguments> bufferByteIoParameters() {
         final ByteBuffer[] holder = new ByteBuffer[1];
-        final ByteOutput output = new BufferByteOutput(() -> (holder[0] = allocate(128)));
+        final ByteOutput output = new BufferByteOutput(() -> (holder[0] = allocate(1048576)));
         final ByteInput input = new BufferByteInput(
                 () -> (ByteBuffer) requireNonNull(holder[0], "holder[0] is null").flip());
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> sourceByteIoData() {
+    static Stream<Arguments> dataByteIoParameters() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = new DataByteOutput(
                 () -> new DataOutputStream(holder[0] = new ByteArrayOutputStream()));
@@ -64,7 +64,7 @@ final class ByteIoSources {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> sourceByteIoStream() {
+    static Stream<Arguments> streamByteIoParameters() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = new StreamByteOutput(() -> (holder[0] = new ByteArrayOutputStream()));
         final ByteInput input = new StreamByteInput(
@@ -73,7 +73,7 @@ final class ByteIoSources {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> sourceByteIoChannel2() {
+    static Stream<Arguments> channelByteIoParameters() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ChannelByteOutput2 output = new ChannelByteOutput2(
                 () -> newChannel((holder[0] = new ByteArrayOutputStream())));
@@ -84,14 +84,14 @@ final class ByteIoSources {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> sourceByteIo() {
-        return Stream.of(sourceByteIoArray(), sourceByteIoBuffer(), sourceByteIoData(), sourceByteIoStream(),
-                         sourceByteIoChannel2())
+    static Stream<Arguments> byteIoParameters() {
+        return Stream.of(arrayByteIoParameters(), bufferByteIoParameters(), dataByteIoParameters(),
+                         streamByteIoParameters(), channelByteIoParameters())
                 .flatMap(s -> s);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private ByteIoSources() {
+    private ByteIoParameters() {
         super();
     }
 }

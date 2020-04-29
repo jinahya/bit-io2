@@ -23,8 +23,10 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An interface for writing values of an arbitrary number of bits.
@@ -222,7 +224,7 @@ public interface BitOutput {
         writeInt(true, size, value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------ long
 
     /**
      * Writes a {@code long} value of specified number of bits.
@@ -300,25 +302,72 @@ public interface BitOutput {
         writeLong(true, size, value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------ char
+
+    /**
+     * Writes specified {@code char} value of specified bit size.
+     *
+     * @param size  the number of bits to write.
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see #writeUnsignedInt(int, int)
+     * @see #writeChar16(char)
+     * @see BitInput#readChar(int)
+     */
+    default void writeChar(final int size, final char value) throws IOException {
+        writeUnsignedInt(requireValidSizeChar(size), value);
+    }
+
+    /**
+     * Writes specified {@value java.lang.Character#SIZE}-bit {@code char} value.
+     *
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see #writeChar(int, char)
+     * @see BitInput#readChar16()
+     */
+    default void writeChar16(final char value) throws IOException {
+        writeChar(Character.SIZE, value);
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- value
+
+    /**
+     * Writes a value using specified bit unit.
+     *
+     * @param adapter the bit unit.
+     * @param value   the value to write.
+     * @param <T>     value type parameter
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readValue(ValueAdapter)
+     */
+    default <T> void writeValue(final ValueAdapter<? super T> adapter, final T value) throws IOException {
+        requireNonNull(adapter, "adapter is null").write(this, value);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------ skip
 
     /**
      * Skips specified number of bits by padding zero bits.
      *
      * @param bits the number of bit to skip; must be positive.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#skip(int)
      */
     default void skip(int bits) throws IOException {
         if (bits <= 0) {
             throw new IllegalArgumentException("bits(" + bits + ") <= 0");
         }
-        for (int i = bits >> 3; i > 0; i--) {
-            writeInt(true, Byte.SIZE, 0);
+        for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
+            writeInt32(0);
         }
-        for (int i = (bits & 7); i > 0; i--) {
-            writeInt(true, 1, 0);
+        final int remains = bits & 31;
+        if (remains > 0) {
+            writeUnsignedInt(remains, 0);
         }
     }
+
+    // ----------------------------------------------------------------------------------------------------------- align
 
     /**
      * Aligns to specified number of bytes by padding zero bits.
