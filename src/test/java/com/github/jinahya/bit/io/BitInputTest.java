@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Slf4j
 public class BitInputTest {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------- readBoolean
 
     /**
      * Tests {@link BitInput#readBoolean()} method.
@@ -59,14 +59,14 @@ public class BitInputTest {
 
     // -------------------------------------------------------------------------------------------------------- readLong
     @DisplayName("readLong(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForLong"})
     @ParameterizedTest
     void assertReadLongSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readLong(false, size));
     }
 
     @DisplayName("readLong(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForUnsignedLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForUnsignedLong"})
     @ParameterizedTest
     void assertReadLongUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readLong(true, size));
@@ -79,7 +79,7 @@ public class BitInputTest {
      * not positive.
      */
     @DisplayName("skip(bits) throws IllegalArgumentException when bits is not positive")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalBitsForSkip"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalBitsForSkip"})
     @ParameterizedTest
     void assertSkipThrowsIllegalArgumentExceptionWhenBitsIsNotPositive() {
         assertThrows(IllegalArgumentException.class, () -> input.skip(current().nextInt() | Integer.MIN_VALUE));

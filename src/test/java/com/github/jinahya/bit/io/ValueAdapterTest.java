@@ -20,21 +20,17 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
+import static java.util.Objects.requireNonNull;
 
-class ArrayByteOutputTest extends ByteOutputAdapterTest<ArrayByteOutput, byte[]> {
+abstract class ValueAdapterTest<T extends ValueAdapter<U>, U> {
 
-    static ArrayByteOutput black() {
-        return new ArrayByteOutput(() -> null) {
-            @Override
-            public void write(final byte[] target, final int value) throws IOException {
-                assert target == null;
-                // does nothing
-            }
-        };
+    ValueAdapterTest(final Class<T> adapterClass, final Class<U> valueClass) {
+        super();
+        this.adapterClass = requireNonNull(adapterClass, "adapterClass is null");
+        this.valueClass = requireNonNull(valueClass, "valueClass is null");
     }
 
-    ArrayByteOutputTest() {
-        super(ArrayByteOutput.class, byte[].class);
-    }
+    final Class<T> adapterClass;
+
+    final Class<U> valueClass;
 }

@@ -20,21 +20,9 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
+class UserListAdapter extends ListAdapter<User> {
 
-class ArrayByteOutputTest extends ByteOutputAdapterTest<ArrayByteOutput, byte[]> {
-
-    static ArrayByteOutput black() {
-        return new ArrayByteOutput(() -> null) {
-            @Override
-            public void write(final byte[] target, final int value) throws IOException {
-                assert target == null;
-                // does nothing
-            }
-        };
-    }
-
-    ArrayByteOutputTest() {
-        super(ArrayByteOutput.class, byte[].class);
+    public UserListAdapter(int lengthSize) {
+        super(lengthSize, new UserAdapter());
     }
 }

@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class BitInputAdapter implements BitInput {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    private static final Supplier<ByteInput> NULL_SUPPLIER = () -> null;
 
     /**
      * Creates a new instance with specified byte input.
@@ -45,12 +45,10 @@ public class BitInputAdapter implements BitInput {
      * @return a new instance.
      */
     public static BitInputAdapter of(final ByteInput input) {
-        final BitInputAdapter instance = new BitInputAdapter(() -> null);
+        final BitInputAdapter instance = new BitInputAdapter(NULL_SUPPLIER);
         instance.input = requireNonNull(input, "input is null");
         return instance;
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Creates a new instance with specified input supplier.
@@ -62,7 +60,6 @@ public class BitInputAdapter implements BitInput {
         this.inputSupplier = requireNonNull(inputSupplier, "inputSupplier is null");
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public int readInt(final boolean unsigned, int size) throws IOException {
         requireValidSizeInt(unsigned, size);
@@ -78,52 +75,53 @@ public class BitInputAdapter implements BitInput {
         }
         for (int i = size >> SIZE_EXPONENT_BYTE; i > 0; i--) {
             value <<= Byte.SIZE;
-            value |= octet(Byte.SIZE);
+            value |= unsigned8(Byte.SIZE);
         }
         final int remainder = size & (Byte.SIZE - 1);
         if (remainder > 0) {
             value <<= remainder;
-            value |= octet(remainder);
+            value |= unsigned8(remainder);
         }
         return value;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public long align(int bytes) throws IOException {
         if (bytes <= 0) {
             throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
         }
-        long bits = 0;
+        long bits = 0L; // number of discarded bits
         if (available > 0) {
-            bits += available;
-            readInt(true, available);
+            bits += available; // must be prior to the below
+            readUnsignedInt(available);
         }
         assert available == 0;
-        for (; (count % bytes) > 0L; bits += Byte.SIZE) {
-            readInt(true, Byte.SIZE);
+        if (bytes == 1) {
+            return bits;
         }
-        assert count % bytes == 0L;
+        for (bytes = bytes - (int) (count % bytes); bytes > 0L; bytes--) {
+            readUnsignedInt(Byte.SIZE);
+            bits += Byte.SIZE;
+        }
+        assert bytes == 0;
         return bits;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    private int octet(final int size) throws IOException {
+    private int unsigned8(final int size) throws IOException {
         requireValidSizeUnsigned8(size); // TODO: 2020-04-24 remove!!!
         if (available == 0) {
             octet = input().read();
             assert octet >= 0 && octet < 256;
-            count++;
             available = Byte.SIZE;
+            count++;
         }
         final int required = size - available;
         if (required > 0) {
-            return (octet(available) << required) | octet(required);
+            return (unsigned8(available) << required) | unsigned8(required);
         }
         return (octet >> (available -= size)) & ((1 << size) - 1);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private ByteInput input() {
         if (input == null) {
             input = inputSupplier.get();
@@ -131,12 +129,9 @@ public class BitInputAdapter implements BitInput {
         return input;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private final Supplier<? extends ByteInput> inputSupplier;
 
     private transient ByteInput input;
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * The current octet.

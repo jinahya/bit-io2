@@ -23,7 +23,11 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
+import static java.lang.Float.floatToRawIntBits;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An interface for writing values of an arbitrary number of bits.
@@ -32,8 +36,6 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
  * @see BitInput
  */
 public interface BitOutput {
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Writes a {@code 1}-bit {@code boolean} value. This method writes {@code 0b1} for {@code true} and {@code 0b0} for
@@ -45,8 +47,6 @@ public interface BitOutput {
     default void writeBoolean(boolean value) throws IOException {
         writeInt(true, 1, value ? 0x01 : 0x00);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Writes a {@code byte} value of specified number of bits.
@@ -82,7 +82,7 @@ public interface BitOutput {
      * @see BitInput#readByte8()
      */
     default void writeByte8(final byte value) throws IOException {
-        writeByte(false, Byte.SIZE, value);
+        writeByte(Byte.SIZE, value);
     }
 
     /**
@@ -97,7 +97,66 @@ public interface BitOutput {
         writeByte(true, size, value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Writes a {@code short} value of specified number of bits.
+     *
+     * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
+     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE} - (unsigned ?
+     *                 {@code 1} : {@code 0})), both inclusive.
+     * @param value    the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readShort(boolean, int)
+     */
+    default void writeShort(final boolean unsigned, final int size, final short value) throws IOException {
+        writeInt(unsigned, requireValidSizeShort(unsigned, size), value);
+    }
+
+    /**
+     * Writes a signed {@code short} value of specified number of bits.
+     *
+     * @param size  the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE}, both inclusive.
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readShort(boolean, int)
+     */
+    default void writeShort(final int size, final short value) throws IOException {
+        writeShort(false, size, value);
+    }
+
+    /**
+     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value.
+     *
+     * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readShort16()
+     */
+    default void writeShort16(final short value) throws IOException {
+        writeShort(Short.SIZE, value);
+    }
+
+    /**
+     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order.
+     *
+     * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readShort16Le()
+     */
+    default void writeShort16Le(final short value) throws IOException {
+        writeByte8((byte) value);
+        writeByte8((byte) (value >> Byte.SIZE));
+    }
+
+    /**
+     * Writes specified unsigned {@code short} value of specified bit size.
+     *
+     * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value Short#SIZE} (exclusive).
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readUnsignedShort(int)
+     */
+    default void writeUnsignedShort(final int size, final short value) throws IOException {
+        writeShort(true, size, value);
+    }
 
     /**
      * Writes an {@code int} value of specified number of bits.
@@ -107,6 +166,7 @@ public interface BitOutput {
      *                 {@code 1} : {@code 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readInt(boolean, int)
      */
     void writeInt(boolean unsigned, int size, int value) throws IOException;
 
@@ -116,6 +176,7 @@ public interface BitOutput {
      * @param size  the number of bits to write; between {@code 1} and {@value Integer#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readInt(int)
      */
     default void writeInt(final int size, final int value) throws IOException {
         writeInt(false, size, value);
@@ -126,9 +187,22 @@ public interface BitOutput {
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readInt32()
      */
     default void writeInt32(final int value) throws IOException {
         writeInt(Integer.SIZE, value);
+    }
+
+    /**
+     * Writes specified signed {@value Integer#SIZE}-bit value in little endian byte order.
+     *
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readInt32Le()
+     */
+    default void writeInt32Le(final int value) throws IOException {
+        writeShort16Le((short) value);
+        writeShort16Le((short) (value >> Short.SIZE));
     }
 
     /**
@@ -137,12 +211,11 @@ public interface BitOutput {
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value Integer#SIZE} (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readUnsignedInt(int)
      */
     default void writeUnsignedInt(final int size, final int value) throws IOException {
         writeInt(true, size, value);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Writes a {@code long} value of specified number of bits.
@@ -154,23 +227,22 @@ public interface BitOutput {
      * @throws IOException if an I/O error occurs.
      * @see BitInput#readLong(boolean, int)
      */
-    default void writeLong(final boolean unsigned, int size, long value) throws IOException {
+    default void writeLong(final boolean unsigned, int size, final long value) throws IOException {
         requireValidSizeLong(unsigned, size);
         if (!unsigned) {
-            writeInt(true, 1, value < 0L ? 0x01 : 0x00);
+            writeUnsignedInt(1, value < 0L ? 0x01 : 0x00);
             if (--size > 0) {
-                writeLong(true, size, value);
+                writeUnsignedLong(size, value);
             }
             return;
         }
         assert unsigned;
         if (size >= Integer.SIZE) {
-//            writeInt(false, Integer.SIZE, (int) ((value >> (size - Integer.SIZE)) & 0xFFFFFFFFL));
-            writeInt(false, Integer.SIZE, (int) (value >> (size - Integer.SIZE)));
+            writeInt(Integer.SIZE, (int) (value >> (size - Integer.SIZE)));
             size -= Integer.SIZE;
         }
         if (size > 0) {
-            writeInt(true, size, (int) value);
+            writeUnsignedInt(size, (int) value);
         }
     }
 
@@ -180,9 +252,33 @@ public interface BitOutput {
      * @param size  the number of bits to write; between {@code 1} and {@value Long#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readLong(int)
      */
     default void writeLong(final int size, final long value) throws IOException {
         writeLong(false, size, value);
+    }
+
+    /**
+     * Writes a signed {@value Long#SIZE}-bit {@code long} value.
+     *
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     */
+    default void writeLong64(final long value) throws IOException {
+        writeLong(Long.SIZE, value);
+    }
+
+    /**
+     * Writes a signed {@value Long#SIZE}-bit {@code long} value in little endian byte order.
+     *
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readLong64Le()
+     */
+    default void writeLong64Le(final long value) throws IOException {
+//        writeInt32Le((int) (value & 0xFFFFFFFFL));
+        writeInt32Le((int) value);
+        writeInt32Le((int) (value >> Integer.SIZE));
     }
 
     /**
@@ -191,28 +287,94 @@ public interface BitOutput {
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value Long#SIZE} (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readUnsignedLong(int)
      */
     default void writeUnsignedLong(final int size, final long value) throws IOException {
         writeLong(true, size, value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Writes specified {@code char} value of specified bit size.
+     *
+     * @param size  the number of bits to write.
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see #writeUnsignedInt(int, int)
+     * @see #writeChar16(char)
+     * @see BitInput#readChar(int)
+     */
+    default void writeChar(final int size, final char value) throws IOException {
+        writeUnsignedInt(requireValidSizeChar(size), value);
+    }
+
+    /**
+     * Writes specified {@value java.lang.Character#SIZE}-bit {@code char} value.
+     *
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see #writeChar(int, char)
+     * @see BitInput#readChar16()
+     */
+    default void writeChar16(final char value) throws IOException {
+        writeChar(Character.SIZE, value);
+    }
+
+    /**
+     * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value.
+     *
+     * @param value the {@code float} value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see Float#floatToRawIntBits(float)
+     * @see #writeInt32(int)
+     * @see BitInput#readFloat32()
+     */
+    default void writeFloat32(final float value) throws IOException {
+        writeInt32(floatToRawIntBits(value));
+    }
+
+    /**
+     * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value.
+     *
+     * @param value the {@code double} value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see Double#doubleToRawLongBits(double)
+     * @see #writeLong64(long)
+     * @see BitInput#readDouble64()
+     */
+    default void writeDouble64(final double value) throws IOException {
+        writeLong64(Double.doubleToRawLongBits(value));
+    }
+
+    /**
+     * Writes a value using specified bit unit.
+     *
+     * @param adapter the bit unit.
+     * @param value   the value to write.
+     * @param <T>     value type parameter
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readValue(ValueAdapter)
+     */
+    default <T> void writeValue(final ValueAdapter<? super T> adapter, final T value) throws IOException {
+        requireNonNull(adapter, "adapter is null").write(this, value);
+    }
 
     /**
      * Skips specified number of bits by padding zero bits.
      *
      * @param bits the number of bit to skip; must be positive.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#skip(int)
      */
     default void skip(int bits) throws IOException {
         if (bits <= 0) {
             throw new IllegalArgumentException("bits(" + bits + ") <= 0");
         }
-        for (int i = bits >> 3; i > 0; i--) {
-            writeInt(true, Byte.SIZE, 0);
+        for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
+            writeInt32(0);
         }
-        for (int i = (bits & 7); i > 0; i--) {
-            writeInt(true, 1, 0);
+        final int remains = bits & 31;
+        if (remains > 0) {
+            writeUnsignedInt(remains, 0);
         }
     }
 
@@ -223,6 +385,7 @@ public interface BitOutput {
      * @return the number of bits padded while aligning.
      * @throws IllegalArgumentException if {@code bytes} is not positive.
      * @throws IOException              if an I/O error occurs.
+     * @see BitInput#align(int)
      */
     long align(int bytes) throws IOException;
 

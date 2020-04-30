@@ -36,21 +36,20 @@ import static java.util.Objects.requireNonNull;
  */
 public class BitOutputAdapter implements BitOutput {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    private static final Supplier<ByteOutput> NULL_SUPPLIER = () -> null;
 
     /**
      * Creates a new instance with specified byte output.
      *
      * @param output the byte output for writing bytes.
      * @return a new instance.
+     * @see BitInputAdapter#of(ByteInput)
      */
     public static BitOutputAdapter of(final ByteOutput output) {
-        final BitOutputAdapter instance = new BitOutputAdapter(() -> null);
+        final BitOutputAdapter instance = new BitOutputAdapter(NULL_SUPPLIER);
         instance.output = requireNonNull(output, "output is null");
         return instance;
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Creates a new instance with specified output supplier.
@@ -62,7 +61,6 @@ public class BitOutputAdapter implements BitOutput {
         this.outputSupplier = requireNonNull(outputSupplier, "outputSupplier is null");
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
         requireValidSizeInt(unsigned, size);
@@ -78,10 +76,10 @@ public class BitOutputAdapter implements BitOutput {
         final int quotient = size >> SIZE_EXPONENT_BYTE;
         final int remainder = size & (Byte.SIZE - 1);
         if (remainder > 0) {
-            octet(remainder, value >> (quotient << SIZE_EXPONENT_BYTE));
+            unsigned8(remainder, value >> (quotient << SIZE_EXPONENT_BYTE));
         }
         for (int i = Byte.SIZE * (quotient - 1); i >= 0; i -= Byte.SIZE) {
-            octet(Byte.SIZE, value >> i);
+            unsigned8(Byte.SIZE, value >> i);
         }
     }
 
@@ -90,26 +88,29 @@ public class BitOutputAdapter implements BitOutput {
         if (bytes <= 0) {
             throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
         }
-        long bits = 0; // the number of bits to pad
+        long bits = 0L; // number of bits padded
         if (available < Byte.SIZE) {
-            bits += available;
-            writeInt(true, available, 0x00);
+            bits += available; // must be prior to the below
+            writeUnsignedInt(available, 0x00);
         }
         assert available == Byte.SIZE;
-        for (; count % bytes > 0; bits += Byte.SIZE) {
-            writeInt(true, Byte.SIZE, 0x00);
+        if (bytes == 1) {
+            return bits;
         }
-        assert count % bytes == 0L;
+        for (bytes = bytes - (int) (count % bytes); bytes > 0; bytes--) {
+            writeUnsignedInt(Byte.SIZE, 0x00);
+            bits += Byte.SIZE;
+        }
+        assert bytes == 0;
         return bits;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    private void octet(final int size, int value) throws IOException {
+    private void unsigned8(final int size, int value) throws IOException {
         requireValidSizeUnsigned8(size); // TODO: 2020-04-24 remove!!!
         final int required = size - available;
         if (required > 0) {
-            octet(available, value >> required);
-            octet(required, value);
+            unsigned8(available, value >> required);
+            unsigned8(required, value);
             return;
         }
         octet <<= size;
@@ -118,13 +119,12 @@ public class BitOutputAdapter implements BitOutput {
         if (available == 0) {
             assert octet >= 0 && octet < 256;
             output().write(octet);
-            count++;
             octet = 0x00;
             available = Byte.SIZE;
+            count++;
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private ByteOutput output() {
         if (output == null) {
             output = outputSupplier.get();
@@ -132,12 +132,9 @@ public class BitOutputAdapter implements BitOutput {
         return output;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private final Supplier<? extends ByteOutput> outputSupplier;
 
     private transient ByteOutput output;
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * The current octet.

@@ -21,59 +21,37 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.function.Supplier;
 
-import static java.nio.ByteBuffer.allocate;
-import static java.util.Objects.requireNonNull;
-
 /**
- * A byte input reads bytes from a readable byte channel.
+ * A byte input which reads bytes from a readable byte channel.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ChannelByteOutput
- * @deprecated Use {@link ChannelByteInput2}.
  */
-@Deprecated
-class ChannelByteInput extends BufferByteInput {
+class ChannelByteInput extends ByteInputAdapter<ReadableByteChannel> {
 
-    // -----------------------------------------------------------------------------------------------------------------
-    public static ChannelByteInput of(final Supplier<? extends ReadableByteChannel> channelSupplier) {
-        if (channelSupplier == null) {
-            throw new NullPointerException("channelSupplier is null");
-        }
-        return new ChannelByteInput(() -> (ByteBuffer) allocate(1).position(1), channelSupplier);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public ChannelByteInput(final Supplier<? extends ByteBuffer> sourceSupplier,
-                            final Supplier<? extends ReadableByteChannel> channelSupplier) {
+    /**
+     * Creates new instance with specified source supplier.
+     *
+     * @param sourceSupplier the source supplier.
+     */
+    public ChannelByteInput(final Supplier<? extends ReadableByteChannel> sourceSupplier) {
         super(sourceSupplier);
-        this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
-    public int read(final ByteBuffer source) throws IOException {
-        while (!source.hasRemaining()) {
-            source.clear(); // position -> zero, limit -> capacity
-            channel().read(source);
-            source.flip(); // limit -> position, position -> zero
-        }
-        return super.read(source);
+    protected int read(final ReadableByteChannel source) throws IOException {
+        return delegate(source).read();
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    private ReadableByteChannel channel() {
-        if (channel == null) {
-            channel = channelSupplier.get();
+    private ByteInput delegate(final ReadableByteChannel channel) {
+        if (delegate == null) {
+            delegate = BufferByteInput.of(channel);
         }
-        return channel;
+        return delegate;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    private final Supplier<? extends ReadableByteChannel> channelSupplier;
-
-    private transient ReadableByteChannel channel;
+    private ByteInput delegate;
 }

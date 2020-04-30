@@ -28,34 +28,64 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * A class for unit-testing {@link BitOutputAdapter} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see BitInputAdapterTest
+ */
 class BitOutputAdapterTest {
+
+    // -------------------------------------------------------------------------------------------------------------- of
+
+    /**
+     * Asserts {@link BitOutputAdapter#of(ByteOutput)} method throws a {@code NullPointerException} when {@code output}
+     * argument is {@code null}.
+     */
+    @DisplayName("of(output) throws NullPointerException when output is null")
+    @Test
+    void assertOfThrowNullPointerExceptionWhenOutputIsNull() {
+        assertThrows(NullPointerException.class, () -> BitOutputAdapter.of(null));
+    }
+
+    /**
+     * Tests {@link BitOutputAdapter#of(ByteOutput)} method.
+     */
+    @DisplayName("of(output)")
+    @Test
+    void testOf() throws IOException {
+        final BitOutputAdapter instance = BitOutputAdapter.of(ByteOutputTest.black());
+        assertNotNull(instance);
+        BitOutputInstanceTests.test(instance);
+    }
 
     // -------------------------------------------------------------------------------------------------------- writeInt
     @DisplayName("writeInt(false, size, value) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForInt"})
     @ParameterizedTest
     void assertWriteIntSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.writeInt(false, size, 0));
     }
 
     @DisplayName("writeInt(true, size, value) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForUnsignedInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForUnsignedInt"})
     @ParameterizedTest
     void assertWriteIntUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.writeInt(true, size, 0));
     }
 
     @DisplayName("writeInt(false, size, value)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#sizeAndValueForInt"})
     @ParameterizedTest
     void testWriteIntSigned(final int size, final int value) throws IOException {
         adapter.writeInt(false, size, value);
     }
 
     @DisplayName("writeInt(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForUnsignedInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#sizeAndValueForUnsignedInt"})
     @ParameterizedTest
     void testWriteIntUnsigned(final int size, final int value) throws IOException {
         adapter.writeInt(true, size, value);
@@ -63,14 +93,14 @@ class BitOutputAdapterTest {
 
     // ------------------------------------------------------------------------------------------------------- writeLong
     @DisplayName("writeLong(false, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#sizeAndValueForLong"})
     @ParameterizedTest
     void testWriteLongSigned(final int size, final long value) throws IOException {
         adapter.writeLong(false, size, value);
     }
 
     @DisplayName("writeLong(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForUnsignedLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#sizeAndValueForUnsignedLong"})
     @ParameterizedTest
     void testWriteLongUnsigned(final int size, final long value) throws IOException {
         adapter.writeLong(true, size, value);

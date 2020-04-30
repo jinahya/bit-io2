@@ -21,67 +21,32 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.util.function.Supplier;
 
-import static java.nio.ByteBuffer.allocate;
-import static java.util.Objects.requireNonNull;
-
 /**
- * A byte output writes bytes to a writable byte channel.
+ * A byte output which writes bytes to a writable byte channel.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ChannelByteInput
- * @deprecated Use {@link ChannelByteOutput}.
  */
-@Deprecated
-class ChannelByteOutput extends BufferByteOutput {
+class ChannelByteOutput extends ByteOutputAdapter<WritableByteChannel> {
 
-    // -----------------------------------------------------------------------------------------------------------------
-    public static ChannelByteOutput of(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        if (channelSupplier == null) {
-            throw new NullPointerException("channelSupplier is null");
-        }
-        return new ChannelByteOutput(() -> allocate(1), channelSupplier);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public ChannelByteOutput(final Supplier<? extends ByteBuffer> targetSupplier,
-                             final Supplier<? extends WritableByteChannel> channelSupplier) {
+    public ChannelByteOutput(final Supplier<? extends WritableByteChannel> targetSupplier) {
         super(targetSupplier);
-        this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param target {@inheritDoc}
-     * @param value  {@inheritDoc}
-     * @throws IOException {@inheritDoc}
-     */
     @Override
-    protected void write(final ByteBuffer target, final int value) throws IOException {
-        while (!target.hasRemaining()) {
-            target.flip(); // limit -> position, position -> zero
-            final int written = channel().write(target);
-            target.compact();
-        }
-        super.write(value);
+    protected void write(final WritableByteChannel target, final int value) throws IOException {
+        delegate(target).write(value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    private WritableByteChannel channel() {
-        if (channel == null) {
-            channel = channelSupplier.get();
+    private ByteOutput delegate(final WritableByteChannel channel) {
+        if (delegate == null) {
+            delegate = BufferByteOutput.of(channel);
         }
-        return channel;
+        return delegate;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    private final Supplier<? extends WritableByteChannel> channelSupplier;
-
-    private transient WritableByteChannel channel;
+    private ByteOutput delegate;
 }

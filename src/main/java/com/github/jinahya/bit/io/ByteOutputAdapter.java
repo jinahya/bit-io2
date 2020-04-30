@@ -34,8 +34,6 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * Creates a new instance with specified target supplier.
      *
@@ -45,8 +43,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
         super();
         this.targetSupplier = requireNonNull(targetSupplier, "targetSupplier is null");
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * {@inheritDoc}
@@ -68,7 +64,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      */
     protected abstract void write(T target, int value) throws IOException;
 
-    // -----------------------------------------------------------------------------------------------------------------
     private T target() {
         if (target == null) {
             target = targetSupplier.get();
@@ -76,7 +71,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
         return target;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private final Supplier<? extends T> targetSupplier;
 
     private transient T target;

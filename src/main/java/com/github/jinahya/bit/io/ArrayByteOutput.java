@@ -21,17 +21,65 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.function.Supplier;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A byte output writes byte to an array of bytes.
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see ArrayByteInput
+ * @deprecated Use {@link BufferByteOutput} with a <a href="https://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html#wrap(byte[])">backing
+ * array</a>.
  */
+@Deprecated // forRemoval = true
 public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    private static class StreamAdapter extends ArrayByteOutput {
+
+        StreamAdapter(final Supplier<? extends OutputStream> streamSupplier) {
+            super(() -> new byte[1]);
+            this.streamSupplier = requireNonNull(streamSupplier, "streamSupplier is null");
+        }
+
+        @Override
+        protected void write(final byte[] target, final int value) throws IOException {
+            assert target.length == 1;
+            super.write(target, value);
+            assert index == 1;
+            stream().write(target);
+            index = 0;
+        }
+
+        OutputStream stream() {
+            if (stream == null) {
+                stream = streamSupplier.get();
+            }
+            return stream;
+        }
+
+        private final Supplier<? extends OutputStream> streamSupplier;
+
+        private transient OutputStream stream;
+    }
+
+    public static ByteOutput of(final Supplier<? extends OutputStream> streamSupplier) {
+        return new StreamAdapter(streamSupplier);
+    }
+
+    public static ByteOutput of(final OutputStream stream) {
+        if (stream == null) {
+            throw new NullPointerException("stream is null");
+        }
+        return new StreamAdapter(() -> null) {
+            @Override
+            OutputStream stream() {
+                return stream;
+            }
+        };
+    }
 
     /**
      * Creates a new instance with specified target supplier.
@@ -42,8 +90,6 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
         super(targetSupplier);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * {@inheritDoc} The {@code write(byte[], int)} method of {@code ArrayByteOutput} class sets the {@code value} on
      * {@code target} at {@link #index} and increments the value of {@link #index} by {@code 1}.
@@ -53,11 +99,9 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
      * @throws IOException if an I/O error occurs.
      */
     @Override
-    public void write(final byte[] target, final int value) throws IOException {
+    protected void write(final byte[] target, final int value) throws IOException {
         target[index++] = (byte) value;
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * The next index in the {@code target} on which the byte is written.

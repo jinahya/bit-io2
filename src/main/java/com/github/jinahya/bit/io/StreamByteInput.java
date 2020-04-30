@@ -33,12 +33,10 @@ import java.util.function.Supplier;
  */
 public class StreamByteInput extends ByteInputAdapter<InputStream> {
 
-    // -----------------------------------------------------------------------------------------------------------------
     public StreamByteInput(final Supplier<? extends InputStream> sourceSupplier) {
         super(sourceSupplier);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     protected int read(final InputStream source) throws IOException {
         final int value = source.read();

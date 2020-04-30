@@ -22,7 +22,12 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.function.Supplier;
+
+import static java.nio.ByteBuffer.allocate;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A byte output writes bytes to a {@link ByteBuffer}.
@@ -32,7 +37,66 @@ import java.util.function.Supplier;
  */
 public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    private static class ChanelAdapter extends BufferByteOutput {
+
+        ChanelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
+            super(() -> allocate(1));
+            this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        }
+
+        @Override
+        protected void write(final ByteBuffer target, final int value) throws IOException {
+            super.write(target, value);
+            while (!target.hasRemaining()) {
+                target.flip(); // limit -> position, position -> zero
+                final int written = channel().write(target);
+                target.compact();
+            }
+        }
+
+        WritableByteChannel channel() {
+            if (channel == null) {
+                channel = channelSupplier.get();
+            }
+            return channel;
+        }
+
+        private final Supplier<? extends WritableByteChannel> channelSupplier;
+
+        private transient WritableByteChannel channel;
+    }
+
+    /**
+     * Creates a new instance writes bytes to a writable byte channel.
+     *
+     * @param channelSupplier a supplier for the writable byte channel.
+     * @return a new instance.
+     * @see #of(WritableByteChannel)
+     * @see BufferByteInput#of(Supplier)
+     */
+    public static ByteOutput of(final Supplier<? extends WritableByteChannel> channelSupplier) {
+        return new ChanelAdapter(channelSupplier);
+    }
+
+    /**
+     * Creates a new instance writes bytes to specified writable byte channel.
+     *
+     * @param channel the writable byte channel to which bytes are written.
+     * @return a new instance.
+     * @see #of(Supplier)
+     * @see BufferByteInput#of(ReadableByteChannel)
+     */
+    public static ByteOutput of(final WritableByteChannel channel) {
+        if (channel == null) {
+            throw new NullPointerException("channel is null");
+        }
+        return new ChanelAdapter(() -> null) {
+            @Override
+            WritableByteChannel channel() {
+                return channel;
+            }
+        };
+    }
 
     /**
      * Creates a new instance with specified target supplier.
@@ -42,8 +106,6 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
     public BufferByteOutput(final Supplier<? extends ByteBuffer> targetSupplier) {
         super(targetSupplier);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * {@inheritDoc}

@@ -20,26 +20,24 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.params.converter.ArgumentConversionException;
+import org.junit.jupiter.params.converter.ArgumentConverter;
 
 /**
- * An interface for reading objects from a bit input.
+ * A class for converting instances of {@link ByteInput} to instances of {@link BitInput}.
  *
- * @param <T> object type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitWriter
- * @see BitReadable
+ * @see ByteOutput2BitOutputConverter
  */
-interface BitReader<T> {
+class ByteInput2BitInputConverter implements ArgumentConverter {
 
     // -----------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Reads an instance from specified bit input.
-     *
-     * @param input the bit input from which the object is read.
-     * @return an object value read.
-     * @throws IOException if an I/O error occurs.
-     */
-    T read(BitInput input) throws IOException;
+    @Override
+    public Object convert(final Object source, final ParameterContext context) throws ArgumentConversionException {
+        if (!(source instanceof ByteInput)) {
+            throw new ArgumentConversionException("can't convert " + source + " into an instance of " + BitInput.class);
+        }
+        return BitInputAdapter.of((ByteInput) source);
+    }
 }

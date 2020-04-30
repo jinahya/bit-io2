@@ -20,9 +20,14 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.function.Supplier;
+
+import static java.nio.ByteBuffer.allocate;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A byte input reads bytes from a {@link ByteBuffer}.
@@ -32,7 +37,65 @@ import java.util.function.Supplier;
  */
 public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    private static class ChannelAdapter extends BufferByteInput {
+
+        ChannelAdapter(final Supplier<? extends ReadableByteChannel> channelSupplier) {
+            super(() -> (ByteBuffer) allocate(1).position(1));
+            this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        }
+
+        @Override
+        protected int read(final ByteBuffer source) throws IOException {
+            while (!source.hasRemaining()) {
+                source.clear(); // position -> zero, limit -> capacity
+                final ReadableByteChannel channel = channel();
+                if (channel().read(source) == -1) {
+                    throw new EOFException("channel has reached end-of-stream");
+                }
+                source.flip(); // limit -> position, position -> zero
+            }
+            return super.read(source);
+        }
+
+        ReadableByteChannel channel() {
+            if (channel == null) {
+                channel = channelSupplier.get();
+            }
+            return channel;
+        }
+
+        private final Supplier<? extends ReadableByteChannel> channelSupplier;
+
+        private transient ReadableByteChannel channel;
+    }
+
+    /**
+     * Creates a new instance reads bytes from a readable byte channel.
+     *
+     * @param channelSupplier a supplier for the readable byte channel.
+     * @return a new instance.
+     */
+    public static ByteInput of(final Supplier<? extends ReadableByteChannel> channelSupplier) {
+        return new ChannelAdapter(channelSupplier);
+    }
+
+    /**
+     * Creates a new instance reads bytes from specified readable byte channel.
+     *
+     * @param channel the readable byte channel.
+     * @return a new instance.
+     */
+    public static ByteInput of(final ReadableByteChannel channel) {
+        if (channel == null) {
+            throw new NullPointerException("channel is null");
+        }
+        return new ChannelAdapter(() -> null) {
+            @Override
+            ReadableByteChannel channel() {
+                return channel;
+            }
+        };
+    }
 
     /**
      * Creates a new instance with specified source supplier.
@@ -43,8 +106,6 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
         super(sourceSupplier);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * {@inheritDoc}
      *
@@ -53,7 +114,7 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
      * @throws IOException {@inheritDoc}
      */
     @Override
-    public int read(final ByteBuffer source) throws IOException {
+    protected int read(final ByteBuffer source) throws IOException {
         return source.get() & 0xFF;
     }
 }

@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,25 +20,31 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
+
 /**
- * An interface for writing contents to a bit output.
+ * A class for unit-testing {@link ByteInput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitWriters
- * @see BitReadable
  */
-@FunctionalInterface
-interface BitWritable {
-
-    // -----------------------------------------------------------------------------------------------------------------
+class ByteInputTest {
 
     /**
-     * Writes contents to specified bit output.
+     * Returns an instance of {@link ByteInput} whose {@link ByteInput#read()} method returns a random value.
      *
-     * @param output the bit output to which contents are written.
-     * @throws IOException if an I/O error occurs.
+     * @return an instance of {@link ByteInput}.
+     * @see ByteOutputTest#black()
      */
-    void write(BitOutput output) throws IOException;
+    static ByteInput white() {
+        return () -> current().nextInt(0, 256);
+    }
+
+    @Test
+    void testWhite() throws IOException {
+        final int value = white().read();
+    }
 }

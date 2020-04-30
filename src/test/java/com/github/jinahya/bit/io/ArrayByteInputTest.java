@@ -31,7 +31,7 @@ class ArrayByteInputTest extends ByteInputAdapterTest<ArrayByteInput, byte[]> {
             @Override
             public int read(final byte[] source) throws IOException {
                 assert source == null;
-                return current().nextInt(255) + 1;
+                return current().nextInt(0, 256);
             }
         };
     }
