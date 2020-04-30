@@ -28,16 +28,16 @@ import java.util.function.Supplier;
  * A byte input which writes bytes to a random access file.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see RandomAccessFileByteInput
+ * @see RandomAccessByteInput
  */
-class RandomAccessFileByteOutput extends ByteOutputAdapter<RandomAccessFile> {
+class RandomAccessByteOutput extends ByteOutputAdapter<RandomAccessFile> {
 
     /**
      * Creates a new instance with specified target supplier.
      *
      * @param targetSupplier the target supplier.
      */
-    public RandomAccessFileByteOutput(final Supplier<? extends RandomAccessFile> targetSupplier) {
+    public RandomAccessByteOutput(final Supplier<? extends RandomAccessFile> targetSupplier) {
         super(targetSupplier);
     }
 

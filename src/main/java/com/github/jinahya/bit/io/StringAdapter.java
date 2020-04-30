@@ -27,16 +27,13 @@ import static com.github.jinahya.bit.io.BytesAdapter.unsignedBytesAdapter;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.util.Objects.requireNonNull;
 
-public class StringValueAdapter implements ValueAdapter<String> {
+public class StringAdapter implements ValueAdapter<String> {
 
-    // -----------------------------------------------------------------------------------------------------------------
-    public static StringValueAdapter asciiStringAdapter(final int lengthSize) {
-        return new StringValueAdapter(unsignedBytesAdapter(lengthSize, 7), US_ASCII);
+    public static StringAdapter asciiAdapter(final int lengthSize) {
+        return new StringAdapter(unsignedBytesAdapter(lengthSize, 7), US_ASCII);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public StringValueAdapter(final BytesAdapter delegate, final Charset charset) {
+    public StringAdapter(final BytesAdapter delegate, final Charset charset) {
         super();
         this.delegate = requireNonNull(delegate, "delegate is null");
         this.charset = requireNonNull(charset, "charset is null");

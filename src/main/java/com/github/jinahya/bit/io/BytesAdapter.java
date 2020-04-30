@@ -23,12 +23,10 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsignedByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsignedInt;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 
 public class BytesAdapter implements ValueAdapter<byte[]> {
 
-    // -----------------------------------------------------------------------------------------------------------------
     private static BytesAdapter BYTES_ADAPTER8;
 
     public static BytesAdapter bytesAdapter8(final int elementSize) {
@@ -65,9 +63,8 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         return BYTES_ADAPTER31;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     public static BytesAdapter unsignedBytesAdapter(final int lengthSize, final int elementSize) {
-        return new BytesAdapter(lengthSize, requireValidSizeUnsignedByte(elementSize));
+        return new BytesAdapter(lengthSize, requireValidSizeByte(true, elementSize));
     }
 
     private static BytesAdapter UNSIGNED_BYTES_ADAPTER8;
@@ -106,14 +103,12 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         return UNSIGNED_BYTES_ADAPTER31;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     public BytesAdapter(final int lengthSize, final int elementSize) {
         super();
-        this.lengthSize = requireValidSizeUnsignedInt(lengthSize);
-        this.elementSize = requireValidSizeByte(elementSize);
+        this.lengthSize = requireValidSizeInt(true, lengthSize);
+        this.elementSize = requireValidSizeByte(false, elementSize);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public void write(final BitOutput output, final byte[] value) throws IOException {
         final int length = value.length & ((1 << lengthSize) - 1);
@@ -133,7 +128,6 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         return value;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     final int lengthSize;
 
     final int elementSize;

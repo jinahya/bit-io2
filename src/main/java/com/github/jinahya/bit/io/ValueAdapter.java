@@ -31,7 +31,7 @@ import java.io.IOException;
 public interface ValueAdapter<T> {
 
     /**
-     * Returns a bit unit which pre-read/write a signal of nullability of the value.
+     * Returns a value adapter which pre-read/write a signal of nullability of the value.
      *
      * @param wrapped the unit to be wrapped.
      * @param <T>     value type parameter

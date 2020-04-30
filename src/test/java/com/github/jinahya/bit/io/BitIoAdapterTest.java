@@ -26,24 +26,25 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForByte;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForChar;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForInt;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForLong;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForShort;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForUnsignedInt;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForUnsignedLong;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomSizeForUnsignedShort;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForByte;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForChar;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForChar16;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForInt;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForLong;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForShort;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForUnsignedInt;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForUnsignedLong;
-import static com.github.jinahya.bit.io.BitIoTestValues.randomValueForUnsignedShort;
+import static com.github.jinahya.bit.io.BitIoValues.randomSizeForByte;
+import static com.github.jinahya.bit.io.BitIoValues.randomSizeForChar;
+import static com.github.jinahya.bit.io.BitIoValues.randomSizeForInt;
+import static com.github.jinahya.bit.io.BitIoValues.randomSizeForLong;
+import static com.github.jinahya.bit.io.BitIoValues.randomSizeForShort;
+import static com.github.jinahya.bit.io.BitIoValues.randomSizeForUnsignedInt;
+import static com.github.jinahya.bit.io.BitIoValues.randomSizeForUnsignedLong;
+import static com.github.jinahya.bit.io.BitIoValues.randomSizeForUnsignedShort;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForByte;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForChar;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForChar16;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForInt;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForLong;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForShort;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForUnsignedInt;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForUnsignedLong;
+import static com.github.jinahya.bit.io.BitIoValues.randomValueForUnsignedShort;
 import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BitIoAdapterTest {
@@ -384,6 +385,52 @@ class BitIoAdapterTest {
         final char actual = input.readChar16();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- float
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoParameters#byteIoParameters"})
+    @ParameterizedTest
+    void testFloat32(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
+                     @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
+            throws IOException {
+        final float[] expected = new float[] {
+                Float.MAX_VALUE, Float.MIN_NORMAL, Float.MIN_VALUE, Float.NaN, Float.NEGATIVE_INFINITY,
+                Float.POSITIVE_INFINITY,
+                current().nextFloat()
+        };
+        for (final float value : expected) {
+            output.writeFloat32(value);
+        }
+        assertEquals(0L, output.align());
+        final float[] actual = new float[expected.length];
+        for (int i = 0; i < actual.length; i++) {
+            actual[i] = input.readFloat32();
+        }
+        assertEquals(0L, input.align());
+        assertArrayEquals(expected, actual);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------- double
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoParameters#byteIoParameters"})
+    @ParameterizedTest
+    void testDouble64(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
+                      @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
+            throws IOException {
+        final double[] expected = new double[] {
+                Double.MAX_VALUE, Double.MIN_NORMAL, Double.MIN_VALUE, Double.NaN, Double.NEGATIVE_INFINITY,
+                Double.POSITIVE_INFINITY,
+                current().nextDouble()
+        };
+        for (final double value : expected) {
+            output.writeDouble64(value);
+        }
+        assertEquals(0L, output.align());
+        final double[] actual = new double[expected.length];
+        for (int i = 0; i < actual.length; i++) {
+            actual[i] = input.readDouble64();
+        }
+        assertEquals(0L, input.align());
+        assertArrayEquals(expected, actual);
     }
 
     // ------------------------------------------------------------------------------------------------------------ skip

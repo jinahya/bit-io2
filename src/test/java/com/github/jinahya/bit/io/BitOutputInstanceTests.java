@@ -55,8 +55,8 @@ final class BitOutputInstanceTests {
      */
     static void testByte(final BitOutput instance) throws IOException {
         final boolean unsigned = current().nextBoolean();
-        final int size = BitIoTestValues.randomSizeForByte(unsigned);
-        final byte value = BitIoTestValues.randomValueForByte(unsigned, size);
+        final int size = BitIoValues.randomSizeForByte(unsigned);
+        final byte value = BitIoValues.randomValueForByte(unsigned, size);
         requireNonNull(instance, "instance is null").writeByte(unsigned, size, value);
     }
 

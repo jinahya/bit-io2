@@ -20,9 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-
 import static com.github.jinahya.bit.io.BitIoConstants.MIN_SIZE;
 import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_BYTE;
 import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_CHAR;
@@ -30,7 +27,6 @@ import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_INTEGER;
 import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_LONG;
 import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_SHORT;
 import static java.lang.Math.pow;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Constraints for bit-io.
@@ -38,8 +34,6 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  */
 public final class BitIoConstraints {
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Checks whether given size is valid for unsigned 8 bit integer. An {@code IllegalArgumentException} will be thrown
@@ -58,25 +52,6 @@ public final class BitIoConstraints {
         return size;
     }
 
-    /**
-     * Checks whether given size is valid for unsigned 16 bit integer. An {@code IllegalArgumentException} will be
-     * thrown if given value is not valid.
-     *
-     * @param size the size to check; must between {@code 1} and {@value java.lang.Short#SIZE}, both inclusive.
-     * @return given size.
-     */
-    // TODO: 2020-04-26 Remove!!!
-    static int requireValidSizeUnsigned16(final int size) {
-        if (size < MIN_SIZE) {
-            throw new IllegalArgumentException("unsigned16.size(" + size + ") < 1");
-        }
-        if (size > Short.SIZE) {
-            throw new IllegalArgumentException("unsigned16.size(" + size + ") > " + Short.SIZE);
-        }
-        return size;
-    }
-
-    // -------------------------------------------------------------------------------------------------------- exponent
     static final int MIN_EXPONENT = SIZE_EXPONENT_BYTE;
 
     static final int MAX_EXPONENT = SIZE_EXPONENT_LONG;
@@ -87,7 +62,7 @@ public final class BitIoConstraints {
      * @param exponent the exponent to validate.
      * @return given exponent.
      */
-    static int requireValidExponent(final int exponent) {
+    private static int requireValidExponent(final int exponent) {
         if (exponent < MIN_EXPONENT) {
             throw new IllegalArgumentException("exponent(" + exponent + ") < " + MIN_EXPONENT);
         }
@@ -97,7 +72,6 @@ public final class BitIoConstraints {
         return exponent;
     }
 
-    // ------------------------------------------------------------------------------------------------------------ size
     private static final int[] MAX_SIZES = new int[MAX_EXPONENT - MIN_EXPONENT + 1];
 
     static {
@@ -114,7 +88,7 @@ public final class BitIoConstraints {
      * @param exponent the value for exponent.
      * @return the maximum size.
      */
-    static int maxSize(final boolean unsigned, final int exponent) {
+    private static int maxSize(final boolean unsigned, final int exponent) {
         return MAX_SIZES[requireValidExponent(exponent) - MIN_EXPONENT] - (unsigned ? 1 : 0);
     }
 
@@ -130,61 +104,46 @@ public final class BitIoConstraints {
         return size;
     }
 
-    // ------------------------------------------------------------------------------------------------------------ byte
     static int requireValidSizeByte(final boolean unsigned, final int size) {
-        return requireValidSize(unsigned, SIZE_EXPONENT_BYTE, size);
+        if (size <= 0) {
+            throw new IllegalArgumentException("size(" + size + ") <= 0");
+        }
+        if (unsigned && size >= Byte.SIZE) {
+            throw new IllegalArgumentException("size(" + size + ") >= " + Byte.SIZE);
+        }
+        if (size > Byte.SIZE) {
+            throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
+        }
+        return size;
     }
-
-    public static int requireValidSizeByte(final int size) {
-        return requireValidSizeByte(false, size);
-    }
-
-    public static int requireValidSizeUnsignedByte(final int size) {
-        return requireValidSizeByte(true, size);
-    }
-
-    static <R> R requireValidSizeByte(final boolean unsigned, final int size,
-                                      final BiFunction<? super Boolean, ? super Integer, ? extends R> function) {
-        return requireNonNull(function, "consumer is null").apply(unsigned, requireValidSizeByte(unsigned, size));
-    }
-
-    static void requireValidSizeByte(final boolean unsigned, final int size,
-                                     final BiConsumer<? super Boolean, ? super Integer> consumer) {
-        requireValidSizeByte(unsigned, size, (u, s) -> {
-            requireNonNull(consumer, "consumer is null").accept(u, requireValidSizeByte(u, s));
-            return null;
-        });
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     static int requireValidSizeShort(final boolean unsigned, final int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("size(" + size + ") <= 0");
+        }
         return requireValidSize(unsigned, SIZE_EXPONENT_SHORT, size);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     static int requireValidSizeInt(final boolean unsigned, final int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("size(" + size + ") <= 0");
+        }
         return requireValidSize(unsigned, SIZE_EXPONENT_INTEGER, size);
     }
 
-    static int requireValidSizeInt(final int size) {
-        return requireValidSizeInt(false, size);
-    }
-
-    public static int requireValidSizeUnsignedInt(final int size) {
-        return requireValidSizeInt(true, size);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
     static int requireValidSizeLong(final boolean unsigned, final int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("size(" + size + ") <= 0");
+        }
         return requireValidSize(unsigned, SIZE_EXPONENT_LONG, size);
     }
 
     static int requireValidSizeChar(final int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("size(" + size + ") <= 0");
+        }
         return requireValidSize(false, SIZE_EXPONENT_CHAR, size);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Creates a new instance.

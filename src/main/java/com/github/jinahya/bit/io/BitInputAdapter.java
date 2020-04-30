@@ -36,7 +36,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class BitInputAdapter implements BitInput {
 
-    // -----------------------------------------------------------------------------------------------------------------
     private static final Supplier<ByteInput> NULL_SUPPLIER = () -> null;
 
     /**
@@ -51,8 +50,6 @@ public class BitInputAdapter implements BitInput {
         return instance;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * Creates a new instance with specified input supplier.
      *
@@ -63,7 +60,6 @@ public class BitInputAdapter implements BitInput {
         this.inputSupplier = requireNonNull(inputSupplier, "inputSupplier is null");
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public int readInt(final boolean unsigned, int size) throws IOException {
         requireValidSizeInt(unsigned, size);
@@ -89,7 +85,6 @@ public class BitInputAdapter implements BitInput {
         return value;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public long align(int bytes) throws IOException {
         if (bytes <= 0) {
@@ -112,7 +107,6 @@ public class BitInputAdapter implements BitInput {
         return bits;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private int unsigned8(final int size) throws IOException {
         requireValidSizeUnsigned8(size); // TODO: 2020-04-24 remove!!!
         if (available == 0) {
@@ -128,7 +122,6 @@ public class BitInputAdapter implements BitInput {
         return (octet >> (available -= size)) & ((1 << size) - 1);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private ByteInput input() {
         if (input == null) {
             input = inputSupplier.get();
@@ -136,12 +129,9 @@ public class BitInputAdapter implements BitInput {
         return input;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private final Supplier<? extends ByteInput> inputSupplier;
 
     private transient ByteInput input;
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * The current octet.

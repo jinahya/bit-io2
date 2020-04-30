@@ -36,7 +36,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class BitOutputAdapter implements BitOutput {
 
-    // -----------------------------------------------------------------------------------------------------------------
     private static final Supplier<ByteOutput> NULL_SUPPLIER = () -> null;
 
     /**
@@ -52,8 +51,6 @@ public class BitOutputAdapter implements BitOutput {
         return instance;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * Creates a new instance with specified output supplier.
      *
@@ -64,7 +61,6 @@ public class BitOutputAdapter implements BitOutput {
         this.outputSupplier = requireNonNull(outputSupplier, "outputSupplier is null");
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
         requireValidSizeInt(unsigned, size);
@@ -109,7 +105,6 @@ public class BitOutputAdapter implements BitOutput {
         return bits;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private void unsigned8(final int size, int value) throws IOException {
         requireValidSizeUnsigned8(size); // TODO: 2020-04-24 remove!!!
         final int required = size - available;
@@ -130,7 +125,6 @@ public class BitOutputAdapter implements BitOutput {
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private ByteOutput output() {
         if (output == null) {
             output = outputSupplier.get();
@@ -138,12 +132,9 @@ public class BitOutputAdapter implements BitOutput {
         return output;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private final Supplier<? extends ByteOutput> outputSupplier;
 
     private transient ByteOutput output;
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * The current octet.

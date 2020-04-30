@@ -34,8 +34,6 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class ByteInputAdapter<T> implements ByteInput {
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * Creates a new instance with specified source supplier.
      *
@@ -45,8 +43,6 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
         super();
         this.sourceSupplier = requireNonNull(sourceSupplier, "sourceSupplier is null");
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * {@inheritDoc}
@@ -68,7 +64,6 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      */
     protected abstract int read(T source) throws IOException;
 
-    // -----------------------------------------------------------------------------------------------------------------
     private T source() {
         if (source == null) {
             source = sourceSupplier.get();
@@ -76,7 +71,6 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
         return source;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private final Supplier<? extends T> sourceSupplier;
 
     private transient T source;

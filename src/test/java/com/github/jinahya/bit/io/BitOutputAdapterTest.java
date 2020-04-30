@@ -64,28 +64,28 @@ class BitOutputAdapterTest {
 
     // -------------------------------------------------------------------------------------------------------- writeInt
     @DisplayName("writeInt(false, size, value) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForInt"})
     @ParameterizedTest
     void assertWriteIntSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.writeInt(false, size, 0));
     }
 
     @DisplayName("writeInt(true, size, value) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#illegalSizeForUnsignedInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForUnsignedInt"})
     @ParameterizedTest
     void assertWriteIntUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.writeInt(true, size, 0));
     }
 
     @DisplayName("writeInt(false, size, value)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#sizeAndValueForInt"})
     @ParameterizedTest
     void testWriteIntSigned(final int size, final int value) throws IOException {
         adapter.writeInt(false, size, value);
     }
 
     @DisplayName("writeInt(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForUnsignedInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#sizeAndValueForUnsignedInt"})
     @ParameterizedTest
     void testWriteIntUnsigned(final int size, final int value) throws IOException {
         adapter.writeInt(true, size, value);
@@ -93,14 +93,14 @@ class BitOutputAdapterTest {
 
     // ------------------------------------------------------------------------------------------------------- writeLong
     @DisplayName("writeLong(false, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#sizeAndValueForLong"})
     @ParameterizedTest
     void testWriteLongSigned(final int size, final long value) throws IOException {
         adapter.writeLong(false, size, value);
     }
 
     @DisplayName("writeLong(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestArguments#sizeAndValueForUnsignedLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#sizeAndValueForUnsignedLong"})
     @ParameterizedTest
     void testWriteLongUnsigned(final int size, final long value) throws IOException {
         adapter.writeLong(true, size, value);

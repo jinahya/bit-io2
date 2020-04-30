@@ -104,10 +104,10 @@ class ByteInputProducer {
 
     // ------------------------------------------------------------------------------------------------------------- raf
     @Produces
-    RandomAccessFileByteInput produceRandomAccessFileByteInput(final InjectionPoint injectionPoint) {
-        return new RandomAccessFileByteInput(() -> mock(RandomAccessFile.class));
+    RandomAccessByteInput produceRandomAccessFileByteInput(final InjectionPoint injectionPoint) {
+        return new RandomAccessByteInput(() -> mock(RandomAccessFile.class));
     }
 
-    void disposeRandomAccessFileByteInput(@Disposes final RandomAccessFileByteInput byteInput) {
+    void disposeRandomAccessFileByteInput(@Disposes final RandomAccessByteInput byteInput) {
     }
 }

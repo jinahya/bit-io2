@@ -35,7 +35,7 @@ import static java.util.concurrent.ThreadLocalRandom.current;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-final class BitIoTestValues {
+final class BitIoValues {
 
     // ------------------------------------------------------------------------------------------------------------ byte
 
@@ -62,7 +62,7 @@ final class BitIoTestValues {
     }
 
     static byte randomValueForUnsignedByte(final int size) {
-        return (byte) ((current().nextInt() >>> 1) >> (Integer.SIZE - requireValidSizeInt(true, size)));
+        return (byte) ((current().nextInt() >>> 1) >> (Integer.SIZE - requireValidSizeByte(true, size)));
     }
 
     static byte randomValueForByte(final boolean unsigned, final int size) {
@@ -75,7 +75,7 @@ final class BitIoTestValues {
     }
 
     static int randomSizeForUnsignedShort() {
-        return requireValidSizeInt(true, current().nextInt(1, Short.SIZE)); // 1 ~ 16
+        return requireValidSizeShort(true, current().nextInt(1, Short.SIZE)); // 1 ~ 16
     }
 
     static int randomSizeForShort(final boolean unsigned) {
@@ -158,7 +158,7 @@ final class BitIoTestValues {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private BitIoTestValues() {
+    private BitIoValues() {
         super();
     }
 }

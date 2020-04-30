@@ -26,6 +26,7 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
+import static java.lang.Float.floatToRawIntBits;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -35,8 +36,6 @@ import static java.util.Objects.requireNonNull;
  * @see BitInput
  */
 public interface BitOutput {
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Writes a {@code 1}-bit {@code boolean} value. This method writes {@code 0b1} for {@code true} and {@code 0b0} for
@@ -48,8 +47,6 @@ public interface BitOutput {
     default void writeBoolean(boolean value) throws IOException {
         writeInt(true, 1, value ? 0x01 : 0x00);
     }
-
-    // ------------------------------------------------------------------------------------------------------------ byte
 
     /**
      * Writes a {@code byte} value of specified number of bits.
@@ -99,8 +96,6 @@ public interface BitOutput {
     default void writeUnsignedByte(final int size, final byte value) throws IOException {
         writeByte(true, size, value);
     }
-
-    // ----------------------------------------------------------------------------------------------------------- short
 
     /**
      * Writes a {@code short} value of specified number of bits.
@@ -163,8 +158,6 @@ public interface BitOutput {
         writeShort(true, size, value);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     /**
      * Writes an {@code int} value of specified number of bits.
      *
@@ -223,8 +216,6 @@ public interface BitOutput {
     default void writeUnsignedInt(final int size, final int value) throws IOException {
         writeInt(true, size, value);
     }
-
-    // ------------------------------------------------------------------------------------------------------------ long
 
     /**
      * Writes a {@code long} value of specified number of bits.
@@ -302,8 +293,6 @@ public interface BitOutput {
         writeLong(true, size, value);
     }
 
-    // ------------------------------------------------------------------------------------------------------------ char
-
     /**
      * Writes specified {@code char} value of specified bit size.
      *
@@ -330,7 +319,31 @@ public interface BitOutput {
         writeChar(Character.SIZE, value);
     }
 
-    // ----------------------------------------------------------------------------------------------------------- value
+    /**
+     * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value.
+     *
+     * @param value the {@code float} value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see Float#floatToRawIntBits(float)
+     * @see #writeInt32(int)
+     * @see BitInput#readFloat32()
+     */
+    default void writeFloat32(final float value) throws IOException {
+        writeInt32(floatToRawIntBits(value));
+    }
+
+    /**
+     * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value.
+     *
+     * @param value the {@code double} value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see Double#doubleToRawLongBits(double)
+     * @see #writeLong64(long)
+     * @see BitInput#readDouble64()
+     */
+    default void writeDouble64(final double value) throws IOException {
+        writeLong64(Double.doubleToRawLongBits(value));
+    }
 
     /**
      * Writes a value using specified bit unit.
@@ -344,8 +357,6 @@ public interface BitOutput {
     default <T> void writeValue(final ValueAdapter<? super T> adapter, final T value) throws IOException {
         requireNonNull(adapter, "adapter is null").write(this, value);
     }
-
-    // ------------------------------------------------------------------------------------------------------------ skip
 
     /**
      * Skips specified number of bits by padding zero bits.
@@ -366,8 +377,6 @@ public interface BitOutput {
             writeUnsignedInt(remains, 0);
         }
     }
-
-    // ----------------------------------------------------------------------------------------------------------- align
 
     /**
      * Aligns to specified number of bytes by padding zero bits.

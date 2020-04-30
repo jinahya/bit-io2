@@ -25,37 +25,33 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsignedInt;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static java.util.Objects.requireNonNull;
 
-public class ListValueAdapter<T> implements ValueAdapter<List<T>> {
+public class ListAdapter<T> implements ValueAdapter<List<T>> {
 
-    // -----------------------------------------------------------------------------------------------------------------
-    public static <T> ListValueAdapter<T> newInstance8(final ValueAdapter<T> elementAdapter) {
-        return new ListValueAdapter<>(Byte.SIZE, elementAdapter);
+    public static <T> ListAdapter<T> listAdapter8(final ValueAdapter<T> elementAdapter) {
+        return new ListAdapter<>(Byte.SIZE, elementAdapter);
     }
 
-    public static <T> ListValueAdapter<T> newInstance16(final ValueAdapter<T> elementAdapter) {
-        return new ListValueAdapter<>(Short.SIZE, elementAdapter);
+    public static <T> ListAdapter<T> listAdapter16(final ValueAdapter<T> elementAdapter) {
+        return new ListAdapter<>(Short.SIZE, elementAdapter);
     }
 
-    public static <T> ListValueAdapter<T> newInstance24(final ValueAdapter<T> elementAdapter) {
-        return new ListValueAdapter<>(Byte.SIZE + Short.SIZE, elementAdapter);
+    public static <T> ListAdapter<T> listAdapter24(final ValueAdapter<T> elementAdapter) {
+        return new ListAdapter<>(Byte.SIZE + Short.SIZE, elementAdapter);
     }
 
-    public static <T> ListValueAdapter<T> newInstance31(final ValueAdapter<T> elementAdapter) {
-        return new ListValueAdapter<>(Integer.SIZE - 1, elementAdapter);
+    public static <T> ListAdapter<T> listAdapter31(final ValueAdapter<T> elementAdapter) {
+        return new ListAdapter<>(Integer.SIZE - 1, elementAdapter);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public ListValueAdapter(final int lengthSize, final ValueAdapter<T> elementAdapter) {
+    public ListAdapter(final int lengthSize, final ValueAdapter<T> elementAdapter) {
         super();
-        this.lengthSize = requireValidSizeUnsignedInt(lengthSize);
+        this.lengthSize = requireValidSizeInt(true, lengthSize);
         this.elementAdapter = requireNonNull(elementAdapter, "elementAdapter is null");
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public void write(final BitOutput output, final List<T> value) throws IOException {
         final int length = value.size() & ((1 << lengthSize) - 1);
@@ -77,7 +73,6 @@ public class ListValueAdapter<T> implements ValueAdapter<List<T>> {
         return value;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     private final int lengthSize;
 
     private final ValueAdapter<T> elementAdapter;

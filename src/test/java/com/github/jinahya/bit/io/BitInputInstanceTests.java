@@ -55,7 +55,7 @@ final class BitInputInstanceTests {
      */
     static void testByte(final BitInput instance) throws IOException {
         final boolean unsigned = current().nextBoolean();
-        final int size = BitIoTestValues.randomSizeForByte(unsigned);
+        final int size = BitIoValues.randomSizeForByte(unsigned);
         final byte value = requireNonNull(instance, "instance is null").readByte(unsigned, size);
     }
 

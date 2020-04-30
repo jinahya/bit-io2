@@ -26,6 +26,8 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
+import static java.lang.Double.longBitsToDouble;
+import static java.lang.Float.intBitsToFloat;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -35,8 +37,6 @@ import static java.util.Objects.requireNonNull;
  * @see BitOutput
  */
 public interface BitInput {
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} and returns
@@ -48,8 +48,6 @@ public interface BitInput {
     default boolean readBoolean() throws IOException {
         return readInt(true, 1) == 0x01;
     }
-
-    // ------------------------------------------------------------------------------------------------------------ byte
 
     /**
      * Reads a {@code byte} value of specified number of bits.
@@ -100,8 +98,6 @@ public interface BitInput {
     default byte readUnsignedByte(final int size) throws IOException {
         return readByte(true, size);
     }
-
-    // ----------------------------------------------------------------------------------------------------------- short
 
     /**
      * Reads a {@code short} value of specified number of bits.
@@ -164,8 +160,6 @@ public interface BitInput {
         return readShort(true, size);
     }
 
-    // ------------------------------------------------------------------------------------------------------------- int
-
     /**
      * Reads an {@code int} value of specified number of bits.
      *
@@ -222,8 +216,6 @@ public interface BitInput {
     default int readUnsignedInt(final int size) throws IOException {
         return readInt(true, size);
     }
-
-    // ------------------------------------------------------------------------------------------------------------ long
 
     /**
      * Reads a {@code long} value of specified number of bits.
@@ -305,8 +297,6 @@ public interface BitInput {
         return readLong(true, size);
     }
 
-    // ------------------------------------------------------------------------------------------------------------ char
-
     /**
      * Reads a {@code char} value of specified bit size.
      *
@@ -333,7 +323,31 @@ public interface BitInput {
         return readChar(Character.SIZE);
     }
 
-    // ------------------------------------------------------------------------------------------------------------ unit
+    /**
+     * Reads a {@value java.lang.Float#SIZE}-bit {@code float} value.
+     *
+     * @return a {@value java.lang.Float#SIZE}-bit {@code float} value
+     * @throws IOException if an I/O error occurs.
+     * @see #readInt32()
+     * @see Float#intBitsToFloat(int)
+     * @see BitOutput#writeFloat32(float)
+     */
+    default float readFloat32() throws IOException {
+        return intBitsToFloat(readInt32());
+    }
+
+    /**
+     * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value.
+     *
+     * @return a {@value java.lang.Double#SIZE}-bit {@code double} value
+     * @throws IOException if an I/O error occurs.
+     * @see #readLong64()
+     * @see Double#longBitsToDouble(long)
+     * @see BitOutput#writeDouble64(double)
+     */
+    default double readDouble64() throws IOException {
+        return longBitsToDouble(readLong64());
+    }
 
     /**
      * Reads a value using specified bit unit.
@@ -347,8 +361,6 @@ public interface BitInput {
     default <T> T readValue(final ValueAdapter<? extends T> adapter) throws IOException {
         return requireNonNull(adapter, "adapter is null").read(this);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Skips specified number of bits by discarding bits.
@@ -371,8 +383,6 @@ public interface BitInput {
         }
         assert bits == 0; // TODO: 2020-04-22 remove!!!
     }
-
-    // ----------------------------------------------------------------------------------------------------------- align
 
     /**
      * Aligns to specified number of bytes by discarding bits.
