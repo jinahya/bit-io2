@@ -75,9 +75,9 @@ final class ByteIoSources {
     // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> sourceByteIoChannel2() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
-        final ChannelByteOutput2 output = new ChannelByteOutput2(
+        final ByteOutput output = new ChannelByteOutput(
                 () -> newChannel((holder[0] = new ByteArrayOutputStream())));
-        final ByteInput input = new ChannelByteInput2(
+        final ByteInput input = new ChannelByteInput(
                 () -> newChannel(new ByteArrayInputStream(
                         requireNonNull(holder[0], "holder[0] is null").toByteArray())));
         return Stream.of(arguments(output, input));
