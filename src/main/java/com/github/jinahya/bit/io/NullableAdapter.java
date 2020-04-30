@@ -24,9 +24,9 @@ import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
-class NullableValueAdapter<T> implements ValueAdapter<T> {
+class NullableAdapter<T> implements ValueAdapter<T> {
 
-    NullableValueAdapter(final ValueAdapter<T> wrapped) {
+    NullableAdapter(final ValueAdapter<T> wrapped) {
         super();
         this.wrapped = requireNonNull(wrapped, "wrapped is null");
     }
