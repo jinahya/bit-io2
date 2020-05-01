@@ -57,6 +57,36 @@ public class BitInputTest {
         final boolean value = input.readBoolean();
     }
 
+    // -------------------------------------------------------------------------------------------------------- readByte
+    @DisplayName("readByte(false, size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForByte"})
+    @ParameterizedTest
+    void assertReadByteSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> input.readByte(false, size));
+    }
+
+    @DisplayName("readByte(true, size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForUnsignedByte"})
+    @ParameterizedTest
+    void assertReadByteUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> input.readByte(true, size));
+    }
+
+    // ------------------------------------------------------------------------------------------------------- readShort
+    @DisplayName("readShort(false, size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForShort"})
+    @ParameterizedTest
+    void assertReadShortSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> input.readShort(false, size));
+    }
+
+    @DisplayName("readShort(true, size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForUnsignedShort"})
+    @ParameterizedTest
+    void assertReadShortUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> input.readShort(true, size));
+    }
+
     // -------------------------------------------------------------------------------------------------------- readLong
     @DisplayName("readLong(false, size) throws IllegalArgumentException when size is illegal")
     @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForLong"})

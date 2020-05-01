@@ -93,7 +93,7 @@ public interface BitInput {
      *             (exclusive).
      * @return an unsigned {@code byte} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeByte(boolean, int, byte)
+     * @see BitOutput#writeUnsignedByte(int, byte)
      */
     default byte readUnsignedByte(final int size) throws IOException {
         return readByte(true, size);
@@ -119,7 +119,7 @@ public interface BitInput {
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Short#SIZE}, both inclusive.
      * @return a signed {@code short} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeShort(boolean, int, short)
+     * @see BitOutput#writeShort(int, short)
      */
     default short readShort(final int size) throws IOException {
         return readShort(false, size);
@@ -154,7 +154,7 @@ public interface BitInput {
      *             (exclusive).
      * @return an unsigned {@code short} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeShort(boolean, int, short)
+     * @see BitOutput#writeUnsignedShort(int, short)
      */
     default short readUnsignedShort(final int size) throws IOException {
         return readShort(true, size);
@@ -238,12 +238,10 @@ public interface BitInput {
             }
             return value;
         }
-        assert unsigned;
         if (size >= Integer.SIZE) {
             value = (readInt(false, Integer.SIZE) & 0xFFFFFFFFL);
             size -= Integer.SIZE;
         }
-        assert size < Integer.SIZE : "size(" + size + ") > Integer.SIZE";
         if (size > 0) {
             value <<= size;
             value |= readInt(true, size);

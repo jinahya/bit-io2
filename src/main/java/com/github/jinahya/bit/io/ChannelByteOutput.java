@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
 import java.util.function.Supplier;
 
+import static com.github.jinahya.bit.io.BufferByteOutput.from;
+
 /**
  * A byte output which writes bytes to a writable byte channel.
  *
@@ -43,7 +45,7 @@ class ChannelByteOutput extends ByteOutputAdapter<WritableByteChannel> {
 
     private ByteOutput delegate(final WritableByteChannel channel) {
         if (delegate == null) {
-            delegate = BufferByteOutput.of(channel);
+            delegate = from(channel);
         }
         return delegate;
     }

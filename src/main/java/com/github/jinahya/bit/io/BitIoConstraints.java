@@ -33,7 +33,7 @@ import static java.lang.Math.pow;
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  */
-public final class BitIoConstraints {
+final class BitIoConstraints {
 
     /**
      * Checks whether given size is valid for unsigned 8 bit integer. An {@code IllegalArgumentException} will be thrown
@@ -108,11 +108,20 @@ public final class BitIoConstraints {
         if (size <= 0) {
             throw new IllegalArgumentException("size(" + size + ") <= 0");
         }
+//        if (unsigned) {
+//            if (size >= Byte.SIZE) {
+//                throw new IllegalArgumentException("size(" + size + ") >= " + Byte.SIZE);
+//            }
+//        } else {
+//            if (size > Byte.SIZE) {
+//                throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
+//            }
+//        }
         if (unsigned && size >= Byte.SIZE) {
-            throw new IllegalArgumentException("size(" + size + ") >= " + Byte.SIZE);
+            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned byte");
         }
-        if (size > Byte.SIZE) {
-            throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
+        if (!unsigned && size > Byte.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") for byte");
         }
         return size;
     }

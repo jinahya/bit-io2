@@ -38,7 +38,7 @@ public interface ValueAdapter<T> {
      * @return a bit unit of nullable values.
      */
     static <T> ValueAdapter<T> nullable(final ValueAdapter<T> wrapped) {
-        return new NullableValueAdapter<>(wrapped);
+        return new NullableAdapter<>(wrapped);
     }
 
     /**

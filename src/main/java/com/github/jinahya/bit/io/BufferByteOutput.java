@@ -37,9 +37,19 @@ import static java.util.Objects.requireNonNull;
  */
 public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
 
-    private static class ChanelAdapter extends BufferByteOutput {
+    /**
+     * An implementation uses a single-byte-capacity buffer for writing bytes to a writable channel.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
+    private static class ChannelAdapter extends BufferByteOutput {
 
-        ChanelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
+        /**
+         * Creates a new instance with specified channel supplier.
+         *
+         * @param channelSupplier the channel supplier.
+         */
+        ChannelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
             super(() -> allocate(1));
             this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
         }
@@ -67,30 +77,30 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
     }
 
     /**
-     * Creates a new instance writes bytes to a writable byte channel.
+     * Creates a new instance which writes bytes to a writable byte channel.
      *
      * @param channelSupplier a supplier for the writable byte channel.
      * @return a new instance.
-     * @see #of(WritableByteChannel)
-     * @see BufferByteInput#of(Supplier)
+     * @see #from(WritableByteChannel)
+     * @see BufferByteInput#from(Supplier)
      */
-    public static ByteOutput of(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        return new ChanelAdapter(channelSupplier);
+    static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
+        return new ChannelAdapter(channelSupplier);
     }
 
     /**
-     * Creates a new instance writes bytes to specified writable byte channel.
+     * Creates a new instance writes bytes directly to specified writable byte channel.
      *
      * @param channel the writable byte channel to which bytes are written.
      * @return a new instance.
-     * @see #of(Supplier)
-     * @see BufferByteInput#of(ReadableByteChannel)
+     * @see #from(Supplier)
+     * @see BufferByteInput#from(ReadableByteChannel)
      */
-    public static ByteOutput of(final WritableByteChannel channel) {
+    static BufferByteOutput from(final WritableByteChannel channel) {
         if (channel == null) {
             throw new NullPointerException("channel is null");
         }
-        return new ChanelAdapter(() -> null) {
+        return new ChannelAdapter(nullTargetSupplier()) {
             @Override
             WritableByteChannel channel() {
                 return channel;
@@ -107,13 +117,6 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
         super(targetSupplier);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param target {@inheritDoc}
-     * @param value  {@inheritDoc}
-     * @throws IOException {@inheritDoc}
-     */
     @Override
     protected void write(final ByteBuffer target, final int value) throws IOException {
         target.put((byte) value);

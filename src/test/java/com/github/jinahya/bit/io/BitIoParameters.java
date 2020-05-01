@@ -46,7 +46,49 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @Slf4j
 final class BitIoParameters {
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------ byte
+    static IntStream illegalSizeForByte() {
+        final IntStream.Builder builder = IntStream.builder();
+        builder.add(0);
+        builder.add(-1);
+        builder.add(current().nextInt() | Integer.MIN_VALUE);
+        builder.add(Byte.SIZE + 1);
+        builder.add((current().nextInt() >>> 1 | Byte.SIZE) + 1);
+        return builder.build();
+    }
+
+    static IntStream illegalSizeForUnsignedByte() {
+        final IntStream.Builder builder = IntStream.builder();
+        builder.add(0);
+        builder.add(-1);
+        builder.add(current().nextInt() | Integer.MIN_VALUE);
+        builder.add(Integer.SIZE);
+        builder.add(current().nextInt() >>> 1 | Byte.SIZE);
+        return builder.build();
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- short
+    static IntStream illegalSizeForShort() {
+        final IntStream.Builder builder = IntStream.builder();
+        builder.add(0);
+        builder.add(-1);
+        builder.add(current().nextInt() | Integer.MIN_VALUE);
+        builder.add(Short.SIZE + 1);
+        builder.add((current().nextInt() >>> 1 | Short.SIZE) + 1);
+        return builder.build();
+    }
+
+    static IntStream illegalSizeForUnsignedShort() {
+        final IntStream.Builder builder = IntStream.builder();
+        builder.add(0);
+        builder.add(-1);
+        builder.add(current().nextInt() | Integer.MIN_VALUE);
+        builder.add(Integer.SIZE);
+        builder.add(current().nextInt() >>> 1 | Short.SIZE);
+        return builder.build();
+    }
+
+    // ------------------------------------------------------------------------------------------------------------- int
     static IntStream illegalSizeForInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
@@ -65,10 +107,6 @@ final class BitIoParameters {
         builder.add(Integer.SIZE);
         builder.add(current().nextInt() >>> 1 | Integer.SIZE);
         return builder.build();
-    }
-
-    static IntStream illegalSizeForInt(final boolean unsigned) {
-        return unsigned ? illegalSizeForUnsignedInt() : illegalSizeForInt();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -105,7 +143,7 @@ final class BitIoParameters {
         return unsigned ? sizeAndValueForUnsignedInt() : sizeAndValueForInt();
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------ long
     static IntStream illegalSizeForLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);

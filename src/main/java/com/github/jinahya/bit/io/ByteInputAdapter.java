@@ -34,6 +34,16 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class ByteInputAdapter<T> implements ByteInput {
 
+    static Supplier<?> NULL_SOURCE_SUPPLIER;
+
+    @SuppressWarnings({"unchecked"})
+    static <T> Supplier<? extends T> nullSourceSupplier() {
+        if (NULL_SOURCE_SUPPLIER == null) {
+            NULL_SOURCE_SUPPLIER = () -> null;
+        }
+        return (Supplier<? extends T>) NULL_SOURCE_SUPPLIER;
+    }
+
     /**
      * Creates a new instance with specified source supplier.
      *
