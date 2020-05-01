@@ -110,13 +110,6 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
         super(sourceSupplier);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param source {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws IOException {@inheritDoc}
-     */
     @Override
     protected int read(final ByteBuffer source) throws IOException {
         return source.get() & 0xFF;
