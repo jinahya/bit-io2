@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.nio.channels.ReadableByteChannel;
 import java.util.function.Supplier;
 
+import static com.github.jinahya.bit.io.BufferByteInput.from;
+
 /**
  * A byte input which reads bytes from a readable byte channel.
  *
@@ -48,7 +50,7 @@ class ChannelByteInput extends ByteInputAdapter<ReadableByteChannel> {
 
     private ByteInput delegate(final ReadableByteChannel channel) {
         if (delegate == null) {
-            delegate = BufferByteInput.of(channel);
+            delegate = from(channel);
         }
         return delegate;
     }

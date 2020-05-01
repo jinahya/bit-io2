@@ -38,22 +38,22 @@ class BitInputAdapterTest {
     // -------------------------------------------------------------------------------------------------------------- of
 
     /**
-     * Asserts {@link BitInputAdapter#of(ByteInput)} method throws a {@code NullPointerException} when {@code input}
+     * Asserts {@link BitInputAdapter#from(ByteInput)} method throws a {@code NullPointerException} when {@code input}
      * argument is {@code null}.
      */
-    @DisplayName("of(input) throws NullPointerException when input is null")
+    @DisplayName("from(input) throws NullPointerException when input is null")
     @Test
     void assertOfThrowNullPointerExceptionWhenInputIsNull() {
-        assertThrows(NullPointerException.class, () -> BitInputAdapter.of(null));
+        assertThrows(NullPointerException.class, () -> BitInputAdapter.from(null));
     }
 
     /**
-     * Tests {@link BitInputAdapter#of(ByteInput)} method.
+     * Tests {@link BitInputAdapter#from(ByteInput)} method.
      */
-    @DisplayName("of(input)")
+    @DisplayName("from(input)")
     @Test
-    void testOf() throws IOException {
-        final BitInputAdapter instance = BitInputAdapter.of(ByteInputTest.white());
+    void testFrom() throws IOException {
+        final BitInputAdapter instance = BitInputAdapter.from(ByteInputTest.white());
         assertNotNull(instance);
         BitInputInstanceTests.test(instance);
     }

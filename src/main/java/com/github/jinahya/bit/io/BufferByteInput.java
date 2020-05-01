@@ -24,6 +24,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.function.Supplier;
 
 import static java.nio.ByteBuffer.allocate;
@@ -48,7 +49,6 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
         protected int read(final ByteBuffer source) throws IOException {
             while (!source.hasRemaining()) {
                 source.clear(); // position -> zero, limit -> capacity
-                final ReadableByteChannel channel = channel();
                 if (channel().read(source) == -1) {
                     throw new EOFException("channel has reached end-of-stream");
                 }
@@ -70,26 +70,30 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
     }
 
     /**
-     * Creates a new instance reads bytes from a readable byte channel.
+     * Creates a new instance which reads bytes from a readable byte channel.
      *
      * @param channelSupplier a supplier for the readable byte channel.
      * @return a new instance.
+     * @see #from(ReadableByteChannel)
+     * @see BufferByteOutput#from(Supplier)
      */
-    public static ByteInput of(final Supplier<? extends ReadableByteChannel> channelSupplier) {
+    static BufferByteInput from(final Supplier<? extends ReadableByteChannel> channelSupplier) {
         return new ChannelAdapter(channelSupplier);
     }
 
     /**
-     * Creates a new instance reads bytes from specified readable byte channel.
+     * Creates a new instance which reads bytes from specified readable byte channel.
      *
      * @param channel the readable byte channel.
      * @return a new instance.
+     * @see #from(Supplier)
+     * @see BufferByteOutput#from(WritableByteChannel)
      */
-    public static ByteInput of(final ReadableByteChannel channel) {
+    static BufferByteInput from(final ReadableByteChannel channel) {
         if (channel == null) {
             throw new NullPointerException("channel is null");
         }
-        return new ChannelAdapter(() -> null) {
+        return new ChannelAdapter(nullSourceSupplier()) {
             @Override
             ReadableByteChannel channel() {
                 return channel;

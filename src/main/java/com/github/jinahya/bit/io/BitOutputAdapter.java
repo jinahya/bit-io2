@@ -23,7 +23,6 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.function.Supplier;
 
-import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_BYTE;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsigned8;
 import static java.util.Objects.requireNonNull;
@@ -36,17 +35,18 @@ import static java.util.Objects.requireNonNull;
  */
 public class BitOutputAdapter implements BitOutput {
 
-    private static final Supplier<ByteOutput> NULL_SUPPLIER = () -> null;
+    // TODO: 2020-05-01 required? preferred?
+    static final Supplier<ByteOutput> NULL_OUTPUT_SUPPLIER = () -> null;
 
     /**
-     * Creates a new instance with specified byte output.
+     * Creates a new instance which writes bytes directly to specified byte output.
      *
-     * @param output the byte output for writing bytes.
+     * @param output the byte output to which bytes are written.
      * @return a new instance.
-     * @see BitInputAdapter#of(ByteInput)
+     * @see BitInputAdapter#from(ByteInput)
      */
-    public static BitOutputAdapter of(final ByteOutput output) {
-        final BitOutputAdapter instance = new BitOutputAdapter(NULL_SUPPLIER);
+    public static BitOutputAdapter from(final ByteOutput output) {
+        final BitOutputAdapter instance = new BitOutputAdapter(NULL_OUTPUT_SUPPLIER);
         instance.output = requireNonNull(output, "output is null");
         return instance;
     }
@@ -65,18 +65,17 @@ public class BitOutputAdapter implements BitOutput {
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
         requireValidSizeInt(unsigned, size);
         if (!unsigned) {
-            writeInt(true, 1, value < 0 ? 1 : 0);
+            writeUnsignedInt(1, value < 0 ? 1 : 0);
             size--;
             if (size > 0) {
-                writeInt(true, size, value);
+                writeUnsignedInt(size, value);
             }
             return;
         }
-        assert unsigned;
-        final int quotient = size >> SIZE_EXPONENT_BYTE;
-        final int remainder = size & (Byte.SIZE - 1);
+        final int quotient = size >> 3;
+        final int remainder = size & 7;
         if (remainder > 0) {
-            unsigned8(remainder, value >> (quotient << SIZE_EXPONENT_BYTE));
+            unsigned8(remainder, value >> (quotient << 3));
         }
         for (int i = Byte.SIZE * (quotient - 1); i >= 0; i -= Byte.SIZE) {
             unsigned8(Byte.SIZE, value >> i);

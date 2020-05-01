@@ -31,8 +31,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see ArrayByteInput
- * @deprecated Use {@link BufferByteOutput} with a <a href="https://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html#wrap(byte[])">backing
- * array</a>.
+ * @deprecated Use {@link BufferByteOutput} with a <a href="https://bit.ly/2WgUbS4">backing array</a>.
  */
 @Deprecated // forRemoval = true
 public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
@@ -65,15 +64,15 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
         private transient OutputStream stream;
     }
 
-    public static ByteOutput of(final Supplier<? extends OutputStream> streamSupplier) {
+    public static ArrayByteOutput from(final Supplier<? extends OutputStream> streamSupplier) {
         return new StreamAdapter(streamSupplier);
     }
 
-    public static ByteOutput of(final OutputStream stream) {
+    public static ArrayByteOutput from(final OutputStream stream) {
         if (stream == null) {
             throw new NullPointerException("stream is null");
         }
-        return new StreamAdapter(() -> null) {
+        return new StreamAdapter(nullTargetSupplier()) {
             @Override
             OutputStream stream() {
                 return stream;

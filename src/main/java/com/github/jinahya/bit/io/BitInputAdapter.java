@@ -23,7 +23,6 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.function.Supplier;
 
-import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_BYTE;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsigned8;
 import static java.util.Objects.requireNonNull;
@@ -36,17 +35,22 @@ import static java.util.Objects.requireNonNull;
  */
 public class BitInputAdapter implements BitInput {
 
-    private static final Supplier<ByteInput> NULL_SUPPLIER = () -> null;
+    // TODO: 2020-05-01 required? preferred?
+    static final Supplier<ByteInput> NULL_INPUT_SUPPLIER = () -> null;
 
     /**
-     * Creates a new instance with specified byte input.
+     * Creates a new instance which reads bytes directly from specified byte input.
      *
-     * @param input the byte input for reading bytes.
+     * @param input the byte input from which bytes are read.
      * @return a new instance.
+     * @see BitOutputAdapter#from(ByteOutput)
      */
-    public static BitInputAdapter of(final ByteInput input) {
-        final BitInputAdapter instance = new BitInputAdapter(NULL_SUPPLIER);
-        instance.input = requireNonNull(input, "input is null");
+    public static BitInputAdapter from(final ByteInput input) {
+        if (input == null) {
+            throw new NullPointerException("input is null");
+        }
+        final BitInputAdapter instance = new BitInputAdapter(NULL_INPUT_SUPPLIER);
+        instance.input = input;
         return instance;
     }
 
@@ -65,22 +69,21 @@ public class BitInputAdapter implements BitInput {
         requireValidSizeInt(unsigned, size);
         int value = 0;
         if (!unsigned) {
-            value -= readInt(true, 1);
+            value -= readUnsignedInt(1);
             size--;
             if (size > 0) {
                 value <<= size;
-                value |= readInt(true, size);
+                value |= readUnsignedInt(size);
             }
             return value;
         }
-        for (int i = size >> SIZE_EXPONENT_BYTE; i > 0; i--) {
+        for (; size >= Byte.SIZE; size -= Byte.SIZE) {
             value <<= Byte.SIZE;
             value |= unsigned8(Byte.SIZE);
         }
-        final int remainder = size & (Byte.SIZE - 1);
-        if (remainder > 0) {
-            value <<= remainder;
-            value |= unsigned8(remainder);
+        if (size > 0) {
+            value <<= size;
+            value |= unsigned8(size);
         }
         return value;
     }
