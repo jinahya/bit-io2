@@ -68,7 +68,7 @@ public interface BitOutput {
      * @param size  the number of bits to write; between {@code 1} and ({@value java.lang.Byte#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see BitInput#readByte(boolean, int)
+     * @see BitInput#readByte(int)
      */
     default void writeByte(final int size, final byte value) throws IOException {
         writeByte(false, size, value);
@@ -117,7 +117,7 @@ public interface BitOutput {
      * @param size  the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see BitInput#readShort(boolean, int)
+     * @see BitInput#readShort(int)
      */
     default void writeShort(final int size, final short value) throws IOException {
         writeShort(false, size, value);
@@ -236,7 +236,6 @@ public interface BitOutput {
             }
             return;
         }
-        assert unsigned;
         if (size >= Integer.SIZE) {
             writeInt(Integer.SIZE, (int) (value >> (size - Integer.SIZE)));
             size -= Integer.SIZE;
@@ -276,7 +275,6 @@ public interface BitOutput {
      * @see BitInput#readLong64Le()
      */
     default void writeLong64Le(final long value) throws IOException {
-//        writeInt32Le((int) (value & 0xFFFFFFFFL));
         writeInt32Le((int) value);
         writeInt32Le((int) (value >> Integer.SIZE));
     }

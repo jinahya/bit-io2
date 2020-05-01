@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 
 import static java.io.File.createTempFile;
 import static java.nio.ByteBuffer.allocate;
+import static java.nio.ByteBuffer.allocateDirect;
 import static java.nio.channels.Channels.newChannel;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -90,6 +91,14 @@ final class ByteIoParameters {
     }
 
     static Stream<Arguments> bufferByteIoParameters2() {
+        final ByteBuffer[] holder = new ByteBuffer[1];
+        final ByteOutput output = new BufferByteOutput(() -> (holder[0] = allocateDirect(BYTES)));
+        final ByteInput input = new BufferByteInput(
+                () -> (ByteBuffer) requireNonNull(holder[0], "holder[0] is null").flip());
+        return Stream.of(arguments(output, input));
+    }
+
+    static Stream<Arguments> bufferByteIoParameters3() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = BufferByteOutput.from(() -> newChannel(holder[0] = new ByteArrayOutputStream()));
         final ByteInput input = BufferByteInput.from(
@@ -98,7 +107,7 @@ final class ByteIoParameters {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> bufferByteIoParameters3() {
+    static Stream<Arguments> bufferByteIoParameters4() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
         final ByteOutput output = BufferByteOutput.from(newChannel(baos));
         final byte[] array;
@@ -177,8 +186,8 @@ final class ByteIoParameters {
                          arrayByteIoParameters2(),
                          arrayByteIoParameters3(),
                          bufferByteIoParameters(),
-                         bufferByteIoParameters2(),
                          bufferByteIoParameters3(),
+                         bufferByteIoParameters4(),
                          dataByteIoParameters(),
                          streamByteIoParameters(),
                          channelByteIoParameters(),

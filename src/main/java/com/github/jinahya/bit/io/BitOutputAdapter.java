@@ -65,10 +65,10 @@ public class BitOutputAdapter implements BitOutput {
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
         requireValidSizeInt(unsigned, size);
         if (!unsigned) {
-            writeUnsignedInt(1, value < 0 ? 1 : 0);
+            writeInt(true, 1, value < 0 ? 1 : 0);
             size--;
             if (size > 0) {
-                writeUnsignedInt(size, value);
+                writeInt(true, size, value);
             }
             return;
         }

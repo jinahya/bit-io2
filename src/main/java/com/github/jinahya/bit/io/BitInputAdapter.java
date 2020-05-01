@@ -69,11 +69,11 @@ public class BitInputAdapter implements BitInput {
         requireValidSizeInt(unsigned, size);
         int value = 0;
         if (!unsigned) {
-            value -= readUnsignedInt(1);
+            value -= readInt(true, 1);
             size--;
             if (size > 0) {
                 value <<= size;
-                value |= readUnsignedInt(size);
+                value |= readInt(true, size);
             }
             return value;
         }
