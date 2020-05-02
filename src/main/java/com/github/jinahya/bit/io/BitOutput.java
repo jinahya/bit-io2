@@ -302,7 +302,7 @@ public interface BitOutput {
      * @see BitInput#readChar(int)
      */
     default void writeChar(final int size, final char value) throws IOException {
-        writeUnsignedInt(requireValidSizeChar(size), value);
+        writeInt(true, requireValidSizeChar(size), value);
     }
 
     /**
@@ -327,7 +327,7 @@ public interface BitOutput {
      * @see BitInput#readFloat32()
      */
     default void writeFloat32(final float value) throws IOException {
-        writeInt32(floatToRawIntBits(value));
+        writeInt(false, Integer.SIZE, floatToRawIntBits(value));
     }
 
     /**
@@ -340,7 +340,7 @@ public interface BitOutput {
      * @see BitInput#readDouble64()
      */
     default void writeDouble64(final double value) throws IOException {
-        writeLong64(Double.doubleToRawLongBits(value));
+        writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
     }
 
     /**
@@ -368,11 +368,10 @@ public interface BitOutput {
             throw new IllegalArgumentException("bits(" + bits + ") <= 0");
         }
         for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
-            writeInt32(0);
+            writeInt(false, Integer.SIZE, 0);
         }
-        final int remains = bits & 31;
-        if (remains > 0) {
-            writeUnsignedInt(remains, 0);
+        if (bits > 0) {
+            writeInt(true, bits, 0);
         }
     }
 

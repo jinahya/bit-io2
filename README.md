@@ -36,23 +36,22 @@ These `...Adapter` classes which each implements top-level interfaces accept an 
 
 ### Primitive Type
 
-All primitive types can be handled.
-
 #### `byte`, `short`, `int`, and `long`
 
 There, for each type, are three methods for reading and (corresponding) three methods for writing.
 
-|signature                      |description                 |notes                               |
-|-------------------------------|----------------------------|------------------------------------|
-|`r...(ZI)*`, `w...(ZI*)V`      |(signed or unsigned) `I`-bit|`I`: `1` ~ (`N` - (`Z` ? `1` : `0`))|
-|`r...(I)*`, `w...(I*)V`        |`I`-bit signed              |                                    |
-|`r...N()*`, `w...N(*)V`        |`N`-bit signed              |`N`: `8`, `16`, `32`, `64`          |
-|`r...NLe()*`, `w...NLe(*)V`    |`N`-bit in Little Endian    |N/A with `byte`                     |
-|`r...U...(I)*`, `w...U...(I*)V`|`I`-bit unsigned            |                                    |
+|signature                      |description                        |notes                               |
+|-------------------------------|-----------------------------------|------------------------------------|
+|`r...(ZI)*`, `w...(ZI*)V`      |(signed or unsigned) `I`-bit       |`I`: `1` ~ (`N` - (`Z` ? `1` : `0`))|
+|`r...(I)*`, `w...(I*)V`        |`I`-bit signed                     |                                    |
+|`r...N()*`, `w...N(*)V`        |`N`-bit signed                     |`N`: `8`, `16`, `32`, `64`          |
+|`r...NLe()*`, `w...NLe(*)V`    |`N`-bit in Little Endian byte order|N/A with `byte`                     |
+|`r...U...(I)*`, `w...U...(I*)V`|`I`-bit unsigned                   |`I` < `N`                           |
 
 ##### How a signed integral value of `I`-bit is read/written?
 
 Signed values composite with the first bit as the sign bit and lower `I-1` bits.
+
 ```
  S              | -- lower I-1 bits -- |
  xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
