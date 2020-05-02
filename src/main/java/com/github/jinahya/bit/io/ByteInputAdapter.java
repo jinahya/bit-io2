@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An abstract class implements {@link ByteInput} adapting various byte sources.
+ * An abstract class implements {@link ByteInput} adapting specified byte source.
  *
  * @param <T> byte source parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
