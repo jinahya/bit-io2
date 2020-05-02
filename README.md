@@ -32,17 +32,13 @@ CLIENT -write-> BitOutput
 
 These `...Adapter` classes which each implements top-level interfaces accept an instance of `Supplier<? extends T>` which means any byte sources/targets can be lazily initialized only when some bits are requested to be read/written. 
 
-## Supported Types and Values
+## Types and Values
 
 ### Primitive Type
 
 All primitive types can be handled.
 
-#### Numeric Type
-
-##### Integral Type
-
-###### `byte`, `short`, `int`, and `long`
+#### Numeric Type / Integral Type / `byte`, `short`, `int`, and `long`
 
 There, for each type, are three methods for reading and (corresponding) three methods for writing.
 
@@ -54,7 +50,7 @@ There, for each type, are three methods for reading and (corresponding) three me
 |`r...NLe()*`, `w...NLe(*)V`    |`N`-bit in Little Endian    |N/A with `byte`                     |
 |`r...U...(I)*`, `w...U...(I*)V`|`I`-bit unsigned            |                                    |
 
-####### How a signed integral value of `I`-bit is read/written?
+##### How a signed integral value of `I`-bit is read/written?
 
 Signed values composite with the first bit as the sign bit and lower `I-1` bits.
 ```
@@ -62,7 +58,7 @@ Signed values composite with the first bit as the sign bit and lower `I-1` bits.
  xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
 ```
 
-####### How an unsigned integral value of `I`-bit is read/written?
+##### How an unsigned integral value of `I`-bit is read/written?
 
 Unsigned values are simply processed with their lower `I`-bits.
 
@@ -71,7 +67,7 @@ Unsigned values are simply processed with their lower `I`-bits.
  xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
 ```
 
-###### `char`
+#### Numeric Type / Integral Type / `char`
 
 Reads/writes values as (in maximum) `16`-bit unsigned `int`.
 
@@ -80,7 +76,7 @@ Reads/writes values as (in maximum) `16`-bit unsigned `int`.
 |`readChar(I)C`, `writeChar(I,C)V` |`I`-bit unsigned |`I`: `1` ~ `16`|
 |`readChar16()C`, `writeChar16(C)V`|`16`-bit unsigned|               |
 
-##### Floating Point Type
+#### Numeric Type / Floating Point Type
 
 No methods defined for arbitrary number of bits.
 
@@ -89,7 +85,7 @@ No methods defined for arbitrary number of bits.
 |`readFloat32()F`, `writeFloat32(F)V`  |`32`-bit `float` |     |
 |`readDouble64()D`, `writeDouble64(D)V`|`64`-bit `double`|     |
 
-#### `boolean`
+### Primitive Type / `boolean`
 
 Reads/writes just `1` bit; `0b1` for `true`, `0b0` for `false`.
 
