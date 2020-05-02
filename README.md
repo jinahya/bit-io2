@@ -30,17 +30,19 @@ CLIENT -write-> BitOutput
                                                                       ...)
 ```
 
-Those `...Adapter` classes which each implements top-level interfaces accepts an instance of `Supplier<? extends T>` which means any byte sources/targets can be lazily initialized only when some bits are requested to be read/written. 
+These `...Adapter` classes which each implements top-level interfaces accept an instance of `Supplier<? extends T>` which means any byte sources/targets can be lazily initialized only when some bits are requested to be read/written. 
 
 ## Supported Types and Values
 
 ### Primitive Type
 
+All primitive types can be handled.
+
 #### Numeric Type
 
 ##### Integral Type
 
-##### `byte`, `short`, `int`, and `long`
+###### `byte`, `short`, `int`, and `long`
 
 There, for each type, are three methods for reading and (corresponding) three methods for writing.
 
@@ -52,7 +54,24 @@ There, for each type, are three methods for reading and (corresponding) three me
 |`r...NLe()*`, `w...NLe(*)V`    |`N`-bit in Little Endian    |N/A with `byte`                     |
 |`r...U...(I)*`, `w...U...(I*)V`|`I`-bit unsigned            |                                    |
 
-##### `char`
+####### How a signed integral value of `I`-bit is read/written?
+
+Signed values composite with the first bit as the sign bit and lower `I-1` bits.
+```
+ S              | -- lower I-1 bits -- |
+ xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
+```
+
+####### How an unsigned integral value of `I`-bit is read/written?
+
+Unsigned values are simply processed with their lower `I`-bits.
+
+```
+                  | -- lower I bits -- |
+ xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
+```
+
+###### `char`
 
 Reads/writes values as (in maximum) `16`-bit unsigned `int`.
 
@@ -70,7 +89,7 @@ No methods defined for arbitrary number of bits.
 |`readFloat32()F`, `writeFloat32(F)V`  |`32`-bit `float` |     |
 |`readDouble64()D`, `writeDouble64(D)V`|`64`-bit `double`|     |
 
-#### boolean
+#### `boolean`
 
 Reads/writes just `1` bit; `0b1` for `true`, `0b0` for `false`.
 
@@ -80,18 +99,20 @@ Reads/writes just `1` bit; `0b1` for `true`, `0b0` for `false`.
 
 ### Reference Type
 
-For complex/composite object references, we can use instances of `ValueAdapter<T>`.
+No capabilities for binding directly to reference types. (I hope, someday, I can make one.)  
+
+Instead, we can use `ValueAdapter<T>`.
 
 |signature                                                                      |description|notes|
 |-------------------------------------------------------------------------------|-----------|-----|
-|`<T>(Lc....ValueAdapter<? extends T>)T`, `<T>(L...ValueAdapter<? super T>, T)V`|           |     |
+|`<T>(Lc....ValueAdapter<? extends T>)T`, `<T>(L...ValueAdapter<? super T>T)V`|           |     |
 
 For example, let's say we have a `User` class.
 
 ```java
 class User {
-    String name;
-    int age;
+    String name; // say, 127 bytes in maximum
+    @Max(127) @PositiveOrZero int age;
 }
 ```
 
@@ -113,6 +134,14 @@ class UserAdapter extends ValueAdapter<User> {
 
     private final StringAdapter nameAdapter = new StringAdapter(bytesAdapter8(8), UTF_8);
 }
+```
+
+And we can use it like this.
+
+```java
+ValueAdapter<User> adapter = new UserAdapter();
+User user = bitInput.read(adapter);
+bitOutput.write(adapter, user);
 ```
 
 ## Skipping and Aligning
