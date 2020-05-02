@@ -65,7 +65,7 @@ public interface BitOutput {
     /**
      * Writes a signed {@code byte} value of specified number of bits.
      *
-     * @param size  the number of bits to write; between {@code 1} and ({@value java.lang.Byte#SIZE}, both inclusive.
+     * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
      * @see BitInput#readByte(int)
