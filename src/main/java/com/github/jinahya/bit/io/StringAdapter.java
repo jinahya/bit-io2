@@ -27,12 +27,30 @@ import static com.github.jinahya.bit.io.BytesAdapter.unsignedBytesAdapter;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A value adapter for reading/writing string values.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public class StringAdapter implements ValueAdapter<String> {
 
+    /**
+     * Creates a new instance for reading/writing {@code US-ASCII} strings.
+     *
+     * @param lengthSize the number of bits for the length of encoded bytes.
+     * @return a new instance.
+     * @see BytesAdapter#unsignedBytesAdapter(int, int)
+     */
     public static StringAdapter asciiAdapter(final int lengthSize) {
         return new StringAdapter(unsignedBytesAdapter(lengthSize, 7), US_ASCII);
     }
 
+    /**
+     * Creates a new instance with specified arguments.
+     *
+     * @param delegate a bytes adapter for reading/writing encoded values.
+     * @param charset  a charset for encoding values.
+     */
     public StringAdapter(final BytesAdapter delegate, final Charset charset) {
         super();
         this.delegate = requireNonNull(delegate, "delegate is null");
@@ -49,7 +67,7 @@ public class StringAdapter implements ValueAdapter<String> {
         return new String(delegate.read(input), charset);
     }
 
-    protected final BytesAdapter delegate;
+    private final BytesAdapter delegate;
 
-    protected final Charset charset;
+    private final Charset charset;
 }

@@ -46,16 +46,10 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
 
         @Override
         protected int read(final byte[] source) throws IOException {
-            while (true) {
-                final int read = stream().read(source);
-                if (read == -1) {
-                    throw new EOFException("stream has reached to end-of-stream");
-                }
-                if (read == 1) {
-                    index = 0;
-                    break;
-                }
+            if (stream().read(source) == -1) {
+                throw new EOFException("stream has reached to end-of-stream");
             }
+            index = 0;
             return super.read(source);
         }
 
@@ -71,10 +65,22 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
         private transient InputStream stream;
     }
 
+    /**
+     * Creates a new instance with specified stream supplier.
+     *
+     * @param streamSupplier the stream supplier.
+     * @return a new instance.
+     */
     public static ArrayByteInput from(final Supplier<? extends InputStream> streamSupplier) {
         return new StreamAdapter(streamSupplier);
     }
 
+    /**
+     * Creates a new instance reads bytes directly from specified input stream.
+     *
+     * @param stream the input from which bytes are read.
+     * @return a new instance.
+     */
     public static ArrayByteInput from(final InputStream stream) {
         if (stream == null) {
             throw new NullPointerException("stream is null");

@@ -185,9 +185,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a signed {@value Integer#SIZE}-bit {@code int} value.
+     * Reads a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
      *
-     * @return a signed {@value Integer#SIZE}-bit {@code int} value.
+     * @return a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeInt32(int)
      */
@@ -196,9 +196,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a signed {@value Integer#SIZE}-bit {@code int} value in little endian byte order.
+     * Reads a signed {@value java.lang.Integer#SIZE}-bit {@code int} value in little endian byte order.
      *
-     * @return a signed {@value Integer#SIZE}-bit {@code int} value.
+     * @return a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeInt32Le(int)
      */
@@ -301,12 +301,11 @@ public interface BitInput {
      * @param size the number of bits to read.
      * @return a {@code char} value.
      * @throws IOException if an I/O error occurs.
-     * @see #readUnsignedInt(int)
      * @see #readChar16()
      * @see BitOutput#writeChar(int, char)
      */
     default char readChar(final int size) throws IOException {
-        return (char) readUnsignedInt(requireValidSizeChar(size));
+        return (char) readInt(true, requireValidSizeChar(size));
     }
 
     /**
@@ -326,12 +325,11 @@ public interface BitInput {
      *
      * @return a {@value java.lang.Float#SIZE}-bit {@code float} value
      * @throws IOException if an I/O error occurs.
-     * @see #readInt32()
      * @see Float#intBitsToFloat(int)
      * @see BitOutput#writeFloat32(float)
      */
     default float readFloat32() throws IOException {
-        return intBitsToFloat(readInt32());
+        return intBitsToFloat(readInt(false, Integer.SIZE));
     }
 
     /**
@@ -339,12 +337,11 @@ public interface BitInput {
      *
      * @return a {@value java.lang.Double#SIZE}-bit {@code double} value
      * @throws IOException if an I/O error occurs.
-     * @see #readLong64()
      * @see Double#longBitsToDouble(long)
      * @see BitOutput#writeDouble64(double)
      */
     default double readDouble64() throws IOException {
-        return longBitsToDouble(readLong64());
+        return longBitsToDouble(readLong(false, Long.SIZE));
     }
 
     /**
@@ -372,14 +369,11 @@ public interface BitInput {
             throw new IllegalArgumentException("bits(" + bits + ") <= 0");
         }
         for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
-            readInt32();
+            readInt(false, Integer.SIZE);
         }
-        assert bits < Integer.SIZE; // TODO: 2020-04-22 remove!!!
         if (bits > 0) {
-            readUnsignedInt(bits);
-            bits -= bits; // TODO: 2020-04-22 remove!!!
+            readInt(true, bits);
         }
-        assert bits == 0; // TODO: 2020-04-22 remove!!!
     }
 
     /**

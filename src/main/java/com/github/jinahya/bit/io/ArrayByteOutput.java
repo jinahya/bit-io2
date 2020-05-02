@@ -45,9 +45,7 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
 
         @Override
         protected void write(final byte[] target, final int value) throws IOException {
-            assert target.length == 1;
             super.write(target, value);
-            assert index == 1;
             stream().write(target);
             index = 0;
         }

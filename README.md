@@ -4,27 +4,69 @@
 
 A Java 8+ flavored version of [bit-io](https://github.com/jinahya/bit-io).
 
-## Supported Types and Values
+## How it works?
 
-### Primitives
+There is no magic. The module just reads/writes values of requested number of bits from/into octets and there should be adapters for reading/writing octets from/to any given sources/targets.
 
-#### Numeric
+```
+CLIENT <-read- BitInput
+               BitInputAdapter <-read- ByteInput
+                                       ByteInputAdapter <-read-- (byte[]
+                                                                  ByteBuffer
+                                                                  DataInput
+                                                                  InputStream
+                                                                  RandomAccessFile
+                                                                  ...)
+```
 
-##### Integral
+```
+CLIENT -write-> BitOutput
+                BitOutputAdapter -write-> ByteOutput
+                                          ByteOutputAdapter -write-> (byte[]
+                                                                      ByteBuffer
+                                                                      DataOutput
+                                                                      OutputStream
+                                                                      RandomAccessFile
+                                                                      ...)
+```
 
-##### `byte`, `short`, `int`, and `long`
+These `...Adapter` classes which each implements top-level interfaces accept an instance of `Supplier<? extends T>` which means any byte sources/targets can be lazily initialized only when some bits are requested to be read/written. 
+
+## Types and Values
+
+### Primitive Type
+
+#### `byte`, `short`, `int`, and `long`
 
 There, for each type, are three methods for reading and (corresponding) three methods for writing.
 
-|signature                      |description                 |notes                               |
-|-------------------------------|----------------------------|------------------------------------|
-|`r...(ZI)*`, `w...(ZI*)V`      |(signed or unsigned) `I`-bit|`I`: `1` ~ (`N` - (`Z` ? `1` : `0`))|
-|`r...(I)*`, `w...(I*)V`        |`I`-bit signed              |                                    |
-|`r...N()*`, `w...N(*)V`        |`N`-bit signed              |`N`: `8`, `16`, `32`, `64`          |
-|`r...NLe()*`, `w...NLe(*)V`    |`N`-bit in little endian    |N/A with `byte`                     |
-|`r...U...(I)*`, `w...U...(I*)V`|`I`-bit unsigned            |                                    |
+|signature                      |description                        |notes                               |
+|-------------------------------|-----------------------------------|------------------------------------|
+|`r...(ZI)*`, `w...(ZI*)V`      |(signed or unsigned) `I`-bit       |`I`: `1` ~ (`N` - (`Z` ? `1` : `0`))|
+|`r...(I)*`, `w...(I*)V`        |`I`-bit signed                     |                                    |
+|`r...N()*`, `w...N(*)V`        |`N`-bit signed                     |`N`: `8`, `16`, `32`, `64`          |
+|`r...NLe()*`, `w...NLe(*)V`    |`N`-bit in Little Endian byte order|N/A with `byte`                     |
+|`r...U...(I)*`, `w...U...(I*)V`|`I`-bit unsigned                   |`I` < `N`                           |
 
-##### `char`
+##### How a signed integral value of `I`-bit is read/written?
+
+Signed values composite with the first bit as the sign bit and lower `I-1` bits.
+
+```
+ S              | -- lower I-1 bits -- |
+ xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
+```
+
+##### How an unsigned integral value of `I`-bit is read/written?
+
+Unsigned values are simply processed with their lower `I`-bits.
+
+```
+                  | -- lower I bits -- |
+ xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
+```
+
+#### `char`
 
 Reads/writes values as (in maximum) `16`-bit unsigned `int`.
 
@@ -33,7 +75,7 @@ Reads/writes values as (in maximum) `16`-bit unsigned `int`.
 |`readChar(I)C`, `writeChar(I,C)V` |`I`-bit unsigned |`I`: `1` ~ `16`|
 |`readChar16()C`, `writeChar16(C)V`|`16`-bit unsigned|               |
 
-##### Floating Point
+#### `float` and `double`
 
 No methods defined for arbitrary number of bits.
 
@@ -42,7 +84,7 @@ No methods defined for arbitrary number of bits.
 |`readFloat32()F`, `writeFloat32(F)V`  |`32`-bit `float` |     |
 |`readDouble64()D`, `writeDouble64(D)V`|`64`-bit `double`|     |
 
-#### boolean
+#### `boolean`
 
 Reads/writes just `1` bit; `0b1` for `true`, `0b0` for `false`.
 
@@ -50,20 +92,22 @@ Reads/writes just `1` bit; `0b1` for `true`, `0b0` for `false`.
 |------------------------------------|-----------------|-----|
 |`readBoolean()Z`, `writeBoolean(Z)V`|`1`-bit `boolean`|     |
 
-### References
+### Reference Type
 
-For complex/composite object references, we can use instances of `ValueAdapter<T>`.
+No capabilities for binding directly to reference types. (I hope, someday, I can make one.)  
+
+Instead, we can use `ValueAdapter<T>`.
 
 |signature                                                                      |description|notes|
 |-------------------------------------------------------------------------------|-----------|-----|
-|`<T>(Lc....ValueAdapter<? extends T>)T`, `<T>(L...ValueAdapter<? super T>, T)V`|           |     |
+|`<T>(Lc....ValueAdapter<? extends T>)T`, `<T>(L...ValueAdapter<? super T>T)V`|           |     |
 
-For example, let's say we have the `User` class.
+For example, let's say we have a `User` class.
 
 ```java
 class User {
-    String name;
-    int age;
+    String name; // say, 127 bytes in maximum
+    @Max(127) @PositiveOrZero int age;
 }
 ```
 
@@ -83,8 +127,32 @@ class UserAdapter extends ValueAdapter<User> {
         output.writeUnsignedInt(7, value.age);
     }
 
-    private final StringAdapter nameAdapter = new StringAdapter(BytesAdapter.bytesAdapter8(8), UTF_8);
+    private final StringAdapter nameAdapter = new StringAdapter(bytesAdapter8(8), UTF_8);
 }
 ```
 
+And we can use it like this.
+
+```java
+ValueAdapter<User> adapter = new UserAdapter();
+User user = bitInput.read(adapter);
+bitOutput.write(adapter, user);
+```
+
 ## Skipping and Aligning
+
+### skipping
+
+You can skip a positive number of bits.
+
+|signature             |description|notes|
+|----------------------|-----------|-----|
+|`skip(I)V`, `skip(I)V`|           |     |
+
+### aligning
+
+You can align the stream for a positive number of bytes by padding/discarding required number of bits. 
+
+|signature               |description|notes                                                   |
+|------------------------|-----------|--------------------------------------------------------|
+|`align(I)L`, `align(I)L`|           |returns number of bits (padded/discarded) while aligning|
