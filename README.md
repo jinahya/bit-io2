@@ -38,7 +38,7 @@ These `...Adapter` classes which each implements top-level interfaces accept an 
 
 All primitive types can be handled.
 
-#### Numeric Type / Integral Type / `byte`, `short`, `int`, and `long`
+#### `byte`, `short`, `int`, and `long`
 
 There, for each type, are three methods for reading and (corresponding) three methods for writing.
 
@@ -67,7 +67,7 @@ Unsigned values are simply processed with their lower `I`-bits.
  xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
 ```
 
-#### Numeric Type / Integral Type / `char`
+#### `char`
 
 Reads/writes values as (in maximum) `16`-bit unsigned `int`.
 
@@ -76,7 +76,7 @@ Reads/writes values as (in maximum) `16`-bit unsigned `int`.
 |`readChar(I)C`, `writeChar(I,C)V` |`I`-bit unsigned |`I`: `1` ~ `16`|
 |`readChar16()C`, `writeChar16(C)V`|`16`-bit unsigned|               |
 
-#### Numeric Type / Floating Point Type
+#### `float` and `double`
 
 No methods defined for arbitrary number of bits.
 
@@ -85,7 +85,7 @@ No methods defined for arbitrary number of bits.
 |`readFloat32()F`, `writeFloat32(F)V`  |`32`-bit `float` |     |
 |`readDouble64()D`, `writeDouble64(D)V`|`64`-bit `double`|     |
 
-### Primitive Type / `boolean`
+#### `boolean`
 
 Reads/writes just `1` bit; `0b1` for `true`, `0b0` for `false`.
 
