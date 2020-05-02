@@ -347,9 +347,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a value using specified bit unit.
+     * Reads a value using specified adapter.
      *
-     * @param adapter the bit unit.
+     * @param adapter the adapter.
      * @param <T>     value type parameter
      * @return a value.
      * @throws IOException if an I/O error occurs.

@@ -348,9 +348,9 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a value using specified bit unit.
+     * Writes specified value using specified adapter.
      *
-     * @param adapter the bit unit.
+     * @param adapter the adapter.
      * @param value   the value to write.
      * @param <T>     value type parameter
      * @throws IOException if an I/O error occurs.
