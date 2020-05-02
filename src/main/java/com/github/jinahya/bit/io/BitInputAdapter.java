@@ -27,7 +27,7 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An implementation of {@link BitInput} adapting an instance of {@link ByteInput}.
+ * An implementation of {@link BitInput} adapts an instance of {@link ByteInput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitOutputAdapter

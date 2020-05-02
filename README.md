@@ -4,13 +4,41 @@
 
 A Java 8+ flavored version of [bit-io](https://github.com/jinahya/bit-io).
 
+## How it works?
+
+There is no magic. The module just reads/writes values of requested number of bits from/into octets and there should be adapters for reading/writing octets from/to any given sources/targets.
+
+```
+CLIENT <-read- BitInput
+               BitInputAdapter <-read- ByteInput
+                                       ByteInputAdapter <-read-- (byte[]
+                                                                  ByteBuffer
+                                                                  DataInput
+                                                                  InputStream
+                                                                  RandomAccessFile
+                                                                  ...)
+```
+
+```
+CLIENT -write-> BitOutput
+                BitOutputAdapter -write-> ByteOutput
+                                          ByteOutputAdapter -write-> (byte[]
+                                                                      ByteBuffer
+                                                                      DataOutput
+                                                                      OutputStream
+                                                                      RandomAccessFile
+                                                                      ...)
+```
+
+Those `...Adapter` classes which each implements top-level interfaces accepts an instance of `Supplier<? extends T>` which means any byte sources/targets can be lazily initialized only when some bits are requested to be read/written. 
+
 ## Supported Types and Values
 
-### Primitives
+### Primitive Type
 
-#### Numeric
+#### Numeric Type
 
-##### Integral
+##### Integral Type
 
 ##### `byte`, `short`, `int`, and `long`
 
@@ -21,7 +49,7 @@ There, for each type, are three methods for reading and (corresponding) three me
 |`r...(ZI)*`, `w...(ZI*)V`      |(signed or unsigned) `I`-bit|`I`: `1` ~ (`N` - (`Z` ? `1` : `0`))|
 |`r...(I)*`, `w...(I*)V`        |`I`-bit signed              |                                    |
 |`r...N()*`, `w...N(*)V`        |`N`-bit signed              |`N`: `8`, `16`, `32`, `64`          |
-|`r...NLe()*`, `w...NLe(*)V`    |`N`-bit in little endian    |N/A with `byte`                     |
+|`r...NLe()*`, `w...NLe(*)V`    |`N`-bit in Little Endian    |N/A with `byte`                     |
 |`r...U...(I)*`, `w...U...(I*)V`|`I`-bit unsigned            |                                    |
 
 ##### `char`
@@ -33,7 +61,7 @@ Reads/writes values as (in maximum) `16`-bit unsigned `int`.
 |`readChar(I)C`, `writeChar(I,C)V` |`I`-bit unsigned |`I`: `1` ~ `16`|
 |`readChar16()C`, `writeChar16(C)V`|`16`-bit unsigned|               |
 
-##### Floating Point
+##### Floating Point Type
 
 No methods defined for arbitrary number of bits.
 
@@ -50,7 +78,7 @@ Reads/writes just `1` bit; `0b1` for `true`, `0b0` for `false`.
 |------------------------------------|-----------------|-----|
 |`readBoolean()Z`, `writeBoolean(Z)V`|`1`-bit `boolean`|     |
 
-### References
+### Reference Type
 
 For complex/composite object references, we can use instances of `ValueAdapter<T>`.
 
@@ -58,7 +86,7 @@ For complex/composite object references, we can use instances of `ValueAdapter<T
 |-------------------------------------------------------------------------------|-----------|-----|
 |`<T>(Lc....ValueAdapter<? extends T>)T`, `<T>(L...ValueAdapter<? super T>, T)V`|           |     |
 
-For example, let's say we have the `User` class.
+For example, let's say we have a `User` class.
 
 ```java
 class User {
@@ -83,8 +111,24 @@ class UserAdapter extends ValueAdapter<User> {
         output.writeUnsignedInt(7, value.age);
     }
 
-    private final StringAdapter nameAdapter = new StringAdapter(BytesAdapter.bytesAdapter8(8), UTF_8);
+    private final StringAdapter nameAdapter = new StringAdapter(bytesAdapter8(8), UTF_8);
 }
 ```
 
 ## Skipping and Aligning
+
+### skipping
+
+You can skip a positive number of bits.
+
+|signature             |description|notes|
+|----------------------|-----------|-----|
+|`skip(I)V`, `skip(I)V`|           |     |
+
+### aligning
+
+You can align the stream for a positive number of bytes by padding/discarding required number of bits. 
+
+|signature               |description|notes                                                   |
+|------------------------|-----------|--------------------------------------------------------|
+|`align(I)L`, `align(I)L`|           |returns number of bits (padded/discarded) while aligning|

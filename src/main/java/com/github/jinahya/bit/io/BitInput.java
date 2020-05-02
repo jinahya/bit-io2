@@ -185,9 +185,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a signed {@value Integer#SIZE}-bit {@code int} value.
+     * Reads a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
      *
-     * @return a signed {@value Integer#SIZE}-bit {@code int} value.
+     * @return a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeInt32(int)
      */
@@ -196,9 +196,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a signed {@value Integer#SIZE}-bit {@code int} value in little endian byte order.
+     * Reads a signed {@value java.lang.Integer#SIZE}-bit {@code int} value in little endian byte order.
      *
-     * @return a signed {@value Integer#SIZE}-bit {@code int} value.
+     * @return a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeInt32Le(int)
      */
