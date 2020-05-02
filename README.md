@@ -54,8 +54,8 @@ There, for each type, are three methods for reading and (corresponding) three me
 Signed values composite with the first bit as the sign bit and lower `I-1` bits.
 
 ```
- S              | -- lower I-1 bits -- |
- xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
+S              | -- lower I-1 bits -- |
+xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
 ```
 
 ##### How an unsigned integral value of `I`-bit is read/written?
@@ -64,7 +64,7 @@ Unsigned values are simply processed with their lower `I`-bits.
 
 ```
                   | -- lower I bits -- |
- xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
+0xxxxxxxx xxxxxxxx ... xxxxxxxx xxxxxxxx
 ```
 
 #### `char`
