@@ -20,14 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import static com.github.jinahya.bit.io.BitIoConstants.MIN_SIZE;
-import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_BYTE;
-import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_CHAR;
-import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_INTEGER;
-import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_LONG;
-import static com.github.jinahya.bit.io.BitIoConstants.SIZE_EXPONENT_SHORT;
-import static java.lang.Math.pow;
-
 /**
  * Constraints for bit-io.
  *
@@ -35,93 +27,15 @@ import static java.lang.Math.pow;
  */
 final class BitIoConstraints {
 
-    /**
-     * Checks whether given size is valid for unsigned 8 bit integer. An {@code IllegalArgumentException} will be thrown
-     * if given value is not valid.
-     *
-     * @param size the size to check; must between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
-     * @return given size.
-     */
-    static int requireValidSizeUnsigned8(final int size) {
-        if (size < MIN_SIZE) {
-            throw new IllegalArgumentException("unsigned8.size(" + size + ") < 1");
-        }
-        if (size > Byte.SIZE) {
-            throw new IllegalArgumentException("unsigned8.size(" + size + ") > " + Byte.SIZE);
-        }
-        return size;
-    }
-
-    static final int MIN_EXPONENT = SIZE_EXPONENT_BYTE;
-
-    static final int MAX_EXPONENT = SIZE_EXPONENT_LONG;
-
-    /**
-     * Validates given exponent.
-     *
-     * @param exponent the exponent to validate.
-     * @return given exponent.
-     */
-    private static int requireValidExponent(final int exponent) {
-        if (exponent < MIN_EXPONENT) {
-            throw new IllegalArgumentException("exponent(" + exponent + ") < " + MIN_EXPONENT);
-        }
-        if (exponent > MAX_EXPONENT) {
-            throw new IllegalArgumentException("exponent(" + exponent + ") > " + MAX_EXPONENT);
-        }
-        return exponent;
-    }
-
-    private static final int[] MAX_SIZES = new int[MAX_EXPONENT - MIN_EXPONENT + 1];
-
-    static {
-        MAX_SIZES[0] = (int) pow(2, MIN_EXPONENT);
-        for (int i = 1; i < MAX_SIZES.length; i++) {
-            MAX_SIZES[i] = MAX_SIZES[i - 1] << 1;
-        }
-    }
-
-    /**
-     * Returns the maximum size for given arguments.
-     *
-     * @param unsigned the value for unsigned.
-     * @param exponent the value for exponent.
-     * @return the maximum size.
-     */
-    private static int maxSize(final boolean unsigned, final int exponent) {
-        return MAX_SIZES[requireValidExponent(exponent) - MIN_EXPONENT] - (unsigned ? 1 : 0);
-    }
-
-    static int requireValidSize(final boolean unsigned, final int exponent, final int size) {
-        if (size < MIN_SIZE) {
-            throw new IllegalArgumentException("size(" + size + ") < " + MIN_SIZE);
-        }
-        final int max = maxSize(unsigned, exponent);
-        if (size > max) {
-            throw new IllegalArgumentException(
-                    "size(" + size + ") > " + max + "; unsigned: " + unsigned + "; exponent: " + exponent);
-        }
-        return size;
-    }
-
     static int requireValidSizeByte(final boolean unsigned, final int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("size(" + size + ") <= 0");
         }
-//        if (unsigned) {
-//            if (size >= Byte.SIZE) {
-//                throw new IllegalArgumentException("size(" + size + ") >= " + Byte.SIZE);
-//            }
-//        } else {
-//            if (size > Byte.SIZE) {
-//                throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
-//            }
-//        }
-        if (unsigned && size >= Byte.SIZE) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned byte");
+        if (size > Byte.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") > " + Byte.SIZE);
         }
-        if (!unsigned && size > Byte.SIZE) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for byte");
+        if (unsigned && size == Byte.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned byte");
         }
         return size;
     }
@@ -130,28 +44,49 @@ final class BitIoConstraints {
         if (size <= 0) {
             throw new IllegalArgumentException("size(" + size + ") <= 0");
         }
-        return requireValidSize(unsigned, SIZE_EXPONENT_SHORT, size);
+        if (size > Short.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") > " + Short.SIZE);
+        }
+        if (unsigned && size == Short.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned short");
+        }
+        return size;
     }
 
     static int requireValidSizeInt(final boolean unsigned, final int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("size(" + size + ") <= 0");
         }
-        return requireValidSize(unsigned, SIZE_EXPONENT_INTEGER, size);
+        if (size > Integer.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") > " + Integer.SIZE);
+        }
+        if (unsigned && size == Integer.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned integer");
+        }
+        return size;
     }
 
     static int requireValidSizeLong(final boolean unsigned, final int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("size(" + size + ") <= 0");
         }
-        return requireValidSize(unsigned, SIZE_EXPONENT_LONG, size);
+        if (size > Long.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") > " + Long.SIZE);
+        }
+        if (unsigned && size == Long.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned long");
+        }
+        return size;
     }
 
     static int requireValidSizeChar(final int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("size(" + size + ") <= 0");
         }
-        return requireValidSize(false, SIZE_EXPONENT_CHAR, size);
+        if (size > Character.SIZE) {
+            throw new IllegalArgumentException("invalid size(" + size + ") for char");
+        }
+        return size;
     }
 
     /**

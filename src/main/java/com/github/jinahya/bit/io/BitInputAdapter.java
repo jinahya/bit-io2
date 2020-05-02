@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsigned8;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -111,7 +110,6 @@ public class BitInputAdapter implements BitInput {
     }
 
     private int unsigned8(final int size) throws IOException {
-        requireValidSizeUnsigned8(size); // TODO: 2020-04-24 remove!!!
         if (available == 0) {
             octet = input().read();
             assert octet >= 0 && octet < 256;

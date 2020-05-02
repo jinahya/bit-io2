@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 
+@Deprecated
 class ArrayByteInputTest extends ByteInputAdapterTest<ArrayByteInput, byte[]> {
 
     static ArrayByteInput white() {

@@ -23,8 +23,10 @@ package com.github.jinahya.bit.io;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
 /**
@@ -58,6 +60,31 @@ final class BitIoTestValues {
 
     static byte randomValueForByte(final boolean unsigned, final int size) {
         return unsigned ? randomValueForUnsignedByte(size) : randomValueForByte(size);
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- short
+    static int randomSizeForShort() {
+        return requireValidSizeShort(false, current().nextInt(Short.SIZE) + 1); // 1 - 16
+    }
+
+    static int randomSizeForUnsignedShort() {
+        return requireValidSizeShort(true, current().nextInt(1, Short.SIZE)); // 1 ~ 16
+    }
+
+    static int randomSizeForShort(final boolean unsigned) {
+        return unsigned ? randomSizeForUnsignedShort() : randomSizeForShort();
+    }
+
+    static short randomValueForShort(final int size) {
+        return (short) (current().nextInt() >> (Integer.SIZE - requireValidSizeShort(false, size)));
+    }
+
+    static short randomValueForUnsignedShort(final int size) {
+        return (short) ((current().nextInt() >>> 1) >> (Integer.SIZE - requireValidSizeInt(true, size)));
+    }
+
+    static short randomValueForShort(final boolean unsigned, final int size) {
+        return unsigned ? randomValueForUnsignedShort(size) : randomValueForShort(size);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -110,6 +137,19 @@ final class BitIoTestValues {
 
     static long randomValueForLong(final boolean unsigned, final int size) {
         return unsigned ? randomValueForUnsignedLong(size) : randomValueForLong(size);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------ char
+    static int randomSizeForChar() {
+        return requireValidSizeChar(current().nextInt(Character.SIZE) + 1); // 1 ~ 16
+    }
+
+    static char randomValueForChar(final int size) {
+        return (char) (current().nextInt() >>> (Integer.SIZE - requireValidSizeChar(size)));
+    }
+
+    static char randomValueForChar16() {
+        return randomValueForChar(Character.SIZE);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

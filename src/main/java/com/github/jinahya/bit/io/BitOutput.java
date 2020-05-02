@@ -230,18 +230,18 @@ public interface BitOutput {
     default void writeLong(final boolean unsigned, int size, final long value) throws IOException {
         requireValidSizeLong(unsigned, size);
         if (!unsigned) {
-            writeUnsignedInt(1, value < 0L ? 0x01 : 0x00);
+            writeInt(true, 1, value < 0L ? 0x01 : 0x00);
             if (--size > 0) {
-                writeUnsignedLong(size, value);
+                writeLong(true, size, value);
             }
             return;
         }
         if (size >= Integer.SIZE) {
-            writeInt(Integer.SIZE, (int) (value >> (size - Integer.SIZE)));
+            writeInt(false, Integer.SIZE, (int) (value >> (size - Integer.SIZE)));
             size -= Integer.SIZE;
         }
         if (size > 0) {
-            writeUnsignedInt(size, (int) value);
+            writeInt(true, size, (int) value);
         }
     }
 
