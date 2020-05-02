@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+@Deprecated
 class ArrayByteOutputTest extends ByteOutputAdapterTest<ArrayByteOutput, byte[]> {
 
     static ArrayByteOutput black() {

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeUnsigned8;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -105,7 +104,6 @@ public class BitOutputAdapter implements BitOutput {
     }
 
     private void unsigned8(final int size, int value) throws IOException {
-        requireValidSizeUnsigned8(size); // TODO: 2020-04-24 remove!!!
         final int required = size - available;
         if (required > 0) {
             unsigned8(available, value >> required);

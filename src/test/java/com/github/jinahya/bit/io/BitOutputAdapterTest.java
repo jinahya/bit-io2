@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class BitOutputAdapterTest {
 
-    // -------------------------------------------------------------------------------------------------------------- of
+    // ------------------------------------------------------------------------------------------------------------ from
 
     /**
      * Asserts {@link BitOutputAdapter#from(ByteOutput)} method throws a {@code NullPointerException} when {@code
@@ -47,7 +47,7 @@ class BitOutputAdapterTest {
      */
     @DisplayName("from(output) throws NullPointerException when output is null")
     @Test
-    void assertOfThrowNullPointerExceptionWhenOutputIsNull() {
+    void assertFromThrowNullPointerExceptionWhenOutputIsNull() {
         assertThrows(NullPointerException.class, () -> BitOutputAdapter.from(null));
     }
 
@@ -59,7 +59,6 @@ class BitOutputAdapterTest {
     void testFrom() throws IOException {
         final BitOutputAdapter instance = BitOutputAdapter.from(ByteOutputTest.black());
         assertNotNull(instance);
-        BitOutputInstanceTests.test(instance);
     }
 
     // -------------------------------------------------------------------------------------------------------- writeInt
