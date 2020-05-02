@@ -30,7 +30,7 @@ import java.util.function.Supplier;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see RandomAccessByteInput
  */
-class RandomAccessByteOutput extends ByteOutputAdapter<RandomAccessFile> {
+public class RandomAccessByteOutput extends ByteOutputAdapter<RandomAccessFile> {
 
     /**
      * Creates a new instance with specified target supplier.
