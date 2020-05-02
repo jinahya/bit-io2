@@ -175,7 +175,7 @@ public interface BitInput {
     /**
      * Reads a signed {@code int} value of specified bit size.
      *
-     * @param size the number of bits to read; between {@code 1} and {@value Integer#SIZE}, both inclusive.
+     * @param size the number of bits to read; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
      * @return a signed {@code int} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeInt(int, int)
@@ -209,7 +209,8 @@ public interface BitInput {
     /**
      * Reads an unsigned {@code int} value of specified bit size.
      *
-     * @param size the number of bits to read; between {@code 1} (inclusive) and {@value Integer#SIZE} (exclusive).
+     * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
+     *             (exclusive).
      * @return an unsigned {@code int} value.
      * @throws IOException if an error occurs.
      */
@@ -252,7 +253,7 @@ public interface BitInput {
     /**
      * Reads a signed {@code long} value of specified bit size.
      *
-     * @param size the number of bits to read; between {@code 1} and {@value Long#SIZE}, both inclusive.
+     * @param size the number of bits to read; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
      * @return a signed {@code long} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeLong(int, long)
@@ -262,9 +263,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a signed {@value Long#SIZE}-bit {@code long} value.
+     * Reads a signed {@value java.lang.Long#SIZE}-bit {@code long} value.
      *
-     * @return a signed {@value Long#SIZE}-bit {@code long} value.
+     * @return a signed {@value java.lang.Long#SIZE}-bit {@code long} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeLong64(long)
      */
@@ -273,9 +274,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a signed {@value Long#SIZE}-bit {@code long} value in little endian byte order.
+     * Reads a signed {@value java.lang.Long#SIZE}-bit {@code long} value in little endian byte order.
      *
-     * @return a signed {@value Long#SIZE}-bit {@code long} value.
+     * @return a signed {@value java.lang.Long#SIZE}-bit {@code long} value.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeLong64Le(long)
      */
@@ -286,7 +287,8 @@ public interface BitInput {
     /**
      * Reads an unsigned {@code long} value of specified bit size.
      *
-     * @param size the number of bits to read; between {@code 1} (inclusive) and {@value Long#SIZE} (exclusive).
+     * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
+     *             (exclusive).
      * @return an unsigned {@code long} value.
      * @throws IOException if an error occurs.
      * @see BitOutput#writeUnsignedLong(int, long)
