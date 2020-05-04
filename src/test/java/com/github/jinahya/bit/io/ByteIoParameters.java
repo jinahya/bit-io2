@@ -27,15 +27,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.io.UncheckedIOException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.stream.Stream;
 
-import static java.io.File.createTempFile;
 import static java.nio.ByteBuffer.allocate;
 import static java.nio.ByteBuffer.allocateDirect;
 import static java.nio.channels.Channels.newChannel;
@@ -141,29 +136,6 @@ final class ByteIoParameters {
         return Stream.of(arguments(output, input));
     }
 
-    // --------------------------------------------------------------------------------------------- random access files
-    static Stream<Arguments> randomAccessByteIoParameters() {
-        final File[] holder = new File[1];
-        final ByteOutput output = new RandomAccessByteOutput(() -> {
-            try {
-                holder[0] = createTempFile("tmp", null);
-                holder[0].deleteOnExit();
-                return new RandomAccessFile(holder[0], "rw");
-            } catch (final IOException ioe) {
-                throw new UncheckedIOException(ioe);
-            }
-        });
-        final ByteInput input = new RandomAccessByteInput(
-                () -> {
-                    try {
-                        return new RandomAccessFile(requireNonNull(holder[0], "holder[0] is null"), "r");
-                    } catch (final IOException ioe) {
-                        throw new UncheckedIOException(ioe);
-                    }
-                });
-        return Stream.of(arguments(output, input));
-    }
-
     // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> channelByteIoParameters() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
@@ -190,8 +162,7 @@ final class ByteIoParameters {
                          bufferByteIoParameters4(),
                          dataByteIoParameters(),
                          streamByteIoParameters(),
-                         channelByteIoParameters(),
-                         randomAccessByteIoParameters())
+                         channelByteIoParameters())
                 .flatMap(s -> s);
     }
 

@@ -22,8 +22,10 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+import static java.util.Objects.requireNonNull;
+
 /**
- * An interface for readable/writable unit of bit data.
+ * An interface for reading/writing non-scalar values.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -31,14 +33,14 @@ import java.io.IOException;
 public interface ValueAdapter<T> {
 
     /**
-     * Returns a value adapter which pre-read/write a signal of nullability of the value.
+     * Returns an adapter which pre-reads/writes a {@code boolean} value indicating the nullability of the value.
      *
-     * @param wrapped the unit to be wrapped.
+     * @param wrapped the adapter to be wrapped.
      * @param <T>     value type parameter
-     * @return a bit unit of nullable values.
+     * @return an adapter wraps specified adapter.
      */
     static <T> ValueAdapter<T> nullable(final ValueAdapter<T> wrapped) {
-        return new NullableAdapter<>(wrapped);
+        return new NullableAdapter<>(requireNonNull(wrapped, "wrapped is null"));
     }
 
     /**

@@ -21,8 +21,11 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.Supplier;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A byte output writes bytes to an instance of {@link OutputStream}.
@@ -33,16 +36,35 @@ import java.util.function.Supplier;
 public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
 
     /**
+     * Creates a new instance which writes bytes directly to specified target.
+     *
+     * @param target the target to which bytes are written.
+     * @return a new instance.
+     * @see StreamByteInput#from(InputStream)
+     */
+    public static StreamByteOutput from(final OutputStream target) {
+        requireNonNull(target, "target is null");
+        return new StreamByteOutput(nullTargetSupplier()) {
+            @Override
+            OutputStream target() {
+                return target;
+            }
+        };
+    }
+
+    /**
      * Creates a new instance with specified target supplier.
      *
      * @param targetSupplier the target supplier.
+     * @see StreamByteInput#StreamByteInput(Supplier)
      */
     public StreamByteOutput(final Supplier<? extends OutputStream> targetSupplier) {
         super(targetSupplier);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes {@link
+     * OutputStream#write(int)} method on specified {@code target} with specified {@code value}.
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}

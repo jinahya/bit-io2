@@ -29,7 +29,7 @@ import java.io.IOException;
  * @see ByteInput
  */
 @FunctionalInterface
-public interface ByteOutput {
+public interface ByteOutput extends AutoCloseable {
 
     /**
      * Writes specified unsigned {@value java.lang.Byte#SIZE}-bit value.
@@ -40,4 +40,9 @@ public interface ByteOutput {
      * @see ByteInput#read()
      */
     void write(int value) throws IOException;
+
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
 }

@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
-class NullableAdapter<T> implements ValueAdapter<T> {
+final class NullableAdapter<T> implements ValueAdapter<T> {
 
     NullableAdapter(final ValueAdapter<T> wrapped) {
         super();

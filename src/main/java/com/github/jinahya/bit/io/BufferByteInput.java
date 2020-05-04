@@ -38,11 +38,29 @@ import static java.util.Objects.requireNonNull;
  */
 public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
 
+    /**
+     * An implementation uses a single-byte-capacity buffer for reading bytes to a writable channel.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
     private static class ChannelAdapter extends BufferByteInput {
 
-        ChannelAdapter(final Supplier<? extends ReadableByteChannel> channelSupplier) {
+        /**
+         * Creates a new instance with specified channel supplier.
+         *
+         * @param channelSupplier the channel supplier.
+         */
+        private ChannelAdapter(final Supplier<? extends ReadableByteChannel> channelSupplier) {
             super(() -> (ByteBuffer) allocate(1).position(1));
             this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (channel != null) {
+                channel.close();
+            }
+            super.close(); // effectively does nothing; source is an instance of ByteBuffer.
         }
 
         @Override
@@ -97,6 +115,23 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
             @Override
             ReadableByteChannel channel() {
                 return channel;
+            }
+        };
+    }
+
+    /**
+     * Creates a new instance which reads bytes directly from specified source.
+     *
+     * @param source the source from which bytes are read.
+     * @return a new instance.
+     * @see BufferByteOutput#from(ByteBuffer)
+     */
+    public static BufferByteInput from(final ByteBuffer source) {
+        requireNonNull(source, "buffer is null");
+        return new BufferByteInput(nullSourceSupplier()) {
+            @Override
+            ByteBuffer source() {
+                return source;
             }
         };
     }

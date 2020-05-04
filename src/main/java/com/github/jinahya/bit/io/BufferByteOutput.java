@@ -49,9 +49,17 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
          *
          * @param channelSupplier the channel supplier.
          */
-        ChannelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
+        private ChannelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
             super(() -> allocate(1));
             this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (channel != null) {
+                channel.close();
+            }
+            super.close(); // effectively does nothing; target is an instance of ByteBuffer.
         }
 
         @Override
@@ -104,6 +112,23 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
             @Override
             WritableByteChannel channel() {
                 return channel;
+            }
+        };
+    }
+
+    /**
+     * Creates a new instance which writes bytes directly to specified target.
+     *
+     * @param target the target to which bytes are written.
+     * @return a new instance.
+     * @see BufferByteInput#from(ByteBuffer)
+     */
+    public static BufferByteOutput from(final ByteBuffer target) {
+        requireNonNull(target, "target is null");
+        return new BufferByteOutput(nullTargetSupplier()) {
+            @Override
+            ByteBuffer target() {
+                return target;
             }
         };
     }

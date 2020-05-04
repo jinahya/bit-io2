@@ -20,13 +20,14 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * An abstract class implements {@link ByteInput} adapting various byte sources.
+ * An abstract class implements {@link ByteInput} adapting specified byte source.
  *
  * @param <T> byte source parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -34,6 +35,9 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class ByteInputAdapter<T> implements ByteInput {
 
+    /**
+     * A target supplier always returns {@code null}.
+     */
     static Supplier<?> NULL_SOURCE_SUPPLIER;
 
     @SuppressWarnings({"unchecked"})
@@ -54,11 +58,20 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
         this.sourceSupplier = requireNonNull(sourceSupplier, "sourceSupplier is null");
     }
 
+    @Override
+    public void close() throws IOException {
+        if (source instanceof Closeable) {
+            ((Closeable) source).close();
+        }
+    }
+
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a
+     * lazily-initialized {@code source} and returns the result.
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @see ByteOutputAdapter#write(int)
      */
     @Override
     public int read() throws IOException {
@@ -71,10 +84,11 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      * @param source the source from which a byte is read.
      * @return an unsigned {@code 8}-bit value read from the {@code source}.
      * @throws IOException if an I/O error occurs.
+     * @see ByteOutputAdapter#write(Object, int)
      */
     protected abstract int read(T source) throws IOException;
 
-    private T source() {
+    T source() {
         if (source == null) {
             source = sourceSupplier.get();
         }

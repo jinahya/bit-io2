@@ -23,7 +23,10 @@ package com.github.jinahya.bit.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.function.Supplier;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A byte input reads bytes from an instance of {@link InputStream}.
@@ -33,6 +36,29 @@ import java.util.function.Supplier;
  */
 public class StreamByteInput extends ByteInputAdapter<InputStream> {
 
+    /**
+     * Creates a new instance which reads bytes directly from specified source.
+     *
+     * @param source the source from which bytes are read.
+     * @return a new instance.
+     * @see StreamByteOutput#from(OutputStream)
+     */
+    public static StreamByteInput from(final InputStream source) {
+        requireNonNull(source, "source is null");
+        return new StreamByteInput(nullSourceSupplier()) {
+            @Override
+            InputStream source() {
+                return source;
+            }
+        };
+    }
+
+    /**
+     * Creates a new instance with specified source supplier.
+     *
+     * @param sourceSupplier the source supplier.
+     * @see StreamByteOutput#StreamByteOutput(Supplier)
+     */
     public StreamByteInput(final Supplier<? extends InputStream> sourceSupplier) {
         super(sourceSupplier);
     }

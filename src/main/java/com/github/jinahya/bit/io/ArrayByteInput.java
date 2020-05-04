@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -37,9 +38,12 @@ import static java.util.Objects.requireNonNull;
 @Deprecated // forRemoval = true
 public class ArrayByteInput extends ByteInputAdapter<byte[]> {
 
+    /**
+     * An extended class for adapting an instance of {@link InputStream}.
+     */
     private static class StreamAdapter extends ArrayByteInput {
 
-        StreamAdapter(final Supplier<? extends InputStream> streamSupplier) {
+        private StreamAdapter(final Supplier<? extends InputStream> streamSupplier) {
             super(() -> new byte[1]);
             this.streamSupplier = requireNonNull(streamSupplier, "streamSupplier is null");
         }
@@ -66,7 +70,7 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
     }
 
     /**
-     * Creates a new instance with specified stream supplier.
+     * Creates a new instance which read bytes from an input stream supplied by specified stream supplier.
      *
      * @param streamSupplier the stream supplier.
      * @return a new instance.
@@ -76,10 +80,11 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
     }
 
     /**
-     * Creates a new instance reads bytes directly from specified input stream.
+     * Creates a new instance which reads bytes directly from specified input stream.
      *
      * @param stream the input from which bytes are read.
      * @return a new instance.
+     * @see ArrayByteOutput#from(OutputStream)
      */
     public static ArrayByteInput from(final InputStream stream) {
         if (stream == null) {
@@ -89,6 +94,26 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
             @Override
             InputStream stream() {
                 return stream;
+            }
+        };
+    }
+
+    /**
+     * Creates a new instance which reads bytes directly from specified source.
+     *
+     * @param source the source from which bytes are read.
+     * @return a new instance.
+     * @throws NullPointerException if {@code source} is {@code null}.
+     * @see ArrayByteOutput#from(byte[])
+     */
+    public static ArrayByteInput from(final byte[] source) {
+        if (source == null) {
+            throw new NullPointerException("source is null");
+        }
+        return new ArrayByteInput(() -> null) {
+            @Override
+            byte[] source() {
+                return source;
             }
         };
     }

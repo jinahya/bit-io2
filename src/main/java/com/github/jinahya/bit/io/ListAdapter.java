@@ -28,6 +28,12 @@ import java.util.List;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A value adapter for reading/writing a list.
+ *
+ * @param <T> element type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public class ListAdapter<T> implements ValueAdapter<List<T>> {
 
     /**

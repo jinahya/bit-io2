@@ -38,7 +38,7 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
 
     private static class StreamAdapter extends ArrayByteOutput {
 
-        StreamAdapter(final Supplier<? extends OutputStream> streamSupplier) {
+        private StreamAdapter(final Supplier<? extends OutputStream> streamSupplier) {
             super(() -> new byte[1]);
             this.streamSupplier = requireNonNull(streamSupplier, "streamSupplier is null");
         }
@@ -74,6 +74,26 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
             @Override
             OutputStream stream() {
                 return stream;
+            }
+        };
+    }
+
+    /**
+     * Creates a new instance which writes bytes directly to specified target.
+     *
+     * @param target the target to which bytes are written.
+     * @return a new instance.
+     * @throws NullPointerException if {@code target} is {@code null}.
+     * @see ArrayByteInput#from(byte[])
+     */
+    public static ArrayByteOutput from(final byte[] target) {
+        if (target == null) {
+            throw new NullPointerException("target is null");
+        }
+        return new ArrayByteOutput(() -> null) {
+            @Override
+            byte[] target() {
+                return target;
             }
         };
     }

@@ -22,13 +22,12 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BytesAdapter.bytesAdapter16;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 class UserAdapter implements ValueAdapter<User> {
 
     private static final ValueAdapter<String> NAME_ADAPTER
-            = ValueAdapter.nullable(new StringAdapter(bytesAdapter16(Byte.SIZE), UTF_8));
+            = ValueAdapter.nullable(new StringAdapter(new BytesAdapter(16, 8), UTF_8));
 
     @Override
     public void write(final BitOutput output, final User value) throws IOException {
