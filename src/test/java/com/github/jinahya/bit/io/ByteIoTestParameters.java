@@ -38,13 +38,13 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Slf4j
-final class ByteIoParameters {
+final class ByteIoTestParameters {
 
     private static final int BYTES = 1048576;
 
     // ----------------------------------------------------------------------------------------------------------- array
     @Deprecated
-    static Stream<Arguments> arrayByteIoParameters() {
+    static Stream<Arguments> arrayByteIoTestParameters() {
         final byte[][] holder = new byte[1][];
         final ByteOutput output = new ArrayByteOutput(() -> (holder[0] = new byte[BYTES]));
         final ByteInput input = new ArrayByteInput(() -> requireNonNull(holder[0], "holder[0] is null"));
@@ -52,7 +52,7 @@ final class ByteIoParameters {
     }
 
     @Deprecated
-    static Stream<Arguments> arrayByteIoParameters2() {
+    static Stream<Arguments> arrayByteIoTestParameters2() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = ArrayByteOutput.from(() -> (holder[0] = new ByteArrayOutputStream()));
         final ByteInput input = ArrayByteInput.from(
@@ -61,7 +61,7 @@ final class ByteIoParameters {
     }
 
     @Deprecated
-    static Stream<Arguments> arrayByteIoParameters3() {
+    static Stream<Arguments> arrayByteIoTestParameters3() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
         final ByteOutput output = ArrayByteOutput.from(baos);
         final byte[] array;
@@ -77,7 +77,7 @@ final class ByteIoParameters {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> bufferByteIoParameters() {
+    static Stream<Arguments> bufferByteIoTestParameters() {
         final ByteBuffer[] holder = new ByteBuffer[1];
         final ByteOutput output = new BufferByteOutput(() -> (holder[0] = allocate(BYTES)));
         final ByteInput input = new BufferByteInput(
@@ -85,7 +85,7 @@ final class ByteIoParameters {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> bufferByteIoParameters2() {
+    static Stream<Arguments> bufferByteIoTestParameters2() {
         final ByteBuffer[] holder = new ByteBuffer[1];
         final ByteOutput output = new BufferByteOutput(() -> (holder[0] = allocateDirect(BYTES)));
         final ByteInput input = new BufferByteInput(
@@ -93,7 +93,7 @@ final class ByteIoParameters {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> bufferByteIoParameters3() {
+    static Stream<Arguments> bufferByteIoTestParameters3() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = BufferByteOutput.from(() -> newChannel(holder[0] = new ByteArrayOutputStream()));
         final ByteInput input = BufferByteInput.from(
@@ -102,7 +102,7 @@ final class ByteIoParameters {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> bufferByteIoParameters4() {
+    static Stream<Arguments> bufferByteIoTestParameters4() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
         final ByteOutput output = BufferByteOutput.from(newChannel(baos));
         final byte[] array;
@@ -118,7 +118,7 @@ final class ByteIoParameters {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> dataByteIoParameters() {
+    static Stream<Arguments> dataByteIoTestParameters() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = new DataByteOutput(
                 () -> new DataOutputStream(holder[0] = new ByteArrayOutputStream()));
@@ -128,7 +128,7 @@ final class ByteIoParameters {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> streamByteIoParameters() {
+    static Stream<Arguments> streamByteIoTestParameters() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = new StreamByteOutput(() -> (holder[0] = new ByteArrayOutputStream()));
         final ByteInput input = new StreamByteInput(
@@ -137,7 +137,7 @@ final class ByteIoParameters {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> channelByteIoParameters() {
+    static Stream<Arguments> channelByteIoTestParameters() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ChannelByteOutput output = new ChannelByteOutput(
                 () -> {
@@ -153,21 +153,22 @@ final class ByteIoParameters {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> byteIoParameters() {
-        return Stream.of(arrayByteIoParameters(),
-                         arrayByteIoParameters2(),
-                         arrayByteIoParameters3(),
-                         bufferByteIoParameters(),
-                         bufferByteIoParameters3(),
-                         bufferByteIoParameters4(),
-                         dataByteIoParameters(),
-                         streamByteIoParameters(),
-                         channelByteIoParameters())
+    static Stream<Arguments> ByteIoTestParameters() {
+        return Stream.of(arrayByteIoTestParameters(),
+                         arrayByteIoTestParameters2(),
+                         arrayByteIoTestParameters3(),
+                         bufferByteIoTestParameters(),
+                         bufferByteIoTestParameters2(),
+                         bufferByteIoTestParameters3(),
+                         bufferByteIoTestParameters4(),
+                         dataByteIoTestParameters(),
+                         streamByteIoTestParameters(),
+                         channelByteIoTestParameters())
                 .flatMap(s -> s);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private ByteIoParameters() {
+    private ByteIoTestParameters() {
         super();
     }
 }

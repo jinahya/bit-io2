@@ -38,7 +38,7 @@ public class BitInputAdapter implements BitInput {
     static final Supplier<ByteInput> NULL_INPUT_SUPPLIER = () -> null;
 
     /**
-     * Creates a new instance which reads bytes directly from specified byte input.
+     * Creates a new instance which reads bytes from specified byte input.
      *
      * @param input the byte input from which bytes are read.
      * @return a new instance.

@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
 public class DataByteInput extends ByteInputAdapter<DataInput> {
 
     /**
-     * Creates a new instance which read bytes directly from specified source.
+     * Creates a new instance which read bytes from specified source.
      *
      * @param source the source from which bytes are read.
      * @return a new instance.

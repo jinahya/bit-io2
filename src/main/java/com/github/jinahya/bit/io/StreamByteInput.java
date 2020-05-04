@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
 public class StreamByteInput extends ByteInputAdapter<InputStream> {
 
     /**
-     * Creates a new instance which reads bytes directly from specified source.
+     * Creates a new instance which reads bytes from specified source.
      *
      * @param source the source from which bytes are read.
      * @return a new instance.

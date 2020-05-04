@@ -44,22 +44,38 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
      */
     private static class ChannelAdapter extends BufferByteOutput {
 
+        private ChannelAdapter(final Supplier<? extends ByteBuffer> targetSupplier,
+                               final Supplier<? extends WritableByteChannel> channelSupplier) {
+            super(targetSupplier);
+            this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        }
+
         /**
          * Creates a new instance with specified channel supplier.
          *
          * @param channelSupplier the channel supplier.
          */
         private ChannelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
-            super(() -> allocate(1));
-            this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+            this(() -> allocate(1), channelSupplier);
+        }
+
+        @Override
+        public void flush() throws IOException {
+            super.flush();
+            if (target != null) {
+                for (target.flip(); target.hasRemaining(); ) {
+                    channel().write(target);
+                }
+                target.clear();
+            }
         }
 
         @Override
         public void close() throws IOException {
+            super.close();
             if (channel != null) {
                 channel.close();
             }
-            super.close(); // effectively does nothing; target is an instance of ByteBuffer.
         }
 
         @Override
@@ -84,20 +100,25 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
         private transient WritableByteChannel channel;
     }
 
+    static BufferByteOutput from(final Supplier<? extends ByteBuffer> targetSupplier,
+                                 final Supplier<? extends WritableByteChannel> channelSupplier) {
+        return new ChannelAdapter(targetSupplier, channelSupplier);
+    }
+
     /**
      * Creates a new instance which writes bytes to a writable byte channel.
      *
      * @param channelSupplier a supplier for the writable byte channel.
      * @return a new instance.
-     * @see #from(WritableByteChannel)
+     * @see #from(Supplier, Supplier)
      * @see BufferByteInput#from(Supplier)
      */
     static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        return new ChannelAdapter(channelSupplier);
+        return from(() -> allocate(1), channelSupplier);
     }
 
     /**
-     * Creates a new instance writes bytes directly to specified writable byte channel.
+     * Creates a new instance writes bytes to specified writable byte channel.
      *
      * @param channel the writable byte channel to which bytes are written.
      * @return a new instance.
@@ -117,7 +138,7 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
     }
 
     /**
-     * Creates a new instance which writes bytes directly to specified target.
+     * Creates a new instance which writes bytes to specified target.
      *
      * @param target the target to which bytes are written.
      * @return a new instance.

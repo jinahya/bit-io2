@@ -22,8 +22,24 @@ package com.github.jinahya.bit.io;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * An abstract class for testing subclasses of {@link ByteInputAdapter} class.
+ *
+ * @param <T> subclass type parameter
+ * @param <U> source type parameter
+ * @see ByteOutputAdapterTest
+ */
 abstract class ByteInputAdapterTest<T extends ByteInputAdapter<U>, U> {
 
+    /**
+     * Creates a new instance with specified arguments.
+     *
+     * @param adapterClass a class of {@link T} to test.
+     * @param sourceClass  a class of {@link U} on which {@code adapterClass} is based.
+     * @see #adapterClass
+     * @see #sourceClass
+     * @see ByteOutputAdapterTest#ByteOutputAdapterTest(Class, Class)
+     */
     ByteInputAdapterTest(final Class<T> adapterClass, final Class<U> sourceClass) {
         super();
         this.adapterClass = requireNonNull(adapterClass, "adapterClass is null");

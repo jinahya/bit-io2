@@ -26,7 +26,7 @@ class StringAdapterTest extends ValueAdapterTest<StringAdapter, String> {
         super(StringAdapter.class, String.class);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoParameters#byteIoParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
     @ParameterizedTest
     void testAsciiAdapter(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                           @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -44,7 +44,7 @@ class StringAdapterTest extends ValueAdapterTest<StringAdapter, String> {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoParameters#byteIoParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
     @ParameterizedTest
     void test(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
               @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)

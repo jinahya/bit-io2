@@ -60,10 +60,15 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     @Override
-    public void close() throws IOException {
+    public void flush() throws IOException {
         if (target instanceof Flushable) {
             ((Flushable) target).flush();
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        flush();
         if (target instanceof Closeable) {
             ((Closeable) target).close();
         }
@@ -101,5 +106,5 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
     private final Supplier<? extends T> targetSupplier;
 
-    private transient T target;
+    transient T target;
 }

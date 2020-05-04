@@ -27,7 +27,7 @@ import java.nio.channels.WritableByteChannel;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 
-final class NonBlockingByteChannel {
+final class NonBlockingByteChannels {
 
     private static class Readable implements ReadableByteChannel {
 
@@ -83,7 +83,7 @@ final class NonBlockingByteChannel {
         return new Writable();
     }
 
-    private NonBlockingByteChannel() {
+    private NonBlockingByteChannels() {
         super();
     }
 }

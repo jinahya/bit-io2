@@ -93,6 +93,6 @@ final class BitIoConstraints {
      * Creates a new instance.
      */
     private BitIoConstraints() {
-        super();
+        throw new AssertionError("instantiation is not allowed");
     }
 }

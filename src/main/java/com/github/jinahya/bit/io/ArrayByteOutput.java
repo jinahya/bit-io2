@@ -44,10 +44,29 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
         }
 
         @Override
+        public void flush() throws IOException {
+            super.flush();
+            if (target != null && index > 0) {
+                stream().write(target, 0, index);
+                index = 0;
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            if (stream != null) {
+                stream.close();
+            }
+        }
+
+        @Override
         protected void write(final byte[] target, final int value) throws IOException {
             super.write(target, value);
-            stream().write(target);
-            index = 0;
+            if (index == target.length) {
+                stream().write(target);
+                index = 0;
+            }
         }
 
         OutputStream stream() {
@@ -79,7 +98,7 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
     }
 
     /**
-     * Creates a new instance which writes bytes directly to specified target.
+     * Creates a new instance which writes bytes to specified target.
      *
      * @param target the target to which bytes are written.
      * @return a new instance.

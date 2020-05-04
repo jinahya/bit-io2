@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
 public class DataByteOutput extends ByteOutputAdapter<DataOutput> {
 
     /**
-     * Creates a new instance which writes bytes directly to specified target.
+     * Creates a new instance which writes bytes to specified target.
      *
      * @param target the target to which bytes are written.
      * @return a new instance.

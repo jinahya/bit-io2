@@ -38,7 +38,7 @@ public class BitOutputAdapter implements BitOutput {
     static final Supplier<ByteOutput> NULL_OUTPUT_SUPPLIER = () -> null;
 
     /**
-     * Creates a new instance which writes bytes directly to specified byte output.
+     * Creates a new instance which writes bytes to specified byte output.
      *
      * @param output the byte output to which bytes are written.
      * @return a new instance.
@@ -61,7 +61,16 @@ public class BitOutputAdapter implements BitOutput {
     }
 
     @Override
+    public void flush() throws IOException {
+        BitOutput.super.flush();
+        if (output != null) {
+            output.flush();
+        }
+    }
+
+    @Override
     public void close() throws IOException {
+        BitOutput.super.close();
         if (output != null) {
             output.close();
         }

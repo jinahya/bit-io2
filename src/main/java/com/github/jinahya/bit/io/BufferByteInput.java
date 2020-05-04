@@ -45,14 +45,19 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
      */
     private static class ChannelAdapter extends BufferByteInput {
 
+        private ChannelAdapter(final Supplier<? extends ByteBuffer> sourceSupplier,
+                               final Supplier<? extends ReadableByteChannel> channelSupplier) {
+            super(sourceSupplier);
+            this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        }
+
         /**
          * Creates a new instance with specified channel supplier.
          *
          * @param channelSupplier the channel supplier.
          */
         private ChannelAdapter(final Supplier<? extends ReadableByteChannel> channelSupplier) {
-            super(() -> (ByteBuffer) allocate(1).position(1));
-            this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+            this(() -> (ByteBuffer) allocate(1).position(1), channelSupplier);
         }
 
         @Override
@@ -120,7 +125,7 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
     }
 
     /**
-     * Creates a new instance which reads bytes directly from specified source.
+     * Creates a new instance which reads bytes from specified source.
      *
      * @param source the source from which bytes are read.
      * @return a new instance.

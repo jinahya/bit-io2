@@ -80,7 +80,7 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
     }
 
     /**
-     * Creates a new instance which reads bytes directly from specified input stream.
+     * Creates a new instance which reads bytes from specified input stream.
      *
      * @param stream the input from which bytes are read.
      * @return a new instance.
@@ -99,7 +99,7 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
     }
 
     /**
-     * Creates a new instance which reads bytes directly from specified source.
+     * Creates a new instance which reads bytes from specified source.
      *
      * @param source the source from which bytes are read.
      * @return a new instance.

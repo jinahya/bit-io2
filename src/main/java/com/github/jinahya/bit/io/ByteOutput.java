@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Flushable;
 import java.io.IOException;
 
 /**
@@ -29,7 +30,17 @@ import java.io.IOException;
  * @see ByteInput
  */
 @FunctionalInterface
-public interface ByteOutput extends AutoCloseable {
+public interface ByteOutput extends Flushable, AutoCloseable {
+
+    @Override
+    default void flush() throws IOException {
+        // does nothing.
+    }
+
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
 
     /**
      * Writes specified unsigned {@value java.lang.Byte#SIZE}-bit value.
@@ -40,9 +51,4 @@ public interface ByteOutput extends AutoCloseable {
      * @see ByteInput#read()
      */
     void write(int value) throws IOException;
-
-    @Override
-    default void close() throws IOException {
-        // does nothing.
-    }
 }
