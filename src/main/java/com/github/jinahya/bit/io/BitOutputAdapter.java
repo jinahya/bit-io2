@@ -61,22 +61,6 @@ public class BitOutputAdapter implements BitOutput {
     }
 
     @Override
-    public void flush() throws IOException {
-        BitOutput.super.flush();
-        if (output != null) {
-            output.flush();
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        BitOutput.super.close();
-        if (output != null) {
-            output.close();
-        }
-    }
-
-    @Override
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
         requireValidSizeInt(unsigned, size);
         if (!unsigned) {

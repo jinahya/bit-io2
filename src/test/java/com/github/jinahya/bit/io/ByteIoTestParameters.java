@@ -42,40 +42,6 @@ final class ByteIoTestParameters {
 
     private static final int BYTES = 1048576;
 
-    // ----------------------------------------------------------------------------------------------------------- array
-    @Deprecated
-    static Stream<Arguments> arrayByteIoTestParameters() {
-        final byte[][] holder = new byte[1][];
-        final ByteOutput output = new ArrayByteOutput(() -> (holder[0] = new byte[BYTES]));
-        final ByteInput input = new ArrayByteInput(() -> requireNonNull(holder[0], "holder[0] is null"));
-        return Stream.of(arguments(output, input));
-    }
-
-    @Deprecated
-    static Stream<Arguments> arrayByteIoTestParameters2() {
-        final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
-        final ByteOutput output = ArrayByteOutput.from(() -> (holder[0] = new ByteArrayOutputStream()));
-        final ByteInput input = ArrayByteInput.from(
-                () -> new ByteArrayInputStream(requireNonNull(holder[0], "holder[0] is null").toByteArray()));
-        return Stream.of(arguments(output, input));
-    }
-
-    @Deprecated
-    static Stream<Arguments> arrayByteIoTestParameters3() {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
-        final ByteOutput output = ArrayByteOutput.from(baos);
-        final byte[] array;
-        try {
-            final Field f = ByteArrayOutputStream.class.getDeclaredField("buf");
-            f.setAccessible(true);
-            array = (byte[]) f.get(baos);
-        } catch (final ReflectiveOperationException roe) {
-            throw new RuntimeException(roe);
-        }
-        final ByteInput input = ArrayByteInput.from(new ByteArrayInputStream(array));
-        return Stream.of(arguments(output, input));
-    }
-
     // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> bufferByteIoTestParameters() {
         final ByteBuffer[] holder = new ByteBuffer[1];
@@ -155,10 +121,7 @@ final class ByteIoTestParameters {
 
     // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> ByteIoTestParameters() {
-        return Stream.of(arrayByteIoTestParameters(),
-                         arrayByteIoTestParameters2(),
-                         arrayByteIoTestParameters3(),
-                         bufferByteIoTestParameters(),
+        return Stream.of(bufferByteIoTestParameters(),
                          bufferByteIoTestParameters2(),
                          bufferByteIoTestParameters3(),
                          bufferByteIoTestParameters4(),

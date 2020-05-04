@@ -64,13 +64,6 @@ public class BitInputAdapter implements BitInput {
     }
 
     @Override
-    public void close() throws IOException {
-        if (input != null) {
-            input.close();
-        }
-    }
-
-    @Override
     public int readInt(final boolean unsigned, int size) throws IOException {
         requireValidSizeInt(unsigned, size);
         int value = 0;

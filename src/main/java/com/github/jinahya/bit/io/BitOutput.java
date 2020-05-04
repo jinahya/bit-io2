@@ -20,7 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.Flushable;
 import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
@@ -36,17 +35,7 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitInput
  */
-public interface BitOutput extends Flushable, AutoCloseable {
-
-    @Override
-    default void flush() throws IOException {
-        // does nothing
-    }
-
-    @Override
-    default void close() throws IOException {
-        flush();
-    }
+public interface BitOutput {
 
     /**
      * Writes specified {@code 1}-bit {@code boolean} value. This method writes {@code 0b1} for {@code true} and {@code

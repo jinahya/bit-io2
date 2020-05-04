@@ -36,12 +36,7 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitOutput
  */
-public interface BitInput extends AutoCloseable {
-
-    @Override
-    default void close() throws IOException {
-        // does nothing.
-    }
+public interface BitInput {
 
     /**
      * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} and returns
