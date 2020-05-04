@@ -34,6 +34,9 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
+    /**
+     * A target supplier always returns {@code null}.
+     */
     private static Supplier<?> NULL_TARGET_SUPPLIER;
 
     @SuppressWarnings({"unchecked"})
@@ -54,11 +57,20 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
         this.targetSupplier = requireNonNull(targetSupplier, "targetSupplier is null");
     }
 
+    @Override
+    public void close() throws Exception {
+        if (target instanceof AutoCloseable) {
+            ((AutoCloseable) target).close();
+        }
+    }
+
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code write(int)} method of {@code ByteOutputAdapter} class invokes {@link #write(Object,
+     * int)} with a lazily-initialized {@code target} and given {@code value}.
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @see ByteInputAdapter#read()
      */
     @Override
     public void write(final int value) throws IOException {
@@ -69,12 +81,13 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      * Writes specified unsigned {@code 8}-bit value to specified target.
      *
      * @param target the target.
-     * @param value  the unsigned {@code 8}-bit value to write.
+     * @param value  the unsigned {@code 8}-bit value to write; between {@code 1} and {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
+     * @see ByteInputAdapter#read(Object)
      */
     protected abstract void write(T target, int value) throws IOException;
 
-    private T target() {
+    T target() {
         if (target == null) {
             target = targetSupplier.get();
         }

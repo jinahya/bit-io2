@@ -102,6 +102,23 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
     }
 
     /**
+     * Creates a new instance which reads bytes directly from specified source.
+     *
+     * @param source the source from which bytes are read.
+     * @return a new instance.
+     * @see BufferByteOutput#from(ByteBuffer)
+     */
+    public static BufferByteInput from(final ByteBuffer source) {
+        requireNonNull(source, "buffer is null");
+        return new BufferByteInput(nullSourceSupplier()) {
+            @Override
+            ByteBuffer source() {
+                return source;
+            }
+        };
+    }
+
+    /**
      * Creates a new instance with specified source supplier.
      *
      * @param sourceSupplier the source supplier.

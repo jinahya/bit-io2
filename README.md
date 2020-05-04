@@ -12,26 +12,56 @@ There is no magic. The module just reads/writes values of requested number of bi
 ```
 CLIENT <-read- BitInput
                BitInputAdapter <-read- ByteInput
-                                       ByteInputAdapter <-read-- (byte[]
-                                                                  ByteBuffer
+                                       ByteInputAdapter <-read-- (ByteBuffer
                                                                   DataInput
                                                                   InputStream
-                                                                  RandomAccessFile
                                                                   ...)
 ```
 
 ```
 CLIENT -write-> BitOutput
                 BitOutputAdapter -write-> ByteOutput
-                                          ByteOutputAdapter -write-> (byte[]
-                                                                      ByteBuffer
+                                          ByteOutputAdapter -write-> (ByteBuffer
                                                                       DataOutput
                                                                       OutputStream
-                                                                      RandomAccessFile
                                                                       ...)
 ```
 
 These `...Adapter` classes which each implements top-level interfaces accept an instance of `Supplier<? extends T>` which means any byte sources/targets can be lazily initialized only when some bits are requested to be read/written. 
+
+### Where are `ArrayByte(Input|Output)`?
+
+The `ArrayByteInput` and the `ArrayByteOutput` class have been effectively removed. Use `BufferByte(Input|Output)` as wrapping the array.
+
+### What about `(Readable|Writable)ByteChannel`?
+
+There is, unfortunately, no methods for reading/writing bytes directly from/to those interfaces.
+
+You can use `ByteBuffer(Input|Output)` as a literally intermediate buffer.
+
+```java
+try(ReadableByteChannel channel = open()) {
+    // use 1-capacity buffer, internally.
+    BitInput input = BitInputAdapter.from(BufferByteInput.from(channel));
+    // ...
+    input.align();
+}
+```
+
+And you can always make it as lazy as possible.
+
+```java
+BitOutput output = new BitOutputAdapter(() -> {
+    // again, uses 1-capacity buffer, internally.
+    return BufferByteOutput.from(() -> {
+        try {
+            return open();
+        } catch (IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
+    });
+});
+```
 
 ## Types and Values
 

@@ -35,11 +35,16 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitInput
  */
-public interface BitOutput {
+public interface BitOutput extends AutoCloseable {
+
+    @Override
+    default void close() throws Exception {
+        // does nothing.
+    }
 
     /**
-     * Writes a {@code 1}-bit {@code boolean} value. This method writes {@code 0b1} for {@code true} and {@code 0b0} for
-     * {@code false}.
+     * Writes specified {@code 1}-bit {@code boolean} value. This method writes {@code 0b1} for {@code true} and {@code
+     * 0b0} for {@code false}.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
@@ -49,7 +54,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a {@code byte} value of specified number of bits.
+     * Writes specified {@code byte} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Byte#SIZE} - (unsigned ?
@@ -63,7 +68,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a signed {@code byte} value of specified number of bits.
+     * Writes specified signed {@code byte} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @param value the value to write.
@@ -75,7 +80,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
+     * Writes specified signed {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
      *
      * @param value the {@value java.lang.Byte#SIZE}-bit signed {@code byte} value to write.
      * @throws IOException if an I/O error occurs.
@@ -88,7 +93,7 @@ public interface BitOutput {
     /**
      * Writes specified unsigned {@code byte} value of specified bit size.
      *
-     * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Byte#SIZE}
+     * @param size  the number of lower bits to write; between {@code 1} (inclusive) and {@value java.lang.Byte#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
@@ -99,7 +104,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a {@code short} value of specified number of bits.
+     * Writes specified {@code short} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE} - (unsigned ?
@@ -113,7 +118,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a signed {@code short} value of specified number of bits.
+     * Writes specified signed {@code short} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE}, both inclusive.
      * @param value the value to write.
@@ -125,7 +130,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value.
+     * Writes specified signed {@value java.lang.Short#SIZE}-bit signed {@code short} value.
      *
      * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
      * @throws IOException if an I/O error occurs.
@@ -136,7 +141,8 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order.
+     * Writes specified signed {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte
+     * order.
      *
      * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
      * @throws IOException if an I/O error occurs.
@@ -161,7 +167,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes an {@code int} value of specified number of bits.
+     * Writes specified {@code int} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Integer#SIZE} - (unsigned ?
@@ -173,7 +179,7 @@ public interface BitOutput {
     void writeInt(boolean unsigned, int size, int value) throws IOException;
 
     /**
-     * Writes a signed {@code int} value of specified bit size.
+     * Writes specified signed {@code int} value of specified bit size.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
      * @param value the value to write.
@@ -208,7 +214,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes an unsigned {@code int} value of specified bit size.
+     * Writes specified unsigned {@code int} value of specified bit size.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
      *              (exclusive).
@@ -221,7 +227,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a {@code long} value of specified number of bits.
+     * Writes specified {@code long} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Long#SIZE} - (unsigned ?
@@ -249,7 +255,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a signed {@code long} value of specified bit size.
+     * Writes specified signed {@code long} value of specified bit size.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
      * @param value the value to write.
@@ -261,7 +267,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a signed {@value java.lang.Long#SIZE}-bit {@code long} value.
+     * Writes specified signed {@value java.lang.Long#SIZE}-bit {@code long} value.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
@@ -271,7 +277,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a signed {@value java.lang.Long#SIZE}-bit {@code long} value in little endian byte order.
+     * Writes specified signed {@value java.lang.Long#SIZE}-bit {@code long} value in little endian byte order.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
@@ -283,7 +289,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes an unsigned {@code long} value of specified bit size.
+     * Writes specified unsigned {@code long} value of specified bit size.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
      *              (exclusive).

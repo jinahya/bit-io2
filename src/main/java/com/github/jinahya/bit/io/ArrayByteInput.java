@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -80,6 +81,7 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
      *
      * @param stream the input from which bytes are read.
      * @return a new instance.
+     * @see ArrayByteOutput#from(OutputStream)
      */
     public static ArrayByteInput from(final InputStream stream) {
         if (stream == null) {
@@ -89,6 +91,21 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
             @Override
             InputStream stream() {
                 return stream;
+            }
+        };
+    }
+
+    /**
+     * Creates a new instance which reads bytes directly from specified source.
+     *
+     * @param source the source from which bytes are read.
+     * @return a new instance.
+     */
+    public static ArrayByteInput from(final byte[] source) {
+        return new ArrayByteInput(() -> null) {
+            @Override
+            byte[] source() {
+                return source;
             }
         };
     }

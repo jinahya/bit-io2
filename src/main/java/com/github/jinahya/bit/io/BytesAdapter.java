@@ -25,13 +25,18 @@ import java.io.IOException;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 
+/**
+ * A value adapter for reading/writing an array of bytes.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public class BytesAdapter implements ValueAdapter<byte[]> {
 
     private static BytesAdapter BYTES_ADAPTER8;
 
     public static BytesAdapter bytesAdapter8(final int elementSize) {
         if (BYTES_ADAPTER8 == null) {
-            BYTES_ADAPTER8 = new BytesAdapter(Byte.SIZE - 1, elementSize);
+            BYTES_ADAPTER8 = new BytesAdapter(Byte.SIZE, elementSize);
         }
         return BYTES_ADAPTER8;
     }
@@ -40,7 +45,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
 
     public static BytesAdapter bytesAdapter16(final int elementSize) {
         if (BYTES_ADAPTER16 == null) {
-            BYTES_ADAPTER16 = new BytesAdapter(Short.SIZE - 1, elementSize);
+            BYTES_ADAPTER16 = new BytesAdapter(Short.SIZE, elementSize);
         }
         return BYTES_ADAPTER16;
     }
@@ -49,7 +54,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
 
     public static BytesAdapter bytesAdapter24(final int elementSize) {
         if (BYTES_ADAPTER24 == null) {
-            BYTES_ADAPTER24 = new BytesAdapter(Byte.SIZE + Short.SIZE - 1, elementSize);
+            BYTES_ADAPTER24 = new BytesAdapter(Byte.SIZE + Short.SIZE, elementSize);
         }
         return BYTES_ADAPTER24;
     }
@@ -71,7 +76,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
 
     public static BytesAdapter unsignedBytesAdapter8(final int elementSize) {
         if (UNSIGNED_BYTES_ADAPTER8 == null) {
-            UNSIGNED_BYTES_ADAPTER8 = unsignedBytesAdapter(Byte.SIZE - 1, elementSize);
+            UNSIGNED_BYTES_ADAPTER8 = unsignedBytesAdapter(Byte.SIZE, elementSize);
         }
         return UNSIGNED_BYTES_ADAPTER8;
     }
@@ -80,7 +85,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
 
     public static BytesAdapter unsignedBytesAdapter16(final int elementSize) {
         if (UNSIGNED_BYTES_ADAPTER16 == null) {
-            UNSIGNED_BYTES_ADAPTER16 = unsignedBytesAdapter(Short.SIZE - 1, elementSize);
+            UNSIGNED_BYTES_ADAPTER16 = unsignedBytesAdapter(Short.SIZE, elementSize);
         }
         return UNSIGNED_BYTES_ADAPTER16;
     }
@@ -89,20 +94,26 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
 
     public static BytesAdapter unsignedBytesAdapter24(final int elementSize) {
         if (UNSIGNED_BYTES_ADAPTER24 == null) {
-            UNSIGNED_BYTES_ADAPTER24 = unsignedBytesAdapter(Byte.SIZE + Short.SIZE - 1, elementSize);
+            UNSIGNED_BYTES_ADAPTER24 = unsignedBytesAdapter(Byte.SIZE + Short.SIZE, elementSize);
         }
         return UNSIGNED_BYTES_ADAPTER24;
     }
 
     private static BytesAdapter UNSIGNED_BYTES_ADAPTER31;
 
-    public static BytesAdapter newInstance31Unsigned(final int elementSize) {
+    public static BytesAdapter unsignedBytesAdapter31(final int elementSize) {
         if (UNSIGNED_BYTES_ADAPTER31 == null) {
             UNSIGNED_BYTES_ADAPTER31 = unsignedBytesAdapter(Integer.SIZE - 1, elementSize);
         }
         return UNSIGNED_BYTES_ADAPTER31;
     }
 
+    /**
+     * Creates a new instance with specified arguments.
+     *
+     * @param lengthSize  a number of bits for the {@code length} of the array.
+     * @param elementSize a number of bits for each elements in the array.
+     */
     public BytesAdapter(final int lengthSize, final int elementSize) {
         super();
         this.lengthSize = requireValidSizeInt(true, lengthSize);

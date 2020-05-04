@@ -36,7 +36,12 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitOutput
  */
-public interface BitInput {
+public interface BitInput extends AutoCloseable {
+
+    @Override
+    default void close() throws Exception {
+        // does nothing.
+    }
 
     /**
      * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} and returns
@@ -229,7 +234,7 @@ public interface BitInput {
      * @see BitOutput#writeLong(boolean, int, long)
      */
     default long readLong(final boolean unsigned, int size) throws IOException {
-        size = requireValidSizeLong(unsigned, size);
+        requireValidSizeLong(unsigned, size);
         long value = 0L;
         if (!unsigned) {
             value -= readInt(true, 1);

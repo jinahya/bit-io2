@@ -30,7 +30,7 @@ import java.io.IOException;
  * @see ByteOutput
  */
 @FunctionalInterface
-public interface ByteInput {
+public interface ByteInput extends AutoCloseable {
 
     /**
      * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.
@@ -41,4 +41,9 @@ public interface ByteInput {
      * @see ByteOutput#write(int)
      */
     int read() throws IOException;
+
+    @Override
+    default void close() throws Exception {
+        // does nothing.
+    }
 }

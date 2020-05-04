@@ -22,6 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * An interface for reading/writing non-scalar values.
  *
@@ -31,14 +33,14 @@ import java.io.IOException;
 public interface ValueAdapter<T> {
 
     /**
-     * Returns an adapter which pre-reads/writes a {@code boolean} value for signalling the nullability of the value.
+     * Returns an adapter which pre-reads/writes a {@code boolean} value indicating the nullability of the value.
      *
      * @param wrapped the adapter to be wrapped.
      * @param <T>     value type parameter
      * @return an adapter wraps specified adapter.
      */
     static <T> ValueAdapter<T> nullable(final ValueAdapter<T> wrapped) {
-        return new NullableAdapter<>(wrapped);
+        return new NullableAdapter<>(requireNonNull(wrapped, "wrapped is null"));
     }
 
     /**

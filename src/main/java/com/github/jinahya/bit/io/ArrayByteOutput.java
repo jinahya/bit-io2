@@ -79,6 +79,21 @@ public class ArrayByteOutput extends ByteOutputAdapter<byte[]> {
     }
 
     /**
+     * Creates a new instance which writes bytes directly to specified target.
+     *
+     * @param target the target to which bytes are written.
+     * @return a new instance.
+     */
+    public static ArrayByteOutput from(final byte[] target) {
+        return new ArrayByteOutput(() -> null) {
+            @Override
+            byte[] target() {
+                return target;
+            }
+        };
+    }
+
+    /**
      * Creates a new instance with specified target supplier.
      *
      * @param targetSupplier the target supplier.
