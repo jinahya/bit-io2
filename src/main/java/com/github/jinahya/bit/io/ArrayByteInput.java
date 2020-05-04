@@ -99,26 +99,6 @@ public class ArrayByteInput extends ByteInputAdapter<byte[]> {
     }
 
     /**
-     * Creates a new instance which reads bytes from specified source.
-     *
-     * @param source the source from which bytes are read.
-     * @return a new instance.
-     * @throws NullPointerException if {@code source} is {@code null}.
-     * @see ArrayByteOutput#from(byte[])
-     */
-    public static ArrayByteInput from(final byte[] source) {
-        if (source == null) {
-            throw new NullPointerException("source is null");
-        }
-        return new ArrayByteInput(() -> null) {
-            @Override
-            byte[] source() {
-                return source;
-            }
-        };
-    }
-
-    /**
      * Creates a new instance with specified source supplier.
      *
      * @param sourceSupplier the source supplier.

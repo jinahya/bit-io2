@@ -128,6 +128,7 @@ final class ByteIoTestParameters {
         return Stream.of(arguments(output, input));
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> streamByteIoTestParameters() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = new StreamByteOutput(() -> (holder[0] = new ByteArrayOutputStream()));

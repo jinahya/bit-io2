@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -97,7 +98,7 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      */
     protected abstract void write(T target, int value) throws IOException;
 
-    T target() {
+    private T target() {
         if (target == null) {
             target = targetSupplier.get();
         }

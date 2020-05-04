@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,31 +45,6 @@ class ArrayByteInputTest extends ByteInputAdapterTest<ArrayByteInput, byte[]> {
      */
     ArrayByteInputTest() {
         super(ArrayByteInput.class, byte[].class);
-    }
-
-    // ---------------------------------------------------------------------------------------------------- from(byte[])
-
-    /**
-     * Asserts {@link ArrayByteInput#from(byte[])} method throws a {@code NullPointerException} when {@code source} is
-     * {@code null}.
-     *
-     * @see ArrayByteOutputTest#testFromByteArrayThrowNullPointerExceptionWhenSourceIsNull()
-     */
-    @Test
-    void testFromByteArrayThrowNullPointerExceptionWhenSourceIsNull() {
-        assertThrows(NullPointerException.class, () -> ArrayByteInput.from((byte[]) null));
-    }
-
-    /**
-     * Tests {@link ArrayByteInput#from(byte[])} method with a non-null {@code source} asserting the result is not
-     * {@code null}.
-     *
-     * @see ArrayByteOutputTest#testFromByteArray()
-     */
-    @Test
-    void testFromByteArray() {
-        final ArrayByteInput instance = ArrayByteInput.from(new byte[0]);
-        assertNotNull(instance);
     }
 
     // ----------------------------------------------------------------------------------------------- from(InputStream)
@@ -94,7 +70,7 @@ class ArrayByteInputTest extends ByteInputAdapterTest<ArrayByteInput, byte[]> {
     @DisplayName("from(InputStream) returns non-null")
     @Test
     void testFromInputStream() {
-        final ArrayByteInput instance = ArrayByteInput.from(new byte[0]);
+        final ArrayByteInput instance = ArrayByteInput.from(new ByteArrayInputStream(new byte[0]));
         assertNotNull(instance);
     }
 }

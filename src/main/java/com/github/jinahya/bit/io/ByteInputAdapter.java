@@ -88,7 +88,7 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      */
     protected abstract int read(T source) throws IOException;
 
-    T source() {
+    private T source() {
         if (source == null) {
             source = sourceSupplier.get();
         }

@@ -138,23 +138,6 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
     }
 
     /**
-     * Creates a new instance which writes bytes to specified target.
-     *
-     * @param target the target to which bytes are written.
-     * @return a new instance.
-     * @see BufferByteInput#from(ByteBuffer)
-     */
-    public static BufferByteOutput from(final ByteBuffer target) {
-        requireNonNull(target, "target is null");
-        return new BufferByteOutput(nullTargetSupplier()) {
-            @Override
-            ByteBuffer target() {
-                return target;
-            }
-        };
-    }
-
-    /**
      * Creates a new instance with specified target supplier.
      *
      * @param targetSupplier the target supplier.
