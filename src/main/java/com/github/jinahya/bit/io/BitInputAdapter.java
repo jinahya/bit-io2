@@ -64,7 +64,7 @@ public class BitInputAdapter implements BitInput {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         if (input != null) {
             input.close();
         }

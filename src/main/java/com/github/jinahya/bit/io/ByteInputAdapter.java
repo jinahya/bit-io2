@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -58,9 +59,9 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     }
 
     @Override
-    public void close() throws Exception {
-        if (source instanceof AutoCloseable) {
-            ((AutoCloseable) source).close();
+    public void close() throws IOException {
+        if (source instanceof Closeable) {
+            ((Closeable) source).close();
         }
     }
 

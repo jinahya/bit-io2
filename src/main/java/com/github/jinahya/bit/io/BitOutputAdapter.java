@@ -61,7 +61,7 @@ public class BitOutputAdapter implements BitOutput {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         if (output != null) {
             output.close();
         }

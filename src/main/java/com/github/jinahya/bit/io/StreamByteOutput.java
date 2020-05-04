@@ -56,13 +56,15 @@ public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
      * Creates a new instance with specified target supplier.
      *
      * @param targetSupplier the target supplier.
+     * @see StreamByteInput#StreamByteInput(Supplier)
      */
     public StreamByteOutput(final Supplier<? extends OutputStream> targetSupplier) {
         super(targetSupplier);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes {@link
+     * OutputStream#write(int)} method on specified {@code target} with specified {@code value}.
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}

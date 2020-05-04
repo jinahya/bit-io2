@@ -49,9 +49,17 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
          *
          * @param channelSupplier the channel supplier.
          */
-        ChannelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
+        private ChannelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
             super(() -> allocate(1));
             this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (channel != null) {
+                channel.close();
+            }
+            super.close(); // effectively does nothing; target is an instance of ByteBuffer.
         }
 
         @Override

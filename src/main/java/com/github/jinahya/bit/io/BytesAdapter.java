@@ -32,81 +32,37 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
  */
 public class BytesAdapter implements ValueAdapter<byte[]> {
 
-    private static BytesAdapter BYTES_ADAPTER8;
+    private static class UnsignedBytesAdapter extends BytesAdapter {
 
-    public static BytesAdapter bytesAdapter8(final int elementSize) {
-        if (BYTES_ADAPTER8 == null) {
-            BYTES_ADAPTER8 = new BytesAdapter(Byte.SIZE, elementSize);
+        private UnsignedBytesAdapter(final int lengthSize, final int elementSize) {
+            super(lengthSize, requireValidSizeByte(true, elementSize));
         }
-        return BYTES_ADAPTER8;
-    }
 
-    private static BytesAdapter BYTES_ADAPTER16;
-
-    public static BytesAdapter bytesAdapter16(final int elementSize) {
-        if (BYTES_ADAPTER16 == null) {
-            BYTES_ADAPTER16 = new BytesAdapter(Short.SIZE, elementSize);
+        @Override
+        public void write(final BitOutput output, final byte[] value) throws IOException {
+            final int length = value.length & ((1 << lengthSize) - 1);
+            output.writeUnsignedInt(lengthSize, length);
+            for (int i = 0; i < length; i++) {
+                output.writeByte(true, elementSize, value[i]);
+            }
         }
-        return BYTES_ADAPTER16;
-    }
 
-    private static BytesAdapter BYTES_ADAPTER24;
-
-    public static BytesAdapter bytesAdapter24(final int elementSize) {
-        if (BYTES_ADAPTER24 == null) {
-            BYTES_ADAPTER24 = new BytesAdapter(Byte.SIZE + Short.SIZE, elementSize);
+        @Override
+        public byte[] read(final BitInput input) throws IOException {
+            final int length = input.readUnsignedInt(lengthSize);
+            final byte[] value = new byte[length];
+            for (int i = 0; i < value.length; i++) {
+                value[i] = input.readByte(true, elementSize);
+            }
+            return value;
         }
-        return BYTES_ADAPTER24;
-    }
-
-    private static BytesAdapter BYTES_ADAPTER31;
-
-    public static BytesAdapter bytesAdapter31(final int elementSize) {
-        if (BYTES_ADAPTER31 == null) {
-            BYTES_ADAPTER31 = new BytesAdapter(Integer.SIZE - 1, elementSize);
-        }
-        return BYTES_ADAPTER31;
     }
 
     public static BytesAdapter unsignedBytesAdapter(final int lengthSize, final int elementSize) {
-        return new BytesAdapter(lengthSize, requireValidSizeByte(true, elementSize));
+        return new UnsignedBytesAdapter(lengthSize, elementSize);
     }
 
     private static BytesAdapter UNSIGNED_BYTES_ADAPTER8;
-
-    public static BytesAdapter unsignedBytesAdapter8(final int elementSize) {
-        if (UNSIGNED_BYTES_ADAPTER8 == null) {
-            UNSIGNED_BYTES_ADAPTER8 = unsignedBytesAdapter(Byte.SIZE, elementSize);
-        }
-        return UNSIGNED_BYTES_ADAPTER8;
-    }
-
-    private static BytesAdapter UNSIGNED_BYTES_ADAPTER16;
-
-    public static BytesAdapter unsignedBytesAdapter16(final int elementSize) {
-        if (UNSIGNED_BYTES_ADAPTER16 == null) {
-            UNSIGNED_BYTES_ADAPTER16 = unsignedBytesAdapter(Short.SIZE, elementSize);
-        }
-        return UNSIGNED_BYTES_ADAPTER16;
-    }
-
-    private static BytesAdapter UNSIGNED_BYTES_ADAPTER24;
-
-    public static BytesAdapter unsignedBytesAdapter24(final int elementSize) {
-        if (UNSIGNED_BYTES_ADAPTER24 == null) {
-            UNSIGNED_BYTES_ADAPTER24 = unsignedBytesAdapter(Byte.SIZE + Short.SIZE, elementSize);
-        }
-        return UNSIGNED_BYTES_ADAPTER24;
-    }
-
-    private static BytesAdapter UNSIGNED_BYTES_ADAPTER31;
-
-    public static BytesAdapter unsignedBytesAdapter31(final int elementSize) {
-        if (UNSIGNED_BYTES_ADAPTER31 == null) {
-            UNSIGNED_BYTES_ADAPTER31 = unsignedBytesAdapter(Integer.SIZE - 1, elementSize);
-        }
-        return UNSIGNED_BYTES_ADAPTER31;
-    }
 
     /**
      * Creates a new instance with specified arguments.

@@ -43,7 +43,7 @@ public interface ByteInput extends AutoCloseable {
     int read() throws IOException;
 
     @Override
-    default void close() throws Exception {
+    default void close() throws IOException {
         // does nothing.
     }
 }

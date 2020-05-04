@@ -20,6 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -58,9 +60,12 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     @Override
-    public void close() throws Exception {
-        if (target instanceof AutoCloseable) {
-            ((AutoCloseable) target).close();
+    public void close() throws IOException {
+        if (target instanceof Flushable) {
+            ((Flushable) target).flush();
+        }
+        if (target instanceof Closeable) {
+            ((Closeable) target).close();
         }
     }
 

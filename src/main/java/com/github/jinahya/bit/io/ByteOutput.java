@@ -42,7 +42,7 @@ public interface ByteOutput extends AutoCloseable {
     void write(int value) throws IOException;
 
     @Override
-    default void close() throws Exception {
+    default void close() throws IOException {
         // does nothing.
     }
 }

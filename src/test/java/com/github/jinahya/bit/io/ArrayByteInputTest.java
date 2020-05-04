@@ -20,24 +20,81 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static java.util.concurrent.ThreadLocalRandom.current;
+import java.io.InputStream;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+/**
+ * A class for testing {@link ArrayByteInput} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ArrayByteOutput
+ */
 @Deprecated
 class ArrayByteInputTest extends ByteInputAdapterTest<ArrayByteInput, byte[]> {
 
-    static ArrayByteInput white() {
-        return new ArrayByteInput(() -> null) {
-            @Override
-            public int read(final byte[] source) throws IOException {
-                assert source == null;
-                return current().nextInt(0, 256);
-            }
-        };
-    }
-
+    /**
+     * Creates a new instance.
+     *
+     * @see ArrayByteOutputTest#ArrayByteOutputTest()
+     */
     ArrayByteInputTest() {
         super(ArrayByteInput.class, byte[].class);
+    }
+
+    // ---------------------------------------------------------------------------------------------------- from(byte[])
+
+    /**
+     * Asserts {@link ArrayByteInput#from(byte[])} method throws a {@code NullPointerException} when {@code source} is
+     * {@code null}.
+     *
+     * @see ArrayByteOutputTest#testFromByteArrayThrowNullPointerExceptionWhenSourceIsNull()
+     */
+    @Test
+    void testFromByteArrayThrowNullPointerExceptionWhenSourceIsNull() {
+        assertThrows(NullPointerException.class, () -> ArrayByteInput.from((byte[]) null));
+    }
+
+    /**
+     * Tests {@link ArrayByteInput#from(byte[])} method with a non-null {@code source} asserting the result is not
+     * {@code null}.
+     *
+     * @see ArrayByteOutputTest#testFromByteArray()
+     */
+    @Test
+    void testFromByteArray() {
+        final ArrayByteInput instance = ArrayByteInput.from(new byte[0]);
+        assertNotNull(instance);
+    }
+
+    // ----------------------------------------------------------------------------------------------- from(InputStream)
+
+    /**
+     * Asserts {@link ArrayByteInput#from(InputStream)} method throws a {@code NullPointerException} when {@code source}
+     * is {@code null}.
+     *
+     * @see ArrayByteOutputTest#testFromByteArrayThrowNullPointerExceptionWhenSourceIsNull()
+     */
+    @DisplayName("from(InputStream) throws NullPointerException when source is null")
+    @Test
+    void testFromInputStreamArrayThrowNullPointerExceptionWhenSourceIsNull() {
+        assertThrows(NullPointerException.class, () -> ArrayByteInput.from((InputStream) null));
+    }
+
+    /**
+     * Tests {@link ArrayByteInput#from(InputStream)} method with a non-null {@code source} asserting the result is not
+     * {@code null}.
+     *
+     * @see ArrayByteOutputTest#testFromByteArray()
+     */
+    @DisplayName("from(InputStream) returns non-null")
+    @Test
+    void testFromInputStream() {
+        final ArrayByteInput instance = ArrayByteInput.from(new byte[0]);
+        assertNotNull(instance);
     }
 }

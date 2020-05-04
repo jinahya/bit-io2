@@ -39,7 +39,7 @@ import static java.util.Objects.requireNonNull;
 public interface BitInput extends AutoCloseable {
 
     @Override
-    default void close() throws Exception {
+    default void close() throws IOException {
         // does nothing.
     }
 
