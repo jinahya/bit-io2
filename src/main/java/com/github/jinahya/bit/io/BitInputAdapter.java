@@ -42,9 +42,9 @@ public class BitInputAdapter implements BitInput {
      *
      * @param input the byte input from which bytes are read.
      * @return a new instance.
-     * @see BitOutputAdapter#from(ByteOutput)
+     * @see BitOutputAdapter#of(ByteOutput)
      */
-    public static BitInputAdapter from(final ByteInput input) {
+    public static BitInputAdapter of(final ByteInput input) {
         if (input == null) {
             throw new NullPointerException("input is null");
         }
@@ -132,7 +132,7 @@ public class BitInputAdapter implements BitInput {
 
     private final Supplier<? extends ByteInput> inputSupplier;
 
-    private transient ByteInput input;
+    private ByteInput input;
 
     /**
      * The current octet.

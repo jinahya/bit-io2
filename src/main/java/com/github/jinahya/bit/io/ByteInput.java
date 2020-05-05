@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

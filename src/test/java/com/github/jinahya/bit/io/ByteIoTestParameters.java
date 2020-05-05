@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ final class ByteIoTestParameters {
     private static final int BYTES = 1048576;
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> bufferByteIoTestParameters() {
+    static Stream<Arguments> buffer() {
         final ByteBuffer[] holder = new ByteBuffer[1];
         final ByteOutput output = new BufferByteOutput(() -> (holder[0] = allocate(BYTES)));
         final ByteInput input = new BufferByteInput(
@@ -51,7 +51,7 @@ final class ByteIoTestParameters {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> bufferByteIoTestParameters2() {
+    static Stream<Arguments> buffer2() {
         final ByteBuffer[] holder = new ByteBuffer[1];
         final ByteOutput output = new BufferByteOutput(() -> (holder[0] = allocateDirect(BYTES)));
         final ByteInput input = new BufferByteInput(
@@ -59,7 +59,7 @@ final class ByteIoTestParameters {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> bufferByteIoTestParameters3() {
+    static Stream<Arguments> buffer3() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = BufferByteOutput.from(() -> newChannel(holder[0] = new ByteArrayOutputStream()));
         final ByteInput input = BufferByteInput.from(
@@ -68,9 +68,9 @@ final class ByteIoTestParameters {
         return Stream.of(arguments(output, input));
     }
 
-    static Stream<Arguments> bufferByteIoTestParameters4() {
+    static Stream<Arguments> buffer4() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
-        final ByteOutput output = BufferByteOutput.from(newChannel(baos));
+        final ByteOutput output = BufferByteOutput.from(() -> newChannel(baos));
         final byte[] array;
         try {
             final Field f = ByteArrayOutputStream.class.getDeclaredField("buf");
@@ -79,12 +79,12 @@ final class ByteIoTestParameters {
         } catch (final ReflectiveOperationException roe) {
             throw new RuntimeException(roe);
         }
-        final ByteInput input = BufferByteInput.from(newChannel(new ByteArrayInputStream(array)));
+        final ByteInput input = BufferByteInput.from(() -> newChannel(new ByteArrayInputStream(array)));
         return Stream.of(arguments(output, input));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> dataByteIoTestParameters() {
+    static Stream<Arguments> data() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = new DataByteOutput(
                 () -> new DataOutputStream(holder[0] = new ByteArrayOutputStream()));
@@ -95,7 +95,7 @@ final class ByteIoTestParameters {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> streamByteIoTestParameters() {
+    static Stream<Arguments> stream() {
         final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
         final ByteOutput output = new StreamByteOutput(() -> (holder[0] = new ByteArrayOutputStream()));
         final ByteInput input = new StreamByteInput(
@@ -104,30 +104,13 @@ final class ByteIoTestParameters {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> channelByteIoTestParameters() {
-        final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
-        final ChannelByteOutput output = new ChannelByteOutput(
-                () -> {
-                    holder[0] = new ByteArrayOutputStream();
-                    return newChannel(holder[0]);
-                });
-        final ByteInput input = new ChannelByteInput(
-                () -> {
-                    final byte[] bytes = requireNonNull(holder[0], "holder[0] is null").toByteArray();
-                    return newChannel(new ByteArrayInputStream(bytes));
-                });
-        return Stream.of(arguments(output, input));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> ByteIoTestParameters() {
-        return Stream.of(bufferByteIoTestParameters(),
-                         bufferByteIoTestParameters2(),
-                         bufferByteIoTestParameters3(),
-                         bufferByteIoTestParameters4(),
-                         dataByteIoTestParameters(),
-                         streamByteIoTestParameters(),
-                         channelByteIoTestParameters())
+        return Stream.of(buffer(),
+                         buffer2(),
+                         buffer3(),
+                         buffer4(),
+                         data(),
+                         stream())
                 .flatMap(s -> s);
     }
 

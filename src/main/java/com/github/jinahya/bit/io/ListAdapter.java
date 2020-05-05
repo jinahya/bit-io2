@@ -51,7 +51,6 @@ public class ListAdapter<T> implements ValueAdapter<List<T>> {
     @Override
     public void write(final BitOutput output, final List<T> value) throws IOException {
         final int length = value.size() & ((1 << lengthSize) - 1);
-        assert length <= value.size();
         output.writeUnsignedInt(lengthSize, length);
         final Iterator<T> i = value.iterator();
         for (int l = 0; l < length; l++) {

@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.Supplier;
 
@@ -49,6 +50,7 @@ public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @see StreamByteInput#read(InputStream)
      */
     @Override
     protected void write(final OutputStream target, final int value) throws IOException {

@@ -42,22 +42,22 @@ class BitOutputAdapterTest {
     // ------------------------------------------------------------------------------------------------------------ from
 
     /**
-     * Asserts {@link BitOutputAdapter#from(ByteOutput)} method throws a {@code NullPointerException} when {@code
-     * output} argument is {@code null}.
+     * Asserts {@link BitOutputAdapter#of(ByteOutput)} method throws a {@code NullPointerException} when {@code output}
+     * argument is {@code null}.
      */
     @DisplayName("from(output) throws NullPointerException when output is null")
     @Test
     void assertFromThrowNullPointerExceptionWhenOutputIsNull() {
-        assertThrows(NullPointerException.class, () -> BitOutputAdapter.from(null));
+        assertThrows(NullPointerException.class, () -> BitOutputAdapter.of(null));
     }
 
     /**
-     * Tests {@link BitOutputAdapter#from(ByteOutput)} method.
+     * Tests {@link BitOutputAdapter#of(ByteOutput)} method.
      */
     @DisplayName("from(output)")
     @Test
     void testFrom() throws IOException {
-        final BitOutputAdapter instance = BitOutputAdapter.from(ByteOutputTest.black());
+        final BitOutputAdapter instance = BitOutputAdapter.of(ByteOutputTest.black());
         assertNotNull(instance);
     }
 
