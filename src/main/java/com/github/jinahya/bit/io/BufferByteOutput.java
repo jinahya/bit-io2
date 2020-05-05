@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.function.Supplier;
 
@@ -44,22 +43,10 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
      */
     private static class ChannelAdapter extends BufferByteOutput {
 
-        /**
-         * Creates a new instance with specified channel supplier.
-         *
-         * @param channelSupplier the channel supplier.
-         */
-        private ChannelAdapter(final Supplier<? extends WritableByteChannel> channelSupplier) {
-            super(() -> allocate(1));
+        private ChannelAdapter(final Supplier<? extends ByteBuffer> targetSupplier,
+                               final Supplier<? extends WritableByteChannel> channelSupplier) {
+            super(targetSupplier);
             this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
-        }
-
-        @Override
-        public void close() throws IOException {
-            if (channel != null) {
-                channel.close();
-            }
-            super.close(); // effectively does nothing; target is an instance of ByteBuffer.
         }
 
         @Override
@@ -67,12 +54,12 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
             super.write(target, value);
             while (!target.hasRemaining()) {
                 target.flip(); // limit -> position, position -> zero
-                final int written = channel().write(target);
+                channel().write(target);
                 target.compact();
             }
         }
 
-        WritableByteChannel channel() {
+        private WritableByteChannel channel() {
             if (channel == null) {
                 channel = channelSupplier.get();
             }
@@ -81,56 +68,18 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
 
         private final Supplier<? extends WritableByteChannel> channelSupplier;
 
-        private transient WritableByteChannel channel;
+        private WritableByteChannel channel;
     }
 
     /**
-     * Creates a new instance which writes bytes to a writable byte channel.
+     * Creates a new instance which writes bytes to a writable byte channel supplied by specified supplier.
      *
-     * @param channelSupplier a supplier for the writable byte channel.
+     * @param channelSupplier the supplier for the writable byte channel.
      * @return a new instance.
-     * @see #from(WritableByteChannel)
      * @see BufferByteInput#from(Supplier)
      */
-    static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        return new ChannelAdapter(channelSupplier);
-    }
-
-    /**
-     * Creates a new instance writes bytes directly to specified writable byte channel.
-     *
-     * @param channel the writable byte channel to which bytes are written.
-     * @return a new instance.
-     * @see #from(Supplier)
-     * @see BufferByteInput#from(ReadableByteChannel)
-     */
-    static BufferByteOutput from(final WritableByteChannel channel) {
-        if (channel == null) {
-            throw new NullPointerException("channel is null");
-        }
-        return new ChannelAdapter(nullTargetSupplier()) {
-            @Override
-            WritableByteChannel channel() {
-                return channel;
-            }
-        };
-    }
-
-    /**
-     * Creates a new instance which writes bytes directly to specified target.
-     *
-     * @param target the target to which bytes are written.
-     * @return a new instance.
-     * @see BufferByteInput#from(ByteBuffer)
-     */
-    public static BufferByteOutput from(final ByteBuffer target) {
-        requireNonNull(target, "target is null");
-        return new BufferByteOutput(nullTargetSupplier()) {
-            @Override
-            ByteBuffer target() {
-                return target;
-            }
-        };
+    public static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
+        return new ChannelAdapter(() -> allocate(1), channelSupplier);
     }
 
     /**
@@ -142,6 +91,14 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
         super(targetSupplier);
     }
 
+    /**
+     * {@inheritDoc} The {@code write(ByteBuffer, int)} method of {@code BufferByteOutput} class invokes {@link
+     * ByteBuffer#put(byte)} method on {@code target} with the {@code value} casted as a {@code byte}.
+     *
+     * @param target {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     protected void write(final ByteBuffer target, final int value) throws IOException {
         target.put((byte) value);

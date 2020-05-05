@@ -34,7 +34,7 @@ class UserAdapterTest extends ValueAdapterTest<UserAdapter, User> {
         super(UserAdapter.class, User.class);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoParameters#byteIoParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
     @ParameterizedTest
     void test(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
               @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)

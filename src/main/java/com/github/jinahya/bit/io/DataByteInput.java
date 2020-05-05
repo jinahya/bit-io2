@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A byte input reads bytes from an instance of {@link DataInput}.
@@ -34,23 +31,6 @@ import static java.util.Objects.requireNonNull;
  * @see DataByteOutput
  */
 public class DataByteInput extends ByteInputAdapter<DataInput> {
-
-    /**
-     * Creates a new instance which read bytes directly from specified source.
-     *
-     * @param source the source from which bytes are read.
-     * @return a new instance.
-     * @see DataByteOutput#from(DataOutput)
-     */
-    public static DataByteInput from(final DataInput source) {
-        requireNonNull(source, "source is null");
-        return new DataByteInput(nullSourceSupplier()) {
-            @Override
-            DataInput source() {
-                return source;
-            }
-        };
-    }
 
     /**
      * Creates a new instance with specified source supplier.

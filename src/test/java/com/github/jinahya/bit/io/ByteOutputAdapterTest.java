@@ -27,16 +27,18 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T> byte output adapter type parameter
  * @param <U> byte target type parameter
+ * @see ByteInputAdapterTest
  */
 abstract class ByteOutputAdapterTest<T extends ByteOutputAdapter<U>, U> {
 
     /**
      * Creates a new instance with specified classes.
      *
-     * @param adapterClass an adapter class to test.
-     * @param targetClass  a byte target class the {@code adapterClass} adapts.
+     * @param adapterClass a class of {@link T} to test.
+     * @param targetClass  a class of {@link U} on which {@code adapterClass} is based on.
      * @see #adapterClass
      * @see #targetClass
+     * @see ByteInputAdapterTest#ByteInputAdapterTest(Class, Class)
      */
     ByteOutputAdapterTest(final Class<T> adapterClass, final Class<U> targetClass) {
         super();

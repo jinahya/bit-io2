@@ -32,6 +32,11 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
  */
 public class BytesAdapter implements ValueAdapter<byte[]> {
 
+    /**
+     * An extended class for unsigned bytes.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
     private static class UnsignedBytesAdapter extends BytesAdapter {
 
         private UnsignedBytesAdapter(final int lengthSize, final int elementSize) {
@@ -40,8 +45,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
 
         @Override
         public void write(final BitOutput output, final byte[] value) throws IOException {
-            final int length = value.length & ((1 << lengthSize) - 1);
-            output.writeUnsignedInt(lengthSize, length);
+            final int length = writeLength(output, value);
             for (int i = 0; i < length; i++) {
                 output.writeByte(true, elementSize, value[i]);
             }
@@ -49,7 +53,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
 
         @Override
         public byte[] read(final BitInput input) throws IOException {
-            final int length = input.readUnsignedInt(lengthSize);
+            final int length = readLength(input);
             final byte[] value = new byte[length];
             for (int i = 0; i < value.length; i++) {
                 value[i] = input.readByte(true, elementSize);
@@ -58,17 +62,22 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         }
     }
 
+    /**
+     * Creates a new instance for reading/writing unsigned bytes.
+     *
+     * @param lengthSize  the number of bits for the length of the array.
+     * @param elementSize the number of bits for each element in the array.
+     * @return a new instance.
+     */
     public static BytesAdapter unsignedBytesAdapter(final int lengthSize, final int elementSize) {
         return new UnsignedBytesAdapter(lengthSize, elementSize);
     }
-
-    private static BytesAdapter UNSIGNED_BYTES_ADAPTER8;
 
     /**
      * Creates a new instance with specified arguments.
      *
      * @param lengthSize  a number of bits for the {@code length} of the array.
-     * @param elementSize a number of bits for each elements in the array.
+     * @param elementSize a number of bits for each element in the array.
      */
     public BytesAdapter(final int lengthSize, final int elementSize) {
         super();
@@ -76,18 +85,27 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         this.elementSize = requireValidSizeByte(false, elementSize);
     }
 
-    @Override
-    public void write(final BitOutput output, final byte[] value) throws IOException {
+    final int writeLength(final BitOutput output, final byte[] value) throws IOException {
         final int length = value.length & ((1 << lengthSize) - 1);
         output.writeUnsignedInt(lengthSize, length);
+        return length;
+    }
+
+    @Override
+    public void write(final BitOutput output, final byte[] value) throws IOException {
+        final int length = writeLength(output, value);
         for (int i = 0; i < length; i++) {
             output.writeByte(elementSize, value[i]);
         }
     }
 
+    final int readLength(final BitInput input) throws IOException {
+        return input.readUnsignedInt(lengthSize);
+    }
+
     @Override
     public byte[] read(final BitInput input) throws IOException {
-        final int length = input.readUnsignedInt(lengthSize);
+        final int length = readLength(input);
         final byte[] value = new byte[length];
         for (int i = 0; i < value.length; i++) {
             value[i] = input.readByte(elementSize);
@@ -95,7 +113,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         return value;
     }
 
-    final int lengthSize;
+    private final int lengthSize;
 
     final int elementSize;
 }

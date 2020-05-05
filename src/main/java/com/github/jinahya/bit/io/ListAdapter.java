@@ -37,54 +37,6 @@ import static java.util.Objects.requireNonNull;
 public class ListAdapter<T> implements ValueAdapter<List<T>> {
 
     /**
-     * Creates a new instance which can read/write a list whose {@code size} can be, in maximum, expressed as {@value
-     * java.lang.Byte#SIZE}-bit unsigned int.
-     *
-     * @param elementAdapter a value adapter for reading/writing list elements.
-     * @param <T>            element type parameter
-     * @return a new instance.
-     */
-    public static <T> ListAdapter<T> listAdapter8(final ValueAdapter<T> elementAdapter) {
-        return new ListAdapter<>(Byte.SIZE, elementAdapter);
-    }
-
-    /**
-     * Creates a new instance which can read/write a list whose {@code size} can be, in maximum, expressed as {@value
-     * java.lang.Short#SIZE}-bit unsigned int.
-     *
-     * @param elementAdapter a value adapter for reading/writing list elements.
-     * @param <T>            element type parameter
-     * @return a new instance.
-     */
-    public static <T> ListAdapter<T> listAdapter16(final ValueAdapter<T> elementAdapter) {
-        return new ListAdapter<>(Short.SIZE, elementAdapter);
-    }
-
-    /**
-     * Creates a new instance which can read/write a list whose {@code size} can be, in maximum, expressed as {@code
-     * 24}-bit unsigned int.
-     *
-     * @param elementAdapter a value adapter for reading/writing list elements.
-     * @param <T>            element type parameter
-     * @return a new instance.
-     */
-    public static <T> ListAdapter<T> listAdapter24(final ValueAdapter<T> elementAdapter) {
-        return new ListAdapter<>(Byte.SIZE + Short.SIZE, elementAdapter);
-    }
-
-    /**
-     * Creates a new instance which can read/write a list whose {@code size} can be, in maximum, expressed as {@code
-     * 31}-bit unsigned int.
-     *
-     * @param elementAdapter a value adapter for reading/writing list elements.
-     * @param <T>            element type parameter
-     * @return a new instance.
-     */
-    public static <T> ListAdapter<T> listAdapter31(final ValueAdapter<T> elementAdapter) {
-        return new ListAdapter<>(Integer.SIZE - 1, elementAdapter);
-    }
-
-    /**
      * Creates a new instance with specified arguments.
      *
      * @param lengthSize     the number of bits for reading/writing the number of elements.
@@ -99,7 +51,6 @@ public class ListAdapter<T> implements ValueAdapter<List<T>> {
     @Override
     public void write(final BitOutput output, final List<T> value) throws IOException {
         final int length = value.size() & ((1 << lengthSize) - 1);
-        assert length <= value.size();
         output.writeUnsignedInt(lengthSize, length);
         final Iterator<T> i = value.iterator();
         for (int l = 0; l < length; l++) {

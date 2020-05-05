@@ -38,13 +38,13 @@ public class BitOutputAdapter implements BitOutput {
     static final Supplier<ByteOutput> NULL_OUTPUT_SUPPLIER = () -> null;
 
     /**
-     * Creates a new instance which writes bytes directly to specified byte output.
+     * Creates a new instance which writes bytes to specified byte output.
      *
      * @param output the byte output to which bytes are written.
      * @return a new instance.
-     * @see BitInputAdapter#from(ByteInput)
+     * @see BitInputAdapter#of(ByteInput)
      */
-    public static BitOutputAdapter from(final ByteOutput output) {
+    public static BitOutputAdapter of(final ByteOutput output) {
         final BitOutputAdapter instance = new BitOutputAdapter(NULL_OUTPUT_SUPPLIER);
         instance.output = requireNonNull(output, "output is null");
         return instance;
@@ -58,13 +58,6 @@ public class BitOutputAdapter implements BitOutput {
     public BitOutputAdapter(final Supplier<? extends ByteOutput> outputSupplier) {
         super();
         this.outputSupplier = requireNonNull(outputSupplier, "outputSupplier is null");
-    }
-
-    @Override
-    public void close() throws IOException {
-        if (output != null) {
-            output.close();
-        }
     }
 
     @Override
@@ -138,7 +131,7 @@ public class BitOutputAdapter implements BitOutput {
 
     private final Supplier<? extends ByteOutput> outputSupplier;
 
-    private transient ByteOutput output;
+    private ByteOutput output;
 
     /**
      * The current octet.

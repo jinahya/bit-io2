@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.Supplier;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * A byte input reads bytes from an instance of {@link InputStream}.
  *
@@ -35,23 +33,6 @@ import static java.util.Objects.requireNonNull;
  * @see StreamByteOutput
  */
 public class StreamByteInput extends ByteInputAdapter<InputStream> {
-
-    /**
-     * Creates a new instance which reads bytes directly from specified source.
-     *
-     * @param source the source from which bytes are read.
-     * @return a new instance.
-     * @see StreamByteOutput#from(OutputStream)
-     */
-    public static StreamByteInput from(final InputStream source) {
-        requireNonNull(source, "source is null");
-        return new StreamByteInput(nullSourceSupplier()) {
-            @Override
-            InputStream source() {
-                return source;
-            }
-        };
-    }
 
     /**
      * Creates a new instance with specified source supplier.
@@ -63,6 +44,16 @@ public class StreamByteInput extends ByteInputAdapter<InputStream> {
         super(sourceSupplier);
     }
 
+    /**
+     * {@inheritDoc} The {@code read(InputStream)} method of {@code StreamByteInput} class invokes {@link
+     * InputStream#read()} method on the {@code source} and returns the result.
+     *
+     * @param source {@inheritDoc}
+     * @return {@inheritDoc}
+     * @throws EOFException if the {@link InputStream#read()} operation returns {@code -1}.
+     * @throws IOException  {@inheritDoc}
+     * @see StreamByteOutput#write(OutputStream, int)
+     */
     @Override
     protected int read(final InputStream source) throws IOException {
         final int value = source.read();

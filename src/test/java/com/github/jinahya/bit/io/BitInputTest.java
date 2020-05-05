@@ -59,14 +59,14 @@ public class BitInputTest {
 
     // -------------------------------------------------------------------------------------------------------- readByte
     @DisplayName("readByte(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForByte"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForByte"})
     @ParameterizedTest
     void assertReadByteSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readByte(false, size));
     }
 
     @DisplayName("readByte(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForUnsignedByte"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForUnsignedByte"})
     @ParameterizedTest
     void assertReadByteUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readByte(true, size));
@@ -74,14 +74,14 @@ public class BitInputTest {
 
     // ------------------------------------------------------------------------------------------------------- readShort
     @DisplayName("readShort(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForShort"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForShort"})
     @ParameterizedTest
     void assertReadShortSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readShort(false, size));
     }
 
     @DisplayName("readShort(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForUnsignedShort"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForUnsignedShort"})
     @ParameterizedTest
     void assertReadShortUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readShort(true, size));
@@ -89,14 +89,14 @@ public class BitInputTest {
 
     // -------------------------------------------------------------------------------------------------------- readLong
     @DisplayName("readLong(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForLong"})
     @ParameterizedTest
     void assertReadLongSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readLong(false, size));
     }
 
     @DisplayName("readLong(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalSizeForUnsignedLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForUnsignedLong"})
     @ParameterizedTest
     void assertReadLongUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readLong(true, size));
@@ -107,12 +107,36 @@ public class BitInputTest {
     /**
      * Asserts {@link BitInput#skip(int)} method throws {@link IllegalArgumentException} when {@code bits} argument is
      * not positive.
+     *
+     * @see BitOutputTest#assertSkipThrowsIllegalArgumentExceptionWhenBitsIsNotLegal(int)
      */
     @DisplayName("skip(bits) throws IllegalArgumentException when bits is not positive")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoParameters#illegalBitsForSkip"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalBitsForSkip"})
     @ParameterizedTest
-    void assertSkipThrowsIllegalArgumentExceptionWhenBitsIsNotPositive() {
-        assertThrows(IllegalArgumentException.class, () -> input.skip(current().nextInt() | Integer.MIN_VALUE));
+    void assertSkipThrowsIllegalArgumentExceptionWhenBitsIsNotLegal(final int bits) {
+        assertThrows(IllegalArgumentException.class, () -> input.skip(bits));
+    }
+
+    /**
+     * Tests {@link BitInput#skip(int)} method.
+     *
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutputTest#testSkip()
+     */
+    @Test
+    void testSkip() throws IOException {
+        input.skip(current().nextInt(1, 128));
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- align
+    @Test
+    void testAlignWithBytes() throws IOException {
+        input.align(current().nextInt(1, 128));
+    }
+
+    @Test
+    void testAlign() throws IOException {
+        input.align();
     }
 
     // -----------------------------------------------------------------------------------------------------------------

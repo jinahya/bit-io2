@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,29 +20,14 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-/**
- * Constants for bit-io.
- *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- */
-final class BitIoConstants {
+import java.io.DataOutput;
+
+class DataByteOutputTest extends ByteOutputAdapterTest<DataByteOutput, DataOutput> {
 
     /**
-     * The minimum value for {@code size} parameter.
+     * Creates a new instance.
      */
-    static final int MIN_SIZE = 1;
-
-    static final int SIZE_EXPONENT_BYTE = 3;
-
-    static final int SIZE_EXPONENT_SHORT = 4;
-
-    static final int SIZE_EXPONENT_INTEGER = 5;
-
-    static final int SIZE_EXPONENT_LONG = 6;
-
-    static final int SIZE_EXPONENT_CHAR = SIZE_EXPONENT_SHORT;
-
-    private BitIoConstants() {
-        super();
+    DataByteOutputTest() {
+        super(DataByteOutput.class, DataOutput.class);
     }
 }

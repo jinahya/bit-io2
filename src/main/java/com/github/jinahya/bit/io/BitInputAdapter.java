@@ -38,13 +38,13 @@ public class BitInputAdapter implements BitInput {
     static final Supplier<ByteInput> NULL_INPUT_SUPPLIER = () -> null;
 
     /**
-     * Creates a new instance which reads bytes directly from specified byte input.
+     * Creates a new instance which reads bytes from specified byte input.
      *
      * @param input the byte input from which bytes are read.
      * @return a new instance.
-     * @see BitOutputAdapter#from(ByteOutput)
+     * @see BitOutputAdapter#of(ByteOutput)
      */
-    public static BitInputAdapter from(final ByteInput input) {
+    public static BitInputAdapter of(final ByteInput input) {
         if (input == null) {
             throw new NullPointerException("input is null");
         }
@@ -61,13 +61,6 @@ public class BitInputAdapter implements BitInput {
     public BitInputAdapter(final Supplier<? extends ByteInput> inputSupplier) {
         super();
         this.inputSupplier = requireNonNull(inputSupplier, "inputSupplier is null");
-    }
-
-    @Override
-    public void close() throws IOException {
-        if (input != null) {
-            input.close();
-        }
     }
 
     @Override
@@ -139,7 +132,7 @@ public class BitInputAdapter implements BitInput {
 
     private final Supplier<? extends ByteInput> inputSupplier;
 
-    private transient ByteInput input;
+    private ByteInput input;
 
     /**
      * The current octet.

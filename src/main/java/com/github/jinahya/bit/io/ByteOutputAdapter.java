@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -59,16 +57,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
         this.targetSupplier = requireNonNull(targetSupplier, "targetSupplier is null");
     }
 
-    @Override
-    public void close() throws IOException {
-        if (target instanceof Flushable) {
-            ((Flushable) target).flush();
-        }
-        if (target instanceof Closeable) {
-            ((Closeable) target).close();
-        }
-    }
-
     /**
      * {@inheritDoc} The {@code write(int)} method of {@code ByteOutputAdapter} class invokes {@link #write(Object,
      * int)} with a lazily-initialized {@code target} and given {@code value}.
@@ -92,7 +80,7 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      */
     protected abstract void write(T target, int value) throws IOException;
 
-    T target() {
+    private T target() {
         if (target == null) {
             target = targetSupplier.get();
         }
@@ -101,5 +89,5 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
     private final Supplier<? extends T> targetSupplier;
 
-    private transient T target;
+    private T target;
 }

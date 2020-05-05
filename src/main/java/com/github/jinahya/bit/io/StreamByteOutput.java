@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.Supplier;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * A byte output writes bytes to an instance of {@link OutputStream}.
  *
@@ -34,23 +32,6 @@ import static java.util.Objects.requireNonNull;
  * @see StreamByteInput
  */
 public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
-
-    /**
-     * Creates a new instance which writes bytes directly to specified target.
-     *
-     * @param target the target to which bytes are written.
-     * @return a new instance.
-     * @see StreamByteInput#from(InputStream)
-     */
-    public static StreamByteOutput from(final OutputStream target) {
-        requireNonNull(target, "target is null");
-        return new StreamByteOutput(nullTargetSupplier()) {
-            @Override
-            OutputStream target() {
-                return target;
-            }
-        };
-    }
 
     /**
      * Creates a new instance with specified target supplier.
@@ -69,6 +50,7 @@ public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @see StreamByteInput#read(InputStream)
      */
     @Override
     protected void write(final OutputStream target, final int value) throws IOException {

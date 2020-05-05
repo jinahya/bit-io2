@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserListAdapterTest {
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoParameters#byteIoParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
     @ParameterizedTest
     void test(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
               @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)

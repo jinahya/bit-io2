@@ -24,8 +24,19 @@ import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A wrapper class for reading/writing a null flag before reading/writing values.
+ *
+ * @param <T> value type parameter.
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 final class NullableAdapter<T> implements ValueAdapter<T> {
 
+    /**
+     * Creates a new instance with specified adapter.
+     *
+     * @param wrapped the adapter to be wrapped.
+     */
     NullableAdapter(final ValueAdapter<T> wrapped) {
         super();
         this.wrapped = requireNonNull(wrapped, "wrapped is null");

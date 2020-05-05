@@ -2,9 +2,9 @@ package com.github.jinahya.bit.io;
 
 /*-
  * #%L
- * bit-io
+ * bit-io2
  * %%
- * Copyright (C) 2014 - 2019 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,9 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * A byte output writes bytes to an instance of {@link DataOutput}.
@@ -34,23 +31,6 @@ import static java.util.Objects.requireNonNull;
  * @see DataByteInput
  */
 public class DataByteOutput extends ByteOutputAdapter<DataOutput> {
-
-    /**
-     * Creates a new instance which writes bytes directly to specified target.
-     *
-     * @param target the target to which bytes are written.
-     * @return a new instance.
-     * @see DataByteInput#from(DataInput)
-     */
-    public static DataByteOutput from(final DataOutput target) {
-        requireNonNull(target, "target is null");
-        return new DataByteOutput(nullTargetSupplier()) {
-            @Override
-            DataOutput target() {
-                return target;
-            }
-        };
-    }
 
     /**
      * Creates a new instance with specified target supplier.

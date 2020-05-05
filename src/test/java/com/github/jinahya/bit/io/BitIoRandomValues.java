@@ -35,7 +35,7 @@ import static java.util.concurrent.ThreadLocalRandom.current;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-final class BitIoTestValues {
+final class BitIoRandomValues {
 
     // ------------------------------------------------------------------------------------------------------------ byte
     static int randomSizeForByte() {
@@ -153,7 +153,7 @@ final class BitIoTestValues {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private BitIoTestValues() {
+    private BitIoRandomValues() {
         super();
     }
 }
