@@ -20,12 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-
-import static java.util.concurrent.ThreadLocalRandom.current;
-
 /**
  * A class for unit-testing {@link ByteOutput} interface.
  *
@@ -34,19 +28,4 @@ import static java.util.concurrent.ThreadLocalRandom.current;
  */
 class ByteOutputTest {
 
-    /**
-     * Returns a new instance of {@link ByteOutput} whose {@link ByteOutput#write(int)} method does nothing.
-     *
-     * @return an instance of {@link ByteOutput}.
-     * @see ByteInputTest#white()
-     */
-    static ByteOutput black() {
-        return v -> {
-        };
-    }
-
-    @Test
-    void testBlack() throws IOException {
-        black().write(current().nextInt(0, 256));
-    }
 }

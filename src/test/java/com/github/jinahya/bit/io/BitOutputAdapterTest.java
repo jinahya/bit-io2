@@ -28,7 +28,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -38,28 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @see BitInputAdapterTest
  */
 class BitOutputAdapterTest {
-
-    // ------------------------------------------------------------------------------------------------------------ from
-
-    /**
-     * Asserts {@link BitOutputAdapter#of(ByteOutput)} method throws a {@code NullPointerException} when {@code output}
-     * argument is {@code null}.
-     */
-    @DisplayName("from(output) throws NullPointerException when output is null")
-    @Test
-    void assertFromThrowNullPointerExceptionWhenOutputIsNull() {
-        assertThrows(NullPointerException.class, () -> BitOutputAdapter.of(null));
-    }
-
-    /**
-     * Tests {@link BitOutputAdapter#of(ByteOutput)} method.
-     */
-    @DisplayName("from(output)")
-    @Test
-    void testFrom() throws IOException {
-        final BitOutputAdapter instance = BitOutputAdapter.of(ByteOutputTest.black());
-        assertNotNull(instance);
-    }
 
     // -------------------------------------------------------------------------------------------------------- writeInt
     @DisplayName("writeInt(false, size, value) throws IllegalArgumentException when size is illegal")

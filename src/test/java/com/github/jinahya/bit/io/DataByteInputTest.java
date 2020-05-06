@@ -20,8 +20,22 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.DataInput;
+import org.junit.jupiter.api.Test;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * A class for testing {@link DataByteInput} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see DataByteOutputTest
+ */
 class DataByteInputTest extends ByteInputAdapterTest<DataByteInput, DataInput> {
 
     /**
@@ -29,5 +43,27 @@ class DataByteInputTest extends ByteInputAdapterTest<DataByteInput, DataInput> {
      */
     DataByteInputTest() {
         super(DataByteInput.class, DataInput.class);
+    }
+
+    /**
+     * Asserts {@link DataByteInput#read()} method throws an {@link IllegalArgumentException} when reached to an end.
+     */
+    @Test
+    void assertReadThrowsEofExceptionWhenReachedToAnEnd() {
+        final DataByteInput input = new DataByteInput(() -> new DataInputStream(ByteStreams.white(0L)));
+        assertThrows(EOFException.class, input::read);
+    }
+
+    /**
+     * Asserts {@link DataByteInput#read()} method returns a valid octet.
+     *
+     * @throws IOException if an I/O error occurs.
+     * @see DataByteOutputTest#testWrite()
+     */
+    @Test
+    void testRead() throws IOException {
+        final DataByteInput input = new DataByteInput(() -> new DataInputStream(ByteStreams.white(-1L)));
+        final int value = input.read();
+        assertTrue(value >= 0 && value < 256);
     }
 }

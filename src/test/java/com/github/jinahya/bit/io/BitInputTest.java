@@ -59,32 +59,32 @@ public class BitInputTest {
 
     // -------------------------------------------------------------------------------------------------------- readByte
     @DisplayName("readByte(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForByte"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizeForByte"})
     @ParameterizedTest
     void assertReadByteSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readByte(false, size));
     }
 
     @DisplayName("readByte(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForUnsignedByte"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizeForUnsignedByte"})
     @ParameterizedTest
     void assertReadByteUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readByte(true, size));
     }
 
     // ------------------------------------------------------------------------------------------------------- readShort
-    @DisplayName("readShort(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForShort"})
+    @DisplayName("readShort(size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizeForShort"})
     @ParameterizedTest
-    void assertReadShortSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
-        assertThrows(IllegalArgumentException.class, () -> input.readShort(false, size));
+    void assertReadShortThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> input.readShort(size));
     }
 
-    @DisplayName("readShort(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForUnsignedShort"})
+    @DisplayName("readUnsignedShort(size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizeForUnsignedShort"})
     @ParameterizedTest
-    void assertReadShortUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
-        assertThrows(IllegalArgumentException.class, () -> input.readShort(true, size));
+    void assertReadUnsignedShortThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> input.readUnsignedShort(size));
     }
 
     // -------------------------------------------------------------------------------------------------------- readLong
@@ -100,6 +100,22 @@ public class BitInputTest {
     @ParameterizedTest
     void assertReadLongUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> input.readLong(true, size));
+    }
+
+    // -------------------------------------------------------------------------------------------------------- readChar
+
+    /**
+     * Asserts {@link BitInput#readChar(int)} method throws an {@link IllegalArgumentException} when the {@code size}
+     * argument is invalid.
+     *
+     * @param size an invalid value for {@code size} parameter.
+     * @see BitOutputTest#assertWriteCharSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(int)
+     */
+    @DisplayName("readChar(false, size) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizedForChar"})
+    @ParameterizedTest
+    void assertReadCharSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
+        assertThrows(IllegalArgumentException.class, () -> input.readChar(size));
     }
 
     // ------------------------------------------------------------------------------------------------------------ skip

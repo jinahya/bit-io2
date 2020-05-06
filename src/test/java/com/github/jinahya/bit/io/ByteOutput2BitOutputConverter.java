@@ -39,6 +39,6 @@ class ByteOutput2BitOutputConverter implements ArgumentConverter {
             throw new ArgumentConversionException(
                     "can't convert " + source + " into an instance of " + BitOutput.class);
         }
-        return BitOutputAdapter.of((ByteOutput) source);
+        return new BitOutputAdapter(() -> (ByteOutput) source);
     }
 }
