@@ -29,34 +29,16 @@ import java.io.IOException;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * A class for testing {@link BitInputAdapter} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see BitOutputAdapterTest
+ */
 class BitInputAdapterTest {
-
-    // -------------------------------------------------------------------------------------------------------------- of
-
-    /**
-     * Asserts {@link BitInputAdapter#of(ByteInput)} method throws a {@code NullPointerException} when {@code input}
-     * argument is {@code null}.
-     */
-    @DisplayName("from(input) throws NullPointerException when input is null")
-    @Test
-    void assertFromThrowNullPointerExceptionWhenInputIsNull() {
-        assertThrows(NullPointerException.class, () -> BitInputAdapter.of(null));
-    }
-
-    /**
-     * Tests {@link BitInputAdapter#of(ByteInput)} method.
-     */
-    @DisplayName("from(input)")
-    @Test
-    void testFrom() throws IOException {
-        final BitInputAdapter instance = BitInputAdapter.of(ByteInputTest.white());
-        assertNotNull(instance);
-        assertNotNull(instance);
-    }
 
     // --------------------------------------------------------------------------------------------------------- readInt
     @DisplayName("readInt(false, size) throws IllegalArgumentException when size is illegal")

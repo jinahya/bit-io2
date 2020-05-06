@@ -20,8 +20,20 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.DataOutput;
+import org.junit.jupiter.api.Test;
 
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import static java.util.concurrent.ThreadLocalRandom.current;
+
+/**
+ * A class for testing {@link DataByteOutputTest} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see DataByteInputTest
+ */
 class DataByteOutputTest extends ByteOutputAdapterTest<DataByteOutput, DataOutput> {
 
     /**
@@ -29,5 +41,17 @@ class DataByteOutputTest extends ByteOutputAdapterTest<DataByteOutput, DataOutpu
      */
     DataByteOutputTest() {
         super(DataByteOutput.class, DataOutput.class);
+    }
+
+    /**
+     * Tests {@link DataOutput#write(int)} method.
+     *
+     * @throws IOException if an I/O error occurs.
+     * @see DataByteInputTest#testRead()
+     */
+    @Test
+    void testWrite() throws IOException {
+        final DataByteOutput output = new DataByteOutput(() -> new DataOutputStream(ByteStreams.black(-1L)));
+        output.write(current().nextInt(0, 256));
     }
 }

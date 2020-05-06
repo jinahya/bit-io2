@@ -38,22 +38,6 @@ public class BitInputAdapter implements BitInput {
     static final Supplier<ByteInput> NULL_INPUT_SUPPLIER = () -> null;
 
     /**
-     * Creates a new instance which reads bytes from specified byte input.
-     *
-     * @param input the byte input from which bytes are read.
-     * @return a new instance.
-     * @see BitOutputAdapter#of(ByteOutput)
-     */
-    public static BitInputAdapter of(final ByteInput input) {
-        if (input == null) {
-            throw new NullPointerException("input is null");
-        }
-        final BitInputAdapter instance = new BitInputAdapter(NULL_INPUT_SUPPLIER);
-        instance.input = input;
-        return instance;
-    }
-
-    /**
      * Creates a new instance with specified input supplier.
      *
      * @param inputSupplier the input supplier.

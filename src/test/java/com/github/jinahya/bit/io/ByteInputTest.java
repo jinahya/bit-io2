@@ -20,31 +20,12 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-
-import static java.util.concurrent.ThreadLocalRandom.current;
-
 /**
  * A class for unit-testing {@link ByteInput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ByteOutputTest
  */
 class ByteInputTest {
 
-    /**
-     * Returns an instance of {@link ByteInput} whose {@link ByteInput#read()} method returns a random value.
-     *
-     * @return an instance of {@link ByteInput}.
-     * @see ByteOutputTest#black()
-     */
-    static ByteInput white() {
-        return () -> current().nextInt(0, 256);
-    }
-
-    @Test
-    void testWhite() throws IOException {
-        final int value = white().read();
-    }
 }

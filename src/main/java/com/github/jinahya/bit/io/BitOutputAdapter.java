@@ -38,19 +38,6 @@ public class BitOutputAdapter implements BitOutput {
     static final Supplier<ByteOutput> NULL_OUTPUT_SUPPLIER = () -> null;
 
     /**
-     * Creates a new instance which writes bytes to specified byte output.
-     *
-     * @param output the byte output to which bytes are written.
-     * @return a new instance.
-     * @see BitInputAdapter#of(ByteInput)
-     */
-    public static BitOutputAdapter of(final ByteOutput output) {
-        final BitOutputAdapter instance = new BitOutputAdapter(NULL_OUTPUT_SUPPLIER);
-        instance.output = requireNonNull(output, "output is null");
-        return instance;
-    }
-
-    /**
      * Creates a new instance with specified output supplier.
      *
      * @param outputSupplier the output supplier.
