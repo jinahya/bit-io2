@@ -323,7 +323,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a {@value java.lang.Float#SIZE}-bit {@code float} value.
+     * Reads a {@value java.lang.Float#SIZE}-bit {@code float} value. The {@code readFloat32()} method of {@code
+     * BitInput} interface reads a {@value java.lang.Integer#SIZE}-bit {@link Float#intBitsToFloat(int) int bits} and
+     * returns it as a {@code float} value.
      *
      * @return a {@value java.lang.Float#SIZE}-bit {@code float} value
      * @throws IOException if an I/O error occurs.
@@ -335,7 +337,9 @@ public interface BitInput {
     }
 
     /**
-     * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value.
+     * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value. The {@code readDouble64()} method of {@code
+     * BitInput} interface reads a {@value java.lang.Long#SIZE}-bit {@link Double#longBitsToDouble(long) long bits} and
+     * returns it as a {@code double} value.
      *
      * @return a {@value java.lang.Double#SIZE}-bit {@code double} value
      * @throws IOException if an I/O error occurs.
@@ -347,11 +351,12 @@ public interface BitInput {
     }
 
     /**
-     * Reads a value using specified adapter.
+     * Reads a value using specified adapter. The {@code readValue(ValueAdapter)} method of {@code BitInput} interface
+     * invokes {@link ValueAdapter#read(BitInput)} method with {@code this}.
      *
      * @param adapter the adapter.
      * @param <T>     value type parameter
-     * @return a value.
+     * @return a value read.
      * @throws IOException if an I/O error occurs.
      * @see BitOutput#writeValue(ValueAdapter, Object)
      */
