@@ -72,31 +72,28 @@ public class BitInputAdapter implements BitInput {
     }
 
     @Override
-    public long align(int bytes) throws IOException {
+    public long align(final int bytes) throws IOException {
         if (bytes <= 0) {
             throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
         }
         long bits = 0L; // number of discarded bits
         if (available > 0) {
             bits += available; // must be prior to the below
-            readUnsignedInt(available);
+            readInt(true, available);
         }
-        assert available == 0;
         if (bytes == 1) {
             return bits;
         }
-        for (bytes = bytes - (int) (count % bytes); bytes > 0L; bytes--) {
-            readUnsignedInt(Byte.SIZE);
+        for (int i = bytes - (int) (count % bytes); i > 0L; i--) {
+            readInt(true, Byte.SIZE);
             bits += Byte.SIZE;
         }
-        assert bytes == 0;
         return bits;
     }
 
     private int unsigned8(final int size) throws IOException {
         if (available == 0) {
             octet = input().read();
-            assert octet >= 0 && octet < 256;
             available = Byte.SIZE;
             count++;
         }
@@ -104,7 +101,8 @@ public class BitInputAdapter implements BitInput {
         if (required > 0) {
             return (unsigned8(available) << required) | unsigned8(required);
         }
-        return (octet >> (available -= size)) & ((1 << size) - 1);
+        available -= size;
+        return (octet >> available) & ((1 << size) - 1);
     }
 
     private ByteInput input() {
