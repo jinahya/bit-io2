@@ -34,9 +34,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class BitOutputAdapter implements BitOutput {
 
-    // TODO: 2020-05-01 required? preferred?
-    static final Supplier<ByteOutput> NULL_OUTPUT_SUPPLIER = () -> null;
-
     /**
      * Creates a new instance with specified output supplier.
      *
@@ -76,21 +73,19 @@ public class BitOutputAdapter implements BitOutput {
         long bits = 0L; // number of bits padded
         if (available < Byte.SIZE) {
             bits += available; // must be prior to the below
-            writeUnsignedInt(available, 0x00);
+            writeInt(true, available, 0x00);
         }
-        assert available == Byte.SIZE;
         if (bytes == 1) {
             return bits;
         }
         for (bytes = bytes - (int) (count % bytes); bytes > 0; bytes--) {
-            writeUnsignedInt(Byte.SIZE, 0x00);
+            writeInt(true, Byte.SIZE, 0x00);
             bits += Byte.SIZE;
         }
-        assert bytes == 0;
         return bits;
     }
 
-    private void unsigned8(final int size, int value) throws IOException {
+    private void unsigned8(final int size, final int value) throws IOException {
         final int required = size - available;
         if (required > 0) {
             unsigned8(available, value >> required);
@@ -101,7 +96,6 @@ public class BitOutputAdapter implements BitOutput {
         octet |= (value & ((1 << size) - 1));
         available -= size;
         if (available == 0) {
-            assert octet >= 0 && octet < 256;
             output().write(octet);
             octet = 0x00;
             available = Byte.SIZE;
