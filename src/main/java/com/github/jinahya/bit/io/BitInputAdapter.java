@@ -34,9 +34,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class BitInputAdapter implements BitInput {
 
-    // TODO: 2020-05-01 required? preferred?
-    static final Supplier<ByteInput> NULL_INPUT_SUPPLIER = () -> null;
-
     /**
      * Creates a new instance with specified input supplier.
      *
@@ -72,7 +69,7 @@ public class BitInputAdapter implements BitInput {
     }
 
     @Override
-    public long align(final int bytes) throws IOException {
+    public long align(int bytes) throws IOException {
         if (bytes <= 0) {
             throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
         }
@@ -84,7 +81,7 @@ public class BitInputAdapter implements BitInput {
         if (bytes == 1) {
             return bits;
         }
-        for (int i = bytes - (int) (count % bytes); i > 0L; i--) {
+        for (bytes = bytes - (int) (count % bytes); bytes > 0L; bytes--) {
             readInt(true, Byte.SIZE);
             bits += Byte.SIZE;
         }

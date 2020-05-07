@@ -66,7 +66,7 @@ public class BitOutputAdapter implements BitOutput {
     }
 
     @Override
-    public long align(final int bytes) throws IOException {
+    public long align(int bytes) throws IOException {
         if (bytes <= 0) {
             throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
         }
@@ -78,7 +78,7 @@ public class BitOutputAdapter implements BitOutput {
         if (bytes == 1) {
             return bits;
         }
-        for (int i = bytes - (int) (count % bytes); i > 0; i--) {
+        for (bytes = bytes - (int) (count % bytes); bytes > 0; bytes--) {
             writeInt(true, Byte.SIZE, 0x00);
             bits += Byte.SIZE;
         }
