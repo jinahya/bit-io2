@@ -21,7 +21,9 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.function.Supplier;
+import java.util.zip.Checksum;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static java.util.Objects.requireNonNull;
@@ -32,7 +34,7 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitInputAdapter
  */
-public class BitOutputAdapter implements BitOutput {
+public class BitOutputAdapter extends BitBase implements BitOutput {
 
     /**
      * Creates a new instance with specified output supplier.
@@ -104,6 +106,7 @@ public class BitOutputAdapter implements BitOutput {
         octet |= (value & ((1 << size) - 1));
         available -= size;
         if (available == 0) {
+            update(octet);
             output().write(octet);
             octet = 0x00;
             available = Byte.SIZE;
@@ -122,6 +125,26 @@ public class BitOutputAdapter implements BitOutput {
             output = outputSupplier.get();
         }
         return output;
+    }
+
+    @Override
+    public boolean attach(final Checksum checksum) {
+        return attach(Checksum.class, checksum);
+    }
+
+    @Override
+    public boolean detach(final Checksum checksum) {
+        return detach(Checksum.class, checksum);
+    }
+
+    @Override
+    public boolean attach(final MessageDigest messageDigest) {
+        return attach(MessageDigest.class, messageDigest);
+    }
+
+    @Override
+    public boolean detach(final MessageDigest messageDigest) {
+        return detach(MessageDigest.class, messageDigest);
     }
 
     /**
