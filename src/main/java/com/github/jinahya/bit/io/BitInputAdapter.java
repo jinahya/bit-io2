@@ -109,7 +109,6 @@ public class BitInputAdapter implements BitInput {
             return (unsigned8(available) << required) | unsigned8(required);
         }
         available -= size;
-//        return (octet >> available) & ((1 << size) - 1);
         return (octet >> available) & mask(size);
     }
 

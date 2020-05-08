@@ -104,12 +104,10 @@ public class BitOutputAdapter implements BitOutput {
             return;
         }
         octet <<= size;
-//        octet |= (value & ((1 << size) - 1));
         octet |= value & mask(size);
         available -= size;
         if (available == 0) {
             output().write(octet);
-            //octet = 0x00; // TODO: 2020/05/08 not required
             available = Byte.SIZE;
             count++;
         }
