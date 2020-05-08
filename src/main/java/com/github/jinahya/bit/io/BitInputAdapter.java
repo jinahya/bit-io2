@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.function.Supplier;
 
+import static com.github.jinahya.bit.io.BitConstants.mask;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static java.util.Objects.requireNonNull;
 
@@ -96,6 +97,8 @@ public class BitInputAdapter implements BitInput {
      * @see BitOutputAdapter#unsigned8(int, int)
      */
     private int unsigned8(final int size) throws IOException {
+        assert size > 0;
+        assert size <= Byte.SIZE;
         if (available == 0) {
             octet = input().read();
             available = Byte.SIZE;
@@ -106,7 +109,8 @@ public class BitInputAdapter implements BitInput {
             return (unsigned8(available) << required) | unsigned8(required);
         }
         available -= size;
-        return (octet >> available) & ((1 << size) - 1);
+//        return (octet >> available) & ((1 << size) - 1);
+        return (octet >> available) & mask(size);
     }
 
     /**
