@@ -38,6 +38,7 @@ public class BitOutputAdapter implements BitOutput {
      * Creates a new instance with specified output supplier.
      *
      * @param outputSupplier the output supplier.
+     * @see BitInputAdapter#BitInputAdapter(Supplier)
      */
     public BitOutputAdapter(final Supplier<? extends ByteOutput> outputSupplier) {
         super();
@@ -49,8 +50,7 @@ public class BitOutputAdapter implements BitOutput {
         requireValidSizeInt(unsigned, size);
         if (!unsigned) {
             writeInt(true, 1, value < 0 ? 1 : 0);
-            size--;
-            if (size > 0) {
+            if (--size > 0) {
                 writeInt(true, size, value);
             }
             return;
@@ -85,6 +85,14 @@ public class BitOutputAdapter implements BitOutput {
         return bits;
     }
 
+    /**
+     * Writes specified unsigned value of specified bit size.
+     *
+     * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
+     * @param value the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInputAdapter#unsigned8(int)
+     */
     private void unsigned8(final int size, final int value) throws IOException {
         final int required = size - available;
         if (required > 0) {
@@ -103,6 +111,12 @@ public class BitOutputAdapter implements BitOutput {
         }
     }
 
+    /**
+     * Returns an instance of {@link ByteOutput}.
+     *
+     * @return an instance of {@link ByteOutput}.
+     * @see BitInputAdapter#input()
+     */
     private ByteOutput output() {
         if (output == null) {
             output = outputSupplier.get();
@@ -110,22 +124,39 @@ public class BitOutputAdapter implements BitOutput {
         return output;
     }
 
+    /**
+     * The supplier for {@link #output}.
+     *
+     * @see BitInputAdapter#input()
+     */
     private final Supplier<? extends ByteOutput> outputSupplier;
 
+    /**
+     * A value supplied from {@link #outputSupplier}.
+     *
+     * @see #output()
+     * @see BitInputAdapter#input
+     */
     private ByteOutput output;
 
     /**
      * The current octet.
+     *
+     * @see BitInputAdapter#octet
      */
     private int octet;
 
     /**
      * The number of available bits in {@link #octet}.
+     *
+     * @see BitInputAdapter#available
      */
     private int available = Byte.SIZE;
 
     /**
      * The number of bytes written so far.
+     *
+     * @see BitInputAdapter#count
      */
     private long count;
 }

@@ -50,8 +50,7 @@ public class BitInputAdapter implements BitInput {
         int value = 0;
         if (!unsigned) {
             value -= readInt(true, 1);
-            size--;
-            if (size > 0) {
+            if (--size > 0) {
                 value <<= size;
                 value |= readInt(true, size);
             }
@@ -88,6 +87,14 @@ public class BitInputAdapter implements BitInput {
         return bits;
     }
 
+    /**
+     * Reads an unsigned {@code int} value of specified bit size.
+     *
+     * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
+     * @return an unsigned {@code int} value.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutputAdapter#unsigned8(int, int)
+     */
     private int unsigned8(final int size) throws IOException {
         if (available == 0) {
             octet = input().read();
@@ -102,6 +109,12 @@ public class BitInputAdapter implements BitInput {
         return (octet >> available) & ((1 << size) - 1);
     }
 
+    /**
+     * Returns an instance of {@link ByteInput}.
+     *
+     * @return an instance of {@link ByteInput}.
+     * @see BitOutputAdapter#output()
+     */
     private ByteInput input() {
         if (input == null) {
             input = inputSupplier.get();
@@ -109,8 +122,19 @@ public class BitInputAdapter implements BitInput {
         return input;
     }
 
+    /**
+     * A supplier for {@link #input}.
+     *
+     * @see BitOutputAdapter#outputSupplier
+     */
     private final Supplier<? extends ByteInput> inputSupplier;
 
+    /**
+     * A value supplied from {@link #inputSupplier}.
+     *
+     * @see #input()
+     * @see BitOutputAdapter#output
+     */
     private ByteInput input;
 
     /**
