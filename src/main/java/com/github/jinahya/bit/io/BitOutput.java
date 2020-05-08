@@ -323,7 +323,9 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value.
+     * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value. The {@code writeFloat32(float)} method of
+     * {@code BitInput} interface writes a {@value java.lang.Integer#SIZE}-bit {@link Float#floatToRawIntBits(float) raw
+     * int bits} of specified {@code float} value.
      *
      * @param value the {@code float} value to write.
      * @throws IOException if an I/O error occurs.
@@ -336,7 +338,9 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value.
+     * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value. The {@code writeDouble64(double)}
+     * method of {@code BitInput} interface writes a {@value java.lang.Long#SIZE}-bit {@link
+     * Double#doubleToRawLongBits(double) raw long bits} of specified {@code double} value.
      *
      * @param value the {@code double} value to write.
      * @throws IOException if an I/O error occurs.
@@ -349,7 +353,9 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified value using specified adapter.
+     * Writes specified value using specified adapter. The {@code writeValue(ValueAdapter, T)} method of {@code
+     * BitOutput} interface invokes {@link ValueAdapter#write(BitOutput, Object)} with {@code this} and specified
+     * value.
      *
      * @param adapter the adapter.
      * @param value   the value to write.

@@ -34,19 +34,6 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
-//    /**
-//     * A target supplier always returns {@code null}.
-//     */
-//    private static Supplier<?> NULL_TARGET_SUPPLIER;
-//
-//    @SuppressWarnings({"unchecked"})
-//    static <T> Supplier<? extends T> nullTargetSupplier() {
-//        if (NULL_TARGET_SUPPLIER == null) {
-//            NULL_TARGET_SUPPLIER = () -> null;
-//        }
-//        return (Supplier<? extends T>) NULL_TARGET_SUPPLIER;
-//    }
-
     /**
      * Creates a new instance with specified target supplier.
      *
