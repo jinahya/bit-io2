@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -42,6 +43,13 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     public ByteInputAdapter(final Supplier<? extends T> sourceSupplier) {
         super();
         this.sourceSupplier = requireNonNull(sourceSupplier, "sourceSupplier is null");
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (source instanceof Closeable) {
+            ((Closeable) source).close();
+        }
     }
 
     /**

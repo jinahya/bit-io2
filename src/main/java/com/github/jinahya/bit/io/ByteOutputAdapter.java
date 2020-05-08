@@ -20,6 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -42,6 +44,20 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     public ByteOutputAdapter(final Supplier<? extends T> targetSupplier) {
         super();
         this.targetSupplier = requireNonNull(targetSupplier, "targetSupplier is null");
+    }
+
+    @Override
+    public void flush() throws IOException {
+        if (target instanceof Flushable) {
+            ((Flushable) target).flush();
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (target instanceof Closeable) {
+            ((Closeable) target).close();
+        }
     }
 
     /**
@@ -76,5 +92,5 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
     private final Supplier<? extends T> targetSupplier;
 
-    private T target;
+    T target;
 }

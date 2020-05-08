@@ -57,6 +57,14 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
         }
 
         @Override
+        public void close() throws IOException {
+            super.close();
+            if (channel != null) {
+                channel.close();
+            }
+        }
+
+        @Override
         protected int read(final ByteBuffer source) throws IOException {
             while (!source.hasRemaining()) {
                 source.clear(); // position -> zero, limit -> capacity

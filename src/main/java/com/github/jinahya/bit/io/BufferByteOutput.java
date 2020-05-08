@@ -50,6 +50,25 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
         }
 
         @Override
+        public void flush() throws IOException {
+            super.flush();
+            if (target != null && channel != null) {
+                for (target.flip(); target.hasRemaining(); ) {
+                    channel.write(target);
+                }
+                target.clear();
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            if (channel != null) {
+                channel.close();
+            }
+        }
+
+        @Override
         protected void write(final ByteBuffer target, final int value) throws IOException {
             super.write(target, value);
             while (!target.hasRemaining()) {

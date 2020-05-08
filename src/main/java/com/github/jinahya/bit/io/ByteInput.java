@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
 
@@ -30,7 +31,7 @@ import java.io.IOException;
  * @see ByteOutput
  */
 @FunctionalInterface
-public interface ByteInput {
+public interface ByteInput extends Closeable {
 
     /**
      * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.
@@ -41,4 +42,9 @@ public interface ByteInput {
      * @see ByteOutput#write(int)
      */
     int read() throws IOException;
+
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
 }
