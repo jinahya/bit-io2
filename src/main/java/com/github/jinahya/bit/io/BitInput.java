@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.util.zip.Checksum;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
@@ -404,5 +406,21 @@ public interface BitInput {
      */
     default long align() throws IOException {
         return align(Byte.BYTES);
+    }
+
+    default boolean attach(final Checksum checksum) {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    default boolean detach(final Checksum checksum) {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    default boolean attach(final MessageDigest messageDigest) {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
+    default boolean detach(final MessageDigest messageDigest) {
+        throw new UnsupportedOperationException("not implemented yet");
     }
 }
