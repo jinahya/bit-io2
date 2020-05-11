@@ -98,6 +98,7 @@ public class BitInputAdapter implements BitInput {
     private int unsigned8(final int size) throws IOException {
         if (available == 0) {
             octet = input().read();
+            assert octet >= 0 && octet < 256;
             available = Byte.SIZE;
             count++;
         }
