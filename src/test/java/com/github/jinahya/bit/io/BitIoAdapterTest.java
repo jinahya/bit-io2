@@ -55,14 +55,13 @@ class BitIoAdapterTest {
     void testBoolean(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                      @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
             throws IOException {
-        try (BitOutput o = output;
-             BitInput i = input) {
+        try (BitOutput o = output; BitInput i = input) {
             final boolean expected = current().nextBoolean();
             o.writeBoolean(expected);
             assertEquals(7L, o.align());
             o.flush();
-            final boolean actual = input.readBoolean();
-            assertEquals(7L, input.align());
+            final boolean actual = i.readBoolean();
+            assertEquals(7L, i.align());
             assertEquals(expected, actual);
         }
     }

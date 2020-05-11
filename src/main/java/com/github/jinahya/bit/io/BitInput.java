@@ -40,6 +40,17 @@ import static java.util.Objects.requireNonNull;
 public interface BitInput extends Closeable {
 
     /**
+     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * BitInput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
+
+    /**
      * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} and returns
      * {@code true} for {@code 0b1} and {@code false} for {@code 0b0}.
      *
@@ -405,10 +416,5 @@ public interface BitInput extends Closeable {
      */
     default long align() throws IOException {
         return align(Byte.BYTES);
-    }
-
-    @Override
-    default void close() throws IOException {
-        // does nothing.
     }
 }

@@ -46,6 +46,12 @@ public class BitOutputAdapter implements BitOutput {
         this.outputSupplier = requireNonNull(outputSupplier, "outputSupplier is null");
     }
 
+    /**
+     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
+     * BitOutputAdapter} class invokes {@link ByteOutput#flush()} on {@code output} if it's not {@code null}.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void flush() throws IOException {
         BitOutput.super.flush();
@@ -54,6 +60,13 @@ public class BitOutputAdapter implements BitOutput {
         }
     }
 
+    /**
+     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * BitOutputAdapter} class invokes {@link ByteOutput#close()} on {@code output} if it is not {@code null}.
+     *
+     * @throws IOException if an I/O error occurs.
+     * @see ByteOutput#close()
+     */
     @Override
     public void close() throws IOException {
         BitOutput.super.close();

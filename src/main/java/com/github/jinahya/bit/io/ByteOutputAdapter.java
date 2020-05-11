@@ -46,6 +46,13 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
         this.targetSupplier = requireNonNull(targetSupplier, "targetSupplier is null");
     }
 
+    /**
+     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
+     * ByteOutputAdapter} class invokes {@link Flushable#flush()} method on {@code target} if it is an instance of
+     * {@link Flushable}.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void flush() throws IOException {
         if (target instanceof Flushable) {
@@ -53,6 +60,13 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
         }
     }
 
+    /**
+     * Closes this output and releases any system resources associated with it. The {@code close} method of {@code
+     * ByteOutputAdapter} class invokes {@link Closeable#close()} on {@code target} if it is an instance of {@link
+     * Closeable}.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void close() throws IOException {
         if (target instanceof Closeable) {

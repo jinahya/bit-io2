@@ -40,6 +40,28 @@ import static java.util.Objects.requireNonNull;
 public interface BitOutput extends Flushable, Closeable {
 
     /**
+     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
+     * BitOutput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void flush() throws IOException {
+        // does nothing.
+    }
+
+    /**
+     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * BitOutput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
+
+    /**
      * Writes specified {@code 1}-bit {@code boolean} value. This method writes {@code 0b1} for {@code true} and {@code
      * 0b0} for {@code false}.
      *
@@ -409,15 +431,5 @@ public interface BitOutput extends Flushable, Closeable {
      */
     default long align() throws IOException {
         return align(Byte.BYTES);
-    }
-
-    @Override
-    default void flush() throws IOException {
-        // does nothing.
-    }
-
-    @Override
-    default void close() throws IOException {
-        // does nothing.
     }
 }

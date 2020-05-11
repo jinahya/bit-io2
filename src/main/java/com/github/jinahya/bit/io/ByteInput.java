@@ -34,6 +34,17 @@ import java.io.IOException;
 public interface ByteInput extends Closeable {
 
     /**
+     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * ByteInput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
+
+    /**
      * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.
      *
      * @return an unsigned {@value java.lang.Byte#SIZE}-bit value; between {@code 0} and {@code 255}, both inclusive.
@@ -42,9 +53,4 @@ public interface ByteInput extends Closeable {
      * @see ByteOutput#write(int)
      */
     int read() throws IOException;
-
-    @Override
-    default void close() throws IOException {
-        // does nothing.
-    }
 }
