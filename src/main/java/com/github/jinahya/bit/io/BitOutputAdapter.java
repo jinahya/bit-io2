@@ -109,8 +109,9 @@ public class BitOutputAdapter implements BitOutput {
         if (available == 0) {
             assert octet >= 0 && octet < 256;
             output().write(octet);
-            available = Byte.SIZE;
             count++;
+            octet = 0x00;
+            available = Byte.SIZE;
         }
     }
 
