@@ -116,8 +116,9 @@ public class BitInputAdapter implements BitInput {
         assert size <= Byte.SIZE;
         if (available == 0) {
             octet = input().read();
-            available = Byte.SIZE;
+            assert octet >= 0 && octet < 256;
             count++;
+            available = Byte.SIZE;
         }
         final int required = size - available;
         if (required > 0) {

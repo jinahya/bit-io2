@@ -215,7 +215,7 @@ public interface BitInput extends Closeable {
      * @see BitOutput#writeInt32Le(int)
      */
     default int readInt32Le() throws IOException {
-        return (readShort16Le() & 0xFFFF) | (readShort16Le() << Short.SIZE);
+        return readShort16Le() & 0xFFFF | readShort16Le() << Short.SIZE;
     }
 
     /**
@@ -293,7 +293,7 @@ public interface BitInput extends Closeable {
      * @see BitOutput#writeLong64Le(long)
      */
     default long readLong64Le() throws IOException {
-        return (readInt32Le() & 0xFFFFFFFFL) | (((long) readInt32Le()) << Integer.SIZE);
+        return readInt32Le() & 0xFFFFFFFFL | ((long) readInt32Le()) << Integer.SIZE;
     }
 
     /**
