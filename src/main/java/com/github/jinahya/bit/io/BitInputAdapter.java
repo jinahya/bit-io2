@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.function.Supplier;
 
-import static com.github.jinahya.bit.io.BitConstants.mask;
+import static com.github.jinahya.bit.io.BitIoConstants.mask;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static java.util.Objects.requireNonNull;
 
