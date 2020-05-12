@@ -25,12 +25,15 @@ import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForByte;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForChar;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForInt;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForLong;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForShort;
+import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForUnsignedByte;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForUnsignedInt;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForUnsignedLong;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForUnsignedShort;
@@ -40,9 +43,11 @@ import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForChar16;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForInt;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForLong;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForShort;
+import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForUnsignedByte;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForUnsignedInt;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForUnsignedLong;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForUnsignedShort;
+import static com.github.jinahya.bit.io.ValueAdapter.nullable;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -475,5 +480,190 @@ class BitIoAdapterTest {
         }
         final long discarded = input.align(bytes);
         assertEquals(padded, discarded);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @ParameterizedTest
+    void testValues(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
+                    @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
+            throws IOException {
+        final int BOOLEAN = 0;
+        final int BYTE = BOOLEAN + 1;
+        final int UNSIGNED_BYTE = BYTE + 1;
+        final int SHORT = UNSIGNED_BYTE + 1;
+        final int UNSIGNED_SHORT = SHORT + 1;
+        final int INT = UNSIGNED_SHORT + 1;
+        final int UNSIGNED_INT = INT + 1;
+        final int LONG = UNSIGNED_INT + 1;
+        final int UNSIGNED_LONG = LONG + 1;
+        final int CHAR = UNSIGNED_LONG + 1;
+        final int USER = CHAR + 1;
+        final int NULLABLE_USER = USER + 1;
+        final List<Integer> types = new ArrayList<>();
+        final List<Integer> sizes = new ArrayList<>();
+        final List<Object> values = new ArrayList<>();
+        final ValueAdapter<User> userAdapter = new UserAdapter();
+        final ValueAdapter<User> nullableUserAdapter = nullable(userAdapter);
+        final int count = current().nextInt(128);
+        for (int i = 0; i < count; i++) {
+            final int type = current().nextInt(NULLABLE_USER + 1);
+            types.add(type);
+            switch (type) {
+                case BOOLEAN:
+                    sizes.add(null);
+                {
+                    final boolean value = current().nextBoolean();
+                    values.add(value);
+                    output.writeBoolean(value);
+                }
+                break;
+                case BYTE: {
+                    final int size = randomSizeForByte();
+                    sizes.add(size);
+                    final byte value = randomValueForByte(size);
+                    values.add(value);
+                    output.writeByte(size, value);
+                }
+                break;
+                case UNSIGNED_BYTE: {
+                    final int size = randomSizeForUnsignedByte();
+                    sizes.add(size);
+                    final byte value = randomValueForUnsignedByte(size);
+                    values.add(value);
+                    output.writeUnsignedByte(size, value);
+                }
+                break;
+                case SHORT: {
+                    final int size = randomSizeForShort();
+                    sizes.add(size);
+                    final short value = randomValueForShort(size);
+                    values.add(value);
+                    output.writeShort(size, value);
+                }
+                break;
+                case UNSIGNED_SHORT: {
+                    final int size = randomSizeForUnsignedShort();
+                    sizes.add(size);
+                    final short value = randomValueForUnsignedShort(size);
+                    values.add(value);
+                    output.writeUnsignedShort(size, value);
+                }
+                break;
+                case INT: {
+                    final int size = randomSizeForInt();
+                    sizes.add(size);
+                    final int value = randomValueForInt(size);
+                    values.add(value);
+                    output.writeInt(size, value);
+                }
+                break;
+                case UNSIGNED_INT: {
+                    final int size = randomSizeForUnsignedInt();
+                    sizes.add(size);
+                    final int value = randomValueForUnsignedInt(size);
+                    values.add(value);
+                    output.writeUnsignedInt(size, value);
+                }
+                break;
+                case LONG: {
+                    final int size = randomSizeForLong();
+                    sizes.add(size);
+                    final long value = randomValueForLong(size);
+                    values.add(value);
+                    output.writeLong(size, value);
+                }
+                break;
+                case UNSIGNED_LONG: {
+                    final int size = randomSizeForUnsignedLong();
+                    sizes.add(size);
+                    final long value = randomValueForUnsignedLong(size);
+                    values.add(value);
+                    output.writeUnsignedLong(size, value);
+                }
+                break;
+                case CHAR: {
+                    final int size = randomSizeForChar();
+                    sizes.add(size);
+                    final char value = randomValueForChar(size);
+                    values.add(value);
+                    output.writeChar(size, value);
+                }
+                break;
+                case USER: {
+                    sizes.add(null);
+                    final User value = User.newRandomInstance();
+                    values.add(value);
+                    output.writeValue(userAdapter, value);
+                }
+                break;
+                case NULLABLE_USER: {
+                    sizes.add(null);
+                    final User value = current().nextBoolean() ? null : User.newRandomInstance();
+                    values.add(value);
+                    output.writeValue(nullableUserAdapter, value);
+                }
+                break;
+                default:
+                    throw new AssertionError("not gonna happen");
+            }
+        }
+        output.align(current().nextInt(1, 128));
+        for (int i = 0; i < count; i++) {
+            final int type = types.get(i);
+            final Integer size = sizes.get(i);
+            switch (type) {
+                case BOOLEAN: {
+                    assertEquals((boolean) values.get(i), input.readBoolean());
+                }
+                break;
+                case BYTE: {
+                    assertEquals((byte) values.get(i), input.readByte(size));
+                }
+                break;
+                case UNSIGNED_BYTE: {
+                    assertEquals((byte) values.get(i), input.readUnsignedByte(size));
+                }
+                break;
+                case SHORT: {
+                    assertEquals((short) values.get(i), input.readShort(size));
+                }
+                break;
+                case UNSIGNED_SHORT: {
+                    assertEquals((short) values.get(i), input.readUnsignedShort(size));
+                }
+                break;
+                case INT: {
+                    assertEquals((int) values.get(i), input.readInt(size));
+                }
+                break;
+                case UNSIGNED_INT: {
+                    assertEquals((int) values.get(i), input.readUnsignedInt(size));
+                }
+                break;
+                case LONG: {
+                    assertEquals((long) values.get(i), input.readLong(size));
+                }
+                break;
+                case UNSIGNED_LONG: {
+                    assertEquals((long) values.get(i), input.readUnsignedLong(size));
+                }
+                break;
+                case CHAR: {
+                    assertEquals((char) values.get(i), input.readChar(size));
+                }
+                break;
+                case USER: {
+                    assertEquals(values.get(i), input.readValue(userAdapter));
+                }
+                break;
+                case NULLABLE_USER: {
+                    assertEquals(values.get(i), input.readValue(nullableUserAdapter));
+                }
+                break;
+                default:
+                    throw new AssertionError("not gonna happen");
+            }
+        }
     }
 }

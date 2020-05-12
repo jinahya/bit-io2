@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.ByteStreams.black;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
 /**
@@ -51,7 +52,7 @@ class DataByteOutputTest extends ByteOutputAdapterTest<DataByteOutput, DataOutpu
      */
     @Test
     void testWrite() throws IOException {
-        final DataByteOutput output = new DataByteOutput(() -> new DataOutputStream(ByteStreams.black(-1L)));
+        final DataByteOutput output = new DataByteOutput(() -> new DataOutputStream(black(-1L)));
         output.write(current().nextInt(0, 256));
     }
 }
