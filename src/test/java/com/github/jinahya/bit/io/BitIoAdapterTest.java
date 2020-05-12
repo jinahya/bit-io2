@@ -608,7 +608,8 @@ class BitIoAdapterTest {
                     throw new AssertionError("not gonna happen");
             }
         }
-        output.align(current().nextInt(1, 128));
+        final int bytes = current().nextInt(1, 128);
+        output.align(bytes);
         for (int i = 0; i < count; i++) {
             final int type = types.get(i);
             final Integer size = sizes.get(i);
@@ -665,5 +666,6 @@ class BitIoAdapterTest {
                     throw new AssertionError("not gonna happen");
             }
         }
+        input.align(bytes);
     }
 }

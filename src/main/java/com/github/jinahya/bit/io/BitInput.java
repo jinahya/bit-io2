@@ -44,6 +44,7 @@ public interface BitInput {
      *
      * @return {@code true} for {@code 0b1}, {@code false} for {@code 0b0}
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeBoolean(boolean)
      */
     default boolean readBoolean() throws IOException {
         return readInt(true, 1) == 0x01;
@@ -240,7 +241,7 @@ public interface BitInput {
             return value;
         }
         if (size >= Integer.SIZE) {
-            value = (readInt(false, Integer.SIZE) & 0xFFFFFFFFL);
+            value = readInt(false, Integer.SIZE) & 0xFFFFFFFFL;
             size -= Integer.SIZE;
         }
         if (size > 0) {

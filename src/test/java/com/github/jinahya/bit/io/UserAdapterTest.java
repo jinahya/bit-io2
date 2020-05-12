@@ -28,11 +28,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class UserAdapterTest extends ValueAdapterTest<UserAdapter, User> {
-
-    UserAdapterTest() {
-        super(UserAdapter.class, User.class);
-    }
+class UserAdapterTest {
 
     @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
     @ParameterizedTest
