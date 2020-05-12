@@ -43,6 +43,7 @@ public interface BitOutput {
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readBoolean()
      */
     default void writeBoolean(boolean value) throws IOException {
         writeInt(true, 1, value ? 0x01 : 0x00);
@@ -371,7 +372,8 @@ public interface BitOutput {
      * Skips specified number of bits by padding zero bits.
      *
      * @param bits the number of bit to skip; must be positive.
-     * @throws IOException if an I/O error occurs.
+     * @throws IllegalArgumentException if {@code bits} is not positive.
+     * @throws IOException              if an I/O error occurs.
      * @see BitInput#skip(int)
      */
     default void skip(int bits) throws IOException {

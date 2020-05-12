@@ -20,17 +20,21 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import static java.util.Objects.requireNonNull;
+import org.junit.jupiter.api.Test;
 
-abstract class ValueAdapterTest<T extends ValueAdapter<U>, U> {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-    ValueAdapterTest(final Class<T> adapterClass, final Class<U> valueClass) {
-        super();
-        this.adapterClass = requireNonNull(adapterClass, "adapterClass is null");
-        this.valueClass = requireNonNull(valueClass, "valueClass is null");
+class ValueAdapterTest {
+
+    @Test
+    void testNullable() {
+        final ValueAdapter<User> instance = ValueAdapter.nullable(new UserAdapter());
+        assertNotNull(instance);
     }
 
-    final Class<T> adapterClass;
-
-    final Class<U> valueClass;
+    @Test
+    void testComposite() {
+        final ValueAdapter<User> instance = ValueAdapter.composite(new UserReader(), new UserWriter());
+        assertNotNull(instance);
+    }
 }

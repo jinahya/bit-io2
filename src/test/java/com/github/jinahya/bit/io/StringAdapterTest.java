@@ -32,14 +32,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class StringAdapterTest extends ValueAdapterTest<StringAdapter, String> {
-
-    /**
-     * Creates a new instance.
-     */
-    StringAdapterTest() {
-        super(StringAdapter.class, String.class);
-    }
+class StringAdapterTest {
 
     @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
     @ParameterizedTest

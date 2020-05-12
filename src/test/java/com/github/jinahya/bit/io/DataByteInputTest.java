@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.ByteStreams.white;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,7 +51,7 @@ class DataByteInputTest extends ByteInputAdapterTest<DataByteInput, DataInput> {
      */
     @Test
     void assertReadThrowsEofExceptionWhenReachedToAnEnd() {
-        final DataByteInput input = new DataByteInput(() -> new DataInputStream(ByteStreams.white(0L)));
+        final DataByteInput input = new DataByteInput(() -> new DataInputStream(white(0L)));
         assertThrows(EOFException.class, input::read);
     }
 
@@ -62,7 +63,7 @@ class DataByteInputTest extends ByteInputAdapterTest<DataByteInput, DataInput> {
      */
     @Test
     void testRead() throws IOException {
-        final DataByteInput input = new DataByteInput(() -> new DataInputStream(ByteStreams.white(-1L)));
+        final DataByteInput input = new DataByteInput(() -> new DataInputStream(white(-1L)));
         final int value = input.read();
         assertTrue(value >= 0 && value < 256);
     }

@@ -20,28 +20,41 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.IOException;
+
 import static java.util.Objects.requireNonNull;
 
 /**
- * An interface for reading/writing non-scalar values.
+ * A wrapper class for reading/writing a null flag before reading/writing values.
  *
- * @param <T> value type parameter
+ * @param <T> value type parameter.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public interface ValueAdapter<T> extends ValueReader<T>, ValueWriter<T> {
+final class NullableValueAdapter<T> implements ValueAdapter<T> {
 
     /**
-     * Returns an adapter which pre-reads/writes a {@code boolean} value indicating the nullability of the value.
+     * Creates a new instance with specified adapter.
      *
      * @param wrapped the adapter to be wrapped.
-     * @param <T>     value type parameter
-     * @return an adapter wraps specified adapter.
      */
-    static <T> ValueAdapter<T> nullable(final ValueAdapter<T> wrapped) {
-        return new NullableValueAdapter<>(requireNonNull(wrapped, "wrapped is null"));
+    NullableValueAdapter(final ValueAdapter<T> wrapped) {
+        super();
+        requireNonNull(wrapped, "wrapped is null");
+        reader = new NullableValueReader<>(wrapped);
+        writer = new NullableValueWriter<>(wrapped);
     }
 
-    static <T> ValueAdapter<T> composite(final ValueReader<? extends T> reader, final ValueWriter<? super T> writer) {
-        return new CompositeValueAdapter<>(reader, writer);
+    @Override
+    public T read(final BitInput input) throws IOException {
+        return reader.read(input);
     }
+
+    @Override
+    public void write(final BitOutput output, final T value) throws IOException {
+        writer.write(output, value);
+    }
+
+    private final ValueReader<T> reader;
+
+    private final ValueWriter<T> writer;
 }

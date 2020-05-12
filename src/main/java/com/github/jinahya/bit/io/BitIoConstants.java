@@ -1,6 +1,6 @@
 package com.github.jinahya.bit.io;
 
-final class BitConstants {
+final class BitIoConstants {
 
     private static final int[] MASKS = new int[8];
 
@@ -16,7 +16,7 @@ final class BitConstants {
         return MASKS[size - 1];
     }
 
-    private BitConstants() {
-        super();
+    private BitIoConstants() {
+        throw new AssertionError("initialization is not allowed");
     }
 }
