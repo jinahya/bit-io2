@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import java.util.zip.Checksum;
 
 import static com.github.jinahya.bit.io.BitIoConstants.mask;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -49,7 +49,7 @@ public class BitInputAdapter extends BitBase implements BitInput {
 
     @Override
     public int readInt(final boolean unsigned, int size) throws IOException {
-        requireValidSizeInt(unsigned, size);
+        requireValidSizeForInt(unsigned, size);
         int value = 0;
         if (!unsigned) {
             value -= readInt(true, 1);

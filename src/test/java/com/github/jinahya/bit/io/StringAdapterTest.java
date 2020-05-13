@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StringAdapterTest {
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testAsciiAdapter(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                           @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -52,7 +52,7 @@ class StringAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void test(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
               @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)

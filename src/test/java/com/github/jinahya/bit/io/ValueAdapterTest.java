@@ -34,7 +34,7 @@ class ValueAdapterTest {
 
     @Test
     void testComposite() {
-        final ValueAdapter<User> instance = ValueAdapter.composite(new UserReader(), new UserWriter());
+        final ValueAdapter<User> instance = ValueAdapter.compose(new UserReader(), new UserWriter());
         assertNotNull(instance);
     }
 }

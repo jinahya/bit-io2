@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
 public interface ValueAdapter<T> extends ValueReader<T>, ValueWriter<T> {
 
     /**
-     * Returns an adapter which pre-reads/writes a {@code boolean} value indicating the nullability of the value.
+     * Creates a new adapter which pre-reads/writes a {@code boolean} value indicating the nullability of the value.
      *
      * @param wrapped the adapter to be wrapped.
      * @param <T>     value type parameter
@@ -41,7 +41,15 @@ public interface ValueAdapter<T> extends ValueReader<T>, ValueWriter<T> {
         return new NullableValueAdapter<>(requireNonNull(wrapped, "wrapped is null"));
     }
 
-    static <T> ValueAdapter<T> composite(final ValueReader<? extends T> reader, final ValueWriter<? super T> writer) {
+    /**
+     * Creates new adapter composing specified arguments.
+     *
+     * @param reader an adapter for reading values.
+     * @param writer an adapter for writing values.
+     * @param <T>    value type parameter
+     * @return a new instance.
+     */
+    static <T> ValueAdapter<T> compose(final ValueReader<? extends T> reader, final ValueWriter<? super T> writer) {
         return new CompositeValueAdapter<>(reader, writer);
     }
 }

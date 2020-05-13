@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -44,7 +44,7 @@ public class ListAdapter<T> implements ValueAdapter<List<T>> {
      */
     public ListAdapter(final int lengthSize, final ValueAdapter<T> elementAdapter) {
         super();
-        this.lengthSize = requireValidSizeInt(true, lengthSize);
+        this.lengthSize = requireValidSizeForInt(true, lengthSize);
         this.elementAdapter = requireNonNull(elementAdapter, "elementAdapter is null");
     }
 

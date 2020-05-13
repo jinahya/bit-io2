@@ -37,7 +37,6 @@ public interface ByteOutput {
      * @param value the unsigned {@value java.lang.Byte#SIZE}-bit value to write; between {@code 0} and {@code 255},
      *              both inclusive.
      * @throws IOException if an I/O error occurs.
-     * @see ByteInput#read()
      */
     void write(int value) throws IOException;
 }

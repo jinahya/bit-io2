@@ -42,21 +42,21 @@ class BitInputAdapterTest {
 
     // --------------------------------------------------------------------------------------------------------- readInt
     @DisplayName("readInt(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizesForInt"})
     @ParameterizedTest
     void assertReadIntSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.readInt(false, size));
     }
 
     @DisplayName("readInt(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForUnsignedInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizesForUnsignedInt"})
     @ParameterizedTest
     void assertReadIntUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.readInt(true, size));
     }
 
     @DisplayName("readInt(false, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizeForInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesForInt"})
     @ParameterizedTest
     void testReadIntSigned(final int size) throws IOException {
         final int value = adapter.readInt(false, size);
@@ -64,7 +64,7 @@ class BitInputAdapterTest {
     }
 
     @DisplayName("readInt(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizeForUnsignedInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesForUnsignedInt"})
     @ParameterizedTest
     void testReadIntUnsigned(final int size) throws IOException {
         final int value = adapter.readInt(true, size);
@@ -73,7 +73,7 @@ class BitInputAdapterTest {
 
     // -------------------------------------------------------------------------------------------------------- readLong
     @DisplayName("readLong(false, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizeForLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesForLong"})
     @ParameterizedTest
     void testReadLongSigned(final int size) throws IOException {
         final long value = adapter.readLong(false, size);
@@ -81,7 +81,7 @@ class BitInputAdapterTest {
     }
 
     @DisplayName("readLong(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizeForUnsignedLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesForUnsignedLong"})
     @ParameterizedTest
     void testReadLongUnsigned(final int size) throws IOException {
         final long value = adapter.readLong(true, size);
@@ -90,10 +90,10 @@ class BitInputAdapterTest {
 
     // ----------------------------------------------------------------------------------------------------------- align
     @DisplayName("align(bytes) throws IllegalArgumentException when bytes is not positive ")
-    @Test
-    void assertAlignThrowsIllegalArgumentExceptionWhenBytesIsNotPositive() {
-        assertThrows(IllegalArgumentException.class, () -> adapter.align(0));
-        assertThrows(IllegalArgumentException.class, () -> adapter.align(current().nextInt() | Integer.MIN_VALUE));
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalBytesForAlign"})
+    @ParameterizedTest
+    void assertAlignThrowsIllegalArgumentExceptionWhenBytesIsNotPositive(final int bytes) {
+        assertThrows(IllegalArgumentException.class, () -> adapter.align(bytes));
     }
 
     /**

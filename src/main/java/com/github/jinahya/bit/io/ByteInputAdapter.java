@@ -53,7 +53,6 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @see ByteOutputAdapter#write(int)
      */
     @Override
     public int read() throws IOException {
@@ -66,7 +65,6 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      * @param source the source from which a byte is read.
      * @return an unsigned {@code 8}-bit value read from the {@code source}.
      * @throws IOException if an I/O error occurs.
-     * @see ByteOutputAdapter#write(Object, int)
      */
     protected abstract int read(T source) throws IOException;
 

@@ -40,28 +40,28 @@ class BitOutputAdapterTest {
 
     // -------------------------------------------------------------------------------------------------------- writeInt
     @DisplayName("writeInt(false, size, value) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizesForInt"})
     @ParameterizedTest
     void assertWriteIntSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.writeInt(false, size, 0));
     }
 
     @DisplayName("writeInt(true, size, value) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForUnsignedInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizesForUnsignedInt"})
     @ParameterizedTest
     void assertWriteIntUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> adapter.writeInt(true, size, 0));
     }
 
     @DisplayName("writeInt(false, size, value)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizeAndValueForInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesAndValuesForInt"})
     @ParameterizedTest
     void testWriteIntSigned(final int size, final int value) throws IOException {
         adapter.writeInt(false, size, value);
     }
 
     @DisplayName("writeInt(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizeAndValueForUnsignedInt"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesAndValuesForUnsignedInt"})
     @ParameterizedTest
     void testWriteIntUnsigned(final int size, final int value) throws IOException {
         adapter.writeInt(true, size, value);
@@ -69,14 +69,14 @@ class BitOutputAdapterTest {
 
     // ------------------------------------------------------------------------------------------------------- writeLong
     @DisplayName("writeLong(false, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizeAndValueForLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesAndValuesForLong"})
     @ParameterizedTest
     void testWriteLongSigned(final int size, final long value) throws IOException {
         adapter.writeLong(false, size, value);
     }
 
     @DisplayName("writeLong(true, size)")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizeAndValueForUnsignedLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesAndValuesForUnsignedLong"})
     @ParameterizedTest
     void testWriteLongUnsigned(final int size, final long value) throws IOException {
         adapter.writeLong(true, size, value);
@@ -84,10 +84,10 @@ class BitOutputAdapterTest {
 
     // ----------------------------------------------------------------------------------------------------------- align
     @DisplayName("align(bytes) throws IllegalArgumentException when bytes is not positive ")
-    @Test
-    void assertAlignThrowsIllegalArgumentExceptionWhenBytesIsNotPositive() {
-        assertThrows(IllegalArgumentException.class, () -> adapter.align(0));
-        assertThrows(IllegalArgumentException.class, () -> adapter.align(current().nextInt() | Integer.MIN_VALUE));
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalBytesForAlign"})
+    @ParameterizedTest
+    void assertAlignThrowsIllegalArgumentExceptionWhenBytesIsNotPositive(final int bytes) {
+        assertThrows(IllegalArgumentException.class, () -> adapter.align(bytes));
     }
 
     /**
