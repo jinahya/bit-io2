@@ -108,12 +108,12 @@ public class BitOutputAdapter extends BitBase implements BitOutput {
         octet |= value & mask(size);
         available -= size;
         if (available == 0) {
-            update(octet);
             assert octet >= 0 && octet < 256;
             output().write(octet);
             count++;
             octet = 0x00;
             available = Byte.SIZE;
+            update(octet);
         }
     }
 
