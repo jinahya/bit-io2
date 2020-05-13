@@ -7,7 +7,7 @@ A Java 8+ flavored version of [bit-io](https://github.com/jinahya/bit-io).
 
 ## How to use?
 
-Add this module as a dependency. Check the [central](https://search.maven.org/search?q=g:com.github.jinahya%20a:bit-io2) the current version.
+Add this module as a dependency. Check the [central](https://search.maven.org/search?q=g:com.github.jinahya%20a:bit-io2) for the current version.
 
 ```xml
 <dependency>
@@ -19,7 +19,7 @@ Add this module as a dependency. Check the [central](https://search.maven.org/se
 
 ## How it works?
 
-Two interfaces defined for reading/writing non-octet aligned values and two more interfaces are defined for reading/writing octets from/to various sources/targets.
+Two interfaces are defined for reading/writing non-octet aligned values and two more interfaces are defined for reading/writing octets from/to various sources/targets.
 
 ```
 CLIENT <-read BitInput(Adapter)
