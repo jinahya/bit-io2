@@ -43,6 +43,7 @@ public interface BitOutput {
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readBoolean()
      */
     default void writeBoolean(boolean value) throws IOException {
         writeInt(true, 1, value ? 0x01 : 0x00);
