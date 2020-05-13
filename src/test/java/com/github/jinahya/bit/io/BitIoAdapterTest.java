@@ -25,8 +25,11 @@ import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForByte;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForChar;
@@ -505,9 +508,15 @@ class BitIoAdapterTest {
         final List<Object> values = new ArrayList<>();
         final ValueAdapter<User> userAdapter = new UserAdapter();
         final ValueAdapter<User> nullableUserAdapter = nullable(userAdapter);
-        final int count = current().nextInt(128);
+        final int count = 1024;
+        final Random random;
+        try {
+            random = SecureRandom.getInstanceStrong();
+        } catch (final NoSuchAlgorithmException nsae) {
+            throw new RuntimeException(nsae);
+        }
         for (int i = 0; i < count; i++) {
-            final int type = current().nextInt(NULLABLE_USER + 1);
+            final int type = random.nextInt(NULLABLE_USER + 1);
             types.add(type);
             switch (type) {
                 case BOOLEAN:
@@ -615,7 +624,7 @@ class BitIoAdapterTest {
             final Integer size = sizes.get(i);
             switch (type) {
                 case BOOLEAN: {
-                    assertEquals((boolean) values.get(i), input.readBoolean());
+                    assertEquals(values.get(i), input.readBoolean());
                 }
                 break;
                 case BYTE: {
