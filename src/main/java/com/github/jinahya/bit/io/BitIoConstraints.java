@@ -38,7 +38,7 @@ final class BitIoConstraints {
         if (requirePositive(size) > Byte.SIZE) {
             throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
         }
-        if (unsigned && size == Byte.SIZE) {
+        if (size == Byte.SIZE && unsigned) {
             throw new IllegalArgumentException("invalid size(" + size + ") for unsigned byte");
         }
         return size;
@@ -48,7 +48,7 @@ final class BitIoConstraints {
         if (requirePositive(size) > Short.SIZE) {
             throw new IllegalArgumentException("size(" + size + ") > " + Short.SIZE);
         }
-        if (unsigned && size == Short.SIZE) {
+        if (size == Short.SIZE && unsigned) {
             throw new IllegalArgumentException("invalid size(" + size + ") for unsigned short");
         }
         return size;
@@ -58,7 +58,7 @@ final class BitIoConstraints {
         if (requirePositive(size) > Integer.SIZE) {
             throw new IllegalArgumentException("size(" + size + ") > " + Integer.SIZE);
         }
-        if (unsigned && size == Integer.SIZE) {
+        if (size == Integer.SIZE && unsigned) {
             throw new IllegalArgumentException("invalid size(" + size + ") for unsigned int");
         }
         return size;
@@ -68,7 +68,7 @@ final class BitIoConstraints {
         if (requirePositive(size) > Long.SIZE) {
             throw new IllegalArgumentException("size(" + size + ") > " + Long.SIZE);
         }
-        if (unsigned && size == Long.SIZE) {
+        if (size == Long.SIZE && unsigned) {
             throw new IllegalArgumentException("invalid size(" + size + ") for unsigned long");
         }
         return size;
