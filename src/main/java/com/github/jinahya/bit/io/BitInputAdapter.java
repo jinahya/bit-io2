@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.util.function.Supplier;
 import java.util.zip.Checksum;
 
+import static com.github.jinahya.bit.io.BitIoConstants.mask;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
 import static java.util.Objects.requireNonNull;
 
@@ -98,10 +99,13 @@ public class BitInputAdapter extends BitBase implements BitInput {
      * @see BitOutputAdapter#unsigned8(int, int)
      */
     private int unsigned8(final int size) throws IOException {
+        assert size > 0;
+        assert size <= Byte.SIZE;
         if (available == 0) {
             octet = input().read();
-            available = Byte.SIZE;
+            assert octet >= 0 && octet < 256;
             count++;
+            available = Byte.SIZE;
             update(octet);
         }
         final int required = size - available;
@@ -109,7 +113,7 @@ public class BitInputAdapter extends BitBase implements BitInput {
             return (unsigned8(available) << required) | unsigned8(required);
         }
         available -= size;
-        return (octet >> available) & ((1 << size) - 1);
+        return (octet >> available) & mask(size);
     }
 
     /**

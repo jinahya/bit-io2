@@ -46,6 +46,7 @@ public interface BitInput {
      *
      * @return {@code true} for {@code 0b1}, {@code false} for {@code 0b0}
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeBoolean(boolean)
      */
     default boolean readBoolean() throws IOException {
         return readInt(true, 1) == 0x01;
@@ -205,7 +206,7 @@ public interface BitInput {
      * @see BitOutput#writeInt32Le(int)
      */
     default int readInt32Le() throws IOException {
-        return (readShort16Le() & 0xFFFF) | (readShort16Le() << Short.SIZE);
+        return readShort16Le() & 0xFFFF | readShort16Le() << Short.SIZE;
     }
 
     /**
@@ -242,7 +243,7 @@ public interface BitInput {
             return value;
         }
         if (size >= Integer.SIZE) {
-            value = (readInt(false, Integer.SIZE) & 0xFFFFFFFFL);
+            value = readInt(false, Integer.SIZE) & 0xFFFFFFFFL;
             size -= Integer.SIZE;
         }
         if (size > 0) {
@@ -283,7 +284,7 @@ public interface BitInput {
      * @see BitOutput#writeLong64Le(long)
      */
     default long readLong64Le() throws IOException {
-        return (readInt32Le() & 0xFFFFFFFFL) | (((long) readInt32Le()) << Integer.SIZE);
+        return readInt32Le() & 0xFFFFFFFFL | ((long) readInt32Le()) << Integer.SIZE;
     }
 
     /**
@@ -370,7 +371,8 @@ public interface BitInput {
      * Skips specified number of bits by discarding bits.
      *
      * @param bits the number of bit to skip; must be positive.
-     * @throws IOException if an I/O error occurs.
+     * @throws IllegalArgumentException if {@code bits} is not positive.
+     * @throws IOException              if an I/O error occurs.
      * @see BitOutput#skip(int)
      */
     default void skip(int bits) throws IOException {

@@ -22,24 +22,27 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.requireNonNull;
 
-class UserAdapter implements ValueAdapter<User> {
+final class CompositeValueAdapter<T> implements ValueAdapter<T> {
 
-    static final ValueAdapter<String> NAME_ADAPTER
-            = ValueAdapter.nullable(new StringAdapter(new BytesAdapter(16, 8), UTF_8));
-
-    @Override
-    public void write(final BitOutput output, final User value) throws IOException {
-        NAME_ADAPTER.write(output, value.name);
-        output.writeUnsignedInt(7, value.age);
+    CompositeValueAdapter(final ValueReader<? extends T> reader, final ValueWriter<? super T> writer) {
+        super();
+        this.reader = requireNonNull(reader, "reader is null");
+        this.writer = requireNonNull(writer, "writer is null");
     }
 
     @Override
-    public User read(final BitInput input) throws IOException {
-        final User value = new User();
-        value.name = NAME_ADAPTER.read(input);
-        value.age = input.readUnsignedInt(7);
-        return value;
+    public T read(final BitInput input) throws IOException {
+        return reader.read(input);
     }
+
+    @Override
+    public void write(final BitOutput output, final T value) throws IOException {
+        writer.write(output, value);
+    }
+
+    private final ValueReader<? extends T> reader;
+
+    private final ValueWriter<? super T> writer;
 }

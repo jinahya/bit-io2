@@ -27,11 +27,15 @@ package com.github.jinahya.bit.io;
  */
 final class BitIoConstraints {
 
-    static int requireValidSizeByte(final boolean unsigned, final int size) {
+    private static int requirePositive(final int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("size(" + size + ") <= 0");
         }
-        if (size > Byte.SIZE) {
+        return size;
+    }
+
+    static int requireValidSizeByte(final boolean unsigned, final int size) {
+        if (requirePositive(size) > Byte.SIZE) {
             throw new IllegalArgumentException("invalid size(" + size + ") > " + Byte.SIZE);
         }
         if (unsigned && size == Byte.SIZE) {
@@ -41,10 +45,7 @@ final class BitIoConstraints {
     }
 
     static int requireValidSizeShort(final boolean unsigned, final int size) {
-        if (size <= 0) {
-            throw new IllegalArgumentException("size(" + size + ") <= 0");
-        }
-        if (size > Short.SIZE) {
+        if (requirePositive(size) > Short.SIZE) {
             throw new IllegalArgumentException("invalid size(" + size + ") > " + Short.SIZE);
         }
         if (unsigned && size == Short.SIZE) {
@@ -54,10 +55,7 @@ final class BitIoConstraints {
     }
 
     static int requireValidSizeInt(final boolean unsigned, final int size) {
-        if (size <= 0) {
-            throw new IllegalArgumentException("size(" + size + ") <= 0");
-        }
-        if (size > Integer.SIZE) {
+        if (requirePositive(size) > Integer.SIZE) {
             throw new IllegalArgumentException("invalid size(" + size + ") > " + Integer.SIZE);
         }
         if (unsigned && size == Integer.SIZE) {
@@ -67,10 +65,7 @@ final class BitIoConstraints {
     }
 
     static int requireValidSizeLong(final boolean unsigned, final int size) {
-        if (size <= 0) {
-            throw new IllegalArgumentException("size(" + size + ") <= 0");
-        }
-        if (size > Long.SIZE) {
+        if (requirePositive(size) > Long.SIZE) {
             throw new IllegalArgumentException("invalid size(" + size + ") > " + Long.SIZE);
         }
         if (unsigned && size == Long.SIZE) {
@@ -80,10 +75,7 @@ final class BitIoConstraints {
     }
 
     static int requireValidSizeChar(final int size) {
-        if (size <= 0) {
-            throw new IllegalArgumentException("size(" + size + ") <= 0");
-        }
-        if (size > Character.SIZE) {
+        if (requirePositive(size) > Character.SIZE) {
             throw new IllegalArgumentException("size(" + size + ") > " + Character.SIZE);
         }
         return size;

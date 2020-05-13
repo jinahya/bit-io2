@@ -20,28 +20,35 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.IOException;
+
 import static java.util.Objects.requireNonNull;
 
 /**
- * An interface for reading/writing non-scalar values.
+ * An interface for reading non-scalar values.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public interface ValueAdapter<T> extends ValueReader<T>, ValueWriter<T> {
+public interface ValueReader<T> {
 
     /**
-     * Returns an adapter which pre-reads/writes a {@code boolean} value indicating the nullability of the value.
+     * Returns an adapter which pre-reads a {@code boolean} value indicating the nullability of the value.
      *
      * @param wrapped the adapter to be wrapped.
      * @param <T>     value type parameter
      * @return an adapter wraps specified adapter.
      */
-    static <T> ValueAdapter<T> nullable(final ValueAdapter<T> wrapped) {
-        return new NullableValueAdapter<>(requireNonNull(wrapped, "wrapped is null"));
+    static <T> ValueReader<T> nullable(final ValueReader<? extends T> wrapped) {
+        return new NullableValueReader<>(requireNonNull(wrapped, "wrapped is null"));
     }
 
-    static <T> ValueAdapter<T> composite(final ValueReader<? extends T> reader, final ValueWriter<? super T> writer) {
-        return new CompositeValueAdapter<>(reader, writer);
-    }
+    /**
+     * Reads a value from specified input.
+     *
+     * @param input the input from which the value is read.
+     * @return a value.
+     * @throws IOException if an I/O error occurs.
+     */
+    T read(BitInput input) throws IOException;
 }
