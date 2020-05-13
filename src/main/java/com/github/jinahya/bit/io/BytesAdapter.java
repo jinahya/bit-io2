@@ -69,7 +69,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
      * @param elementSize the number of bits for each element in the array.
      * @return a new instance.
      */
-    public static BytesAdapter unsignedBytesAdapter(final int lengthSize, final int elementSize) {
+    public static BytesAdapter unsigned(final int lengthSize, final int elementSize) {
         return new UnsignedBytesAdapter(lengthSize, elementSize);
     }
 

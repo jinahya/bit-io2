@@ -27,7 +27,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.StringAdapter.asciiAdapter;
+import static com.github.jinahya.bit.io.StringAdapter.ascii;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +39,7 @@ class StringAdapterTest {
     void testAsciiAdapter(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                           @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
             throws IOException {
-        final StringAdapter adapter = asciiAdapter(31);
+        final StringAdapter adapter = ascii(31);
         final String expected = new RandomStringGenerator.Builder()
                 .withinRange(0, 127)
                 .build()

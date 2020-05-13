@@ -94,7 +94,6 @@ public class BitInputAdapter implements BitInput {
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return an unsigned {@code int} value.
      * @throws IOException if an I/O error occurs.
-     * @see BitOutputAdapter#unsigned8(int, int)
      */
     private int unsigned8(final int size) throws IOException {
         assert size > 0;
@@ -117,7 +116,6 @@ public class BitInputAdapter implements BitInput {
      * Returns an instance of {@link ByteInput}.
      *
      * @return an instance of {@link ByteInput}.
-     * @see BitOutputAdapter#output()
      */
     private ByteInput input() {
         if (input == null) {
@@ -128,8 +126,6 @@ public class BitInputAdapter implements BitInput {
 
     /**
      * A supplier for {@link #input}.
-     *
-     * @see BitOutputAdapter#outputSupplier
      */
     private final Supplier<? extends ByteInput> inputSupplier;
 
@@ -137,7 +133,6 @@ public class BitInputAdapter implements BitInput {
      * A value supplied from {@link #inputSupplier}.
      *
      * @see #input()
-     * @see BitOutputAdapter#output
      */
     private ByteInput input;
 
@@ -152,7 +147,7 @@ public class BitInputAdapter implements BitInput {
     private int available = 0;
 
     /**
-     * The number of bytes read so far.
+     * The number of bytes read from {@link #input} so far.
      */
     private long count;
 }

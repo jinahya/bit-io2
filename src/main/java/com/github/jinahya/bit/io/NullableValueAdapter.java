@@ -54,7 +54,7 @@ final class NullableValueAdapter<T> implements ValueAdapter<T> {
         writer.write(output, value);
     }
 
-    private final ValueReader<T> reader;
+    private final ValueReader<? extends T> reader;
 
-    private final ValueWriter<T> writer;
+    private final ValueWriter<? super T> writer;
 }
