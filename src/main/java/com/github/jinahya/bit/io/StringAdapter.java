@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import static com.github.jinahya.bit.io.BytesAdapter.unsignedBytesAdapter;
+import static com.github.jinahya.bit.io.BytesAdapter.unsigned;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.util.Objects.requireNonNull;
 
@@ -39,10 +39,10 @@ public class StringAdapter implements ValueAdapter<String> {
      *
      * @param lengthSize the number of bits for the length of encoded bytes.
      * @return a new instance.
-     * @see BytesAdapter#unsignedBytesAdapter(int, int)
+     * @see BytesAdapter#unsigned(int, int)
      */
-    public static StringAdapter asciiAdapter(final int lengthSize) {
-        return new StringAdapter(unsignedBytesAdapter(lengthSize, 7), US_ASCII);
+    public static StringAdapter ascii(final int lengthSize) {
+        return new StringAdapter(unsigned(lengthSize, 7), US_ASCII);
     }
 
     /**

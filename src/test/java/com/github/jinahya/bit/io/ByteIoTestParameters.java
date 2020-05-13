@@ -104,7 +104,7 @@ final class ByteIoTestParameters {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static Stream<Arguments> ByteIoTestParameters() {
+    static Stream<Arguments> byteIos() {
         return Stream.of(buffer(),
                          buffer2(),
                          buffer3(),
@@ -116,6 +116,6 @@ final class ByteIoTestParameters {
 
     // -----------------------------------------------------------------------------------------------------------------
     private ByteIoTestParameters() {
-        super();
+        throw new AssertionError("initialization is not allowed");
     }
 }

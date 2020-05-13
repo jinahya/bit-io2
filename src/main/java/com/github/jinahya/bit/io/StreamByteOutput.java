@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.function.Supplier;
 
@@ -37,7 +36,6 @@ public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
      * Creates a new instance with specified target supplier.
      *
      * @param targetSupplier the target supplier.
-     * @see StreamByteInput#StreamByteInput(Supplier)
      */
     public StreamByteOutput(final Supplier<? extends OutputStream> targetSupplier) {
         super(targetSupplier);
@@ -50,7 +48,6 @@ public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @see StreamByteInput#read(InputStream)
      */
     @Override
     protected void write(final OutputStream target, final int value) throws IOException {

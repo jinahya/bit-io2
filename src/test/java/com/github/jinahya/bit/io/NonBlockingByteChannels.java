@@ -48,7 +48,7 @@ final class NonBlockingByteChannels {
 
         @Override
         public void close() throws IOException {
-
+            // does nothing.
         }
     }
 
@@ -75,7 +75,7 @@ final class NonBlockingByteChannels {
 
         @Override
         public void close() throws IOException {
-
+            // does nothing.
         }
     }
 

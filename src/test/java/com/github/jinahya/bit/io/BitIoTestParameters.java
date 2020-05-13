@@ -49,7 +49,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 final class BitIoTestParameters {
 
     // ------------------------------------------------------------------------------------------------------------ byte
-    static IntStream invalidSizeForByte() {
+    static IntStream invalidSizesForByte() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -59,7 +59,7 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static IntStream invalidSizeForUnsignedByte() {
+    static IntStream invalidSizesForUnsignedByte() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -70,7 +70,7 @@ final class BitIoTestParameters {
     }
 
     // ----------------------------------------------------------------------------------------------------------- short
-    static IntStream invalidSizeForShort() {
+    static IntStream invalidSizesForShort() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -80,7 +80,7 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static IntStream invalidSizeForUnsignedShort() {
+    static IntStream invalidSizesForUnsignedShort() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -91,7 +91,7 @@ final class BitIoTestParameters {
     }
 
     // ------------------------------------------------------------------------------------------------------------- int
-    static IntStream illegalSizeForInt() {
+    static IntStream illegalSizesForInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -101,7 +101,7 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static IntStream illegalSizeForUnsignedInt() {
+    static IntStream illegalSizesForUnsignedInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -111,7 +111,7 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static IntStream sizeForInt() {
+    static IntStream sizesForInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(1);
         builder.add(Integer.SIZE);
@@ -119,7 +119,7 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static IntStream sizeForUnsignedInt() {
+    static IntStream sizesForUnsignedInt() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(1);
         builder.add(Integer.SIZE - 1);
@@ -127,16 +127,16 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static Stream<Arguments> sizeAndValueForInt() {
-        return sizeForInt().mapToObj(size -> arguments(size, randomValueForInt(size)));
+    static Stream<Arguments> sizesAndValuesForInt() {
+        return sizesForInt().mapToObj(size -> arguments(size, randomValueForInt(size)));
     }
 
-    static Stream<Arguments> sizeAndValueForUnsignedInt() {
-        return sizeForUnsignedInt().mapToObj(size -> arguments(size, randomValueForUnsignedInt(size)));
+    static Stream<Arguments> sizesAndValuesForUnsignedInt() {
+        return sizesForUnsignedInt().mapToObj(size -> arguments(size, randomValueForUnsignedInt(size)));
     }
 
     // ------------------------------------------------------------------------------------------------------------ long
-    static IntStream illegalSizeForLong() {
+    static IntStream illegalSizesForLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -146,7 +146,7 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static IntStream illegalSizeForUnsignedLong() {
+    static IntStream illegalSizesForUnsignedLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -156,7 +156,7 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static IntStream sizeForLong() {
+    static IntStream sizesForLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(1);
         builder.add(Long.SIZE);
@@ -164,7 +164,7 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static IntStream sizeForUnsignedLong() {
+    static IntStream sizesForUnsignedLong() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(1);
         builder.add(Long.SIZE - 1);
@@ -172,16 +172,16 @@ final class BitIoTestParameters {
         return builder.build();
     }
 
-    static Stream<Arguments> sizeAndValueForLong() {
-        return sizeForLong().mapToObj(size -> arguments(size, randomValueForLong(size)));
+    static Stream<Arguments> sizesAndValuesForLong() {
+        return sizesForLong().mapToObj(size -> arguments(size, randomValueForLong(size)));
     }
 
-    static Stream<Arguments> sizeAndValueForUnsignedLong() {
-        return sizeForUnsignedLong().mapToObj(size -> arguments(size, randomValueForUnsignedLong(size)));
+    static Stream<Arguments> sizesAndValuesForUnsignedLong() {
+        return sizesForUnsignedLong().mapToObj(size -> arguments(size, randomValueForUnsignedLong(size)));
     }
 
     // ------------------------------------------------------------------------------------------------------------ char
-    static IntStream invalidSizedForChar() {
+    static IntStream invalidSizesForChar() {
         final IntStream.Builder builder = IntStream.builder();
         builder.add(0);
         builder.add(-1);
@@ -223,6 +223,6 @@ final class BitIoTestParameters {
 
     // -----------------------------------------------------------------------------------------------------------------
     private BitIoTestParameters() {
-        super();
+        throw new AssertionError("initialization is not allowed");
     }
 }

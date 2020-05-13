@@ -22,8 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 
 /**
  * A value adapter for reading/writing an array of bytes.
@@ -39,8 +39,16 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
      */
     private static class UnsignedBytesAdapter extends BytesAdapter {
 
+        /**
+         * Creates a new instance.
+         *
+         * @param lengthSize  the number of bits for the length of the array; between {@code 1} (inclusive) and {@value
+         *                    java.lang.Integer#SIZE} (exclusive).
+         * @param elementSize the number of bits for each element in the array; between {@code 1} (inclusive) and
+         *                    {@value java.lang.Byte#SIZE} (exclusive).
+         */
         private UnsignedBytesAdapter(final int lengthSize, final int elementSize) {
-            super(lengthSize, requireValidSizeByte(true, elementSize));
+            super(lengthSize, requireValidSizeForByte(true, elementSize));
         }
 
         @Override
@@ -63,26 +71,30 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
     }
 
     /**
-     * Creates a new instance for reading/writing unsigned bytes.
+     * Creates a new instance for reading/writing an array of unsigned bytes.
      *
-     * @param lengthSize  the number of bits for the length of the array.
-     * @param elementSize the number of bits for each element in the array.
+     * @param lengthSize  the number of bits for the length of the array; between {@code 1} (inclusive) and {@value
+     *                    java.lang.Integer#SIZE} (exclusive).
+     * @param elementSize the number of bits for each element in the array; between {@code 1} (inclusive) and {@value
+     *                    java.lang.Byte#SIZE} (exclusive).
      * @return a new instance.
      */
-    public static BytesAdapter unsignedBytesAdapter(final int lengthSize, final int elementSize) {
+    public static BytesAdapter unsigned(final int lengthSize, final int elementSize) {
         return new UnsignedBytesAdapter(lengthSize, elementSize);
     }
 
     /**
      * Creates a new instance with specified arguments.
      *
-     * @param lengthSize  a number of bits for the {@code length} of the array.
-     * @param elementSize a number of bits for each element in the array.
+     * @param lengthSize  the number of bits for the length of the array; between {@code 1} (inclusive) and {@value
+     *                    java.lang.Integer#SIZE} (exclusive).
+     * @param elementSize the number of bits for each element in the array; between {@code 1} and {@value
+     *                    java.lang.Byte#SIZE}, both inclusive.
      */
     public BytesAdapter(final int lengthSize, final int elementSize) {
         super();
-        this.lengthSize = requireValidSizeInt(true, lengthSize);
-        this.elementSize = requireValidSizeByte(false, elementSize);
+        this.lengthSize = requireValidSizeForInt(true, lengthSize);
+        this.elementSize = requireValidSizeForByte(false, elementSize);
     }
 
     final int writeLength(final BitOutput output, final byte[] value) throws IOException {

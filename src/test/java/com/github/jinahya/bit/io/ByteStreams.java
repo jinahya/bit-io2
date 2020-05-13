@@ -43,6 +43,6 @@ final class ByteStreams {
     }
 
     private ByteStreams() {
-        throw new AssertionError("instantiation not allowed");
+        throw new AssertionError("instantiation is not allowed");
     }
 }
