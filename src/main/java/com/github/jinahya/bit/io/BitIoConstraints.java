@@ -34,9 +34,9 @@ final class BitIoConstraints {
         return size;
     }
 
-    static int requireValidSizeByte(final boolean unsigned, final int size) {
+    static int requireValidSizeForByte(final boolean unsigned, final int size) {
         if (requirePositive(size) > Byte.SIZE) {
-            throw new IllegalArgumentException("invalid size(" + size + ") > " + Byte.SIZE);
+            throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
         }
         if (unsigned && size == Byte.SIZE) {
             throw new IllegalArgumentException("invalid size(" + size + ") for unsigned byte");
@@ -44,9 +44,9 @@ final class BitIoConstraints {
         return size;
     }
 
-    static int requireValidSizeShort(final boolean unsigned, final int size) {
+    static int requireValidSizeForShort(final boolean unsigned, final int size) {
         if (requirePositive(size) > Short.SIZE) {
-            throw new IllegalArgumentException("invalid size(" + size + ") > " + Short.SIZE);
+            throw new IllegalArgumentException("size(" + size + ") > " + Short.SIZE);
         }
         if (unsigned && size == Short.SIZE) {
             throw new IllegalArgumentException("invalid size(" + size + ") for unsigned short");
@@ -54,19 +54,19 @@ final class BitIoConstraints {
         return size;
     }
 
-    static int requireValidSizeInt(final boolean unsigned, final int size) {
+    static int requireValidSizeForInt(final boolean unsigned, final int size) {
         if (requirePositive(size) > Integer.SIZE) {
-            throw new IllegalArgumentException("invalid size(" + size + ") > " + Integer.SIZE);
+            throw new IllegalArgumentException("size(" + size + ") > " + Integer.SIZE);
         }
         if (unsigned && size == Integer.SIZE) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned integer");
+            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned int");
         }
         return size;
     }
 
-    static int requireValidSizeLong(final boolean unsigned, final int size) {
+    static int requireValidSizeForLong(final boolean unsigned, final int size) {
         if (requirePositive(size) > Long.SIZE) {
-            throw new IllegalArgumentException("invalid size(" + size + ") > " + Long.SIZE);
+            throw new IllegalArgumentException("size(" + size + ") > " + Long.SIZE);
         }
         if (unsigned && size == Long.SIZE) {
             throw new IllegalArgumentException("invalid size(" + size + ") for unsigned long");
@@ -74,7 +74,14 @@ final class BitIoConstraints {
         return size;
     }
 
-    static int requireValidSizeChar(final int size) {
+    /**
+     * Tests whether specified bit size is valid for a {@code char} value.
+     *
+     * @param size the bit size to test.
+     * @return specified {@code size}.
+     * @throws IllegalArgumentException if {@code size} is not valid for a {@code char} value.
+     */
+    static int requireValidSizeForChar(final int size) {
         if (requirePositive(size) > Character.SIZE) {
             throw new IllegalArgumentException("size(" + size + ") > " + Character.SIZE);
         }

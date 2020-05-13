@@ -22,10 +22,10 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
 import static java.lang.Double.longBitsToDouble;
 import static java.lang.Float.intBitsToFloat;
 import static java.util.Objects.requireNonNull;
@@ -59,7 +59,7 @@ public interface BitInput {
      * @throws IOException if an I/O error occurs.
      */
     default byte readByte(final boolean unsigned, final int size) throws IOException {
-        return (byte) readInt(unsigned, requireValidSizeByte(unsigned, size));
+        return (byte) readInt(unsigned, requireValidSizeForByte(unsigned, size));
     }
 
     /**
@@ -105,7 +105,7 @@ public interface BitInput {
      * @throws IOException if an I/O error occurs.
      */
     default short readShort(final boolean unsigned, final int size) throws IOException {
-        return (short) readInt(unsigned, requireValidSizeShort(unsigned, size));
+        return (short) readInt(unsigned, requireValidSizeForShort(unsigned, size));
     }
 
     /**
@@ -216,7 +216,7 @@ public interface BitInput {
      * @throws IOException if an I/O error occurs.
      */
     default long readLong(final boolean unsigned, int size) throws IOException {
-        requireValidSizeLong(unsigned, size);
+        requireValidSizeForLong(unsigned, size);
         long value = 0L;
         if (!unsigned) {
             value -= readInt(true, 1);
@@ -289,7 +289,7 @@ public interface BitInput {
      * @see #readChar16()
      */
     default char readChar(final int size) throws IOException {
-        return (char) readInt(true, requireValidSizeChar(size));
+        return (char) readInt(true, requireValidSizeForChar(size));
     }
 
     /**

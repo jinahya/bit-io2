@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 import static com.github.jinahya.bit.io.BitIoConstants.mask;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeInt;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -47,7 +47,7 @@ public class BitOutputAdapter implements BitOutput {
 
     @Override
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
-        requireValidSizeInt(unsigned, size);
+        requireValidSizeForInt(unsigned, size);
         if (!unsigned) {
             writeInt(true, 1, value < 0 ? 1 : 0);
             if (--size > 0) {

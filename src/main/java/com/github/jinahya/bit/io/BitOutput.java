@@ -22,10 +22,10 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeChar;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeLong;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeShort;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
 import static java.lang.Float.floatToRawIntBits;
 import static java.util.Objects.requireNonNull;
 
@@ -58,7 +58,7 @@ public interface BitOutput {
      * @throws IOException if an I/O error occurs.
      */
     default void writeByte(final boolean unsigned, final int size, final byte value) throws IOException {
-        writeInt(unsigned, requireValidSizeByte(unsigned, size), value);
+        writeInt(unsigned, requireValidSizeForByte(unsigned, size), value);
     }
 
     /**
@@ -104,7 +104,7 @@ public interface BitOutput {
      * @throws IOException if an I/O error occurs.
      */
     default void writeShort(final boolean unsigned, final int size, final short value) throws IOException {
-        writeInt(unsigned, requireValidSizeShort(unsigned, size), value);
+        writeInt(unsigned, requireValidSizeForShort(unsigned, size), value);
     }
 
     /**
@@ -218,7 +218,7 @@ public interface BitOutput {
      * @throws IOException if an I/O error occurs.
      */
     default void writeLong(final boolean unsigned, int size, final long value) throws IOException {
-        requireValidSizeLong(unsigned, size);
+        requireValidSizeForLong(unsigned, size);
         if (!unsigned) {
             writeInt(true, 1, value < 0L ? 0x01 : 0x00);
             if (--size > 0) {
@@ -289,7 +289,7 @@ public interface BitOutput {
      * @see #writeChar16(char)
      */
     default void writeChar(final int size, final char value) throws IOException {
-        writeInt(true, requireValidSizeChar(size), value);
+        writeInt(true, requireValidSizeForChar(size), value);
     }
 
     /**

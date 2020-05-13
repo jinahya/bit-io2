@@ -53,14 +53,14 @@ public class BitOutputTest {
 
     // ------------------------------------------------------------------------------------------------------- writeByte
     @DisplayName("writeByte(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizeForByte"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizesForByte"})
     @ParameterizedTest
     void assertWriteByteSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> output.writeByte(false, size, (byte) 0));
     }
 
     @DisplayName("writeByte(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizeForUnsignedByte"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizesForUnsignedByte"})
     @ParameterizedTest
     void assertWriteByteUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> output.writeByte(true, size, (byte) 0));
@@ -68,14 +68,14 @@ public class BitOutputTest {
 
     // ------------------------------------------------------------------------------------------------------ writeShort
     @DisplayName("writeShort(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizeForShort"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizesForShort"})
     @ParameterizedTest
     void assertWriteShortSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> output.writeShort(false, size, (short) 0));
     }
 
     @DisplayName("writeShort(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizeForUnsignedShort"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizesForUnsignedShort"})
     @ParameterizedTest
     void assertWriteShortUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> output.writeShort(true, size, (short) 0));
@@ -83,14 +83,14 @@ public class BitOutputTest {
 
     // ------------------------------------------------------------------------------------------------------- writeLong
     @DisplayName("writeLong(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizesForLong"})
     @ParameterizedTest
     void assertWriteLongSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> output.writeLong(false, size, 0L));
     }
 
     @DisplayName("writeLong(true, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizeForUnsignedLong"})
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#illegalSizesForUnsignedLong"})
     @ParameterizedTest
     void assertWriteLongUnsignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> output.writeLong(true, size, 0L));
@@ -105,11 +105,18 @@ public class BitOutputTest {
      * @param size an invalid value for {@code size} parameter.
      * @see BitInputTest#assertReadCharSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(int)
      */
-    @DisplayName("writeChar(false, size) throws IllegalArgumentException when size is illegal")
-    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizedForChar"})
+    @DisplayName("writeChar(size, value) throws IllegalArgumentException when size is illegal")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#invalidSizesForChar"})
     @ParameterizedTest
     void assertWriteCharSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(final int size) {
         assertThrows(IllegalArgumentException.class, () -> output.writeChar(size, (char) 0));
+    }
+
+    @DisplayName("writeChar(size, value)")
+    @MethodSource({"com.github.jinahya.bit.io.BitIoTestParameters#sizesForChar"})
+    @ParameterizedTest
+    void testReadChar(final int size) throws IOException {
+        output.writeChar(size, (char) 0);
     }
 
     // ------------------------------------------------------------------------------------------------------------ skip

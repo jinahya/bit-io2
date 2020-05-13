@@ -23,7 +23,6 @@ package com.github.jinahya.bit.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.function.Supplier;
 
 /**
@@ -38,7 +37,6 @@ public class StreamByteInput extends ByteInputAdapter<InputStream> {
      * Creates a new instance with specified source supplier.
      *
      * @param sourceSupplier the source supplier.
-     * @see StreamByteOutput#StreamByteOutput(Supplier)
      */
     public StreamByteInput(final Supplier<? extends InputStream> sourceSupplier) {
         super(sourceSupplier);
@@ -52,7 +50,6 @@ public class StreamByteInput extends ByteInputAdapter<InputStream> {
      * @return {@inheritDoc}
      * @throws EOFException if the {@link InputStream#read()} operation returns {@code -1}.
      * @throws IOException  {@inheritDoc}
-     * @see StreamByteOutput#write(OutputStream, int)
      */
     @Override
     protected int read(final InputStream source) throws IOException {
