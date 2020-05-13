@@ -39,7 +39,6 @@ public class BitOutputAdapter implements BitOutput {
      * Creates a new instance with specified output supplier.
      *
      * @param outputSupplier the output supplier.
-     * @see BitInputAdapter#BitInputAdapter(Supplier)
      */
     public BitOutputAdapter(final Supplier<? extends ByteOutput> outputSupplier) {
         super();
