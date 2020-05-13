@@ -93,7 +93,6 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
      *
      * @param channelSupplier the supplier for the readable byte channel.
      * @return a new instance.
-     * @see BufferByteOutput#from(Supplier)
      */
     public static BufferByteInput from(final Supplier<? extends ReadableByteChannel> channelSupplier) {
         return new ChannelAdapter(() -> (ByteBuffer) allocate(1).position(1), channelSupplier);
@@ -115,7 +114,6 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @see BufferByteOutput#write(ByteBuffer, int)
      */
     @Override
     protected int read(final ByteBuffer source) throws IOException {

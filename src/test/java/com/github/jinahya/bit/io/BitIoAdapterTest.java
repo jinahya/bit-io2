@@ -25,8 +25,11 @@ import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForByte;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForChar;
@@ -55,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BitIoAdapterTest {
 
     // --------------------------------------------------------------------------------------------------------- boolean
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testBoolean(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                      @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -80,7 +83,7 @@ class BitIoAdapterTest {
      * @param input  a bit input.
      * @throws IOException if an I/O error occurs.
      */
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testByte_(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                    @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -96,7 +99,7 @@ class BitIoAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testByte(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                   @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -111,7 +114,7 @@ class BitIoAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testByte8(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                    @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -124,7 +127,7 @@ class BitIoAdapterTest {
         assertEquals(expected, actual);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testUnsignedByte(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                           @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -141,7 +144,7 @@ class BitIoAdapterTest {
     }
 
     // ----------------------------------------------------------------------------------------------------------- short
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testShort_(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                     @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -157,7 +160,7 @@ class BitIoAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testShort(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                    @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -172,7 +175,7 @@ class BitIoAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testShort16(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                      @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -185,7 +188,7 @@ class BitIoAdapterTest {
         assertEquals(expected, actual);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testShort16Le(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                        @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -198,7 +201,7 @@ class BitIoAdapterTest {
         assertEquals(expected, actual);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testUnsignedShort(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                            @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -214,7 +217,7 @@ class BitIoAdapterTest {
     }
 
     // ------------------------------------------------------------------------------------------------------------- int
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testInt_(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                   @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -230,7 +233,7 @@ class BitIoAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testInt(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                  @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -245,7 +248,7 @@ class BitIoAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testInt32(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                    @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -258,7 +261,7 @@ class BitIoAdapterTest {
         assertEquals(expected, actual);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testInt32Le(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                      @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -271,7 +274,7 @@ class BitIoAdapterTest {
         assertEquals(expected, actual);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testUnsignedInt(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                          @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -287,7 +290,7 @@ class BitIoAdapterTest {
     }
 
     // ------------------------------------------------------------------------------------------------------------ long
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testLong_(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                    @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -303,7 +306,7 @@ class BitIoAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testLong(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                   @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -318,7 +321,7 @@ class BitIoAdapterTest {
         assertEquals(padded, discarded);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testLong64(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                     @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -331,7 +334,7 @@ class BitIoAdapterTest {
         assertEquals(expected, actual);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testLong64Le(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                       @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -344,7 +347,7 @@ class BitIoAdapterTest {
         assertEquals(expected, actual);
     }
 
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testUnsignedLong(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                           @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -360,7 +363,7 @@ class BitIoAdapterTest {
     }
 
     // ------------------------------------------------------------------------------------------------------------ char
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testChar(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                   @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -382,7 +385,7 @@ class BitIoAdapterTest {
      * @param input  a bit input.
      * @throws IOException if an I/O error occurs.
      */
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testChar16(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                     @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -396,7 +399,7 @@ class BitIoAdapterTest {
     }
 
     // ----------------------------------------------------------------------------------------------------------- float
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testFloat32(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                      @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -419,7 +422,7 @@ class BitIoAdapterTest {
     }
 
     // ---------------------------------------------------------------------------------------------------------- double
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testDouble64(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                       @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -442,7 +445,7 @@ class BitIoAdapterTest {
     }
 
     // ------------------------------------------------------------------------------------------------------------ skip
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testSkip(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                   @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -468,7 +471,7 @@ class BitIoAdapterTest {
      * @param input  a bit input.
      * @throws IOException if an I/O error occurs.
      */
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testAlign(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                    @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -486,7 +489,7 @@ class BitIoAdapterTest {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#ByteIoTestParameters"})
+    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
     void testValues(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                     @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
@@ -508,9 +511,15 @@ class BitIoAdapterTest {
         final List<Object> values = new ArrayList<>();
         final ValueAdapter<User> userAdapter = new UserAdapter();
         final ValueAdapter<User> nullableUserAdapter = nullable(userAdapter);
-        final int count = current().nextInt(128);
+        final int count = 1024;
+        final Random random;
+        try {
+            random = SecureRandom.getInstanceStrong();
+        } catch (final NoSuchAlgorithmException nsae) {
+            throw new RuntimeException(nsae);
+        }
         for (int i = 0; i < count; i++) {
-            final int type = current().nextInt(NULLABLE_USER + 1);
+            final int type = random.nextInt(NULLABLE_USER + 1);
             types.add(type);
             switch (type) {
                 case BOOLEAN:
@@ -618,7 +627,7 @@ class BitIoAdapterTest {
             final Integer size = sizes.get(i);
             switch (type) {
                 case BOOLEAN: {
-                    assertEquals((boolean) values.get(i), input.readBoolean());
+                    assertEquals(values.get(i), input.readBoolean());
                 }
                 break;
                 case BYTE: {

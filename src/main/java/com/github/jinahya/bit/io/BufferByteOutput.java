@@ -43,6 +43,12 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
      */
     private static class ChannelAdapter extends BufferByteOutput {
 
+        /**
+         * Creates a new instance with specified arguments.
+         *
+         * @param targetSupplier  a supplier for a byte buffer.
+         * @param channelSupplier a supplier for a writable byte channel.
+         */
         private ChannelAdapter(final Supplier<? extends ByteBuffer> targetSupplier,
                                final Supplier<? extends WritableByteChannel> channelSupplier) {
             super(targetSupplier);

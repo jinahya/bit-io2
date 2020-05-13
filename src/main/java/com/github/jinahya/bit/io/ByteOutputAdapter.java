@@ -80,7 +80,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @see ByteInputAdapter#read()
      */
     @Override
     public void write(final int value) throws IOException {
@@ -93,7 +92,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      * @param target the target.
      * @param value  the unsigned {@code 8}-bit value to write; between {@code 1} and {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
-     * @see ByteInputAdapter#read(Object)
      */
     protected abstract void write(T target, int value) throws IOException;
 
