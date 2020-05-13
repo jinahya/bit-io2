@@ -25,40 +25,48 @@ import java.io.IOException;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A wrapper class for reading/writing a null flag before reading/writing values.
+ * A wrapper class for reading a null flag before reading values.
  *
  * @param <T> value type parameter.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see NullableValueWriter
  */
-final class NullableAdapter<T> implements ValueAdapter<T> {
+final class NullableValueReader<T> implements ValueReader<T> {
+
+    /**
+     * Reads a nullable value.
+     *
+     * @param input  a bit input.
+     * @param reader a value reader.
+     * @param <V>    value type parameter
+     * @return a value read; maybe {@code null}.
+     * @throws IOException if an I/O error occurs.
+     * @see NullableValueWriter#writeNullable(BitOutput, ValueWriter, Object)
+     */
+    static <V> V readNullable(final BitInput input, final ValueReader<? extends V> reader) throws IOException {
+        requireNonNull(input, "input is null");
+        requireNonNull(reader, "reader is null");
+        final boolean nonnull = input.readBoolean();
+        if (nonnull) {
+            return reader.read(input);
+        }
+        return null;
+    }
 
     /**
      * Creates a new instance with specified adapter.
      *
      * @param wrapped the adapter to be wrapped.
      */
-    NullableAdapter(final ValueAdapter<T> wrapped) {
+    NullableValueReader(final ValueReader<? extends T> wrapped) {
         super();
         this.wrapped = requireNonNull(wrapped, "wrapped is null");
     }
 
     @Override
-    public void write(final BitOutput output, final T value) throws IOException {
-        final boolean nonnull = value != null;
-        output.writeBoolean(nonnull);
-        if (nonnull) {
-            wrapped.write(output, value);
-        }
-    }
-
-    @Override
     public T read(final BitInput input) throws IOException {
-        final boolean nonnull = input.readBoolean();
-        if (nonnull) {
-            return wrapped.read(input);
-        }
-        return null;
+        return readNullable(input, wrapped);
     }
 
-    private final ValueAdapter<T> wrapped;
+    private final ValueReader<? extends T> wrapped;
 }

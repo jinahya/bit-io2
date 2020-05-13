@@ -22,18 +22,9 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static com.github.jinahya.bit.io.UserAdapter.NAME_ADAPTER;
 
-class UserAdapter implements ValueAdapter<User> {
-
-    static final ValueAdapter<String> NAME_ADAPTER
-            = ValueAdapter.nullable(new StringAdapter(new BytesAdapter(16, 8), UTF_8));
-
-    @Override
-    public void write(final BitOutput output, final User value) throws IOException {
-        NAME_ADAPTER.write(output, value.name);
-        output.writeUnsignedInt(7, value.age);
-    }
+class UserReader implements ValueReader<User> {
 
     @Override
     public User read(final BitInput input) throws IOException {
