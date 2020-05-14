@@ -24,8 +24,20 @@ import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A value adapter composing a reader and a writer.
+ *
+ * @param <T> value type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 final class CompositeValueAdapter<T> implements ValueAdapter<T> {
 
+    /**
+     * Creates a new instance with specified reader and writer.
+     *
+     * @param reader the reader.
+     * @param writer the writer.
+     */
     CompositeValueAdapter(final ValueReader<? extends T> reader, final ValueWriter<? super T> writer) {
         super();
         this.reader = requireNonNull(reader, "reader is null");
