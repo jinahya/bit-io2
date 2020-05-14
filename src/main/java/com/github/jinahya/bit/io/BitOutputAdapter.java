@@ -35,7 +35,7 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitInputAdapter
  */
-public class BitOutputAdapter extends BitBase implements BitOutput {
+public class BitOutputAdapter extends BitAdapter implements BitOutput {
 
     /**
      * Creates a new instance with specified output supplier.

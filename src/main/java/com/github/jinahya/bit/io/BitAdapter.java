@@ -10,7 +10,7 @@ import java.util.zip.Checksum;
 
 import static java.util.Objects.requireNonNull;
 
-abstract class BitBase {
+abstract class BitAdapter {
 
     void update(final int octet) {
         accept(Checksum.class, v -> v.update(octet));
