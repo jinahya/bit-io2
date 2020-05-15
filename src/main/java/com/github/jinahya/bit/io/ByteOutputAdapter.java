@@ -20,6 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.util.function.Supplier;
 
@@ -42,6 +44,34 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     public ByteOutputAdapter(final Supplier<? extends T> targetSupplier) {
         super();
         this.targetSupplier = requireNonNull(targetSupplier, "targetSupplier is null");
+    }
+
+    /**
+     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
+     * ByteOutputAdapter} class invokes {@link Flushable#flush()} method on {@code target} if it is an instance of
+     * {@link Flushable}.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    public void flush() throws IOException {
+        if (target instanceof Flushable) {
+            ((Flushable) target).flush();
+        }
+    }
+
+    /**
+     * Closes this output and releases any system resources associated with it. The {@code close} method of {@code
+     * ByteOutputAdapter} class invokes {@link Closeable#close()} on {@code target} if it is an instance of {@link
+     * Closeable}.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    public void close() throws IOException {
+        if (target instanceof Closeable) {
+            ((Closeable) target).close();
+        }
     }
 
     /**
@@ -74,5 +104,5 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
     private final Supplier<? extends T> targetSupplier;
 
-    private T target;
+    T target;
 }
