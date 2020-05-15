@@ -84,6 +84,6 @@ final class NonBlockingByteChannels {
     }
 
     private NonBlockingByteChannels() {
-        super();
+        throw new AssertionError("instantiation is not allowed");
     }
 }
