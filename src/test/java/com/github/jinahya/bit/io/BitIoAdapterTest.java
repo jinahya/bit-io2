@@ -93,6 +93,7 @@ class BitIoAdapterTest {
         final byte expected = randomValueForByte(unsigned, size);
         output.writeByte(unsigned, size, expected);
         final long padded = output.align();
+        output.flush();
         final byte actual = input.readByte(unsigned, size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -108,6 +109,7 @@ class BitIoAdapterTest {
         final byte expected = randomValueForByte(size);
         output.writeByte(size, expected);
         final long padded = output.align();
+        output.flush();
         final byte actual = input.readByte(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -122,6 +124,7 @@ class BitIoAdapterTest {
         final byte expected = (byte) (current().nextInt() >> (Integer.SIZE - Byte.SIZE));
         output.writeByte8(expected);
         assertEquals(0L, output.align());
+        output.flush();
         final int actual = input.readByte8();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
@@ -137,6 +140,7 @@ class BitIoAdapterTest {
         final byte expected = randomValueForByte(unsigned, size);
         output.writeUnsignedByte(size, expected);
         final long padded = output.align();
+        output.flush();
         final int actual = input.readUnsignedByte(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -154,6 +158,7 @@ class BitIoAdapterTest {
         final short expected = randomValueForShort(unsigned, size);
         output.writeShort(unsigned, size, expected);
         final long padded = output.align();
+        output.flush();
         final short actual = input.readShort(unsigned, size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -169,6 +174,7 @@ class BitIoAdapterTest {
         final short expected = randomValueForShort(size);
         output.writeShort(size, expected);
         final long padded = output.align();
+        output.flush();
         final short actual = input.readShort(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -183,6 +189,7 @@ class BitIoAdapterTest {
         final short expected = (short) current().nextInt();
         output.writeShort16(expected);
         assertEquals(0L, output.align());
+        output.flush();
         final short actual = input.readShort16();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
@@ -196,6 +203,7 @@ class BitIoAdapterTest {
         final short expected = (short) current().nextInt();
         output.writeShort16Le(expected);
         assertEquals(0L, output.align());
+        output.flush();
         final short actual = input.readShort16Le();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
@@ -210,6 +218,7 @@ class BitIoAdapterTest {
         final short expected = randomValueForUnsignedShort(size);
         output.writeUnsignedShort(size, expected);
         final long padded = output.align();
+        output.flush();
         final short actual = input.readUnsignedShort(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -227,6 +236,7 @@ class BitIoAdapterTest {
         final int expected = randomValueForInt(unsigned, size);
         output.writeInt(unsigned, size, expected);
         final long padded = output.align();
+        output.flush();
         final int actual = input.readInt(unsigned, size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -242,6 +252,7 @@ class BitIoAdapterTest {
         final int expected = randomValueForInt(size);
         output.writeInt(size, expected);
         final long padded = output.align();
+        output.flush();
         final int actual = input.readInt(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -256,6 +267,7 @@ class BitIoAdapterTest {
         final int expected = current().nextInt();
         output.writeInt32(expected);
         assertEquals(0L, output.align());
+        output.flush();
         final int actual = input.readInt32();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
@@ -269,6 +281,7 @@ class BitIoAdapterTest {
         final int expected = current().nextInt();
         output.writeInt32Le(expected);
         assertEquals(0L, output.align());
+        output.flush();
         final int actual = input.readInt32Le();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
@@ -283,6 +296,7 @@ class BitIoAdapterTest {
         final int expected = randomValueForUnsignedInt(size);
         output.writeUnsignedInt(size, expected);
         final long padded = output.align();
+        output.flush();
         final int actual = input.readUnsignedInt(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -300,6 +314,7 @@ class BitIoAdapterTest {
         final long expected = randomValueForLong(unsigned, size);
         output.writeLong(unsigned, size, expected);
         final long padded = output.align();
+        output.flush();
         final long actual = input.readLong(unsigned, size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -315,6 +330,7 @@ class BitIoAdapterTest {
         final long expected = randomValueForLong(size);
         output.writeLong(size, expected);
         final long padded = output.align();
+        output.flush();
         final long actual = input.readLong(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -329,6 +345,7 @@ class BitIoAdapterTest {
         final long expected = current().nextLong();
         output.writeLong64(expected);
         assertEquals(0L, output.align());
+        output.flush();
         final long actual = input.readLong64();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
@@ -342,6 +359,7 @@ class BitIoAdapterTest {
         final long expected = current().nextLong();
         output.writeLong64Le(expected);
         assertEquals(0L, output.align());
+        output.flush();
         final long actual = input.readLong64Le();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
@@ -356,6 +374,7 @@ class BitIoAdapterTest {
         final long expected = randomValueForUnsignedLong(size);
         output.writeUnsignedLong(size, expected);
         final long padded = output.align();
+        output.flush();
         final long actual = input.readUnsignedLong(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -372,6 +391,7 @@ class BitIoAdapterTest {
         final char expected = randomValueForChar(size);
         output.writeChar(size, expected);
         final long padded = output.align();
+        output.flush();
         final char actual = input.readChar(size);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -393,6 +413,7 @@ class BitIoAdapterTest {
         final char expected = randomValueForChar16();
         output.writeChar16(expected);
         assertEquals(0L, output.align());
+        output.flush();
         final char actual = input.readChar16();
         assertEquals(0L, input.align());
         assertEquals(expected, actual);
@@ -413,6 +434,7 @@ class BitIoAdapterTest {
             output.writeFloat32(value);
         }
         assertEquals(0L, output.align());
+        output.flush();
         final float[] actual = new float[expected.length];
         for (int j = 0; j < actual.length; j++) {
             actual[j] = input.readFloat32();
@@ -436,6 +458,7 @@ class BitIoAdapterTest {
             output.writeDouble64(value);
         }
         assertEquals(0L, output.align());
+        output.flush();
         final double[] actual = new double[expected.length];
         for (int j = 0; j < actual.length; j++) {
             actual[j] = input.readDouble64();
@@ -455,6 +478,7 @@ class BitIoAdapterTest {
             output.skip(bits);
         }
         final long padded = output.align();
+        output.flush();
         {
             input.skip(bits);
         }
@@ -481,6 +505,7 @@ class BitIoAdapterTest {
             output.writeBoolean(current().nextBoolean());
         }
         final long padded = output.align(bytes);
+        output.flush();
         {
             input.readBoolean();
         }
@@ -622,6 +647,7 @@ class BitIoAdapterTest {
         }
         final int bytes = current().nextInt(1, 128);
         output.align(bytes);
+        output.flush();
         for (int i = 0; i < count; i++) {
             final int type = types.get(i);
             final Integer size = sizes.get(i);

@@ -38,6 +38,7 @@ class UserAdapterTest {
         final User expected = User.newRandomInstance();
         output.writeValue(new UserAdapter(), expected);
         final long padded = output.align();
+        output.flush();
         final User actual = input.readValue(new UserAdapter());
         final long discarded = input.align();
         assertEquals(expected, actual);

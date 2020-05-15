@@ -46,6 +46,7 @@ class StringAdapterTest {
                 .generate(current().nextInt(128));
         output.writeValue(adapter, expected);
         final long padded = output.align();
+        output.flush();
         final String actual = input.readValue(adapter);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -63,6 +64,7 @@ class StringAdapterTest {
                 .generate(current().nextInt(128));
         output.writeValue(adapter, expected);
         final long padded = output.align();
+        output.flush();
         final String actual = input.readValue(adapter);
         final long discarded = input.align();
         assertEquals(expected, actual);

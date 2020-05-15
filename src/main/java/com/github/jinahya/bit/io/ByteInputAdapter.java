@@ -54,6 +54,7 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      */
     @Override
     public void close() throws IOException {
+        ByteInput.super.close(); // does nothing.
         if (source instanceof Closeable) {
             ((Closeable) source).close();
         }

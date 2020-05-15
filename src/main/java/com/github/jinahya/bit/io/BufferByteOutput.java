@@ -58,9 +58,9 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
         @Override
         public void flush() throws IOException {
             super.flush();
-            if (target != null && channel != null) {
+            if (target != null) {
                 for (target.flip(); target.hasRemaining(); ) {
-                    channel.write(target);
+                    channel().write(target);
                 }
                 target.clear();
             }
@@ -82,6 +82,14 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
                 target.compact();
             }
             super.write(target, value);
+            // just doing a single writing.
+            {
+                target.flip();
+                if (target.hasRemaining()) {
+                    channel().write(target);
+                }
+                target.compact();
+            }
         }
 
         private WritableByteChannel channel() {
