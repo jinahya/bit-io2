@@ -30,7 +30,7 @@ import java.io.IOException;
  * @see ByteOutput
  */
 @FunctionalInterface
-public interface ByteInput {
+public interface ByteInput extends OctetConsumerAttachable {
 
     /**
      * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.

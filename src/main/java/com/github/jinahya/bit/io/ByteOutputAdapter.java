@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -54,6 +55,7 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     @Override
     public void write(final int value) throws IOException {
         write(target(), value);
+        octetConsumerAttachable.consumeOctet(value);
     }
 
     /**
@@ -72,7 +74,19 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
         return target;
     }
 
+    @Override
+    public boolean attachOctetConsumer(final IntPredicate octetConsumer) {
+        return octetConsumerAttachable.attachOctetConsumer(octetConsumer);
+    }
+
+    @Override
+    public boolean detachOctetConsumer(final IntPredicate octetConsumer) {
+        return octetConsumerAttachable.detachOctetConsumer(octetConsumer);
+    }
+
     private final Supplier<? extends T> targetSupplier;
 
     private T target;
+
+    private final SimpleOctetConsumerAttachable octetConsumerAttachable = new SimpleOctetConsumerAttachable();
 }

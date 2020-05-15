@@ -21,9 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.security.MessageDigest;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
-import java.util.zip.Checksum;
 
 import static com.github.jinahya.bit.io.BitIoConstants.mask;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
@@ -35,7 +34,7 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitOutputAdapter
  */
-public class BitInputAdapter extends BitAdapter implements BitInput {
+public class BitInputAdapter implements BitInput {
 
     /**
      * Creates a new instance with specified input supplier.
@@ -105,7 +104,7 @@ public class BitInputAdapter extends BitAdapter implements BitInput {
             assert octet >= 0 && octet < 256;
             count++;
             available = Byte.SIZE;
-            update(octet);
+            octetConsumerAttachable.consumeOctet(octet);
         }
         final int required = size - available;
         if (required > 0) {
@@ -128,23 +127,13 @@ public class BitInputAdapter extends BitAdapter implements BitInput {
     }
 
     @Override
-    public boolean attach(final Checksum checksum) {
-        return attach(Checksum.class, checksum);
+    public boolean attachOctetConsumer(final IntPredicate octetConsumer) {
+        return octetConsumerAttachable.attachOctetConsumer(octetConsumer);
     }
 
     @Override
-    public boolean detach(final Checksum checksum) {
-        return detach(Checksum.class, checksum);
-    }
-
-    @Override
-    public boolean attach(final MessageDigest messageDigest) {
-        return attach(MessageDigest.class, messageDigest);
-    }
-
-    @Override
-    public boolean detach(final MessageDigest messageDigest) {
-        return detach(MessageDigest.class, messageDigest);
+    public boolean detachOctetConsumer(final IntPredicate octetConsumer) {
+        return octetConsumerAttachable.detachOctetConsumer(octetConsumer);
     }
 
     /**
@@ -173,4 +162,6 @@ public class BitInputAdapter extends BitAdapter implements BitInput {
      * The number of bytes read from {@link #input} so far.
      */
     private long count;
+
+    private final SimpleOctetConsumerAttachable octetConsumerAttachable = new SimpleOctetConsumerAttachable();
 }

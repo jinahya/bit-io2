@@ -21,9 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.security.MessageDigest;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
-import java.util.zip.Checksum;
 
 import static com.github.jinahya.bit.io.BitIoConstants.mask;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
@@ -35,7 +34,7 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitInputAdapter
  */
-public class BitOutputAdapter extends BitAdapter implements BitOutput {
+public class BitOutputAdapter implements BitOutput {
 
     /**
      * Creates a new instance with specified output supplier.
@@ -112,7 +111,7 @@ public class BitOutputAdapter extends BitAdapter implements BitOutput {
             count++;
             octet = 0x00;
             available = Byte.SIZE;
-            update(octet);
+            octetConsumerAttachable.consumeOctet(octet);
         }
     }
 
@@ -129,23 +128,13 @@ public class BitOutputAdapter extends BitAdapter implements BitOutput {
     }
 
     @Override
-    public boolean attach(final Checksum checksum) {
-        return attach(Checksum.class, checksum);
+    public boolean attachOctetConsumer(final IntPredicate octetConsumer) {
+        return octetConsumerAttachable.attachOctetConsumer(octetConsumer);
     }
 
     @Override
-    public boolean detach(final Checksum checksum) {
-        return detach(Checksum.class, checksum);
-    }
-
-    @Override
-    public boolean attach(final MessageDigest messageDigest) {
-        return attach(MessageDigest.class, messageDigest);
-    }
-
-    @Override
-    public boolean detach(final MessageDigest messageDigest) {
-        return detach(MessageDigest.class, messageDigest);
+    public boolean detachOctetConsumer(final IntPredicate octetConsumer) {
+        return octetConsumerAttachable.detachOctetConsumer(octetConsumer);
     }
 
     /**
@@ -175,4 +164,6 @@ public class BitOutputAdapter extends BitAdapter implements BitOutput {
      * The number of bytes written to {@link #output} so far.
      */
     private long count;
+
+    private final SimpleOctetConsumerAttachable octetConsumerAttachable = new SimpleOctetConsumerAttachable();
 }

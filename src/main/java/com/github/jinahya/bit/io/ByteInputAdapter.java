@@ -21,10 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
-import java.util.zip.Checksum;
 
 import static java.util.Objects.requireNonNull;
 
@@ -56,7 +54,9 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      */
     @Override
     public int read() throws IOException {
-        return read(source());
+        final int octet = read(source());
+        octetConsumerAttachable.consumeOctet(octet);
+        return octet;
     }
 
     /**
@@ -75,16 +75,19 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
         return source;
     }
 
-    private Set<Checksum> checksums() {
-        if (checksums == null) {
-            checksums = new HashSet<>();
-        }
-        return checksums;
+    @Override
+    public boolean attachOctetConsumer(final IntPredicate octetConsumer) {
+        return octetConsumerAttachable.attachOctetConsumer(octetConsumer);
+    }
+
+    @Override
+    public boolean detachOctetConsumer(final IntPredicate octetConsumer) {
+        return octetConsumerAttachable.detachOctetConsumer(octetConsumer);
     }
 
     private final Supplier<? extends T> sourceSupplier;
 
     private T source;
 
-    private Set<Checksum> checksums;
+    private final SimpleOctetConsumerAttachable octetConsumerAttachable = new SimpleOctetConsumerAttachable();
 }

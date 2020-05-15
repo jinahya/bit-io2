@@ -21,8 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.util.zip.Checksum;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
@@ -38,7 +36,7 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitOutput
  */
-public interface BitInput {
+public interface BitInput extends OctetConsumerAttachable {
 
     /**
      * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} and returns
@@ -383,21 +381,5 @@ public interface BitInput {
      */
     default long align() throws IOException {
         return align(Byte.BYTES);
-    }
-
-    default boolean attach(final Checksum checksum) {
-        throw new UnsupportedOperationException("not implemented yet");
-    }
-
-    default boolean detach(final Checksum checksum) {
-        throw new UnsupportedOperationException("not implemented yet");
-    }
-
-    default boolean attach(final MessageDigest messageDigest) {
-        throw new UnsupportedOperationException("not implemented yet");
-    }
-
-    default boolean detach(final MessageDigest messageDigest) {
-        throw new UnsupportedOperationException("not implemented yet");
     }
 }
