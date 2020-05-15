@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An abstract class implements {@link ByteInput} adapting specified byte source.
+ * An abstract class implements {@link ByteInput} adapting a specific type of byte source.
  *
  * @param <T> byte source parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -46,11 +46,11 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     }
 
     /**
-     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
-     * ByteInputAdapter} class invokes {@link Closeable#close()} on {@code source} if it is an instance of {@link
-     * Closeable}.
+     * {@inheritDoc}
      *
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException {@inheritDoc}
+     * @implNote. The {@code close()} method of {@code ByteInputAdapter} class invokes {@link Closeable#close()} on
+     * {@code source} if it's an instance of {@link Closeable}.
      */
     @Override
     public void close() throws IOException {
@@ -61,11 +61,12 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     }
 
     /**
-     * {@inheritDoc} The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a
-     * lazily-initialized {@code source} and returns the result.
+     * {@inheritDoc}
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @implNote. The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a
+     * lazily-initialized {@code source} and returns the result.
      */
     @Override
     public int read() throws IOException {
@@ -78,6 +79,7 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      * @param source the source from which a byte is read.
      * @return an unsigned {@code 8}-bit value read from the {@code source}.
      * @throws IOException if an I/O error occurs.
+     * @see #read()
      */
     protected abstract int read(T source) throws IOException;
 

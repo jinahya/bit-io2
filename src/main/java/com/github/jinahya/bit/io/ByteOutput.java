@@ -34,10 +34,10 @@ import java.io.IOException;
 public interface ByteOutput extends Flushable, Closeable {
 
     /**
-     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
-     * ByteOutput} interface does nothing.
+     * Flushes this output by writing any buffered output to the underlying output.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote. The {@code flush()} method of {@code ByteOutput} interface does nothing.
      */
     @Override
     default void flush() throws IOException {
@@ -45,10 +45,10 @@ public interface ByteOutput extends Flushable, Closeable {
     }
 
     /**
-     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
-     * ByteOutput} interface does nothing.
+     * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote. The {@code close()} method of {@code ByteOutput} interface does nothing.
      */
     @Override
     default void close() throws IOException {

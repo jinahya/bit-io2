@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -51,4 +52,17 @@ public interface ValueReader<T> {
      * @throws IOException if an I/O error occurs.
      */
     T read(BitInput input) throws IOException;
+
+    /**
+     * Reads an {@code length} value of specified bit size.
+     *
+     * @param input a bit input from which the value is read.
+     * @param size  the number bits to read.
+     * @return a read {@code length} value.
+     * @throws IOException if an I/O error occurs.
+     * @apiNote. This method is for reading a {@code length} value for subsequent non-singular value.
+     */
+    default int readLength(final BitInput input, final int size) throws IOException {
+        return input.readUnsignedInt(requireValidSizeForInt(true, size));
+    }
 }

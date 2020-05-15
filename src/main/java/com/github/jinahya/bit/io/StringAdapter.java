@@ -58,13 +58,13 @@ public class StringAdapter implements ValueAdapter<String> {
     }
 
     @Override
-    public void write(final BitOutput output, final String value) throws IOException {
-        delegate.write(output, value.getBytes(charset));
+    public String read(final BitInput input) throws IOException {
+        return new String(delegate.read(input), charset);
     }
 
     @Override
-    public String read(final BitInput input) throws IOException {
-        return new String(delegate.read(input), charset);
+    public void write(final BitOutput output, final String value) throws IOException {
+        delegate.write(output, value.getBytes(charset));
     }
 
     private final BytesAdapter delegate;

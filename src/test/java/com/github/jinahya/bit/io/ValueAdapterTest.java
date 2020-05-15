@@ -24,16 +24,27 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * A class for testing {@link ValueAdapter} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 class ValueAdapterTest {
 
+    /**
+     * Tests {@link ValueAdapter#nullable(ValueAdapter)} method.
+     */
     @Test
     void testNullable() {
         final ValueAdapter<User> instance = ValueAdapter.nullable(new UserAdapter());
         assertNotNull(instance);
     }
 
+    /**
+     * Tests {@link ValueAdapter#compose(ValueReader, ValueWriter)} method.
+     */
     @Test
-    void testComposite() {
+    void testCompose() {
         final ValueAdapter<User> instance = ValueAdapter.compose(new UserReader(), new UserWriter());
         assertNotNull(instance);
     }

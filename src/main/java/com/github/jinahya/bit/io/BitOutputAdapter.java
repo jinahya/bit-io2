@@ -46,29 +46,31 @@ public class BitOutputAdapter implements BitOutput {
     }
 
     /**
-     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
-     * BitOutputAdapter} class invokes {@link ByteOutput#flush()} on {@code output} if it's not {@code null}.
+     * Flushes this output by writing any buffered output to the underlying output.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote. The {@code flush()} method of {@code BitOutputAdapter} class invokes {@link ByteOutput#flush()} on
+     * {@code output} if it's not {@code null}.
      */
     @Override
     public void flush() throws IOException {
-        BitOutput.super.flush();
+        BitOutput.super.flush(); // does nothing.
         if (output != null) {
             output.flush();
         }
     }
 
     /**
-     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
-     * BitOutputAdapter} class invokes {@link ByteOutput#close()} on {@code output} if it is not {@code null}.
+     * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote. The {@code close} method of {@code * BitOutputAdapter} class invokes {@link ByteOutput#close()} on
+     * {@code output} if it is not {@code null}.
      * @see ByteOutput#close()
      */
     @Override
     public void close() throws IOException {
-        BitOutput.super.close();
+        BitOutput.super.close(); // does nothing.
         if (output != null) {
             output.close();
         }

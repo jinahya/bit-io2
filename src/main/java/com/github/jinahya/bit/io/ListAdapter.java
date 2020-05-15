@@ -49,23 +49,22 @@ public class ListAdapter<T> implements ValueAdapter<List<T>> {
     }
 
     @Override
-    public void write(final BitOutput output, final List<T> value) throws IOException {
-        final int length = value.size() & ((1 << lengthSize) - 1);
-        output.writeUnsignedInt(lengthSize, length);
-        final Iterator<T> i = value.iterator();
-        for (int l = 0; l < length; l++) {
-            elementAdapter.write(output, i.next());
-        }
-    }
-
-    @Override
     public List<T> read(final BitInput input) throws IOException {
-        final int length = input.readUnsignedInt(lengthSize);
+        final int length = readLength(input, lengthSize);
         final List<T> value = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             value.add(elementAdapter.read(input));
         }
         return value;
+    }
+
+    @Override
+    public void write(final BitOutput output, final List<T> value) throws IOException {
+        final int length = writeLength(output, lengthSize, requireNonNull(value, "value is null").size());
+        final Iterator<T> i = value.iterator();
+        for (int l = 0; l < length; l++) {
+            elementAdapter.write(output, i.next());
+        }
     }
 
     private final int lengthSize;
