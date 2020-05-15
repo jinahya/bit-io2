@@ -20,6 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
@@ -35,7 +37,29 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitInput
  */
-public interface BitOutput extends OctetConsumerAttachable {
+public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable {
+
+    /**
+     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
+     * BitOutput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void flush() throws IOException {
+        // does nothing.
+    }
+
+    /**
+     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * BitOutput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
 
     /**
      * Writes specified {@code 1}-bit {@code boolean} value. This method writes {@code 0b1} for {@code true} and {@code

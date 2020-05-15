@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
@@ -36,7 +37,18 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitOutput
  */
-public interface BitInput extends OctetConsumerAttachable {
+public interface BitInput extends Closeable, OctetConsumerAttachable {
+
+    /**
+     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * BitInput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
 
     /**
      * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} and returns

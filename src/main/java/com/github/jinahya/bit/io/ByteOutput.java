@@ -20,6 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 
 /**
@@ -29,7 +31,29 @@ import java.io.IOException;
  * @see ByteInput
  */
 @FunctionalInterface
-public interface ByteOutput extends OctetConsumerAttachable {
+public interface ByteOutput extends Flushable, Closeable, OctetConsumerAttachable {
+
+    /**
+     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
+     * ByteOutput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void flush() throws IOException {
+        // does nothing.
+    }
+
+    /**
+     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * ByteOutput} interface does nothing.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
 
     /**
      * Writes specified unsigned {@value java.lang.Byte#SIZE}-bit value.

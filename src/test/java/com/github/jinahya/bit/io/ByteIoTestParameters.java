@@ -60,11 +60,9 @@ final class ByteIoTestParameters {
     }
 
     static Stream<Arguments> buffer3() {
-        final ByteArrayOutputStream[] holder = new ByteArrayOutputStream[1];
-        final ByteOutput output = BufferByteOutput.from(() -> newChannel(holder[0] = new ByteArrayOutputStream()));
-        final ByteInput input = BufferByteInput.from(
-                () -> newChannel(
-                        new ByteArrayInputStream(requireNonNull(holder[0], "holder[0] is null").toByteArray())));
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
+        final ByteOutput output = BufferByteOutput.from(() -> newChannel(baos));
+        final ByteInput input = BufferByteInput.from(() -> newChannel(new ByteArrayInputStream(baos.toByteArray())));
         return Stream.of(arguments(output, input));
     }
 
@@ -105,12 +103,14 @@ final class ByteIoTestParameters {
 
     // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> byteIos() {
-        return Stream.of(buffer(),
-                         buffer2(),
-                         buffer3(),
-                         buffer4(),
-                         data(),
-                         stream())
+        return Stream.of(
+                buffer(),
+                buffer2(),
+                buffer3(),
+                buffer4(),
+                data(),
+                stream()
+        )
                 .flatMap(s -> s);
     }
 

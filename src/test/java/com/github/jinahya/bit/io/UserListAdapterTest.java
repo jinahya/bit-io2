@@ -44,6 +44,7 @@ class UserListAdapterTest {
                 = range(0, current().nextInt(1, 128)).mapToObj(i -> newRandomInstance()).collect(toList());
         output.writeValue(new UserListAdapter(7), expected);
         final long padded = output.align();
+        output.flush();
         final List<User> actual = input.readValue(new UserListAdapter(7));
         final long discarded = input.align();
         assertEquals(expected, actual);

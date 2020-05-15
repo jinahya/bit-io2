@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.function.IntPredicate;
 import java.util.function.Supplier;
@@ -43,6 +44,21 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     public ByteInputAdapter(final Supplier<? extends T> sourceSupplier) {
         super();
         this.sourceSupplier = requireNonNull(sourceSupplier, "sourceSupplier is null");
+    }
+
+    /**
+     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * ByteInputAdapter} class invokes {@link Closeable#close()} on {@code source} if it is an instance of {@link
+     * Closeable}.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    public void close() throws IOException {
+        ByteInput.super.close(); // does nothing.
+        if (source instanceof Closeable) {
+            ((Closeable) source).close();
+        }
     }
 
     /**
