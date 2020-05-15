@@ -57,12 +57,12 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
 
         @Override
         protected void write(final ByteBuffer target, final int value) throws IOException {
-            super.write(target, value);
             while (!target.hasRemaining()) {
                 target.flip(); // limit -> position, position -> zero
                 channel().write(target);
                 target.compact();
             }
+            super.write(target, value);
         }
 
         private WritableByteChannel channel() {
