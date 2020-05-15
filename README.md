@@ -41,6 +41,4 @@ CLIENT write-> BitOutput(Adapter)
                                                       ...
 ```
 
-Each `...Adapter` class accepts an instance of `Supplier<? extends T>` which means any byte sources/targets can be lazily initialized only when some bits are read or written.
-
 See [Specifications](https://github.com/jinahya/bit-io2/wiki/Specifications) and [Recipes](https://github.com/jinahya/bit-io2/wiki/Recipes) for more information.
