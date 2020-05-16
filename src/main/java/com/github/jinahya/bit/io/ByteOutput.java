@@ -44,7 +44,7 @@ public interface ByteOutput extends Flushable, Closeable {
     }
 
     /**
-     * Closes this input and releases any system resources associated with it.
+     * Closes this output and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
      */

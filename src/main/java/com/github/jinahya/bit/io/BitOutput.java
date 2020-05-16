@@ -51,7 +51,7 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
+     * Closes this output and releases any system resources associated with it. The {@code close} method of {@code
      * BitOutput} interface does nothing.
      *
      * @throws IOException if an I/O error occurs.
