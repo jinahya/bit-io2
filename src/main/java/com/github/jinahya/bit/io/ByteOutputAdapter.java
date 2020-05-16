@@ -50,8 +50,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      * {@inheritDoc}
      *
      * @throws IOException {@inheritDoc}
-     * @implNote. The {@code flush()} method of {@code ByteOutputAdapter} class invokes {@link Flushable#flush()} method
-     * on {@code target} if it's an instance of {@link Flushable}.
      */
     @Override
     public void flush() throws IOException {
@@ -65,8 +63,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      * {@inheritDoc}
      *
      * @throws IOException {@inheritDoc}
-     * @implNote. The {@code close} method of {@code ByteOutputAdapter} class invokes {@link Closeable#close()} on
-     * {@code target} if it's an instance of {@link Closeable}.
      */
     @Override
     public void close() throws IOException {
@@ -81,8 +77,6 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote. The {@code write(int)} method of {@code ByteOutputAdapter} class invokes {@link #write(Object, int)}
-     * with a lazily-initialized {@code target} and given {@code value}.
      */
     @Override
     public void write(final int value) throws IOException {

@@ -49,8 +49,6 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      * {@inheritDoc}
      *
      * @throws IOException {@inheritDoc}
-     * @implNote. The {@code close()} method of {@code ByteInputAdapter} class invokes {@link Closeable#close()} on
-     * {@code source} if it's an instance of {@link Closeable}.
      */
     @Override
     public void close() throws IOException {
@@ -65,8 +63,6 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote. The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a
-     * lazily-initialized {@code source} and returns the result.
      */
     @Override
     public int read() throws IOException {

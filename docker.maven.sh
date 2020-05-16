@@ -1,6 +1,6 @@
 #!/bin/sh
 # https://stackoverflow.com/questions/3545292/how-to-get-maven-project-version-to-the-bash-command-line
-if [ $# -lt 3 ]; then
+if [ $# -lt 2 ]; then
   echo "Usage: $0 <tag> <phases...>, e.g. $0 3-jdk-11-openj9 clean install"
   echo "See https://hub.docker.com/_/maven for available tags"
   exit 1

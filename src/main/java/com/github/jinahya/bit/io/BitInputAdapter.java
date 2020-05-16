@@ -49,8 +49,6 @@ public class BitInputAdapter implements BitInput {
      * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
-     * @implNote. The {@code close} method of {@code BitInputAdapter} class invokes {@link ByteInput#close()} on the
-     * {@code input} if it is not {@code null}.
      * @see ByteInput#close()
      */
     @Override

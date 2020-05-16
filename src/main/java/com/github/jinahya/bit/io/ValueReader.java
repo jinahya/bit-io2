@@ -60,7 +60,6 @@ public interface ValueReader<T> {
      * @param size  the number bits to read.
      * @return a read {@code length} value.
      * @throws IOException if an I/O error occurs.
-     * @apiNote. This method is for reading a {@code length} value for subsequent non-singular value.
      */
     default int readLength(final BitInput input, final int size) throws IOException {
         return input.readUnsignedInt(requireValidSizeForInt(true, size));

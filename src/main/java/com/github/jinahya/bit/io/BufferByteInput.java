@@ -113,8 +113,6 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote. The {@code read(ByteBuffer)} method of {@code BufferByteInput} class invokes {@link ByteBuffer#get()}
-     * method on {@code source} and returns the result as an unsigned {@code int}.
      */
     @Override
     protected int read(final ByteBuffer source) throws IOException {

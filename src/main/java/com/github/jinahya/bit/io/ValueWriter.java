@@ -61,7 +61,6 @@ public interface ValueWriter<T> {
      * @param value  the value whose lower {@code size} bits are written.
      * @return an actual written {@code length} value.
      * @throws IOException if an I/O error occurs.
-     * @apiNote. This method is for writing the {@code length} of subsequent non-singular value.
      */
     default int writeLength(final BitOutput output, final int size, final int value) throws IOException {
         if (value < 0) {
