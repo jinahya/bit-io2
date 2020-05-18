@@ -106,15 +106,11 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
     public static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
         return new ChannelAdapter(() -> allocate(1), channelSupplier) {
             @Override
-            protected void write(ByteBuffer target, int value) throws IOException {
+            protected void write(final ByteBuffer target, final int value) throws IOException {
                 super.write(target, value);
-                if (target.position() > 0) {
-                    target.flip();
-                    if (target.hasRemaining()) {
-                        channel().write(target);
-                    }
-                    target.compact();
-                }
+                target.flip();
+                channel().write(target);
+                target.compact();
             }
         };
     }
