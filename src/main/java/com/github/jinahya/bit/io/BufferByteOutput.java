@@ -125,8 +125,7 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
     }
 
     /**
-     * {@inheritDoc} The {@code write(ByteBuffer, int)} method of {@code BufferByteOutput} class invokes {@link
-     * ByteBuffer#put(byte)} method on {@code target} with the {@code value} casted as a {@code byte}.
+     * {@inheritDoc}.
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}

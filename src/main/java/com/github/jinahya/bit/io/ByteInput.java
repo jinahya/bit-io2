@@ -34,8 +34,7 @@ import java.io.IOException;
 public interface ByteInput extends Closeable, OctetConsumerAttachable {
 
     /**
-     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
-     * ByteInput} interface does nothing.
+     * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
      */

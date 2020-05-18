@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -51,4 +52,22 @@ public interface ValueWriter<T> {
      * @throws IOException if an I/O error occurs.
      */
     void write(BitOutput output, T value) throws IOException;
+
+    /**
+     * Writes specified {@code length} value as an unsigned {@code int} of specified bit size.
+     *
+     * @param output a bit output from which the value is read.
+     * @param size   the number bits to read.
+     * @param value  the value whose lower {@code size} bits are written.
+     * @return an actual written {@code length} value.
+     * @throws IOException if an I/O error occurs.
+     */
+    default int writeLength(final BitOutput output, final int size, final int value) throws IOException {
+        if (value < 0) {
+            throw new IllegalArgumentException("value(" + value + ") < 0");
+        }
+        final int length = value & ((1 << requireValidSizeForInt(true, size)) - 1);
+        output.writeUnsignedInt(size, length);
+        return length;
+    }
 }

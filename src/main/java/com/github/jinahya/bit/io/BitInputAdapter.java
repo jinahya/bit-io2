@@ -47,15 +47,14 @@ public class BitInputAdapter implements BitInput {
     }
 
     /**
-     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
-     * BitInputAdapter} class invokes {@link ByteInput#close()} on the {@code input} if it is not {@code null}.
+     * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
      * @see ByteInput#close()
      */
     @Override
     public void close() throws IOException {
-        BitInput.super.close();
+        BitInput.super.close(); // does nothing.
         if (input != null) {
             input.close();
         }

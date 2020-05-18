@@ -40,12 +40,15 @@ class UserListAdapterTest {
     void test(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
               @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
             throws IOException {
+        final UserListAdapter adapter = new UserListAdapter(7);
         final List<User> expected
-                = range(0, current().nextInt(1, 128)).mapToObj(i -> newRandomInstance()).collect(toList());
-        output.writeValue(new UserListAdapter(7), expected);
+                = range(0, current().nextInt(1, 128))
+                .mapToObj(i -> newRandomInstance())
+                .collect(toList());
+        output.writeValue(adapter, expected);
         final long padded = output.align();
         output.flush();
-        final List<User> actual = input.readValue(new UserListAdapter(7));
+        final List<User> actual = input.readValue(adapter);
         final long discarded = input.align();
         assertEquals(expected, actual);
         assertEquals(padded, discarded);
