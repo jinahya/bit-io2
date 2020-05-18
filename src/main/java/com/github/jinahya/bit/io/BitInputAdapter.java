@@ -45,6 +45,20 @@ public class BitInputAdapter implements BitInput {
         this.inputSupplier = requireNonNull(inputSupplier, "inputSupplier is null");
     }
 
+    /**
+     * Closes this input and releases any system resources associated with it.
+     *
+     * @throws IOException if an I/O error occurs.
+     * @see ByteInput#close()
+     */
+    @Override
+    public void close() throws IOException {
+        BitInput.super.close(); // does nothing.
+        if (input != null) {
+            input.close();
+        }
+    }
+
     @Override
     public int readInt(final boolean unsigned, int size) throws IOException {
         requireValidSizeForInt(unsigned, size);

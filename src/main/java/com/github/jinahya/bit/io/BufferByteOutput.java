@@ -56,11 +56,38 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
         }
 
         @Override
+        public void flush() throws IOException {
+            super.flush();
+            if (target != null) {
+                for (target.flip(); target.hasRemaining(); ) {
+                    channel().write(target);
+                }
+                target.clear();
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            if (channel != null) {
+                channel.close();
+            }
+        }
+
+        @Override
         protected void write(final ByteBuffer target, final int value) throws IOException {
-            super.write(target, value);
             while (!target.hasRemaining()) {
                 target.flip(); // limit -> position, position -> zero
                 channel().write(target);
+                target.compact();
+            }
+            super.write(target, value);
+            // just doing a single writing.
+            {
+                target.flip();
+                if (target.hasRemaining()) {
+                    channel().write(target);
+                }
                 target.compact();
             }
         }
@@ -99,7 +126,7 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
 
     /**
      * {@inheritDoc} The {@code write(ByteBuffer, int)} method of {@code BufferByteOutput} class invokes {@link
-     * ByteBuffer#put(byte)} method on {@code target} with the {@code value} casted as a {@code byte}.
+     * ByteBuffer#put(byte)} method on specified byte buffer with specified value casted as a {@code byte} value.
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}

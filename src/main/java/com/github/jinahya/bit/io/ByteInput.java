@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
 
@@ -30,7 +31,17 @@ import java.io.IOException;
  * @see ByteOutput
  */
 @FunctionalInterface
-public interface ByteInput {
+public interface ByteInput extends Closeable {
+
+    /**
+     * Closes this input and releases any system resources associated with it.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    @Override
+    default void close() throws IOException {
+        // does nothing.
+    }
 
     /**
      * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.

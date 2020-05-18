@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A value adapter for reading/writing an array of bytes.
@@ -61,8 +62,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
 
         @Override
         public byte[] read(final BitInput input) throws IOException {
-            final int length = readLength(input);
-            final byte[] value = new byte[length];
+            final byte[] value = new byte[readLength(input)];
             for (int i = 0; i < value.length; i++) {
                 value[i] = input.readByte(true, elementSize);
             }
@@ -97,10 +97,21 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         this.elementSize = requireValidSizeForByte(false, elementSize);
     }
 
+    final int readLength(final BitInput input) throws IOException {
+        return readLength(input, lengthSize);
+    }
+
+    @Override
+    public byte[] read(final BitInput input) throws IOException {
+        final byte[] value = new byte[readLength(input)];
+        for (int i = 0; i < value.length; i++) {
+            value[i] = input.readByte(elementSize);
+        }
+        return value;
+    }
+
     final int writeLength(final BitOutput output, final byte[] value) throws IOException {
-        final int length = value.length & ((1 << lengthSize) - 1);
-        output.writeUnsignedInt(lengthSize, length);
-        return length;
+        return writeLength(output, lengthSize, requireNonNull(value, "value is null").length);
     }
 
     @Override
@@ -109,20 +120,6 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         for (int i = 0; i < length; i++) {
             output.writeByte(elementSize, value[i]);
         }
-    }
-
-    final int readLength(final BitInput input) throws IOException {
-        return input.readUnsignedInt(lengthSize);
-    }
-
-    @Override
-    public byte[] read(final BitInput input) throws IOException {
-        final int length = readLength(input);
-        final byte[] value = new byte[length];
-        for (int i = 0; i < value.length; i++) {
-            value[i] = input.readByte(elementSize);
-        }
-        return value;
     }
 
     private final int lengthSize;

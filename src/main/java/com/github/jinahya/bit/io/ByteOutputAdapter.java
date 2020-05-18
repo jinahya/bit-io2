@@ -20,13 +20,15 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * An abstract class implements {@link ByteOutput} adapting specified byte target.
+ * An abstract class implements {@link ByteOutput} adapting a specific type of byte target.
  *
  * @param <T> byte target parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -45,8 +47,34 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @throws IOException {@inheritDoc}
+     */
+    @Override
+    public void flush() throws IOException {
+        ByteOutput.super.flush(); // does nothing.
+        if (target instanceof Flushable) {
+            ((Flushable) target).flush();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws IOException {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        ByteOutput.super.close(); // does nothing.
+        if (target instanceof Closeable) {
+            ((Closeable) target).close();
+        }
+    }
+
+    /**
      * {@inheritDoc} The {@code write(int)} method of {@code ByteOutputAdapter} class invokes {@link #write(Object,
-     * int)} with a lazily-initialized {@code target} and given {@code value}.
+     * int)} method with a byte target and specified value.
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
@@ -57,10 +85,11 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
-     * Writes specified unsigned {@code 8}-bit value to specified target.
+     * Writes specified {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to specified target.
      *
-     * @param target the target.
-     * @param value  the unsigned {@code 8}-bit value to write; between {@code 1} and {@code 255}, both inclusive.
+     * @param target the target to which the {@code value} is written.
+     * @param value  the {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to write; between {@code 1} and
+     *               {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
      */
     protected abstract void write(T target, int value) throws IOException;
@@ -74,5 +103,5 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
 
     private final Supplier<? extends T> targetSupplier;
 
-    private T target;
+    T target;
 }

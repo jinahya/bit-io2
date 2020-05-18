@@ -36,8 +36,8 @@ class StringAdapterTest {
 
     @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
-    void testAsciiAdapter(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
-                          @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
+    void testAscii(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
+                   @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
             throws IOException {
         final StringAdapter adapter = ascii(31);
         final String expected = new RandomStringGenerator.Builder()
@@ -46,6 +46,7 @@ class StringAdapterTest {
                 .generate(current().nextInt(128));
         output.writeValue(adapter, expected);
         final long padded = output.align();
+        output.flush();
         final String actual = input.readValue(adapter);
         final long discarded = input.align();
         assertEquals(expected, actual);
@@ -54,8 +55,8 @@ class StringAdapterTest {
 
     @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
-    void test(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
-              @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
+    void testUtf8(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
+                  @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
             throws IOException {
         final StringAdapter adapter = new StringAdapter(new BytesAdapter(31, 8), UTF_8);
         final String expected = new RandomStringGenerator.Builder()
@@ -63,6 +64,7 @@ class StringAdapterTest {
                 .generate(current().nextInt(128));
         output.writeValue(adapter, expected);
         final long padded = output.align();
+        output.flush();
         final String actual = input.readValue(adapter);
         final long discarded = input.align();
         assertEquals(expected, actual);

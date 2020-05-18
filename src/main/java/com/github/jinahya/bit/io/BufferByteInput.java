@@ -57,6 +57,14 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
         }
 
         @Override
+        public void close() throws IOException {
+            super.close();
+            if (channel != null) {
+                channel.close();
+            }
+        }
+
+        @Override
         protected int read(final ByteBuffer source) throws IOException {
             while (!source.hasRemaining()) {
                 source.clear(); // position -> zero, limit -> capacity
@@ -101,7 +109,7 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
 
     /**
      * {@inheritDoc} The {@code read(ByteBuffer)} method of {@code BufferByteInput} class invokes {@link
-     * ByteBuffer#get()} method on specified {@code source} and returns the result as an unsigned {@code int}.
+     * ByteBuffer#get()} method on specified byte buffer and returns the result as an unsigned {@code int}.
      *
      * @param source {@inheritDoc}
      * @return {@inheritDoc}

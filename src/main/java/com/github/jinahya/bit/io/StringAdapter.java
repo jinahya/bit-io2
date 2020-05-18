@@ -35,11 +35,10 @@ import static java.util.Objects.requireNonNull;
 public class StringAdapter implements ValueAdapter<String> {
 
     /**
-     * Creates a new instance for reading/writing {@code US-ASCII} strings.
+     * Creates a new instance for reading/writing {@link java.nio.charset.StandardCharsets#US_ASCII US-ASCII} strings.
      *
      * @param lengthSize the number of bits for the length of encoded bytes.
      * @return a new instance.
-     * @see BytesAdapter#unsigned(int, int)
      */
     public static StringAdapter ascii(final int lengthSize) {
         return new StringAdapter(unsigned(lengthSize, 7), US_ASCII);
@@ -58,13 +57,13 @@ public class StringAdapter implements ValueAdapter<String> {
     }
 
     @Override
-    public void write(final BitOutput output, final String value) throws IOException {
-        delegate.write(output, value.getBytes(charset));
+    public String read(final BitInput input) throws IOException {
+        return new String(delegate.read(input), charset);
     }
 
     @Override
-    public String read(final BitInput input) throws IOException {
-        return new String(delegate.read(input), charset);
+    public void write(final BitOutput output, final String value) throws IOException {
+        delegate.write(output, value.getBytes(charset));
     }
 
     private final BytesAdapter delegate;
