@@ -84,7 +84,7 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
             super.write(target, value);
         }
 
-        WritableByteChannel channel() {
+        private WritableByteChannel channel() {
             if (channel == null) {
                 channel = channelSupplier.get();
             }
@@ -108,9 +108,7 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
             @Override
             protected void write(final ByteBuffer target, final int value) throws IOException {
                 super.write(target, value);
-                target.flip();
-                channel().write(target);
-                target.compact();
+                flush();
             }
         };
     }
