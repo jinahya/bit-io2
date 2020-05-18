@@ -82,17 +82,9 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
                 target.compact();
             }
             super.write(target, value);
-            // just doing a single writing.
-            {
-                target.flip();
-                if (target.hasRemaining()) {
-                    channel().write(target);
-                }
-                target.compact();
-            }
         }
 
-        private WritableByteChannel channel() {
+        WritableByteChannel channel() {
             if (channel == null) {
                 channel = channelSupplier.get();
             }
@@ -112,7 +104,19 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
      * @see BufferByteInput#from(Supplier)
      */
     public static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        return new ChannelAdapter(() -> allocate(1), channelSupplier);
+        return new ChannelAdapter(() -> allocate(1), channelSupplier) {
+            @Override
+            protected void write(ByteBuffer target, int value) throws IOException {
+                super.write(target, value);
+                if (target.position() > 0) {
+                    target.flip();
+                    if (target.hasRemaining()) {
+                        channel().write(target);
+                    }
+                    target.compact();
+                }
+            }
+        };
     }
 
     /**
