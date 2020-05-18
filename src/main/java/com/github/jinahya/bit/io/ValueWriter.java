@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ValueReader
- * @see ValueWriter
+ * @see ValueAdapter
  */
 public interface ValueWriter<T> {
 
