@@ -327,10 +327,10 @@ public interface BitOutput extends Flushable, Closeable {
     /**
      * Writes specified {@code char} value of specified bit size.
      *
-     * @param size  the number of bits to write.
+     * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Character#SIZE}, both
+     *              inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see #writeUnsignedInt(int, int)
      * @see #writeChar16(char)
      */
     default void writeChar(final int size, final char value) throws IOException {
