@@ -43,7 +43,7 @@ public class DataByteInput extends ByteInputAdapter<DataInput> {
 
     /**
      * {@inheritDoc} The {@code read(DataInput)} method of {@link DataByteInput} class invokes {@link
-     * DataInput#readUnsignedByte()} method on {@code source} and returns the result.
+     * DataInput#readUnsignedByte()} method on specified data input and returns the result.
      *
      * @param source {@inheritDoc}
      * @return {@inheritDoc}

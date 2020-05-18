@@ -26,10 +26,12 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An interface for writing non-scalar values.
+ * An interface for writing non-primitive object references.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ValueReader
+ * @see ValueWriter
  */
 public interface ValueWriter<T> {
 
@@ -56,16 +58,13 @@ public interface ValueWriter<T> {
     /**
      * Writes specified {@code length} value as an unsigned {@code int} of specified bit size.
      *
-     * @param output a bit output from which the value is read.
-     * @param size   the number bits to read.
+     * @param output a bit output to which the value is written.
+     * @param size   the number of bits to write.
      * @param value  the value whose lower {@code size} bits are written.
      * @return an actual written {@code length} value.
      * @throws IOException if an I/O error occurs.
      */
     default int writeLength(final BitOutput output, final int size, final int value) throws IOException {
-        if (value < 0) {
-            throw new IllegalArgumentException("value(" + value + ") < 0");
-        }
         final int length = value & ((1 << requireValidSizeForInt(true, size)) - 1);
         output.writeUnsignedInt(size, length);
         return length;

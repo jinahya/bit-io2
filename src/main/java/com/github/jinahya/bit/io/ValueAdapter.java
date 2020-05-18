@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An interface for reading/writing non-scalar values.
+ * An interface for reading/writing non-primitive object references.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;

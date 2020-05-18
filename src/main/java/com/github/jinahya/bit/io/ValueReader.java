@@ -26,10 +26,12 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An interface for reading non-scalar values.
+ * An interface for reading non-primitive object references.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ValueWriter
+ * @see ValueAdapter
  */
 public interface ValueReader<T> {
 
@@ -57,8 +59,8 @@ public interface ValueReader<T> {
      * Reads an {@code length} value of specified bit size.
      *
      * @param input a bit input from which the value is read.
-     * @param size  the number bits to read.
-     * @return a read {@code length} value.
+     * @param size  the number bits to read for the value.
+     * @return a {@code length} value read.
      * @throws IOException if an I/O error occurs.
      */
     default int readLength(final BitInput input, final int size) throws IOException {

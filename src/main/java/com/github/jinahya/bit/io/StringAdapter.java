@@ -35,11 +35,10 @@ import static java.util.Objects.requireNonNull;
 public class StringAdapter implements ValueAdapter<String> {
 
     /**
-     * Creates a new instance for reading/writing {@code US-ASCII} strings.
+     * Creates a new instance for reading/writing {@link java.nio.charset.StandardCharsets#US_ASCII US-ASCII} strings.
      *
      * @param lengthSize the number of bits for the length of encoded bytes.
      * @return a new instance.
-     * @see BytesAdapter#unsigned(int, int)
      */
     public static StringAdapter ascii(final int lengthSize) {
         return new StringAdapter(unsigned(lengthSize, 7), US_ASCII);
