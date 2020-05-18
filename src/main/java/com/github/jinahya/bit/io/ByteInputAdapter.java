@@ -60,7 +60,8 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a
+     * byte source and returns the result.
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
@@ -73,12 +74,11 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     }
 
     /**
-     * Reads an unsigned {@code 8}-bit value from specified source.
+     * Reads an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value from specified source.
      *
-     * @param source the source from which a byte is read.
-     * @return an unsigned {@code 8}-bit value read from the {@code source}.
+     * @param source the source from which an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value is read.
+     * @return an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value read from the {@code source}.
      * @throws IOException if an I/O error occurs.
-     * @see #read()
      */
     protected abstract int read(T source) throws IOException;
 

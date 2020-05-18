@@ -30,6 +30,7 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
 import static java.lang.Float.floatToRawIntBits;
 import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.ThreadLocalRandom.current;
 
 /**
  * An interface for writing values of an arbitrary number of bits.
@@ -67,7 +68,6 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see BitInput#readBoolean()
      */
     default void writeBoolean(boolean value) throws IOException {
         writeInt(true, 1, value ? 0x01 : 0x00);
@@ -77,8 +77,8 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
      * Writes specified {@code byte} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Byte#SIZE} - (unsigned ?
-     *                 {@code 1} : {@code 0})), both inclusive.
+     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Byte#SIZE} - ({@code
+     *                 unsigned ? 1: 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
      */
@@ -98,7 +98,7 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     }
 
     /**
-     * Writes specified signed {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
+     * Writes specified {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
      *
      * @param value the {@value java.lang.Byte#SIZE}-bit signed {@code byte} value to write.
      * @throws IOException if an I/O error occurs.
@@ -123,8 +123,8 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
      * Writes specified {@code short} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE} - (unsigned ?
-     *                 {@code 1} : {@code 0})), both inclusive.
+     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE} - ({@code
+     *                 unsigned ? 1 : 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
      */
@@ -144,7 +144,7 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     }
 
     /**
-     * Writes specified signed {@value java.lang.Short#SIZE}-bit signed {@code short} value.
+     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value.
      *
      * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
      * @throws IOException if an I/O error occurs.
@@ -155,13 +155,19 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     }
 
     /**
-     * Writes specified signed {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte
-     * order.
+     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order.
      *
      * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
      * @throws IOException if an I/O error occurs.
+     * @deprecated Reverse specified value's bytes with {@link Short#reverseBytes(short)} method and writes the result
+     * with {@link #writeShort16(short)} method.
      */
+    @Deprecated // forRemoval = true
     default void writeShort16Le(final short value) throws IOException {
+        if (current().nextBoolean()) {
+            writeShort16(Short.reverseBytes(value));
+            return;
+        }
         writeByte8((byte) value);
         writeByte8((byte) (value >> Byte.SIZE));
     }
@@ -182,8 +188,8 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
      * Writes specified {@code int} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Integer#SIZE} - (unsigned ?
-     *                 {@code 1} : {@code 0})), both inclusive.
+     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Integer#SIZE} - ({@code
+     *                 unsigned ? 1 : 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
      */
@@ -201,7 +207,7 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     }
 
     /**
-     * Writes specified signed {@value java.lang.Integer#SIZE}-bit value.
+     * Writes specified {@value java.lang.Integer#SIZE}-bit signed value.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
@@ -211,12 +217,19 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     }
 
     /**
-     * Writes specified signed {@value java.lang.Integer#SIZE}-bit value in little endian byte order.
+     * Writes specified {@value java.lang.Integer#SIZE}-bit signed {@code int} value in little endian byte order.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @deprecated Reverse specified value's bytes using {@link Integer#reverseBytes(int)} and write the result with
+     * {@link #writeInt32(int)} method.
      */
+    @Deprecated // forRemoval = true
     default void writeInt32Le(final int value) throws IOException {
+        if (current().nextBoolean()) {
+            writeInt32(Integer.reverseBytes(value));
+            return;
+        }
         writeShort16Le((short) value);
         writeShort16Le((short) (value >> Short.SIZE));
     }
@@ -237,8 +250,8 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
      * Writes specified {@code long} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Long#SIZE} - (unsigned ?
-     *                 {@code 1} : {@code 0})), both inclusive.
+     * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Long#SIZE} - ({@code
+     *                 unsigned ? 1 : 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
      */
@@ -272,7 +285,7 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     }
 
     /**
-     * Writes specified signed {@value java.lang.Long#SIZE}-bit {@code long} value.
+     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
@@ -282,12 +295,19 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     }
 
     /**
-     * Writes specified signed {@value java.lang.Long#SIZE}-bit {@code long} value in little endian byte order.
+     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value in little endian byte order.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @deprecated Reverse specified value's bytes using {@link Long#reverseBytes(long)} method and write the result
+     * with {@link #writeLong64(long)} method.
      */
+    @Deprecated // forRemoval
     default void writeLong64Le(final long value) throws IOException {
+        if (current().nextBoolean()) {
+            writeLong64(Long.reverseBytes(value));
+            return;
+        }
         writeInt32Le((int) value);
         writeInt32Le((int) (value >> Integer.SIZE));
     }
@@ -307,10 +327,10 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     /**
      * Writes specified {@code char} value of specified bit size.
      *
-     * @param size  the number of bits to write.
+     * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Character#SIZE}, both
+     *              inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see #writeUnsignedInt(int, int)
      * @see #writeChar16(char)
      */
     default void writeChar(final int size, final char value) throws IOException {
@@ -330,8 +350,8 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
 
     /**
      * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value. The {@code writeFloat32(float)} method of
-     * {@code BitOutput} interface writes a {@value java.lang.Integer#SIZE}-bit {@link Float#floatToRawIntBits(float)
-     * raw int bits} of specified {@code float} value.
+     * {@code BitOutput} interface writes specified value as a {@value java.lang.Integer#SIZE}-bit {@code int} value
+     * converted with {@link Float#floatToRawIntBits(float)} method.
      *
      * @param value the {@code float} value to write.
      * @throws IOException if an I/O error occurs.
@@ -344,8 +364,8 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
 
     /**
      * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value. The {@code writeDouble64(double)}
-     * method of {@code BitOutput} interface writes a {@value java.lang.Long#SIZE}-bit {@link
-     * Double#doubleToRawLongBits(double) raw long bits} of specified {@code double} value.
+     * method of {@code BitOutput} interface writes specified value as a {@value java.lang.Long#SIZE}-bit {@code long}
+     * value converted with {@link Double#doubleToRawLongBits(double)} method.
      *
      * @param value the {@code double} value to write.
      * @throws IOException if an I/O error occurs.
@@ -400,7 +420,8 @@ public interface BitOutput extends Flushable, Closeable, OctetConsumerAttachable
     long align(int bytes) throws IOException;
 
     /**
-     * Aligns to a single byte by padding zero bits.
+     * Aligns to a single byte by padding zero bits.  The {@code align()} method of {@code BitOutput} interface invokes
+     * {@link #align(int)} with {@value java.lang.Byte#BYTES}.
      *
      * @return the number of bits padded while aligning.
      * @throws IOException if an I/O error occurs.

@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * A wrapper class for reading a null flag before reading values.
  *
- * @param <T> value type parameter.
+ * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see NullableValueWriter
  */

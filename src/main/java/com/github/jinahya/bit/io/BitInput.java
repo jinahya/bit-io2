@@ -30,6 +30,7 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShor
 import static java.lang.Double.longBitsToDouble;
 import static java.lang.Float.intBitsToFloat;
 import static java.util.Objects.requireNonNull;
+import static java.util.concurrent.ThreadLocalRandom.current;
 
 /**
  * An interface for reading values of an arbitrary number of bits.
@@ -51,12 +52,11 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     }
 
     /**
-     * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} and returns
-     * {@code true} for {@code 0b1} and {@code false} for {@code 0b0}.
+     * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} value and
+     * returns {@code true} for {@code 0b1} and {@code false} for {@code 0b0}.
      *
-     * @return {@code true} for {@code 0b1}, {@code false} for {@code 0b0}
+     * @return the value read.
      * @throws IOException if an I/O error occurs.
-     * @see BitOutput#writeBoolean(boolean)
      */
     default boolean readBoolean() throws IOException {
         return readInt(true, 1) == 0x01;
@@ -66,9 +66,9 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
      * Reads a {@code byte} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} - (unsigned ?
-     *                 {@code 1} : {@code 0})), both inclusive.
-     * @return a {@code byte} value of specified {@code size}.
+     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} - ({@code
+     *                 unsigned ? 1 : 0})), both inclusive.
+     * @return a {@code byte} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
      */
     default byte readByte(final boolean unsigned, final int size) throws IOException {
@@ -87,7 +87,7 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     }
 
     /**
-     * Reads a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
+     * Reads a {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
      *
      * @return a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
      * @throws IOException if an I/O error occurs.
@@ -133,9 +133,9 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     }
 
     /**
-     * Reads a signed {@value java.lang.Short#SIZE}-bit {@code short} value.
+     * Reads a {@value java.lang.Short#SIZE}-bit signed {@code short} value.
      *
-     * @return a signed {@value java.lang.Short#SIZE}-bit {@code short} value.
+     * @return a {@value java.lang.Short#SIZE}-bit signed {@code short} value read.
      * @throws IOException if an I/O error occurs.
      * @see #readShort(int)
      */
@@ -144,12 +144,18 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     }
 
     /**
-     * Reads a signed {@value java.lang.Short#SIZE}-bit {@code short} value in little endian byte order.
+     * Reads a {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order.
      *
-     * @return a signed {@value java.lang.Short#SIZE}-bit {@code short} value in little endian byte order.
+     * @return a {@value java.lang.Short#SIZE}-bit signed {@code short} value read in little endian byte order.
      * @throws IOException if an I/O error occurs.
+     * @deprecated Reads a value with {@link #readShort16()} and reverse bytes with {@link Short#reverseBytes(short)}
+     * method.
      */
+    @Deprecated // forRemoval = true
     default short readShort16Le() throws IOException {
+        if (current().nextBoolean()) {
+            return Short.reverseBytes(readShort16());
+        }
         return (short) ((readByte8() & 0xFF) | (readByte8() << Byte.SIZE));
     }
 
@@ -169,8 +175,8 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
      * Reads an {@code int} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Integer#SIZE} - (unsigned ?
-     *                 {@code 1} : {@code 0})), both inclusive.
+     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Integer#SIZE} - ({@code
+     *                 unsigned ? 1: 0})), both inclusive.
      * @return an {@code int} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
      */
@@ -188,9 +194,9 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     }
 
     /**
-     * Reads a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
+     * Reads a {@value java.lang.Integer#SIZE}-bit signed {@code int} value.
      *
-     * @return a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
+     * @return a {@value java.lang.Integer#SIZE}-bit signed {@code int} value read.
      * @throws IOException if an I/O error occurs.
      */
     default int readInt32() throws IOException {
@@ -198,12 +204,18 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     }
 
     /**
-     * Reads a signed {@value java.lang.Integer#SIZE}-bit {@code int} value in little endian byte order.
+     * Reads a {@value java.lang.Integer#SIZE}-bit signed {@code int} value in little endian byte order.
      *
-     * @return a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
+     * @return a {@value java.lang.Integer#SIZE}-bit signed {@code int} value.
      * @throws IOException if an I/O error occurs.
+     * @deprecated Reads a value with {@link #readInt32()} method and reverse bytes with {@link
+     * Integer#reverseBytes(int)} method.
      */
+    @Deprecated // forRemoval = true
     default int readInt32Le() throws IOException {
+        if (current().nextBoolean()) {
+            return Integer.reverseBytes(readInt32());
+        }
         return readShort16Le() & 0xFFFF | readShort16Le() << Short.SIZE;
     }
 
@@ -223,8 +235,8 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
      * Reads a {@code long} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Long#SIZE} - (unsigned ?
-     *                 {@code 1} : {@code 0})), both inclusive.
+     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Long#SIZE} - ({@code
+     *                 unsigned ? 1: 0})), both inclusive.
      * @return a {@code long} value of specified bit size.
      * @throws IOException if an I/O error occurs.
      */
@@ -262,9 +274,9 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     }
 
     /**
-     * Reads a signed {@value java.lang.Long#SIZE}-bit {@code long} value.
+     * Reads a {@value java.lang.Long#SIZE}-bit signed {@code long} value.
      *
-     * @return a signed {@value java.lang.Long#SIZE}-bit {@code long} value.
+     * @return a {@value java.lang.Long#SIZE}-bit signed {@code long} value.
      * @throws IOException if an I/O error occurs.
      */
     default long readLong64() throws IOException {
@@ -272,12 +284,18 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     }
 
     /**
-     * Reads a signed {@value java.lang.Long#SIZE}-bit {@code long} value in little endian byte order.
+     * Reads a {@value java.lang.Long#SIZE}-bit signed {@code long} value in little endian byte order.
      *
-     * @return a signed {@value java.lang.Long#SIZE}-bit {@code long} value.
+     * @return a {@value java.lang.Long#SIZE}-bit signed {@code long} value read.
      * @throws IOException if an I/O error occurs.
+     * @deprecated Reads a value with {@link #readLong64()} and reverse bytes with {@link Long#reverseBytes(long)}
+     * method.
      */
+    @Deprecated // forRemoval = true
     default long readLong64Le() throws IOException {
+        if (current().nextBoolean()) {
+            return Long.reverseBytes(readLong64());
+        }
         return readInt32Le() & 0xFFFFFFFFL | ((long) readInt32Le()) << Integer.SIZE;
     }
 
@@ -296,7 +314,7 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     /**
      * Reads a {@code char} value of specified bit size.
      *
-     * @param size the number of bits to read.
+     * @param size the number of bits to read; between {@code 1} and {@value java.lang.Character#SIZE}, both inclusive.
      * @return a {@code char} value.
      * @throws IOException if an I/O error occurs.
      * @see #readChar16()
@@ -318,8 +336,8 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
 
     /**
      * Reads a {@value java.lang.Float#SIZE}-bit {@code float} value. The {@code readFloat32()} method of {@code
-     * BitInput} interface reads a {@value java.lang.Integer#SIZE}-bit {@link Float#intBitsToFloat(int) int bits} and
-     * returns it as a {@code float} value.
+     * BitInput} interface reads a {@value java.lang.Integer#SIZE}-bit {@code int} value and returns a {@code float}
+     * value converted with {@link Float#intBitsToFloat(int)} method.
      *
      * @return a {@value java.lang.Float#SIZE}-bit {@code float} value
      * @throws IOException if an I/O error occurs.
@@ -331,8 +349,8 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
 
     /**
      * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value. The {@code readDouble64()} method of {@code
-     * BitInput} interface reads a {@value java.lang.Long#SIZE}-bit {@link Double#longBitsToDouble(long) long bits} and
-     * returns it as a {@code double} value.
+     * BitInput} interface reads a {@value java.lang.Long#SIZE}-bit {@code long} value and returns a {@code double}
+     * value converted with {@link Double#longBitsToDouble(long)} method.
      *
      * @return a {@value java.lang.Double#SIZE}-bit {@code double} value
      * @throws IOException if an I/O error occurs.
@@ -385,7 +403,8 @@ public interface BitInput extends Closeable, OctetConsumerAttachable {
     long align(int bytes) throws IOException;
 
     /**
-     * Aligns to a single byte by discarding bits.
+     * Aligns to a single byte by discarding bits. The {@code align()} method of {@code BitInput} interface invokes
+     * {@link #align(int)} with {@value java.lang.Byte#BYTES}.
      *
      * @return the number of bits discarded while aligning.
      * @throws IOException if an I/O error occurs.

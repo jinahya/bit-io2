@@ -108,7 +108,7 @@ public class BitInputTest {
      * Asserts {@link BitInput#readChar(int)} method throws an {@link IllegalArgumentException} when the {@code size}
      * argument is invalid.
      *
-     * @param size an invalid value for {@code size} parameter.
+     * @param size an invalid value for {@code size} argument.
      * @see BitOutputTest#assertWriteCharSignedThrowsIllegalArgumentExceptionWhenSizeIsIllegal(int)
      */
     @DisplayName("readChar(size) throws IllegalArgumentException when size is illegal")
