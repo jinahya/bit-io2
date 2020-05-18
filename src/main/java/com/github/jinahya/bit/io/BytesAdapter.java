@@ -38,7 +38,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
-    private static class UnsignedBytesAdapter extends BytesAdapter {
+    private static class Unsigned extends BytesAdapter {
 
         /**
          * Creates a new instance.
@@ -48,7 +48,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
          * @param elementSize the number of bits for each element in the array; between {@code 1} (inclusive) and
          *                    {@value java.lang.Byte#SIZE} (exclusive).
          */
-        private UnsignedBytesAdapter(final int lengthSize, final int elementSize) {
+        private Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, requireValidSizeForByte(true, elementSize));
         }
 
@@ -80,7 +80,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
      * @return a new instance.
      */
     public static BytesAdapter unsigned(final int lengthSize, final int elementSize) {
-        return new UnsignedBytesAdapter(lengthSize, elementSize);
+        return new Unsigned(lengthSize, elementSize);
     }
 
     /**
@@ -97,10 +97,24 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         this.elementSize = requireValidSizeForByte(false, elementSize);
     }
 
+    /**
+     * Reads an unsigned {@code int} value of {@link #lengthSize} bits.
+     *
+     * @param input a bit input from which the value is read.
+     * @return a value read.
+     * @throws IOException if an I/O error occurs.
+     */
     final int readLength(final BitInput input) throws IOException {
         return readLength(input, lengthSize);
     }
 
+    /**
+     * Reads an array of bytes from specified input.
+     *
+     * @param input the input from which the value is read.
+     * @return an array of bytes.
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public byte[] read(final BitInput input) throws IOException {
         final byte[] value = new byte[readLength(input)];
@@ -110,10 +124,25 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         return value;
     }
 
+    /**
+     * Writes specified array's {@code length} as an unsigned {@code int} value of {@link #lengthSize}-bits.
+     *
+     * @param output a bit output to which the value is written.
+     * @param value  the value to write.
+     * @return an actual written value.
+     * @throws IOException if an I/O error occurs.
+     */
     final int writeLength(final BitOutput output, final byte[] value) throws IOException {
         return writeLength(output, lengthSize, requireNonNull(value, "value is null").length);
     }
 
+    /**
+     * Writes specified array to specified output.
+     *
+     * @param output the output to which the array is written.
+     * @param value  the array to write.
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void write(final BitOutput output, final byte[] value) throws IOException {
         final int length = writeLength(output, value);

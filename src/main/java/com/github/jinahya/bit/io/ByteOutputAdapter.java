@@ -47,7 +47,8 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code flush()} method of {@code ByteOutputAdapter} class invokes {@link Flushable#flush()}
+     * method on the byte target which may not has been initialized yet in which case this method does nothing.
      *
      * @throws IOException {@inheritDoc}
      */
@@ -60,7 +61,8 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code close()} method of {@code ByteOutputAdapter} class invokes {@link Closeable#close()}
+     * method on the byte target which may not has been initialized yet in which case this method does nothing.
      *
      * @throws IOException {@inheritDoc}
      */
