@@ -37,10 +37,10 @@ import static java.util.Objects.requireNonNull;
 public interface ValueReader<T> {
 
     /**
-     * Reads an unsigned {@code int} value of specified bit size for a {@code length} of subsequent elements.
+     * Reads an unsigned {@code int} value of specified bit size for a <i>length</i> of subsequent elements.
      *
      * @param input a bit input from which the value is read.
-     * @param size  the number bits to read for the value.
+     * @param size  the number of bits to read for the value.
      * @return a value read.
      * @throws IOException if an I/O error occurs.
      */

@@ -38,8 +38,7 @@ import static java.util.Objects.requireNonNull;
 public interface ValueWriter<T> {
 
     /**
-     * Writes specified unsigned {@code int} value for a {@code length} of subsequent elements. Note that only the lower
-     * specified bits of specified value is written.
+     * Writes specified unsigned {@code int} value of specified bit size for a <i>length</i> of subsequent elements.
      *
      * @param output a bit output to which the value is written.
      * @param size   the number of bits to write.
