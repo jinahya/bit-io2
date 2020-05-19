@@ -101,7 +101,6 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
      *
      * @param channelSupplier the supplier for the writable byte channel.
      * @return a new instance.
-     * @see BufferByteInput#from(Supplier)
      */
     public static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
         return new ChannelAdapter(() -> allocate(1), channelSupplier) {
