@@ -120,8 +120,7 @@ public class BitOutputAdapter implements BitOutput {
      * @throws IOException if an I/O error occurs.
      */
     private void unsigned8(final int size, final int value) throws IOException {
-        assert size > 0;
-        assert size <= Byte.SIZE;
+        assert size > 0 && size <= Byte.SIZE;
         final int required = size - available;
         if (required > 0) {
             unsigned8(available, value >> required);
