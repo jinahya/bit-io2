@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static java.util.Objects.requireNonNull;
@@ -34,6 +36,46 @@ import static java.util.Objects.requireNonNull;
  * @see ValueAdapter
  */
 public interface ValueWriter<T> {
+
+    /**
+     * Writes specified unsigned {@code int} value for a {@code length} of subsequent elements. Note that only the lower
+     * specified bits of specified value is written.
+     *
+     * @param output a bit output to which the value is written.
+     * @param size   the number of bits to write.
+     * @param value  the value whose lower {@code size} bits are written.
+     * @return an actual written value of the lower specified bits of specified value.
+     * @throws IOException if an I/O error occurs.
+     */
+    static int writeLength(final BitOutput output, final int size, final int value) throws IOException {
+        requireNonNull(output, "output is null");
+        final int length = value & ((1 << requireValidSizeForInt(true, size)) - 1);
+        output.writeUnsignedInt(size, length);
+        return length;
+    }
+
+    /**
+     * Writes elements in specified collection using specified adapter.
+     *
+     * @param output     a bit output.
+     * @param size       the number of bits for the {@code size} of the collection.
+     * @param adapter    the value adapter for writing elements.
+     * @param collection the collection whose elements are written.
+     * @param <U>        element type parameter
+     * @throws IOException if an I/O error occurs.
+     */
+    static <U> void writeCollection(
+            final BitOutput output, final int size, final ValueAdapter<? super U> adapter,
+            final Collection<? extends U> collection)
+            throws IOException {
+        requireNonNull(adapter, "adapter is null");
+        requireNonNull(collection, "collection is null");
+        final int length = writeLength(output, size, requireNonNull(collection, "collection is null").size());
+        final Iterator<? extends U> iterator = collection.iterator();
+        for (int i = 0; i < length; i++) {
+            adapter.write(output, iterator.next());
+        }
+    }
 
     /**
      * Returns an adapter which pre-writes a {@code boolean} value indicating the nullability of the value.
@@ -54,19 +96,4 @@ public interface ValueWriter<T> {
      * @throws IOException if an I/O error occurs.
      */
     void write(BitOutput output, T value) throws IOException;
-
-    /**
-     * Writes specified {@code length} value as an unsigned {@code int} of specified bit size.
-     *
-     * @param output a bit output to which the value is written.
-     * @param size   the number of bits to write.
-     * @param value  the value whose lower {@code size} bits are written.
-     * @return an actual written {@code length} value.
-     * @throws IOException if an I/O error occurs.
-     */
-    default int writeLength(final BitOutput output, final int size, final int value) throws IOException {
-        final int length = value & ((1 << requireValidSizeForInt(true, size)) - 1);
-        output.writeUnsignedInt(size, length);
-        return length;
-    }
 }

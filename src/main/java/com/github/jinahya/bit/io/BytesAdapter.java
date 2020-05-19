@@ -24,6 +24,8 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
+import static com.github.jinahya.bit.io.ValueReader.readLength;
+import static com.github.jinahya.bit.io.ValueWriter.writeLength;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -38,7 +40,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
-    private static class UnsignedBytesAdapter extends BytesAdapter {
+    private static class Unsigned extends BytesAdapter {
 
         /**
          * Creates a new instance.
@@ -48,25 +50,18 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
          * @param elementSize the number of bits for each element in the array; between {@code 1} (inclusive) and
          *                    {@value java.lang.Byte#SIZE} (exclusive).
          */
-        private UnsignedBytesAdapter(final int lengthSize, final int elementSize) {
+        private Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, requireValidSizeForByte(true, elementSize));
         }
 
         @Override
-        public void write(final BitOutput output, final byte[] value) throws IOException {
-            final int length = writeLength(output, value);
-            for (int i = 0; i < length; i++) {
-                output.writeByte(true, elementSize, value[i]);
-            }
+        byte readByte(final BitInput input) throws IOException {
+            return input.readByte(true, elementSize);
         }
 
         @Override
-        public byte[] read(final BitInput input) throws IOException {
-            final byte[] value = new byte[readLength(input)];
-            for (int i = 0; i < value.length; i++) {
-                value[i] = input.readByte(true, elementSize);
-            }
-            return value;
+        void writeByte(final BitOutput output, byte value) throws IOException {
+            output.writeByte(true, elementSize, value);
         }
     }
 
@@ -80,7 +75,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
      * @return a new instance.
      */
     public static BytesAdapter unsigned(final int lengthSize, final int elementSize) {
-        return new UnsignedBytesAdapter(lengthSize, elementSize);
+        return new Unsigned(lengthSize, elementSize);
     }
 
     /**
@@ -97,29 +92,45 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         this.elementSize = requireValidSizeForByte(false, elementSize);
     }
 
-    final int readLength(final BitInput input) throws IOException {
-        return readLength(input, lengthSize);
-    }
-
+    /**
+     * Reads an array of bytes from specified input.
+     *
+     * @param input the input from which the value is read.
+     * @return an array of bytes.
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public byte[] read(final BitInput input) throws IOException {
-        final byte[] value = new byte[readLength(input)];
+        final int length = readLength(input, lengthSize);
+        final byte[] value = new byte[length];
         for (int i = 0; i < value.length; i++) {
-            value[i] = input.readByte(elementSize);
+            value[i] = readByte(input);
         }
         return value;
     }
 
-    final int writeLength(final BitOutput output, final byte[] value) throws IOException {
-        return writeLength(output, lengthSize, requireNonNull(value, "value is null").length);
+    byte readByte(final BitInput input) throws IOException {
+        return input.readByte(elementSize);
     }
 
+    /**
+     * Writes specified array to specified output.
+     *
+     * @param output the output to which the array is written.
+     * @param value  the array to write.
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void write(final BitOutput output, final byte[] value) throws IOException {
-        final int length = writeLength(output, value);
+        requireNonNull(value, "value is null");
+        final int length = writeLength(output, lengthSize, value.length);
         for (int i = 0; i < length; i++) {
-            output.writeByte(elementSize, value[i]);
+            writeByte(output, value[i]);
         }
+    }
+
+    void writeByte(final BitOutput output, final byte value) throws IOException {
+        output.writeByte(elementSize, value);
     }
 
     private final int lengthSize;

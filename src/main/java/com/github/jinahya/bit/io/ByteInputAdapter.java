@@ -47,7 +47,9 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} {@inheritDoc} The {@code close()} method of {@code ByteInputAdapter} class invokes {@link
+     * Closeable#close()} method on the byte source which may not has been initialized yet in which case the method does
+     * nothing.
      *
      * @throws IOException {@inheritDoc}
      */
