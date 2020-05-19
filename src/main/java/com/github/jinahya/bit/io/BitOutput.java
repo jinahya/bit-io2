@@ -69,82 +69,99 @@ public interface BitOutput extends Flushable, Closeable {
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
      */
-    default void writeBoolean(boolean value) throws IOException {
-        writeInt(true, 1, value ? 0x01 : 0x00);
+    default void writeBoolean(final boolean value) throws IOException {
+        writeUnsignedInt(1, value ? 0x01 : 0x00);
     }
 
     /**
-     * Writes specified {@code byte} value of specified number of bits.
+     * Writes specified {@code byte} value of specified number of bits. The {@code writeByte(boolean, int, byte)} method
+     * of {@code BitOutput} interface invokes {@link #writeInt(boolean, int, int)} method with given arguments.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Byte#SIZE} - ({@code
      *                 unsigned ? 1: 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeInt(boolean, int, int)
      */
     default void writeByte(final boolean unsigned, final int size, final byte value) throws IOException {
         writeInt(unsigned, requireValidSizeForByte(unsigned, size), value);
     }
 
     /**
-     * Writes specified signed {@code byte} value of specified number of bits.
+     * Writes specified signed {@code byte} value of specified number of bits. The {@code writeByte(int, byte)} method
+     * of {@code BitOutput} interface invoke {@link #writeByte(boolean, int, byte)} with {@code false} and given
+     * arguments.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeByte(boolean, int, byte)
      */
     default void writeByte(final int size, final byte value) throws IOException {
         writeByte(false, size, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
+     * Writes specified {@value java.lang.Byte#SIZE}-bit signed {@code byte} value. The {@code writeByte8(byte)} method
+     * of {@code BitOutput} interface invokes {@link #writeByte(int, byte)} with {@value java.lang.Byte#SIZE} and {@code
+     * value} argument.
      *
      * @param value the {@value java.lang.Byte#SIZE}-bit signed {@code byte} value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeByte(int, byte)
      */
     default void writeByte8(final byte value) throws IOException {
         writeByte(Byte.SIZE, value);
     }
 
     /**
-     * Writes specified unsigned {@code byte} value of specified bit size.
+     * Writes specified unsigned {@code byte} value of specified bit size. The {@code writeUnsignedByte(int, byte)}
+     * method of {@code BitOutput} interface invokes {@link #writeByte(boolean, int, byte)} method with {@code true} and
+     * given arguments.
      *
      * @param size  the number of lower bits to write; between {@code 1} (inclusive) and {@value java.lang.Byte#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeByte(boolean, int, byte)
      */
     default void writeUnsignedByte(final int size, final byte value) throws IOException {
         writeByte(true, size, value);
     }
 
     /**
-     * Writes specified {@code short} value of specified number of bits.
+     * Writes specified {@code short} value of specified number of bits. The {@code writeShort(boolean, int, short)}
+     * method of {@code BitOutput} interface invokes {@link #writeInt(boolean, int, int)} method with given arguments.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE} - ({@code
      *                 unsigned ? 1 : 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeInt(boolean, int, int)
      */
     default void writeShort(final boolean unsigned, final int size, final short value) throws IOException {
         writeInt(unsigned, requireValidSizeForShort(unsigned, size), value);
     }
 
     /**
-     * Writes specified signed {@code short} value of specified number of bits.
+     * Writes specified signed {@code short} value of specified number of bits. The {@code writeShort(int, short)}
+     * method invokes {@link #writeShort(boolean, int, short)} method with {@code false} and given arguments.
      *
      * @param size  the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeShort(boolean, int, short)
      */
     default void writeShort(final int size, final short value) throws IOException {
         writeShort(false, size, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value.
+     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value. The {@code writeShort16(short)}
+     * method of {@code BitOutput} interface invokes {@link #writeShort(int, short)} method with {@value
+     * java.lang.Short#SIZE} and given {@code value}.
      *
      * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
      * @throws IOException if an I/O error occurs.
@@ -155,10 +172,13 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order.
+     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order. The
+     * {@code writeShort16Le(short)} method of {@code BitOutput} interface invokes {@link #writeShort16(short)} method
+     * with given value as its bytes reversed.
      *
      * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
      * @throws IOException if an I/O error occurs.
+     * @see Short#reverseBytes(short)
      * @deprecated Reverse specified value's bytes with {@link Short#reverseBytes(short)} method and writes the result
      * with {@link #writeShort16(short)} method.
      */
@@ -173,12 +193,15 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified unsigned {@code short} value of specified bit size.
+     * Writes specified unsigned {@code short} value of specified bit size. The {@code writeUnsignedShort(int, short)}
+     * method of {@code BitOutput} interface invokes {@link #writeShort(boolean, int, short)} with {@code true} and
+     * given arguments.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Short#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeShort(boolean, int, short)
      */
     default void writeUnsignedShort(final int size, final short value) throws IOException {
         writeShort(true, size, value);
@@ -196,31 +219,39 @@ public interface BitOutput extends Flushable, Closeable {
     void writeInt(boolean unsigned, int size, int value) throws IOException;
 
     /**
-     * Writes specified signed {@code int} value of specified bit size.
+     * Writes specified signed {@code int} value of specified bit size. The {@code writeInt(int, int)} method of {@code
+     * BitOutput} interface invokes {@link #writeInt(boolean, int, int)} method with {@code false} and given arguments.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeInt(boolean, int, int)
      */
     default void writeInt(final int size, final int value) throws IOException {
         writeInt(false, size, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Integer#SIZE}-bit signed value.
+     * Writes specified {@value java.lang.Integer#SIZE}-bit signed value. The {@code writeInt32(int)} method of {@code
+     * BitOutput} interface invokes {@link #writeInt(int, int)} method with {@value java.lang.Integer#SIZE} and given
+     * {@code value} argument.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeInt(int, int)
      */
     default void writeInt32(final int value) throws IOException {
         writeInt(Integer.SIZE, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Integer#SIZE}-bit signed {@code int} value in little endian byte order.
+     * Writes specified {@value java.lang.Integer#SIZE}-bit signed {@code int} value in little endian byte order. The
+     * {@code writeInt32Le(int)} method of {@code BitOutput} interface invokes {@link #writeInt32(int)} with given
+     * {@code value} as its byte are reversed.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see Integer#reverseBytes(int)
      * @deprecated Reverse specified value's bytes using {@link Integer#reverseBytes(int)} and write the result with
      * {@link #writeInt32(int)} method.
      */
@@ -235,12 +266,15 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified unsigned {@code int} value of specified bit size.
+     * Writes specified unsigned {@code int} value of specified bit size. The {@code writeUnsignedInt(int, int)} method
+     * of {@code BitOutput} interface invokes {@link #writeInt(boolean, int, int)} with {@code true} and given
+     * arguments.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeInt(boolean, int, int)
      */
     default void writeUnsignedInt(final int size, final int value) throws IOException {
         writeInt(true, size, value);
@@ -274,31 +308,40 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified signed {@code long} value of specified bit size.
+     * Writes specified signed {@code long} value of specified bit size. The {@code writeLong(int, long)} method of
+     * {@code BitOutput} interface invokes {@link #writeLong(boolean, int, long)} method with {@code false} and given
+     * arguments.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeLong(boolean, int, long)
      */
     default void writeLong(final int size, final long value) throws IOException {
         writeLong(false, size, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value.
+     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value. The {@code writeLong64(long)} method
+     * of {@code BitOutput} interface invokes {@link #writeLong(int, long)} with {@value java.lang.Long#SIZE} and given
+     * {@code value} argument.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeLong(int, long)
      */
     default void writeLong64(final long value) throws IOException {
         writeLong(Long.SIZE, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value in little endian byte order.
+     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value in little endian byte order. The
+     * {@code writeLong64Le(long)} method of {@code BitOutput} interface invokes {@link #writeLong64(long)} method with
+     * given {@code value} argument as its bytes are reversed.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see Long#reverseBytes(long)
      * @deprecated Reverse specified value's bytes using {@link Long#reverseBytes(long)} method and write the result
      * with {@link #writeLong64(long)} method.
      */
@@ -313,32 +356,38 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified unsigned {@code long} value of specified bit size.
+     * Writes specified unsigned {@code long} value of specified bit size. The {@code writeUnsignedLong(int, long)}
+     * method of {@code BitOutput} interface invokes {@link #writeLong(boolean, int, long)} method with {@code true} and
+     * given arguments.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see #writeLong(boolean, int, long)
      */
     default void writeUnsignedLong(final int size, final long value) throws IOException {
         writeLong(true, size, value);
     }
 
     /**
-     * Writes specified {@code char} value of specified bit size.
+     * Writes specified {@code char} value of specified bit size. The {@code writeChar(int, char)} method of {@code
+     * BitOutput} interface invokes {@link #writeUnsignedInt(int, int)} with given arguments.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Character#SIZE}, both
      *              inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see #writeChar16(char)
+     * @see #writeUnsignedInt(int, int)
      */
     default void writeChar(final int size, final char value) throws IOException {
-        writeInt(true, requireValidSizeForChar(size), value);
+        writeUnsignedInt(requireValidSizeForChar(size), value);
     }
 
     /**
-     * Writes specified {@value java.lang.Character#SIZE}-bit {@code char} value.
+     * Writes specified {@value java.lang.Character#SIZE}-bit {@code char} value. The {@code writeChar16(char)} method
+     * of {@code BitOutput} interface invokes {@link #writeChar(int, char)} with {@value java.lang.Character#SIZE} and
+     * given {@code value} argument.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.

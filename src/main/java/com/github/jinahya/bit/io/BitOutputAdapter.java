@@ -52,7 +52,7 @@ public class BitOutputAdapter implements BitOutput {
      */
     @Override
     public void flush() throws IOException {
-        BitOutput.super.flush(); // does nothing.
+        BitOutput.super.flush(); // <- does nothing.
         if (output != null) {
             output.flush();
         }
@@ -62,11 +62,10 @@ public class BitOutputAdapter implements BitOutput {
      * Closes this output and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
-     * @see ByteOutput#close()
      */
     @Override
     public void close() throws IOException {
-        BitOutput.super.close(); // does nothing.
+        BitOutput.super.close(); // <- does nothing.
         if (output != null) {
             output.close();
         }
