@@ -60,8 +60,9 @@ public interface ValueReader<T> {
      * @return given collection.
      * @throws IOException if an I/O error occurs.
      */
-    static <U extends Collection<? super V>, V> U readCollection(
-            final BitInput input, final int size, final ValueAdapter<? extends V> adapter, final U collection)
+    static <U extends Collection<? super V>, V> U readCollection(final BitInput input, final int size,
+                                                                 final ValueAdapter<? extends V> adapter,
+                                                                 final U collection)
             throws IOException {
         requireNonNull(adapter, "adapter is null");
         requireNonNull(collection, "collection is null");

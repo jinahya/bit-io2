@@ -34,26 +34,6 @@ import static java.util.Objects.requireNonNull;
 final class NullableValueReader<T> implements ValueReader<T> {
 
     /**
-     * Reads a nullable value.
-     *
-     * @param input  a bit input.
-     * @param reader a value reader.
-     * @param <V>    value type parameter
-     * @return a value read; maybe {@code null}.
-     * @throws IOException if an I/O error occurs.
-     * @see NullableValueWriter#writeNullable(BitOutput, ValueWriter, Object)
-     */
-    static <V> V readNullable(final BitInput input, final ValueReader<? extends V> reader) throws IOException {
-        requireNonNull(input, "input is null");
-        requireNonNull(reader, "reader is null");
-        final boolean nonnull = input.readBoolean();
-        if (nonnull) {
-            return reader.read(input);
-        }
-        return null;
-    }
-
-    /**
      * Creates a new instance with specified adapter.
      *
      * @param wrapped the adapter to be wrapped.
@@ -65,7 +45,12 @@ final class NullableValueReader<T> implements ValueReader<T> {
 
     @Override
     public T read(final BitInput input) throws IOException {
-        return readNullable(input, wrapped);
+        requireNonNull(input, "input is null");
+        final boolean nonnull = input.readBoolean();
+        if (nonnull) {
+            return wrapped.read(input);
+        }
+        return null;
     }
 
     private final ValueReader<? extends T> wrapped;

@@ -63,9 +63,8 @@ public interface ValueWriter<T> {
      * @param <U>        element type parameter
      * @throws IOException if an I/O error occurs.
      */
-    static <U> void writeCollection(
-            final BitOutput output, final int size, final ValueAdapter<? super U> adapter,
-            final Collection<? extends U> collection)
+    static <U> void writeCollection(final BitOutput output, final int size, final ValueAdapter<? super U> adapter,
+                                    final Collection<? extends U> collection)
             throws IOException {
         requireNonNull(adapter, "adapter is null");
         requireNonNull(collection, "collection is null");

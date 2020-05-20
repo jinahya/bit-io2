@@ -33,26 +33,6 @@ import static java.util.Objects.requireNonNull;
 final class NullableValueWriter<T> implements ValueWriter<T> {
 
     /**
-     * Writes specified nullable value.
-     *
-     * @param output a bit output.
-     * @param writer a value writer.
-     * @param value  the value to write.
-     * @param <V>    value type parameter
-     * @throws IOException if an I/O error occurs.
-     */
-    static <V> void writeNullable(final BitOutput output, final ValueWriter<? super V> writer, final V value)
-            throws IOException {
-        requireNonNull(output, "output is null");
-        requireNonNull(writer, "writer is null");
-        final boolean nonnull = value != null;
-        output.writeBoolean(nonnull);
-        if (nonnull) {
-            writer.write(output, value);
-        }
-    }
-
-    /**
      * Creates a new instance with specified adapter.
      *
      * @param wrapped the adapter to be wrapped.
@@ -64,7 +44,12 @@ final class NullableValueWriter<T> implements ValueWriter<T> {
 
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
-        writeNullable(output, wrapped, value);
+        final boolean nonnull = value != null;
+        output.writeBoolean(nonnull);
+        if (!nonnull) {
+            return;
+        }
+        wrapped.write(output, value);
     }
 
     private final ValueWriter<? super T> wrapped;
