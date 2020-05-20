@@ -39,7 +39,7 @@ class IntArrayWriter extends SequenceValueWriter<int[]> {
         }
     }
 
-    IntArrayWriter(final int lengthSize, final int elementSize) {
+    public IntArrayWriter(final int lengthSize, final int elementSize) {
         super(lengthSize);
         this.elementSize = requireValidSizeForInt(elementSize);
     }

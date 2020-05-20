@@ -38,7 +38,7 @@ class IntArrayReader extends SequenceValueReader<int[]> {
         }
     }
 
-    IntArrayReader(final int lengthSize, final int elementSize) {
+    public IntArrayReader(final int lengthSize, final int elementSize) {
         super(lengthSize);
         this.elementSize = requireValidSizeForInt(false, elementSize);
     }
