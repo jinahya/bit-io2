@@ -27,7 +27,7 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsi
 
 class LongArrayReader extends SequenceValueReader<long[]> {
 
-    private static class Unsigned extends LongArrayReader {
+    public static class Unsigned extends LongArrayReader {
 
         public Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, requireValidSizeForUnsignedLong(elementSize));
@@ -37,10 +37,6 @@ class LongArrayReader extends SequenceValueReader<long[]> {
         long readElement(final BitInput input) throws IOException {
             return input.readUnsignedLong(elementSize);
         }
-    }
-
-    public static LongArrayReader unsigned(final int lengthSize, final int elementSize) {
-        return new Unsigned(lengthSize, elementSize);
     }
 
     LongArrayReader(final int lengthSize, final int elementSize) {

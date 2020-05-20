@@ -27,7 +27,7 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsi
 
 class LongArrayWriter extends SequenceValueWriter<long[]> {
 
-    private static class Unsigned extends LongArrayWriter {
+    public static class Unsigned extends LongArrayWriter {
 
         public Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, requireValidSizeForUnsignedLong(elementSize));
@@ -37,10 +37,6 @@ class LongArrayWriter extends SequenceValueWriter<long[]> {
         void writeElement(final BitOutput output, final long value) throws IOException {
             output.writeUnsignedLong(elementSize, value);
         }
-    }
-
-    public static LongArrayWriter unsigned(final int lengthSize, final int elementSize) {
-        return new Unsigned(lengthSize, elementSize);
     }
 
     LongArrayWriter(final int lengthSize, final int elementSize) {
