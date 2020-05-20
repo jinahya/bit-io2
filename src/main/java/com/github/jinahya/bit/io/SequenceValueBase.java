@@ -22,9 +22,9 @@ package com.github.jinahya.bit.io;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 
-abstract class AbstractSequenceValueAdapter {
+abstract class SequenceValueBase {
 
-    AbstractSequenceValueAdapter(final int lengthSize) {
+    SequenceValueBase(final int lengthSize) {
         super();
         this.lengthSize = requireValidSizeForInt(true, lengthSize);
     }

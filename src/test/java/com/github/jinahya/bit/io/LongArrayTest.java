@@ -45,8 +45,7 @@ class LongArrayTest {
             throws IOException {
         try (BitOutput o = output; BitInput i = input) {
             final int lengthSize = current().nextInt(1, 16);
-            final int length = randomValueForUnsignedInt(lengthSize);
-            final long[] expected = new long[length];
+            final long[] expected = new long[randomValueForUnsignedInt(lengthSize)];
             final int elementSize = randomSizeForLong();
             for (int j = 0; j < expected.length; j++) {
                 expected[j] = randomValueForLong(elementSize);
@@ -67,8 +66,7 @@ class LongArrayTest {
             throws IOException {
         try (BitOutput o = output; BitInput i = input) {
             final int lengthSize = current().nextInt(1, 16);
-            final int length = randomValueForUnsignedInt(lengthSize);
-            final long[] expected = new long[length];
+            final long[] expected = new long[randomValueForUnsignedInt(lengthSize)];
             final int elementSize = randomSizeForUnsignedInt();
             for (int j = 0; j < expected.length; j++) {
                 expected[j] = randomValueForUnsignedLong(elementSize);

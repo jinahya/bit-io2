@@ -40,7 +40,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
-    private static class Unsigned extends BytesAdapter {
+    public static class Unsigned extends BytesAdapter {
 
         /**
          * Creates a new instance.
@@ -50,7 +50,7 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
          * @param elementSize the number of bits for each element in the array; between {@code 1} (inclusive) and
          *                    {@value java.lang.Byte#SIZE} (exclusive).
          */
-        private Unsigned(final int lengthSize, final int elementSize) {
+        public Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, requireValidSizeForByte(true, elementSize));
         }
 
@@ -63,19 +63,6 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
         void writeByte(final BitOutput output, byte value) throws IOException {
             output.writeByte(true, elementSize, value);
         }
-    }
-
-    /**
-     * Creates a new instance for reading/writing an array of unsigned bytes.
-     *
-     * @param lengthSize  the number of bits for the length of the array; between {@code 1} (inclusive) and {@value
-     *                    java.lang.Integer#SIZE} (exclusive).
-     * @param elementSize the number of bits for each element in the array; between {@code 1} (inclusive) and {@value
-     *                    java.lang.Byte#SIZE} (exclusive).
-     * @return a new instance.
-     */
-    public static BytesAdapter unsigned(final int lengthSize, final int elementSize) {
-        return new Unsigned(lengthSize, elementSize);
     }
 
     /**

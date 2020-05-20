@@ -22,13 +22,17 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-abstract class SequenceValueWriter<T> extends SequenceValueBase implements ValueWriter<T> {
+class Float32ArrayWriter extends SequenceValueWriter<float[]> {
 
-    SequenceValueWriter(final int lengthSize) {
+    public Float32ArrayWriter(final int lengthSize) {
         super(lengthSize);
     }
 
-    int writeLength(final BitOutput output, final int value) throws IOException {
-        return ValueWriter.writeLength(output, lengthSize, value);
+    @Override
+    public void write(final BitOutput output, final float[] value) throws IOException {
+        final int length = writeLength(output, value.length);
+        for (int i = 0; i < length; i++) {
+            output.writeFloat32(value[i]);
+        }
     }
 }

@@ -42,7 +42,7 @@ public interface ValueAdapter<T> extends ValueReader<T>, ValueWriter<T> {
     }
 
     /**
-     * Creates new adapter composing specified arguments.
+     * Creates new adapter composing specified reader and writer.
      *
      * @param reader an adapter for reading values.
      * @param writer an adapter for writing values.

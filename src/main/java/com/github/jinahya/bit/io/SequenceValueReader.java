@@ -22,7 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-abstract class SequenceValueReader<T> extends AbstractSequenceValueAdapter implements ValueReader<T> {
+abstract class SequenceValueReader<T> extends SequenceValueBase implements ValueReader<T> {
 
     SequenceValueReader(final int lengthSize) {
         super(lengthSize);

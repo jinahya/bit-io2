@@ -21,14 +21,26 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
-abstract class SequenceValueWriter<T> extends SequenceValueBase implements ValueWriter<T> {
+import static java.util.Objects.requireNonNull;
 
-    SequenceValueWriter(final int lengthSize) {
+public class ListWriter<T> extends SequenceValueWriter<List<T>> {
+
+    public ListWriter(final int lengthSize, final ValueAdapter<? super T> elementWriter) {
         super(lengthSize);
+        this.elementWriter = requireNonNull(elementWriter, "elementWriter is null");
     }
 
-    int writeLength(final BitOutput output, final int value) throws IOException {
-        return ValueWriter.writeLength(output, lengthSize, value);
+    @Override
+    public void write(final BitOutput output, final List<T> value) throws IOException {
+        final int length = writeLength(output, value.size());
+        final Iterator<? extends T> iterator = value.iterator();
+        for (int i = 0; i < length; i++) {
+            elementWriter.write(output, iterator.next());
+        }
     }
+
+    private final ValueWriter<? super T> elementWriter;
 }

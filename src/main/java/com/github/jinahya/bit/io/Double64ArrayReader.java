@@ -22,13 +22,19 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-abstract class SequenceValueWriter<T> extends SequenceValueBase implements ValueWriter<T> {
+class Double64ArrayReader extends SequenceValueReader<double[]> {
 
-    SequenceValueWriter(final int lengthSize) {
+    public Double64ArrayReader(final int lengthSize) {
         super(lengthSize);
     }
 
-    int writeLength(final BitOutput output, final int value) throws IOException {
-        return ValueWriter.writeLength(output, lengthSize, value);
+    @Override
+    public double[] read(final BitInput input) throws IOException {
+        final int length = readLength(input);
+        final double[] value = new double[length];
+        for (int i = 0; i < value.length; i++) {
+            value[i] = input.readDouble64();
+        }
+        return value;
     }
 }

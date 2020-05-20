@@ -39,7 +39,7 @@ class LongArrayReader extends SequenceValueReader<long[]> {
         }
     }
 
-    LongArrayReader(final int lengthSize, final int elementSize) {
+    public LongArrayReader(final int lengthSize, final int elementSize) {
         super(lengthSize);
         this.elementSize = requireValidSizeForLong(elementSize);
     }

@@ -27,15 +27,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForInt;
-import static com.github.jinahya.bit.io.BitIoRandomValues.randomSizeForUnsignedInt;
-import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForInt;
 import static com.github.jinahya.bit.io.BitIoRandomValues.randomValueForUnsignedInt;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @Slf4j
-class IntArrayTest {
+class Double64ArrayTest {
 
     @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
     @ParameterizedTest
@@ -44,36 +41,14 @@ class IntArrayTest {
             throws IOException {
         try (BitOutput o = output; BitInput i = input) {
             final int lengthSize = current().nextInt(1, 16);
-            final int[] expected = new int[randomValueForUnsignedInt(lengthSize)];
-            final int elementSize = randomSizeForInt();
+            final double[] expected = new double[randomValueForUnsignedInt(lengthSize)];
             for (int j = 0; j < expected.length; j++) {
-                expected[j] = randomValueForInt(elementSize);
+                expected[j] = current().nextDouble();
             }
-            new IntArrayWriter(lengthSize, elementSize).write(o, expected);
+            new Double64ArrayWriter(lengthSize).write(o, expected);
             o.align();
             o.flush();
-            final int[] actual = new IntArrayReader(lengthSize, elementSize).read(i);
-            i.align();
-            assertArrayEquals(expected, actual);
-        }
-    }
-
-    @MethodSource({"com.github.jinahya.bit.io.ByteIoTestParameters#byteIos"})
-    @ParameterizedTest
-    void testUnsigned(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
-                      @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
-            throws IOException {
-        try (BitOutput o = output; BitInput i = input) {
-            final int lengthSize = current().nextInt(1, 16);
-            final int[] expected = new int[randomValueForUnsignedInt(lengthSize)];
-            final int elementSize = randomSizeForUnsignedInt();
-            for (int j = 0; j < expected.length; j++) {
-                expected[j] = randomValueForUnsignedInt(elementSize);
-            }
-            new IntArrayWriter.Unsigned(lengthSize, elementSize).write(o, expected);
-            o.align();
-            o.flush();
-            final int[] actual = new IntArrayReader.Unsigned(lengthSize, elementSize).read(i);
+            final double[] actual = new Double64ArrayReader(lengthSize).read(i);
             i.align();
             assertArrayEquals(expected, actual);
         }

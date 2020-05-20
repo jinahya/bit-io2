@@ -39,7 +39,7 @@ class LongArrayWriter extends SequenceValueWriter<long[]> {
         }
     }
 
-    LongArrayWriter(final int lengthSize, final int elementSize) {
+    public LongArrayWriter(final int lengthSize, final int elementSize) {
         super(lengthSize);
         this.elementSize = requireValidSizeForLong(elementSize);
     }
