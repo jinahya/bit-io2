@@ -42,6 +42,15 @@ final class NullableValueWriter<T> implements ValueWriter<T> {
         this.wrapped = requireNonNull(wrapped, "wrapped is null");
     }
 
+    /**
+     * {@inheritDoc} The {@code write(BitOutput, Object)} method of {@code NullableValueWriter} class writes a {@code
+     * 1}-bit {@code boolean} flag indicating a nullability of given value and writes the value if an only if the value
+     * is not {@code null}.
+     *
+     * @param output {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
         final boolean nonnull = value != null;

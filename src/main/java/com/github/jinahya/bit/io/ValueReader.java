@@ -45,7 +45,9 @@ public interface ValueReader<T> {
      * @throws IOException if an I/O error occurs.
      */
     static int readLength(final BitInput input, final int size) throws IOException {
-        return requireNonNull(input, "input is null").readUnsignedInt(requireValidSizeForInt(true, size));
+        requireNonNull(input, "input is null");
+        requireValidSizeForInt(true, size);
+        return input.readUnsignedInt(size);
     }
 
     /**
@@ -74,14 +76,14 @@ public interface ValueReader<T> {
     }
 
     /**
-     * Returns an adapter which pre-reads a {@code boolean} value indicating the nullability of the value.
+     * Returns an adapter which pre-reads a {@code boolean} flag for indicating a nullability of the value.
      *
      * @param wrapped the adapter to be wrapped.
      * @param <T>     value type parameter
      * @return an adapter wraps specified adapter.
      */
     static <T> ValueReader<T> nullable(final ValueReader<? extends T> wrapped) {
-        return new NullableValueReader<>(requireNonNull(wrapped, "wrapped is null"));
+        return new NullableValueReader<>(wrapped);
     }
 
     /**

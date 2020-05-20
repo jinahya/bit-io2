@@ -43,6 +43,14 @@ final class NullableValueReader<T> implements ValueReader<T> {
         this.wrapped = requireNonNull(wrapped, "wrapped is null");
     }
 
+    /**
+     * {@inheritDoc} The {@code read(BitInput)} method of {@code NullableValueReader} class reads a {@code 1}-bit {@code
+     * boolean} flag and reads a value if and only if the flag is {@code true}.
+     *
+     * @param input {@inheritDoc}
+     * @return the value read; maybe {@code null} if the flag is not {@code true}.
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public T read(final BitInput input) throws IOException {
         requireNonNull(input, "input is null");

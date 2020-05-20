@@ -48,7 +48,8 @@ public interface ValueWriter<T> {
      */
     static int writeLength(final BitOutput output, final int size, final int value) throws IOException {
         requireNonNull(output, "output is null");
-        final int length = value & ((1 << requireValidSizeForInt(true, size)) - 1);
+        requireValidSizeForInt(true, size);
+        final int length = value & ((1 << size) - 1);
         output.writeUnsignedInt(size, length);
         return length;
     }
@@ -68,7 +69,7 @@ public interface ValueWriter<T> {
             throws IOException {
         requireNonNull(adapter, "adapter is null");
         requireNonNull(collection, "collection is null");
-        final int length = writeLength(output, size, requireNonNull(collection, "collection is null").size());
+        final int length = writeLength(output, size, collection.size());
         final Iterator<? extends U> iterator = collection.iterator();
         for (int i = 0; i < length; i++) {
             adapter.write(output, iterator.next());
@@ -76,14 +77,14 @@ public interface ValueWriter<T> {
     }
 
     /**
-     * Returns an adapter which pre-writes a {@code boolean} value indicating the nullability of the value.
+     * Returns an adapter which pre-writes a {@code boolean} flag for indicating a nullability of the value.
      *
      * @param wrapped the adapter to be wrapped.
      * @param <T>     value type parameter
      * @return an adapter wraps specified adapter.
      */
     static <T> ValueWriter<T> nullable(final ValueWriter<? super T> wrapped) {
-        return new NullableValueWriter<>(requireNonNull(wrapped, "wrapped is null"));
+        return new NullableValueWriter<>(wrapped);
     }
 
     /**
