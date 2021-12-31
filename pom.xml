@@ -207,6 +207,7 @@
         <version>3.2.0</version>
         <configuration>
           <archive>
+            <!-- https://dzone.com/articles/automatic-module-name-calling-all-java-library-maintainers -->
             <manifestEntries>
               <Automatic-Module-Name>com.github.jinahya.bit.io</Automatic-Module-Name>
             </manifestEntries>
