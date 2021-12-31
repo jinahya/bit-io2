@@ -27,30 +27,10 @@ import static java.util.Objects.requireNonNull;
 /**
  * A wrapper class for writing a null flag before writing values.
  *
- * @param <T> value type parameter.
+ * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 final class NullableValueWriter<T> implements ValueWriter<T> {
-
-    /**
-     * Writes specified nullable value.
-     *
-     * @param output a bit output.
-     * @param writer a value writer.
-     * @param value  the value to write.
-     * @param <V>    value type parameter
-     * @throws IOException if an I/O error occurs.
-     */
-    static <V> void writeNullable(final BitOutput output, final ValueWriter<? super V> writer, final V value)
-            throws IOException {
-        requireNonNull(output, "output is null");
-        requireNonNull(writer, "writer is null");
-        final boolean nonnull = value != null;
-        output.writeBoolean(nonnull);
-        if (nonnull) {
-            writer.write(output, value);
-        }
-    }
 
     /**
      * Creates a new instance with specified adapter.
@@ -62,9 +42,23 @@ final class NullableValueWriter<T> implements ValueWriter<T> {
         this.wrapped = requireNonNull(wrapped, "wrapped is null");
     }
 
+    /**
+     * {@inheritDoc} The {@code write(BitOutput, Object)} method of {@code NullableValueWriter} class writes a {@code
+     * 1}-bit {@code boolean} flag indicating a nullability of given value and writes the value if an only if the value
+     * is not {@code null}.
+     *
+     * @param output {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
-        writeNullable(output, wrapped, value);
+        final boolean nonnull = value != null;
+        output.writeBoolean(nonnull);
+        if (!nonnull) {
+            return;
+        }
+        wrapped.write(output, value);
     }
 
     private final ValueWriter<? super T> wrapped;

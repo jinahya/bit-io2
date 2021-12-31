@@ -108,7 +108,8 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code read(ByteBuffer)} method of {@code BufferByteInput} class invokes {@link
+     * ByteBuffer#get()} method on specified byte buffer and returns the result as an unsigned {@code int}.
      *
      * @param source {@inheritDoc}
      * @return {@inheritDoc}

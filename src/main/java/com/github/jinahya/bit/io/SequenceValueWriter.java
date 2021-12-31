@@ -20,23 +20,15 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+abstract class SequenceValueWriter<T> extends SequenceValueBase implements ValueWriter<T> {
 
-/**
- * A class for testing {@link ValueReader} class.
- *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- */
-class ValueReaderTest {
+    SequenceValueWriter(final int lengthSize) {
+        super(lengthSize);
+    }
 
-    /**
-     * Tests {@link ValueReader#nullable(ValueReader)} method.
-     */
-    @Test
-    void testNullable() {
-        final ValueReader<User> instance = ValueReader.nullable(new UserReader());
-        assertNotNull(instance);
+    int writeLength(final BitOutput output, final int value) throws IOException {
+        return ValueWriter.writeLength(output, lengthSize, value);
     }
 }

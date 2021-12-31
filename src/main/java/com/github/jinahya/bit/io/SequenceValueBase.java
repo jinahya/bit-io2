@@ -20,23 +20,14 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+abstract class SequenceValueBase {
 
-/**
- * A class for testing {@link ValueReader} class.
- *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- */
-class ValueReaderTest {
-
-    /**
-     * Tests {@link ValueReader#nullable(ValueReader)} method.
-     */
-    @Test
-    void testNullable() {
-        final ValueReader<User> instance = ValueReader.nullable(new UserReader());
-        assertNotNull(instance);
+    SequenceValueBase(final int lengthSize) {
+        super();
+        this.lengthSize = requireValidSizeForInt(true, lengthSize);
     }
+
+    final int lengthSize;
 }

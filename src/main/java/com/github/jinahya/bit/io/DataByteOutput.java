@@ -42,8 +42,8 @@ public class DataByteOutput extends ByteOutputAdapter<DataOutput> {
     }
 
     /**
-     * {@inheritDoc}. The {@code write(DataOutput, int)} method of {@code DataByteOutput} class invokes {@link
-     * DataOutput#writeByte(int)} method on {@code target} with {@code value}.
+     * {@inheritDoc} The {@code write(DataOutput, int)} method of {@code DataByteOutput} class invokes {@link
+     * DataOutput#writeByte(int)} method on data output with specified value.
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}

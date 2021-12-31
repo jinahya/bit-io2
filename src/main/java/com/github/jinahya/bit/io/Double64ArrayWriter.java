@@ -20,23 +20,19 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+class Double64ArrayWriter extends SequenceValueWriter<double[]> {
 
-/**
- * A class for testing {@link ValueReader} class.
- *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- */
-class ValueReaderTest {
+    public Double64ArrayWriter(final int lengthSize) {
+        super(lengthSize);
+    }
 
-    /**
-     * Tests {@link ValueReader#nullable(ValueReader)} method.
-     */
-    @Test
-    void testNullable() {
-        final ValueReader<User> instance = ValueReader.nullable(new UserReader());
-        assertNotNull(instance);
+    @Override
+    public void write(final BitOutput output, final double[] value) throws IOException {
+        final int length = writeLength(output, value.length);
+        for (int i = 0; i < length; i++) {
+            output.writeDouble64(value[i]);
+        }
     }
 }

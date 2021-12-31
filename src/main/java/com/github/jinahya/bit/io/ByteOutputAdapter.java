@@ -47,7 +47,8 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code flush()} method of {@code ByteOutputAdapter} class invokes {@link Flushable#flush()}
+     * method on the byte target which may not has been initialized yet in which case this method does nothing.
      *
      * @throws IOException {@inheritDoc}
      */
@@ -60,7 +61,8 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code close()} method of {@code ByteOutputAdapter} class invokes {@link Closeable#close()}
+     * method on the byte target which may not has been initialized yet in which case this method does nothing.
      *
      * @throws IOException {@inheritDoc}
      */
@@ -73,7 +75,8 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code write(int)} method of {@code ByteOutputAdapter} class invokes {@link #write(Object,
+     * int)} method with a byte target and specified value.
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
@@ -84,12 +87,12 @@ public abstract class ByteOutputAdapter<T> implements ByteOutput {
     }
 
     /**
-     * Writes specified unsigned {@code 8}-bit value to specified target.
+     * Writes specified {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to specified target.
      *
      * @param target the target to which the {@code value} is written.
-     * @param value  the unsigned {@code 8}-bit value to write; between {@code 1} and {@code 255}, both inclusive.
+     * @param value  the {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to write; between {@code 1} and
+     *               {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
-     * @see #write(int)
      */
     protected abstract void write(T target, int value) throws IOException;
 

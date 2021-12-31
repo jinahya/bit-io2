@@ -27,7 +27,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * A wrapper class for reading/writing a null flag before reading/writing values.
  *
- * @param <T> value type parameter.
+ * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 final class NullableValueAdapter<T> implements ValueAdapter<T> {
@@ -44,17 +44,41 @@ final class NullableValueAdapter<T> implements ValueAdapter<T> {
         writer = new NullableValueWriter<>(wrapped);
     }
 
+    /**
+     * {@inheritDoc} The {@code read(BitInput)} method of {@code NullableValueAdapter} class delegates the call to an
+     * instance of {@link NullableValueReader} class.
+     *
+     * @param input the input from which the value is read.
+     * @return a value read; maybe {@code null} if signalled as {@code null}.
+     * @throws IOException if an I/O error occurs.
+     * @see NullableValueReader#read(BitInput)
+     */
     @Override
     public T read(final BitInput input) throws IOException {
         return reader.read(input);
     }
 
+    /**
+     * {@inheritDoc} The {@code write(BitOutput, value)} method of {@code NullableValueAdapter} class delegate the call
+     * to an instance of {@link NullableValueWriter} class.
+     *
+     * @param output the output to which the value is written.
+     * @param value  the value to write.
+     * @throws IOException if an I/O error occurs.
+     * @see NullableValueWriter#write(BitOutput, Object)
+     */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
         writer.write(output, value);
     }
 
+    /**
+     * A delegate for {@link ValueReader#read(BitInput)} method.
+     */
     private final ValueReader<? extends T> reader;
 
+    /**
+     * A delegate for {@link ValueWriter#write(BitOutput, Object)} method.
+     */
     private final ValueWriter<? super T> writer;
 }

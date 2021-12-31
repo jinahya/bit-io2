@@ -27,31 +27,11 @@ import static java.util.Objects.requireNonNull;
 /**
  * A wrapper class for reading a null flag before reading values.
  *
- * @param <T> value type parameter.
+ * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see NullableValueWriter
  */
 final class NullableValueReader<T> implements ValueReader<T> {
-
-    /**
-     * Reads a nullable value.
-     *
-     * @param input  a bit input.
-     * @param reader a value reader.
-     * @param <V>    value type parameter
-     * @return a value read; maybe {@code null}.
-     * @throws IOException if an I/O error occurs.
-     * @see NullableValueWriter#writeNullable(BitOutput, ValueWriter, Object)
-     */
-    static <V> V readNullable(final BitInput input, final ValueReader<? extends V> reader) throws IOException {
-        requireNonNull(input, "input is null");
-        requireNonNull(reader, "reader is null");
-        final boolean nonnull = input.readBoolean();
-        if (nonnull) {
-            return reader.read(input);
-        }
-        return null;
-    }
 
     /**
      * Creates a new instance with specified adapter.
@@ -63,9 +43,22 @@ final class NullableValueReader<T> implements ValueReader<T> {
         this.wrapped = requireNonNull(wrapped, "wrapped is null");
     }
 
+    /**
+     * {@inheritDoc} The {@code read(BitInput)} method of {@code NullableValueReader} class reads a {@code 1}-bit {@code
+     * boolean} flag and reads a value if and only if the flag is {@code true}.
+     *
+     * @param input {@inheritDoc}
+     * @return the value read; maybe {@code null} if the flag is not {@code true}.
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public T read(final BitInput input) throws IOException {
-        return readNullable(input, wrapped);
+        requireNonNull(input, "input is null");
+        final boolean nonnull = input.readBoolean();
+        if (nonnull) {
+            return wrapped.read(input);
+        }
+        return null;
     }
 
     private final ValueReader<? extends T> wrapped;

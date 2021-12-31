@@ -82,14 +82,6 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
                 target.compact();
             }
             super.write(target, value);
-            // just doing a single writing.
-            {
-                target.flip();
-                if (target.hasRemaining()) {
-                    channel().write(target);
-                }
-                target.compact();
-            }
         }
 
         private WritableByteChannel channel() {
@@ -109,10 +101,15 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
      *
      * @param channelSupplier the supplier for the writable byte channel.
      * @return a new instance.
-     * @see BufferByteInput#from(Supplier)
      */
     public static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        return new ChannelAdapter(() -> allocate(1), channelSupplier);
+        return new ChannelAdapter(() -> allocate(1), channelSupplier) {
+            @Override
+            protected void write(final ByteBuffer target, final int value) throws IOException {
+                super.write(target, value);
+                flush();
+            }
+        };
     }
 
     /**
@@ -125,7 +122,8 @@ public class BufferByteOutput extends ByteOutputAdapter<ByteBuffer> {
     }
 
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc} The {@code write(ByteBuffer, int)} method of {@code BufferByteOutput} class invokes {@link
+     * ByteBuffer#put(byte)} method on specified byte buffer with specified value casted as a {@code byte} value.
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}

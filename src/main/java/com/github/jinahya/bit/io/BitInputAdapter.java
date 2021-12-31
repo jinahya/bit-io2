@@ -110,8 +110,7 @@ public class BitInputAdapter implements BitInput {
      * @throws IOException if an I/O error occurs.
      */
     private int unsigned8(final int size) throws IOException {
-        assert size > 0;
-        assert size <= Byte.SIZE;
+        assert size > 0 && size <= Byte.SIZE;
         if (available == 0) {
             octet = input().read();
             assert octet >= 0 && octet < 256;

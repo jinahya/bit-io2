@@ -20,23 +20,21 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+class Double64ArrayReader extends SequenceValueReader<double[]> {
 
-/**
- * A class for testing {@link ValueReader} class.
- *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- */
-class ValueReaderTest {
+    public Double64ArrayReader(final int lengthSize) {
+        super(lengthSize);
+    }
 
-    /**
-     * Tests {@link ValueReader#nullable(ValueReader)} method.
-     */
-    @Test
-    void testNullable() {
-        final ValueReader<User> instance = ValueReader.nullable(new UserReader());
-        assertNotNull(instance);
+    @Override
+    public double[] read(final BitInput input) throws IOException {
+        final int length = readLength(input);
+        final double[] value = new double[length];
+        for (int i = 0; i < value.length; i++) {
+            value[i] = input.readDouble64();
+        }
+        return value;
     }
 }
