@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class BytesAdapterAsciiTest {
+class ByteArrayAdapterAsciiTest {
 
     static byte[] randomBytes() {
         final int length = ThreadLocalRandom.current().nextInt(8192, 65536);
@@ -39,7 +39,7 @@ class BytesAdapterAsciiTest {
     @ParameterizedTest
     void test(final byte[] randomBytes, final int lengthSize) throws IOException {
         log.debug("chars length: {}", randomBytes.length);
-        final ValueAdapter<byte[]> adapter = new BytesAdapterAscii(lengthSize);
+        final ValueAdapter<byte[]> adapter = new ByteArrayAdapterAscii(lengthSize);
         for (int i = 0; i < randomBytes.length; i++) {
             randomBytes[i] = (byte) ThreadLocalRandom.current().nextInt(0x00, 0x80);
         }

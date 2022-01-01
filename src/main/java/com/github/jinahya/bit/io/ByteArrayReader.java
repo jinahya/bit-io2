@@ -22,46 +22,33 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsignedInt;
 
-class IntArrayReader
-        extends PrimitiveArrayReader<int[]> {
+class ByteArrayReader
+        extends PrimitiveArrayReader<byte[]> {
 
-    static class Unsigned
-            extends IntArrayReader {
-
-        Unsigned(final int lengthSize, final int elementSize) {
-            super(lengthSize, requireValidSizeForUnsignedInt(elementSize));
-        }
-
-        @Override
-        int readElement(final BitInput input) throws IOException {
-            return input.readUnsignedInt(elementSize);
-        }
-    }
-
-    public IntArrayReader(final int lengthSize, final int elementSize) {
+    public ByteArrayReader(final int lengthSize, final int elementSize) {
         super(lengthSize);
         this.elementSize = requireValidSizeForInt(false, elementSize);
     }
 
     @Override
-    public int[] read(final BitInput input) throws IOException {
+    public byte[] read(final BitInput input) throws IOException {
         final int length = readLength(input);
-        final int[] value = new int[length];
+        final byte[] value = new byte[length];
         readElements(input, value);
         return value;
     }
 
-    void readElements(final BitInput input, final int[] elements) throws IOException {
+    void readElements(final BitInput input, final byte[] elements) throws IOException {
         for (int i = 0; i < elements.length; i++) {
             elements[i] = readElement(input);
         }
     }
 
-    int readElement(final BitInput input) throws IOException {
-        return input.readInt(elementSize);
+    byte readElement(final BitInput input) throws IOException {
+        return input.readByte(elementSize);
     }
 
     final int elementSize;

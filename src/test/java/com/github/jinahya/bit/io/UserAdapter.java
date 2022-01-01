@@ -28,7 +28,7 @@ class UserAdapter
         implements ValueAdapter<User> {
 
     static final ValueAdapter<String> NAME_ADAPTER
-            = ValueAdapter.nullable(new StringAdapter(new BytesAdapter(16, 8), UTF_8));
+            = ValueAdapter.nullable(new StringAdapter(new ByteArrayAdapter(16, 8), UTF_8));
 
     @Override
     public void write(final BitOutput output, final User value) throws IOException {

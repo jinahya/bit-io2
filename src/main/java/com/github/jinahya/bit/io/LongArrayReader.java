@@ -26,7 +26,7 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsignedLong;
 
 class LongArrayReader
-        extends SequenceValueReader<long[]> {
+        extends PrimitiveArrayReader<long[]> {
 
     public static class Unsigned
             extends LongArrayReader {
@@ -54,6 +54,12 @@ class LongArrayReader
             value[i] = readElement(input);
         }
         return value;
+    }
+
+    void readElements(final BitInput input, final long[] elements) throws IOException {
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = readElement(input);
+        }
     }
 
     long readElement(final BitInput input) throws IOException {

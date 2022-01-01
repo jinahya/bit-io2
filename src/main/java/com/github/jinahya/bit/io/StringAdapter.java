@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import static java.util.Objects.requireNonNull;
 
@@ -34,35 +33,13 @@ import static java.util.Objects.requireNonNull;
 public class StringAdapter
         implements ValueAdapter<String> {
 
-    static StringAdapter ascii(final int lengthSize) {
-        return new StringAdapter(new BytesAdapterAscii(lengthSize), StandardCharsets.US_ASCII);
-    }
-
-    static StringAdapter asciiPrintable(final int lengthSize) {
-        return new StringAdapter(new BytesAdapterAsciiPrintable(lengthSize), StandardCharsets.US_ASCII);
-    }
-
-    /**
-     * Creates a new instance for reading/writing {@link java.nio.charset.StandardCharsets#US_ASCII US-ASCII} strings.
-     *
-     * @param lengthSize    the number of bits for the length of encoded bytes.
-     * @param printableOnly a flag for printable({@code [0x20..0x7E]}) characters only.
-     * @return a new instance.
-     */
-    public static StringAdapter ascii(final int lengthSize, final boolean printableOnly) {
-        if (printableOnly) {
-            return asciiPrintable(lengthSize);
-        }
-        return ascii(lengthSize);
-    }
-
     /**
      * Creates a new instance with specified arguments.
      *
      * @param delegate an adapter for reading/writing encoded bytes.
      * @param charset  a charset for encoding/decoding values.
      */
-    public StringAdapter(final BytesAdapter delegate, final Charset charset) {
+    public StringAdapter(final ByteArrayAdapter delegate, final Charset charset) {
         super();
         this.delegate = requireNonNull(delegate, "delegate is null");
         this.charset = requireNonNull(charset, "charset is null");
@@ -78,7 +55,7 @@ public class StringAdapter
         delegate.write(output, value.getBytes(charset));
     }
 
-    private final BytesAdapter delegate;
+    private final ByteArrayAdapter delegate;
 
     private final Charset charset;
 }

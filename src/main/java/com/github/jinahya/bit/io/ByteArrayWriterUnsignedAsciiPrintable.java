@@ -27,24 +27,15 @@ import java.io.IOException;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-class BytesAdapterAsciiPrintable
-        extends BytesAdapterAscii {
+class ByteArrayWriterUnsignedAsciiPrintable
+        extends ByteArrayWriterUnsignedAscii {
 
-    BytesAdapterAsciiPrintable(final int lengthSize) {
+    ByteArrayWriterUnsignedAsciiPrintable(final int lengthSize) {
         super(lengthSize);
     }
 
     @Override
-    byte readByte(final BitInput input) throws IOException {
-        final int e = input.readUnsignedInt(1);
-        if (e == 0b0) {
-            return (byte) (input.readUnsignedInt(6) + 0x20);
-        }
-        return (byte) (input.readUnsignedInt(5) + 0x60);
-    }
-
-    @Override
-    void writeByte(final BitOutput output, final byte value) throws IOException {
+    void writeElement(final BitOutput output, final byte value) throws IOException {
         if (value < 0x60) {
             output.writeUnsignedInt(1, 0);
             output.writeUnsignedInt(6, value - 0x20);

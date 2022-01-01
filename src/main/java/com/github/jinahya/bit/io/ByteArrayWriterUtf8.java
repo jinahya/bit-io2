@@ -22,41 +22,15 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-class BytesAdapterUtf8
-        extends BytesAdapter {
+class ByteArrayWriterUtf8
+        extends ByteArrayWriter {
 
-    BytesAdapterUtf8(final int lengthSize) {
+    ByteArrayWriterUtf8(final int lengthSize) {
         super(lengthSize, Byte.SIZE);
     }
 
     @Override
-    void readBytes(final BitInput input, final byte[] value) throws IOException {
-        for (int i = 0; i < value.length; i++) {
-            switch (input.readUnsignedInt(2)) {
-                case 0b00:
-                    value[i] = (byte) input.readUnsignedInt(7);
-                    break;
-                case 0b01:
-                    value[i] = (byte) (0b110_00000 | input.readUnsignedInt(5));
-                    value[++i] = (byte) (0b10_000000 | input.readUnsignedInt(6));
-                    break;
-                case 0b10:
-                    value[i] = (byte) (0b1110_0000 | input.readUnsignedInt(4));
-                    value[++i] = (byte) (0b10_000000 | input.readUnsignedInt(6));
-                    value[++i] = (byte) (0b10_000000 | input.readUnsignedInt(6));
-                    break;
-                default: // 0b11
-                    value[i] = (byte) (0b11100_000 | input.readUnsignedInt(3));
-                    value[++i] = (byte) (0b10_000000 | input.readUnsignedInt(6));
-                    value[++i] = (byte) (0b10_000000 | input.readUnsignedInt(6));
-                    value[++i] = (byte) (0b10_000000 | input.readUnsignedInt(6));
-                    break;
-            }
-        }
-    }
-
-    @Override
-    void writeBytes(final BitOutput output, final byte[] value) throws IOException {
+    void writeElements(final BitOutput output, final byte[] value) throws IOException {
         for (int i = 0; i < value.length; i++) {
             final byte b = value[i];
             if ((b & 0x7F) == b) { // 0xxx_xxxx

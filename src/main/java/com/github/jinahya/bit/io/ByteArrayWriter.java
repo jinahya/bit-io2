@@ -22,44 +22,31 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsignedInt;
 
-class IntArrayWriter
-        extends PrimitiveArrayWriter<int[]> {
+class ByteArrayWriter
+        extends PrimitiveArrayWriter<byte[]> {
 
-    static class Unsigned
-            extends IntArrayWriter {
-
-        Unsigned(final int lengthSize, final int elementSize) {
-            super(lengthSize, requireValidSizeForUnsignedInt(elementSize));
-        }
-
-        @Override
-        void writeElement(final BitOutput output, final int value) throws IOException {
-            output.writeUnsignedInt(elementSize, value);
-        }
-    }
-
-    public IntArrayWriter(final int lengthSize, final int elementSize) {
+    public ByteArrayWriter(final int lengthSize, final int elementSize) {
         super(lengthSize);
         this.elementSize = requireValidSizeForInt(elementSize);
     }
 
     @Override
-    public void write(final BitOutput output, final int[] value) throws IOException {
+    public void write(final BitOutput output, final byte[] value) throws IOException {
         writeLength(output, value.length);
         writeElements(output, value);
     }
 
-    void writeElements(final BitOutput output, final int[] elements) throws IOException {
-        for (final int element : elements) {
+    void writeElements(final BitOutput output, final byte[] elements) throws IOException {
+        for (final byte element : elements) {
             writeElement(output, element);
         }
     }
 
-    void writeElement(final BitOutput output, final int element) throws IOException {
-        output.writeInt(elementSize, element);
+    void writeElement(final BitOutput output, final byte element) throws IOException {
+        output.writeByte(elementSize, element);
     }
 
     final int elementSize;

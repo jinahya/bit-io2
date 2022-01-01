@@ -22,20 +22,24 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-class Float32ArrayReader
-        extends SequenceValueReader<float[]> {
+/**
+ * A value adapter for reading/writing an array of printable ascii characters.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+class ByteArrayReaderUnsignedAsciiPrintable
+        extends ByteArrayReaderUnsignedAscii {
 
-    public Float32ArrayReader(final int lengthSize) {
+    ByteArrayReaderUnsignedAsciiPrintable(final int lengthSize) {
         super(lengthSize);
     }
 
     @Override
-    public float[] read(final BitInput input) throws IOException {
-        final int length = input.readUnsignedInt(lengthSize);
-        final float[] value = new float[length];
-        for (int i = 0; i < value.length; i++) {
-            value[i] = input.readFloat32();
+    byte readElement(final BitInput input) throws IOException {
+        final int e = input.readUnsignedInt(1);
+        if (e == 0b0) {
+            return (byte) (input.readUnsignedInt(6) + 0x20);
         }
-        return value;
+        return (byte) (input.readUnsignedInt(5) + 0x60);
     }
 }

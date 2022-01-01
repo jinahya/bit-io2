@@ -21,21 +21,22 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 
-class Float32ArrayReader
-        extends SequenceValueReader<float[]> {
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 
-    public Float32ArrayReader(final int lengthSize) {
-        super(lengthSize);
+abstract class PrimitiveArrayWriter<T>
+        implements ValueWriter<T> {
+
+    protected PrimitiveArrayWriter(final int lengthSize) {
+        super();
+        this.lengthSize = requireValidSizeForInt(true, lengthSize);
     }
 
-    @Override
-    public float[] read(final BitInput input) throws IOException {
-        final int length = input.readUnsignedInt(lengthSize);
-        final float[] value = new float[length];
-        for (int i = 0; i < value.length; i++) {
-            value[i] = input.readFloat32();
-        }
-        return value;
+    protected void writeLength(final BitOutput output, final int length) throws IOException {
+        Objects.requireNonNull(output, "output is null");
+        output.writeUnsignedInt(lengthSize, length);
     }
+
+    private final int lengthSize;
 }

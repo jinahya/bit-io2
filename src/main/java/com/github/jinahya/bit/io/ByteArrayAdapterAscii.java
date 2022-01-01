@@ -20,22 +20,15 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
+/**
+ * A value adapter for reading/writing an array of ascii characters.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+class ByteArrayAdapterAscii
+        extends ByteArrayAdapterUnsigned {
 
-class Float32ArrayReader
-        extends SequenceValueReader<float[]> {
-
-    public Float32ArrayReader(final int lengthSize) {
-        super(lengthSize);
-    }
-
-    @Override
-    public float[] read(final BitInput input) throws IOException {
-        final int length = input.readUnsignedInt(lengthSize);
-        final float[] value = new float[length];
-        for (int i = 0; i < value.length; i++) {
-            value[i] = input.readFloat32();
-        }
-        return value;
+    ByteArrayAdapterAscii(final int lengthSize) {
+        super(lengthSize, 7);
     }
 }

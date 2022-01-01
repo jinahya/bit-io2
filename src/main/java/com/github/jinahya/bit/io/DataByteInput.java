@@ -63,6 +63,7 @@ public class DataByteInput
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @see DataInput#readUnsignedByte()
      */
     @Override
     protected int read(final DataInput source) throws IOException {

@@ -26,7 +26,7 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsignedLong;
 
 class LongArrayWriter
-        extends SequenceValueWriter<long[]> {
+        extends PrimitiveArrayWriter<long[]> {
 
     public static class Unsigned
             extends LongArrayWriter {
@@ -48,14 +48,18 @@ class LongArrayWriter
 
     @Override
     public void write(final BitOutput output, final long[] value) throws IOException {
-        final int length = writeLength(output, value.length);
-        for (int i = 0; i < length; i++) {
-            writeElement(output, value[i]);
+        writeLength(output, value.length);
+        writeElements(output, value);
+    }
+
+    void writeElements(final BitOutput output, final long[] elements) throws IOException {
+        for (final long element : elements) {
+            writeElement(output, element);
         }
     }
 
-    void writeElement(final BitOutput output, final long value) throws IOException {
-        output.writeLong(elementSize, value);
+    void writeElement(final BitOutput output, final long element) throws IOException {
+        output.writeLong(elementSize, element);
     }
 
     final int elementSize;

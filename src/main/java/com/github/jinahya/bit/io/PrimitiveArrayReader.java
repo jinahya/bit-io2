@@ -20,15 +20,23 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-/**
- * A value adapter for reading/writing an array of ascii characters.
- *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- */
-class BytesAdapterAscii
-        extends BytesAdapterUnsigned {
+import java.io.IOException;
+import java.util.Objects;
 
-    BytesAdapterAscii(final int lengthSize) {
-        super(lengthSize, 7);
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
+
+abstract class PrimitiveArrayReader<T>
+        implements ValueReader<T> {
+
+    protected PrimitiveArrayReader(final int lengthSize) {
+        super();
+        this.lengthSize = requireValidSizeForInt(true, lengthSize);
     }
+
+    protected int readLength(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
+        return input.readUnsignedInt(lengthSize);
+    }
+
+    private final int lengthSize;
 }
