@@ -49,6 +49,9 @@ public interface ValueWriter<T> {
     static int writeLength(final BitOutput output, final int size, final int value) throws IOException {
         requireNonNull(output, "output is null");
         requireValidSizeForInt(true, size);
+        if (value < 0) {
+            throw new IllegalArgumentException("length(" + value + " is negative");
+        }
         final int length = value & ((1 << size) - 1);
         output.writeUnsignedInt(size, length);
         return length;

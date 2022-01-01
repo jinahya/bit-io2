@@ -29,7 +29,7 @@ final class BitIoConstraints {
 
     private static int requirePositive(final int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("size(" + size + ") <= 0");
+            throw new IllegalArgumentException("size(" + size + ") is not positive");
         }
         return size;
     }
@@ -39,7 +39,7 @@ final class BitIoConstraints {
             throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
         }
         if (size == Byte.SIZE && unsigned) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned byte");
+            throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned byte");
         }
         return size;
     }
@@ -49,7 +49,7 @@ final class BitIoConstraints {
             throw new IllegalArgumentException("size(" + size + ") > " + Short.SIZE);
         }
         if (size == Short.SIZE && unsigned) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned short");
+            throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned short");
         }
         return size;
     }
@@ -59,7 +59,7 @@ final class BitIoConstraints {
             throw new IllegalArgumentException("size(" + size + ") > " + Integer.SIZE);
         }
         if (size == Integer.SIZE && unsigned) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned int");
+            throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned int");
         }
         return size;
     }
@@ -77,7 +77,7 @@ final class BitIoConstraints {
             throw new IllegalArgumentException("size(" + size + ") > " + Long.SIZE);
         }
         if (size == Long.SIZE && unsigned) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned long");
+            throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned long");
         }
         return size;
     }

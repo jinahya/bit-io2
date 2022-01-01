@@ -28,7 +28,8 @@ import static java.util.Objects.requireNonNull;
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public interface ValueAdapter<T> extends ValueReader<T>, ValueWriter<T> {
+public interface ValueAdapter<T>
+        extends ValueReader<T>, ValueWriter<T> {
 
     /**
      * Creates a new adapter which pre-reads/writes a {@code boolean} value indicating the nullability of the value.

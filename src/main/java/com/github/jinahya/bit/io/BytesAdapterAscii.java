@@ -20,24 +20,15 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.Objects;
-
 /**
- * An abstract class for testing subclasses of {@link ValueReader} class.
+ * A value adapter for reading/writing an array of ascii characters.
  *
- * @param <T> reader type parameter
- * @param <U> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-abstract class ValueReaderTest<T extends ValueReader<U>, U> {
+class BytesAdapterAscii
+        extends BytesAdapterUnsigned {
 
-    protected ValueReaderTest(final Class<T> readerClass, final Class<U> valueClass) {
-        super();
-        this.readerClass = Objects.requireNonNull(readerClass, "readerClass is null");
-        this.valueClass = Objects.requireNonNull(valueClass, "valueClass is null");
+    BytesAdapterAscii(final int lengthSize) {
+        super(lengthSize, 7);
     }
-
-    protected final Class<T> readerClass;
-
-    protected final Class<U> valueClass;
 }

@@ -26,7 +26,8 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public class ListWriter<T> extends SequenceValueWriter<List<T>> {
+public class ListWriter<T>
+        extends SequenceValueWriter<List<T>> {
 
     public ListWriter(final int lengthSize, final ValueAdapter<? super T> elementWriter) {
         super(lengthSize);

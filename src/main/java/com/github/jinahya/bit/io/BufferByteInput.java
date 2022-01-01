@@ -20,7 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
@@ -35,58 +34,8 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BufferByteOutput
  */
-public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
-
-    /**
-     * An extended class for adapting readable byte channels.
-     *
-     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
-     */
-    private static class ChannelAdapter extends BufferByteInput {
-
-        /**
-         * Creates a new instance with specified arguments.
-         *
-         * @param sourceSupplier  a supplier for a byte buffer.
-         * @param channelSupplier a supplier for a readable byte channel from which the {@code buffer} is filled.
-         */
-        private ChannelAdapter(final Supplier<? extends ByteBuffer> sourceSupplier,
-                               final Supplier<? extends ReadableByteChannel> channelSupplier) {
-            super(sourceSupplier);
-            this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            if (channel != null) {
-                channel.close();
-            }
-        }
-
-        @Override
-        protected int read(final ByteBuffer source) throws IOException {
-            while (!source.hasRemaining()) {
-                source.clear(); // position -> zero, limit -> capacity
-                if (channel().read(source) == -1) {
-                    throw new EOFException("channel has reached end-of-stream");
-                }
-                source.flip(); // limit -> position, position -> zero
-            }
-            return super.read(source);
-        }
-
-        private ReadableByteChannel channel() {
-            if (channel == null) {
-                channel = channelSupplier.get();
-            }
-            return channel;
-        }
-
-        private final Supplier<? extends ReadableByteChannel> channelSupplier;
-
-        private ReadableByteChannel channel;
-    }
+public class BufferByteInput
+        extends ByteInputAdapter<ByteBuffer> {
 
     /**
      * Creates a new instance which reads bytes from a readable byte channel supplied by specified supplier.
@@ -94,8 +43,32 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
      * @param channelSupplier the supplier for the readable byte channel.
      * @return a new instance.
      */
-    public static BufferByteInput from(final Supplier<? extends ReadableByteChannel> channelSupplier) {
-        return new ChannelAdapter(() -> (ByteBuffer) allocate(1).position(1), channelSupplier);
+    public static BufferByteInput adapting(final Supplier<? extends ReadableByteChannel> channelSupplier) {
+        return new BufferByteInputChannelAdapter(() -> (ByteBuffer) allocate(1).position(1), channelSupplier);
+    }
+
+    /**
+     * Creates a new instance which reads bytes from a readable byte channel supplied by specified supplier.
+     *
+     * @param channel the supplier for the readable byte channel.
+     * @return a new instance.
+     */
+    public static BufferByteInput adapting(final ReadableByteChannel channel) {
+        requireNonNull(channel, "channel is null");
+        return adapting(() -> channel);
+    }
+
+    /**
+     * Creates a new instance which reads bytes from specified byte buffer.
+     *
+     * @param source the byte buffer which bytes are read.
+     * @return a new instance.
+     */
+    public static ByteInput of(final ByteBuffer source) {
+        requireNonNull(source, "source is null");
+        final ByteInputAdapter<ByteBuffer> instance = new BufferByteInput(empty());
+        instance.source(source);
+        return instance;
     }
 
     /**
@@ -118,5 +91,13 @@ public class BufferByteInput extends ByteInputAdapter<ByteBuffer> {
     @Override
     protected int read(final ByteBuffer source) throws IOException {
         return source.get() & 0xFF;
+    }
+
+    @Override
+    void source(final ByteBuffer source) {
+        super.source(source);
+        if (source(false).capacity() == 0) {
+            throw new IllegalArgumentException("source.capacity is zero");
+        }
     }
 }

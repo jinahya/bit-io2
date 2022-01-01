@@ -27,8 +27,6 @@ import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
-import static java.lang.Double.longBitsToDouble;
-import static java.lang.Float.intBitsToFloat;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
@@ -38,7 +36,8 @@ import static java.util.concurrent.ThreadLocalRandom.current;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitOutput
  */
-public interface BitInput extends Closeable {
+public interface BitInput
+        extends Closeable {
 
     /**
      * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
@@ -63,9 +62,7 @@ public interface BitInput extends Closeable {
     }
 
     /**
-     * Reads a {@code byte} value of specified number of bits. The {@code readByte(boolean, int)} method of {@code
-     * BitInput} interface invokes {@link #readInt(boolean, int)} method with given arguments and returns the result
-     * casted as {@code byte}.
+     * Reads a {@code byte} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} - ({@code
@@ -78,9 +75,7 @@ public interface BitInput extends Closeable {
     }
 
     /**
-     * Reads a signed {@code byte} value of specified number of bits. The {@code readByte(int)} method of {@code
-     * BitInput} interface invokes {@link #readByte(boolean, int)} method with {@code false} and given {@code size}
-     * argument and returns the result.
+     * Reads a signed {@code byte} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return a signed {@code byte} value of specified bit {@code size}.
@@ -93,7 +88,7 @@ public interface BitInput extends Closeable {
 
     /**
      * Reads a {@value java.lang.Byte#SIZE}-bit signed {@code byte} value. The {@code readByte8()} method of {@code
-     * BitInput} interface invokes {@link #readByte(int)} method with {@value java.lang.Byte#SIZE} and return the
+     * BitInput} interface invokes {@link #readByte(int)} method with {@value java.lang.Byte#SIZE} and returns the
      * result.
      *
      * @return a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
@@ -119,9 +114,7 @@ public interface BitInput extends Closeable {
     }
 
     /**
-     * Reads a {@code short} value of specified number of bits. The {@code readShort(boolean, int)} method of {@code
-     * BitInput} interface invokes {@link #readInt(boolean, int)} method with given arguments and returns the result
-     * casted as {@code short}.
+     * Reads a {@code short} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Short#SIZE} - (unsigned ?
@@ -137,7 +130,7 @@ public interface BitInput extends Closeable {
     /**
      * Reads a signed {@code short} value of specified number of bits. The {@code readShort(int)} method of {@code
      * BitInput} interface invokes {@link #readShort(boolean, int)} method with {@code false} and given {@code size}
-     * argument and returns the result.a
+     * argument and returns the result.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Short#SIZE}, both inclusive.
      * @return a signed {@code short} value of specified bit {@code size}.
@@ -170,8 +163,7 @@ public interface BitInput extends Closeable {
      * @throws IOException if an I/O error occurs.
      * @see #readShort16()
      * @see Short#reverseBytes(short)
-     * @see #readShort16()
-     * @deprecated Reads a value with {@link #readShort16()} and reverse bytes with {@link Short#reverseBytes(short)}
+     * @deprecated Read a value with {@link #readShort16()} and reverse bytes using {@link Short#reverseBytes(short)}
      * method.
      */
     @Deprecated // forRemoval = true
@@ -209,7 +201,7 @@ public interface BitInput extends Closeable {
     int readInt(boolean unsigned, int size) throws IOException;
 
     /**
-     * Reads a signed {@code int} value of specified bit size. The {@code readInt(int)} method of {@code BitInput}
+     * Reads a signed {@code int} value of specified number of bits. The {@code readInt(int)} method of {@code BitInput}
      * interface invokes {@link #readInt(boolean, int)} with {@code false} and given {@code size} argument and returns
      * the result.
      *
@@ -242,8 +234,9 @@ public interface BitInput extends Closeable {
      *
      * @return a {@value java.lang.Integer#SIZE}-bit signed {@code int} value.
      * @throws IOException if an I/O error occurs.
+     * @see #readInt32()
      * @see Integer#reverseBytes(int)
-     * @deprecated Reads the value with {@link #readInt32()} method and reverse bytes with {@link
+     * @deprecated Read the value with {@link #readInt32()} method and reverse bytes using {@link
      * Integer#reverseBytes(int)} method.
      */
     @Deprecated // forRemoval = true
@@ -255,9 +248,9 @@ public interface BitInput extends Closeable {
     }
 
     /**
-     * Reads an unsigned {@code int} value of specified bit size. The {@code readUnsignedInt(int)} method of {@code
-     * BitInput} interface invokes {@link #readInt(boolean, int)} method with {@code true} and {@code size} argument and
-     * returns the result.
+     * Reads an unsigned {@code int} value of specified number of bits. The {@code readUnsignedInt(int)} method of
+     * {@code BitInput} interface invokes {@link #readInt(boolean, int)} method with {@code true} and {@code size}
+     * argument and returns the result.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
      *             (exclusive).
@@ -275,7 +268,7 @@ public interface BitInput extends Closeable {
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Long#SIZE} - ({@code
      *                 unsigned ? 1: 0})), both inclusive.
-     * @return a {@code long} value of specified bit size.
+     * @return a {@code long} value of specified number of bits.
      * @throws IOException if an I/O error occurs.
      * @see #readInt(boolean, int)
      */
@@ -302,9 +295,9 @@ public interface BitInput extends Closeable {
     }
 
     /**
-     * Reads a signed {@code long} value of specified bit size. The {@code readLong(int)} method of {@code BitInput}
-     * interface invokes {@link #readLong(boolean, int)} method with {@code false} and given {@code size} argument and
-     * returns the result.
+     * Reads a signed {@code long} value of specified number of bits. The {@code readLong(int)} method of {@code
+     * BitInput} interface invokes {@link #readLong(boolean, int)} method with {@code false} and given {@code size}
+     * argument and returns the result.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
      * @return a signed {@code long} value.
@@ -335,7 +328,7 @@ public interface BitInput extends Closeable {
      * @return a {@value java.lang.Long#SIZE}-bit signed {@code long} value read.
      * @throws IOException if an I/O error occurs.
      * @see Long#reverseBytes(long)
-     * @deprecated Reads a value with {@link #readLong64()} and reverse bytes with {@link Long#reverseBytes(long)}
+     * @deprecated Read a value with {@link #readLong64()} and reverse bytes with {@link Long#reverseBytes(long)}
      * method.
      */
     @Deprecated // forRemoval = true
@@ -347,9 +340,9 @@ public interface BitInput extends Closeable {
     }
 
     /**
-     * Reads an unsigned {@code long} value of specified bit size. The {@code readUnsignedLong(int)} method of {@code
-     * BitInput} interface invokes {@link #readLong(boolean, int)} method with {@code true} and given {@code size}
-     * arguments and returns the result.
+     * Reads an unsigned {@code long} value of specified number of bits. The {@code readUnsignedLong(int)} method of
+     * {@code BitInput} interface invokes {@link #readLong(boolean, int)} method with {@code true} and given {@code
+     * size} arguments and returns the result.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
      *             (exclusive).
@@ -362,9 +355,7 @@ public interface BitInput extends Closeable {
     }
 
     /**
-     * Reads a {@code char} value of specified bit size. The {@code readChar(int)} method of {@code BitInput} interface
-     * invokes {@link #readUnsignedInt(int)} method with given {@code size} argument and returns the result casted as a
-     * {@code char} value.
+     * Reads a {@code char} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Character#SIZE}, both inclusive.
      * @return a {@code char} value read.
@@ -390,28 +381,30 @@ public interface BitInput extends Closeable {
 
     /**
      * Reads a {@value java.lang.Float#SIZE}-bit {@code float} value. The {@code readFloat32()} method of {@code
-     * BitInput} interface reads a {@value java.lang.Integer#SIZE}-bit {@code int} value and returns the values as
-     * converted to a {@code float} using {@link Float#intBitsToFloat(int)} method.
+     * BitInput} interface reads a {@value java.lang.Integer#SIZE}-bit signed {@code int} value and returns the values
+     * as converted to a {@code float} using {@link Float#intBitsToFloat(int)} method.
      *
      * @return a {@value java.lang.Float#SIZE}-bit {@code float} value
      * @throws IOException if an I/O error occurs.
+     * @see #readInt32()
      * @see Float#intBitsToFloat(int)
      */
     default float readFloat32() throws IOException {
-        return intBitsToFloat(readInt(false, Integer.SIZE));
+        return Float.intBitsToFloat(readInt32());
     }
 
     /**
      * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value. The {@code readDouble64()} method of {@code
-     * BitInput} interface reads a {@value java.lang.Long#SIZE}-bit {@code long} value and returns the value as
+     * BitInput} interface reads a {@value java.lang.Long#SIZE}-bit signed {@code long} value and returns the value as
      * converted to a {@code double} using {@link Double#longBitsToDouble(long)} method.
      *
      * @return a {@value java.lang.Double#SIZE}-bit {@code double} value
      * @throws IOException if an I/O error occurs.
+     * @see #readLong64()
      * @see Double#longBitsToDouble(long)
      */
     default double readDouble64() throws IOException {
-        return longBitsToDouble(readLong(false, Long.SIZE));
+        return Double.longBitsToDouble(readLong64());
     }
 
     /**
@@ -429,21 +422,21 @@ public interface BitInput extends Closeable {
     }
 
     /**
-     * Skips specified number of bits by discarding specified number of bits.
+     * Skips specified number of bits by discarding bits.
      *
-     * @param bits the number of bit to skip; must be positive.
+     * @param bits the number of bits to skip; must be positive.
      * @throws IllegalArgumentException if {@code bits} is not positive.
      * @throws IOException              if an I/O error occurs.
      */
     default void skip(int bits) throws IOException {
         if (bits <= 0) {
-            throw new IllegalArgumentException("bits(" + bits + ") <= 0");
+            throw new IllegalArgumentException("bits(" + bits + ") is not positive");
         }
         for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
-            readInt(false, Integer.SIZE);
+            readInt32();
         }
         if (bits > 0) {
-            readInt(true, bits);
+            readUnsignedInt(bits);
         }
     }
 

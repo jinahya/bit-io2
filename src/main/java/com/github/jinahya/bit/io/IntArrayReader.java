@@ -24,9 +24,11 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 
-class IntArrayReader extends SequenceValueReader<int[]> {
+class IntArrayReader
+        extends SequenceValueReader<int[]> {
 
-    public static class Unsigned extends IntArrayReader {
+    public static class Unsigned
+            extends IntArrayReader {
 
         public Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, requireValidSizeForInt(true, elementSize));

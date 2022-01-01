@@ -425,7 +425,7 @@ class BitIoAdapterTest {
     void testFloat32(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                      @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
             throws IOException {
-        final float[] expected = new float[] {
+        final float[] expected = new float[]{
                 Float.MAX_VALUE, Float.MIN_NORMAL, Float.MIN_VALUE, Float.NaN, Float.NEGATIVE_INFINITY,
                 Float.POSITIVE_INFINITY,
                 current().nextFloat()
@@ -449,7 +449,7 @@ class BitIoAdapterTest {
     void testDouble64(@ConvertWith(ByteOutput2BitOutputConverter.class) final BitOutput output,
                       @ConvertWith(ByteInput2BitInputConverter.class) final BitInput input)
             throws IOException {
-        final double[] expected = new double[] {
+        final double[] expected = new double[]{
                 Double.MAX_VALUE, Double.MIN_NORMAL, Double.MIN_VALUE, Double.NaN, Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY,
                 current().nextDouble()

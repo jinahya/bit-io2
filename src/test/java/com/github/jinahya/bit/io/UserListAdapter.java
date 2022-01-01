@@ -20,7 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-class UserListAdapter extends ListAdapter<User> {
+class UserListAdapter
+        extends ListAdapter<User> {
 
     public UserListAdapter(int lengthSize) {
         super(lengthSize, new UserAdapter());

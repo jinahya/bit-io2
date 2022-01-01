@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -30,7 +31,21 @@ import java.util.function.Supplier;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see StreamByteInput
  */
-public class StreamByteOutput extends ByteOutputAdapter<OutputStream> {
+public class StreamByteOutput
+        extends ByteOutputAdapter<OutputStream> {
+
+    /**
+     * Creates a new byte output on top of specified output stream.
+     *
+     * @param target the output stream to which bytes are written.
+     * @return a new instance.
+     */
+    public static ByteOutput of(final OutputStream target) {
+        Objects.requireNonNull(target, "target is null");
+        final ByteOutputAdapter<OutputStream> instance = new StreamByteOutput(empty());
+        instance.target(target);
+        return instance;
+    }
 
     /**
      * Creates a new instance with specified target supplier.

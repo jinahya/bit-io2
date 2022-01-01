@@ -22,7 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-class Double64ArrayWriter extends SequenceValueWriter<double[]> {
+class Double64ArrayWriter
+        extends SequenceValueWriter<double[]> {
 
     public Double64ArrayWriter(final int lengthSize) {
         super(lengthSize);

@@ -33,7 +33,18 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ByteOutputAdapter
  */
-public abstract class ByteInputAdapter<T> implements ByteInput {
+public abstract class ByteInputAdapter<T>
+        implements ByteInput {
+
+    /**
+     * Returns a supplier supplies {@code null}.
+     *
+     * @param <T> result type parameter
+     * @return a supplier results {@code null}.
+     */
+    static <T> Supplier<T> empty() {
+        return () -> null;
+    }
 
     /**
      * Creates a new instance with specified source supplier.
@@ -69,7 +80,7 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      */
     @Override
     public int read() throws IOException {
-        return read(source());
+        return read(source(true));
     }
 
     /**
@@ -81,11 +92,21 @@ public abstract class ByteInputAdapter<T> implements ByteInput {
      */
     protected abstract int read(T source) throws IOException;
 
-    private T source() {
-        if (source == null) {
-            source = sourceSupplier.get();
+    T source(final boolean get) {
+        if (get) {
+            if (source(false) == null) {
+                source(sourceSupplier.get());
+            }
+            return source(false);
         }
         return source;
+    }
+
+    void source(final T source) {
+        if (source(false) != null) {
+            throw new IllegalArgumentException("source already has been supplied");
+        }
+        this.source = requireNonNull(source, "source is null");
     }
 
     private final Supplier<? extends T> sourceSupplier;

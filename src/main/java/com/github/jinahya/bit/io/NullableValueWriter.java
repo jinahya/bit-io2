@@ -25,27 +25,27 @@ import java.io.IOException;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A wrapper class for writing a null flag before writing values.
+ * A writer class for writing a {@code null} flag before writing a value.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class NullableValueWriter<T> implements ValueWriter<T> {
+final class NullableValueWriter<T>
+        extends FilterValueWriter<T> {
 
     /**
-     * Creates a new instance with specified adapter.
+     * Creates a new instance on top of specified writer.
      *
-     * @param wrapped the adapter to be wrapped.
+     * @param writer the writer to wrap.
      */
-    NullableValueWriter(final ValueWriter<? super T> wrapped) {
-        super();
-        this.wrapped = requireNonNull(wrapped, "wrapped is null");
+    NullableValueWriter(final ValueWriter<? super T> writer) {
+        super(writer);
     }
 
     /**
-     * {@inheritDoc} The {@code write(BitOutput, Object)} method of {@code NullableValueWriter} class writes a {@code
-     * 1}-bit {@code boolean} flag indicating a nullability of given value and writes the value if an only if the value
-     * is not {@code null}.
+     * Writes specified value to specified output. The {@code write(BitOutput, Object)} method of {@code
+     * NullableValueWriter} class writes a {@code 1}-bit {@code int} flag indicates a nullability of given value and
+     * writes the value if and only if the value is not {@code null}.
      *
      * @param output {@inheritDoc}
      * @param value  {@inheritDoc}
@@ -53,13 +53,12 @@ final class NullableValueWriter<T> implements ValueWriter<T> {
      */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
-        final boolean nonnull = value != null;
-        output.writeBoolean(nonnull);
-        if (!nonnull) {
+        requireNonNull(output, "output is null");
+        final int flag = value == null ? 0 : 1;
+        output.writeUnsignedInt(1, flag);
+        if (flag == 0) {
             return;
         }
-        wrapped.write(output, value);
+        super.write(output, value);
     }
-
-    private final ValueWriter<? super T> wrapped;
 }

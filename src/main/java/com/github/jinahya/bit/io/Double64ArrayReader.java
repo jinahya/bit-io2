@@ -22,7 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-class Double64ArrayReader extends SequenceValueReader<double[]> {
+class Double64ArrayReader
+        extends SequenceValueReader<double[]> {
 
     public Double64ArrayReader(final int lengthSize) {
         super(lengthSize);

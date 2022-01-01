@@ -22,8 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -31,23 +31,36 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public class StringAdapter implements ValueAdapter<String> {
+public class StringAdapter
+        implements ValueAdapter<String> {
+
+    static StringAdapter ascii(final int lengthSize) {
+        return new StringAdapter(new BytesAdapterAscii(lengthSize), StandardCharsets.US_ASCII);
+    }
+
+    static StringAdapter asciiPrintable(final int lengthSize) {
+        return new StringAdapter(new BytesAdapterAsciiPrintable(lengthSize), StandardCharsets.US_ASCII);
+    }
 
     /**
      * Creates a new instance for reading/writing {@link java.nio.charset.StandardCharsets#US_ASCII US-ASCII} strings.
      *
-     * @param lengthSize the number of bits for the length of encoded bytes.
+     * @param lengthSize    the number of bits for the length of encoded bytes.
+     * @param printableOnly a flag for printable({@code [0x20..0x7E]}) characters only.
      * @return a new instance.
      */
-    public static StringAdapter ascii(final int lengthSize) {
-        return new StringAdapter(new BytesAdapter.Unsigned(lengthSize, 7), US_ASCII);
+    public static StringAdapter ascii(final int lengthSize, final boolean printableOnly) {
+        if (printableOnly) {
+            return asciiPrintable(lengthSize);
+        }
+        return ascii(lengthSize);
     }
 
     /**
      * Creates a new instance with specified arguments.
      *
-     * @param delegate a bytes adapter for reading/writing encoded values.
-     * @param charset  a charset for encoding values.
+     * @param delegate an adapter for reading/writing encoded bytes.
+     * @param charset  a charset for encoding/decoding values.
      */
     public StringAdapter(final BytesAdapter delegate, final Charset charset) {
         super();

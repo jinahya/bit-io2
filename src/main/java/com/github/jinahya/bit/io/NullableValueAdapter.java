@@ -30,7 +30,8 @@ import static java.util.Objects.requireNonNull;
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class NullableValueAdapter<T> implements ValueAdapter<T> {
+final class NullableValueAdapter<T>
+        implements ValueAdapter<T> {
 
     /**
      * Creates a new instance with specified adapter.

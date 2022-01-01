@@ -24,7 +24,8 @@ import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-class UserAdapter implements ValueAdapter<User> {
+class UserAdapter
+        implements ValueAdapter<User> {
 
     static final ValueAdapter<String> NAME_ADAPTER
             = ValueAdapter.nullable(new StringAdapter(new BytesAdapter(16, 8), UTF_8));

@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -31,7 +32,21 @@ import java.util.function.Supplier;
  * @author Jin Kwon &lt;onacit at gmail.com&gt;
  * @see StreamByteOutput
  */
-public class StreamByteInput extends ByteInputAdapter<InputStream> {
+public class StreamByteInput
+        extends ByteInputAdapter<InputStream> {
+
+    /**
+     * Creates a new byte Input on top of specified Input stream.
+     *
+     * @param source the Input stream to which bytes are written.
+     * @return a new instance.
+     */
+    public static ByteInput of(final InputStream source) {
+        Objects.requireNonNull(source, "source is null");
+        final ByteInputAdapter<InputStream> instance = new StreamByteInput(empty());
+        instance.source(source);
+        return instance;
+    }
 
     /**
      * Creates a new instance with specified source supplier.

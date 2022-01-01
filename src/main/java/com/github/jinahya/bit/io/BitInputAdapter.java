@@ -33,7 +33,21 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitOutputAdapter
  */
-public class BitInputAdapter implements BitInput {
+public class BitInputAdapter
+        implements BitInput {
+
+    /**
+     * Creates a new instance on top of byte input.
+     *
+     * @param input the byte input.
+     * @return a new instance.
+     */
+    public static BitInput of(final ByteInput input) {
+        requireNonNull(input, "input is null");
+        final BitInputAdapter instance = new BitInputAdapter(() -> null);
+        instance.input(input);
+        return instance;
+    }
 
     /**
      * Creates a new instance with specified input supplier.
@@ -54,6 +68,7 @@ public class BitInputAdapter implements BitInput {
     @Override
     public void close() throws IOException {
         BitInput.super.close(); // does nothing.
+        final ByteInput input = input(false);
         if (input != null) {
             input.close();
         }
@@ -103,7 +118,7 @@ public class BitInputAdapter implements BitInput {
     }
 
     /**
-     * Reads an unsigned {@code int} value of specified bit size.
+     * Reads an unsigned {@code int} value of specified numbr of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return an unsigned {@code int} value.
@@ -112,7 +127,7 @@ public class BitInputAdapter implements BitInput {
     private int unsigned8(final int size) throws IOException {
         assert size > 0 && size <= Byte.SIZE;
         if (available == 0) {
-            octet = input().read();
+            octet = input(true).read();
             assert octet >= 0 && octet < 256;
             count++;
             available = Byte.SIZE;
@@ -125,28 +140,32 @@ public class BitInputAdapter implements BitInput {
         return (octet >> available) & mask(size);
     }
 
-    /**
-     * Returns an instance of {@link ByteInput}.
-     *
-     * @return an instance of {@link ByteInput}.
-     */
-    private ByteInput input() {
-        if (input == null) {
-            input = inputSupplier.get();
+//    private ByteInput input() {
+//        if (input(false) == null) {
+//            input(inputSupplier.get());
+//        }
+//        return input(false);
+//    }
+
+    private ByteInput input(final boolean get) {
+        if (get) {
+            if (input(false) == null) {
+                input(inputSupplier.get());
+            }
+            return input(false);
         }
         return input;
     }
 
-    /**
-     * A supplier for {@link #input}.
-     */
+    private void input(final ByteInput input) {
+        if (input(false) != null) {
+            throw new IllegalStateException("input already has been supplied");
+        }
+        this.input = requireNonNull(input, "input is null");
+    }
+
     private final Supplier<? extends ByteInput> inputSupplier;
 
-    /**
-     * A value supplied from {@link #inputSupplier}.
-     *
-     * @see #input()
-     */
     private ByteInput input;
 
     /**

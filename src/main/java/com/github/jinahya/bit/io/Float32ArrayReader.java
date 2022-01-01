@@ -22,7 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-class Float32ArrayReader extends SequenceValueReader<float[]> {
+class Float32ArrayReader
+        extends SequenceValueReader<float[]> {
 
     public Float32ArrayReader(final int lengthSize) {
         super(lengthSize);

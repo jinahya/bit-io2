@@ -33,7 +33,21 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitInputAdapter
  */
-public class BitOutputAdapter implements BitOutput {
+public class BitOutputAdapter
+        implements BitOutput {
+
+    /**
+     * Creates a new instance with read bytes from specified byte input.
+     *
+     * @param output the byte input.
+     * @return a new instance.
+     */
+    public static BitOutput of(final ByteOutput output) {
+        requireNonNull(output, "output is null");
+        final BitOutputAdapter instance = new BitOutputAdapter(() -> null);
+        instance.output(output);
+        return instance;
+    }
 
     /**
      * Creates a new instance with specified output supplier.
@@ -53,6 +67,7 @@ public class BitOutputAdapter implements BitOutput {
     @Override
     public void flush() throws IOException {
         BitOutput.super.flush(); // <- does nothing.
+        final ByteOutput output = output(false);
         if (output != null) {
             output.flush();
         }
@@ -66,6 +81,7 @@ public class BitOutputAdapter implements BitOutput {
     @Override
     public void close() throws IOException {
         BitOutput.super.close(); // <- does nothing.
+        final ByteOutput output = output(false);
         if (output != null) {
             output.close();
         }
@@ -131,36 +147,32 @@ public class BitOutputAdapter implements BitOutput {
         available -= size;
         if (available == 0) {
             assert octet >= 0 && octet < 256;
-            output().write(octet);
+            output(true).write(octet);
             count++;
             octet = 0x00;
             available = Byte.SIZE;
         }
     }
 
-    /**
-     * Returns an instance of {@link ByteOutput}.
-     *
-     * @return an instance of {@link ByteOutput}.
-     */
-    private ByteOutput output() {
-        if (output == null) {
-            output = outputSupplier.get();
+    private ByteOutput output(final boolean get) {
+        if (get) {
+            if (output(false) == null) {
+                output(outputSupplier.get());
+            }
+            return output(false);
         }
         return output;
     }
 
-    /**
-     * The supplier for {@link #output}.
-     */
+    private void output(final ByteOutput output) {
+        if (output(false) != null) {
+            throw new IllegalStateException("output already has been supplied");
+        }
+        this.output = requireNonNull(output, "output is null");
+    }
 
     private final Supplier<? extends ByteOutput> outputSupplier;
 
-    /**
-     * A value supplied from {@link #outputSupplier}.
-     *
-     * @see #output()
-     */
     private ByteOutput output;
 
     /**

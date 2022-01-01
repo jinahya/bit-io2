@@ -24,7 +24,8 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.UserAdapter.NAME_ADAPTER;
 
-class UserWriter implements ValueWriter<User> {
+class UserWriter
+        implements ValueWriter<User> {
 
     @Override
     public void write(final BitOutput output, final User value) throws IOException {

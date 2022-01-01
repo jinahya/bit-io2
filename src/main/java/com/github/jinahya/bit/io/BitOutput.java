@@ -38,7 +38,8 @@ import static java.util.concurrent.ThreadLocalRandom.current;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitInput
  */
-public interface BitOutput extends Flushable, Closeable {
+public interface BitOutput
+        extends Flushable, Closeable {
 
     /**
      * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
@@ -74,8 +75,7 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified {@code byte} value of specified number of bits. The {@code writeByte(boolean, int, byte)} method
-     * of {@code BitOutput} interface invokes {@link #writeInt(boolean, int, int)} method with given arguments.
+     * Writes specified {@code byte} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to write; between {@code 1} and ({@value java.lang.Byte#SIZE} - ({@code

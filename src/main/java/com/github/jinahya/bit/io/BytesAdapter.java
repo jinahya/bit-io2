@@ -24,8 +24,6 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static com.github.jinahya.bit.io.ValueReader.readLength;
-import static com.github.jinahya.bit.io.ValueWriter.writeLength;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -33,37 +31,8 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public class BytesAdapter implements ValueAdapter<byte[]> {
-
-    /**
-     * An extended class for unsigned bytes.
-     *
-     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
-     */
-    public static class Unsigned extends BytesAdapter {
-
-        /**
-         * Creates a new instance.
-         *
-         * @param lengthSize  the number of bits for the length of the array; between {@code 1} (inclusive) and {@value
-         *                    java.lang.Integer#SIZE} (exclusive).
-         * @param elementSize the number of bits for each element in the array; between {@code 1} (inclusive) and
-         *                    {@value java.lang.Byte#SIZE} (exclusive).
-         */
-        public Unsigned(final int lengthSize, final int elementSize) {
-            super(lengthSize, requireValidSizeForByte(true, elementSize));
-        }
-
-        @Override
-        byte readByte(final BitInput input) throws IOException {
-            return input.readByte(true, elementSize);
-        }
-
-        @Override
-        void writeByte(final BitOutput output, byte value) throws IOException {
-            output.writeByte(true, elementSize, value);
-        }
-    }
+public class BytesAdapter
+        implements ValueAdapter<byte[]> {
 
     /**
      * Creates a new instance with specified arguments.
@@ -88,12 +57,16 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
      */
     @Override
     public byte[] read(final BitInput input) throws IOException {
-        final int length = readLength(input, lengthSize);
+        final int length = input.readUnsignedInt(lengthSize);
         final byte[] value = new byte[length];
+        readBytes(input, value);
+        return value;
+    }
+
+    void readBytes(final BitInput input, byte[] value) throws IOException {
         for (int i = 0; i < value.length; i++) {
             value[i] = readByte(input);
         }
-        return value;
     }
 
     byte readByte(final BitInput input) throws IOException {
@@ -110,9 +83,13 @@ public class BytesAdapter implements ValueAdapter<byte[]> {
     @Override
     public void write(final BitOutput output, final byte[] value) throws IOException {
         requireNonNull(value, "value is null");
-        final int length = writeLength(output, lengthSize, value.length);
-        for (int i = 0; i < length; i++) {
-            writeByte(output, value[i]);
+        output.writeUnsignedInt(lengthSize, value.length);
+        writeBytes(output, value);
+    }
+
+    void writeBytes(final BitOutput output, final byte[] value) throws IOException {
+        for (final byte b : value) {
+            writeByte(output, b);
         }
     }
 

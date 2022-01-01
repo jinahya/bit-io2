@@ -25,9 +25,11 @@ import java.io.IOException;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsignedLong;
 
-class LongArrayReader extends SequenceValueReader<long[]> {
+class LongArrayReader
+        extends SequenceValueReader<long[]> {
 
-    public static class Unsigned extends LongArrayReader {
+    public static class Unsigned
+            extends LongArrayReader {
 
         public Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, requireValidSizeForUnsignedLong(elementSize));

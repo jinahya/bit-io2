@@ -25,9 +25,11 @@ import java.io.IOException;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsignedInt;
 
-class IntArrayWriter extends SequenceValueWriter<int[]> {
+class IntArrayWriter
+        extends SequenceValueWriter<int[]> {
 
-    public static class Unsigned extends IntArrayWriter {
+    public static class Unsigned
+            extends IntArrayWriter {
 
         public Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, requireValidSizeForUnsignedInt(elementSize));

@@ -62,7 +62,7 @@ final class ByteIoTestParameters {
     static Stream<Arguments> buffer3() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
         final ByteOutput output = BufferByteOutput.from(() -> newChannel(baos));
-        final ByteInput input = BufferByteInput.from(() -> newChannel(new ByteArrayInputStream(baos.toByteArray())));
+        final ByteInput input = BufferByteInput.adapting(() -> newChannel(new ByteArrayInputStream(baos.toByteArray())));
         return Stream.of(arguments(output, input));
     }
 
@@ -77,7 +77,7 @@ final class ByteIoTestParameters {
         } catch (final ReflectiveOperationException roe) {
             throw new RuntimeException(roe);
         }
-        final ByteInput input = BufferByteInput.from(() -> newChannel(new ByteArrayInputStream(array)));
+        final ByteInput input = BufferByteInput.adapting(() -> newChannel(new ByteArrayInputStream(array)));
         return Stream.of(arguments(output, input));
     }
 
@@ -104,13 +104,13 @@ final class ByteIoTestParameters {
     // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> byteIos() {
         return Stream.of(
-                buffer(),
-                buffer2(),
-                buffer3(),
-                buffer4(),
-                data(),
-                stream()
-        )
+                        buffer(),
+                        buffer2(),
+                        buffer3(),
+                        buffer4(),
+                        data(),
+                        stream()
+                )
                 .flatMap(s -> s);
     }
 

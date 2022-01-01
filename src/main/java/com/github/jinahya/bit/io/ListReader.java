@@ -26,7 +26,8 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public class ListReader<T> extends SequenceValueReader<List<T>> {
+public class ListReader<T>
+        extends SequenceValueReader<List<T>> {
 
     public ListReader(final int lengthSize, final ValueReader<? extends T> elementAdapter) {
         super(lengthSize);

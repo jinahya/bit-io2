@@ -90,7 +90,7 @@ public interface ValueReader<T> {
      * Reads a value from specified input.
      *
      * @param input the input from which the value is read.
-     * @return a value.
+     * @return a value read.
      * @throws IOException if an I/O error occurs.
      */
     T read(BitInput input) throws IOException;

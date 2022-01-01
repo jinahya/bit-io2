@@ -22,7 +22,9 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-abstract class SequenceValueWriter<T> extends SequenceValueBase implements ValueWriter<T> {
+abstract class SequenceValueWriter<T>
+        extends SequenceValueBase
+        implements ValueWriter<T> {
 
     SequenceValueWriter(final int lengthSize) {
         super(lengthSize);

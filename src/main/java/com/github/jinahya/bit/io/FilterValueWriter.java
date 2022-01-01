@@ -25,37 +25,39 @@ import java.io.IOException;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A value adapter composing a reader and a writer.
+ * A wrapper class for writing a null flag before writing values.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class CompositeValueAdapter<T>
-        implements ValueAdapter<T> {
+public abstract class FilterValueWriter<T>
+        implements ValueWriter<T> {
 
     /**
-     * Creates a new instance with specified reader and writer.
+     * Creates a new instance wrapping specified writer.
      *
-     * @param reader the reader.
-     * @param writer the writer.
+     * @param writer the writer to wrap.
      */
-    CompositeValueAdapter(final ValueReader<? extends T> reader, final ValueWriter<? super T> writer) {
+    protected FilterValueWriter(final ValueWriter<? super T> writer) {
         super();
-        this.reader = requireNonNull(reader, "reader is null");
-        this.writer = requireNonNull(writer, "writer is null");
+        this.writer = requireNonNull(writer, "wrapped is null");
     }
 
-    @Override
-    public T read(final BitInput input) throws IOException {
-        return reader.read(input);
-    }
-
+    /**
+     * {@inheritDoc} The {@code write(BitOutput, Object)} method of {@code FilterValueWriter} class invokes {@link
+     * ValueWriter#write(BitOutput, Object)} method on {@link #writer} with {@code output} and {@code value}.
+     *
+     * @param output {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
         writer.write(output, value);
     }
 
-    private final ValueReader<? extends T> reader;
-
-    private final ValueWriter<? super T> writer;
+    /**
+     * The writer wrapped by this writer.
+     */
+    protected final ValueWriter<? super T> writer;
 }

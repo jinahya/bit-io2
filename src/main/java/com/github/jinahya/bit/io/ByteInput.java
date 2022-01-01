@@ -31,7 +31,8 @@ import java.io.IOException;
  * @see ByteOutput
  */
 @FunctionalInterface
-public interface ByteInput extends Closeable {
+public interface ByteInput
+        extends Closeable {
 
     /**
      * Closes this input and releases any system resources associated with it.

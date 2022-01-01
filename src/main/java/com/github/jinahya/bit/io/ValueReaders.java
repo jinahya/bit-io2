@@ -20,24 +20,20 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.Objects;
+public final class ValueReaders {
 
-/**
- * An abstract class for testing subclasses of {@link ValueReader} class.
- *
- * @param <T> reader type parameter
- * @param <U> value type parameter
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- */
-abstract class ValueReaderTest<T extends ValueReader<U>, U> {
-
-    protected ValueReaderTest(final Class<T> readerClass, final Class<U> valueClass) {
-        super();
-        this.readerClass = Objects.requireNonNull(readerClass, "readerClass is null");
-        this.valueClass = Objects.requireNonNull(valueClass, "valueClass is null");
+    /**
+     * Returns a wrapper reader which pre-reads a {@code boolean} flag indicating a {@code null} value.
+     *
+     * @param reader a reader to wrap.
+     * @param <T>    value type parameter
+     * @return a wrapper reader.
+     */
+    public static <T> ValueReader<T> nullable(final ValueReader<? extends T> reader) {
+        return new NullableValueReader<>(reader);
     }
 
-    protected final Class<T> readerClass;
-
-    protected final Class<U> valueClass;
+    private ValueReaders() {
+        throw new AssertionError("instantiation is not allowed");
+    }
 }

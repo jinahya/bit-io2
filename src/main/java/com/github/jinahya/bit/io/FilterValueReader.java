@@ -25,37 +25,40 @@ import java.io.IOException;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A value adapter composing a reader and a writer.
+ * A reader class wraps another reader.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see NullableValueWriter
  */
-final class CompositeValueAdapter<T>
-        implements ValueAdapter<T> {
+public abstract class FilterValueReader<T>
+        implements ValueReader<T> {
 
     /**
-     * Creates a new instance with specified reader and writer.
+     * Creates a new instance with specified reader.
      *
-     * @param reader the reader.
-     * @param writer the writer.
+     * @param reader the reader to filter.
      */
-    CompositeValueAdapter(final ValueReader<? extends T> reader, final ValueWriter<? super T> writer) {
+    protected FilterValueReader(final ValueReader<? extends T> reader) {
         super();
         this.reader = requireNonNull(reader, "reader is null");
-        this.writer = requireNonNull(writer, "writer is null");
     }
 
+    /**
+     * {@inheritDoc} The {@code read(BitInput)} method of {@code FilterValueReader} class invokes {@link
+     * #read(BitInput)} method on {@link #reader}.
+     *
+     * @param input {@inheritDoc}
+     * @return {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
     @Override
     public T read(final BitInput input) throws IOException {
         return reader.read(input);
     }
 
-    @Override
-    public void write(final BitOutput output, final T value) throws IOException {
-        writer.write(output, value);
-    }
-
-    private final ValueReader<? extends T> reader;
-
-    private final ValueWriter<? super T> writer;
+    /**
+     * The reader wrapped by this reader.
+     */
+    protected final ValueReader<? extends T> reader;
 }

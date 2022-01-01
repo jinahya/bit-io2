@@ -20,23 +20,24 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.Objects;
 
 /**
- * A class for testing {@link ValueWriter} class.
+ * An abstract class for testing subclasses {@link ValueWriter} class.
  *
+ * @param <T> writer type parameter
+ * @param <U> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-class ValueWriterTest {
+abstract class ValueWriterTest<T extends ValueWriter<U>, U> {
 
-    /**
-     * Tests {@link ValueWriter#nullable(ValueWriter)}.
-     */
-    @Test
-    void testNullable() {
-        final ValueWriter<User> instance = ValueWriter.nullable(new UserWriter());
-        assertNotNull(instance);
+    protected ValueWriterTest(final Class<T> writerClass, final Class<U> valueClass) {
+        super();
+        this.writerClass = Objects.requireNonNull(writerClass, "writerClass is null");
+        this.valueClass = Objects.requireNonNull(valueClass, "valueClass is null");
     }
+
+    protected final Class<T> writerClass;
+
+    protected final Class<U> valueClass;
 }

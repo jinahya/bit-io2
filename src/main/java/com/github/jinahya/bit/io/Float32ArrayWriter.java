@@ -22,7 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-class Float32ArrayWriter extends SequenceValueWriter<float[]> {
+class Float32ArrayWriter
+        extends SequenceValueWriter<float[]> {
 
     public Float32ArrayWriter(final int lengthSize) {
         super(lengthSize);

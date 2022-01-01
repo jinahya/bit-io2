@@ -35,7 +35,8 @@ import static java.util.Objects.requireNonNull;
  * @param <T> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public class ListAdapter<T> implements ValueAdapter<List<T>> {
+public class ListAdapter<T>
+        implements ValueAdapter<List<T>> {
 
     /**
      * Creates a new instance with specified arguments.

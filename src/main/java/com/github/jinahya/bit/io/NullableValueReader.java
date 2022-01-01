@@ -31,35 +31,33 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see NullableValueWriter
  */
-final class NullableValueReader<T> implements ValueReader<T> {
+final class NullableValueReader<T>
+        extends FilterValueReader<T> {
 
     /**
-     * Creates a new instance with specified adapter.
+     * Creates a new instance on top of specified reader.
      *
-     * @param wrapped the adapter to be wrapped.
+     * @param reader the reader to wrap.
      */
-    NullableValueReader(final ValueReader<? extends T> wrapped) {
-        super();
-        this.wrapped = requireNonNull(wrapped, "wrapped is null");
+    NullableValueReader(final ValueReader<? extends T> reader) {
+        super(reader);
     }
 
     /**
-     * {@inheritDoc} The {@code read(BitInput)} method of {@code NullableValueReader} class reads a {@code 1}-bit {@code
-     * boolean} flag and reads a value if and only if the flag is {@code true}.
+     * Reads a value from specified input. The {@code read(BitInput)} method of {@code NullableValueReader} class reads
+     * a {@code 1}-bit {@code int} flag and reads a value if and only if the flag is {@code 1}.
      *
      * @param input {@inheritDoc}
-     * @return the value read; maybe {@code null} if the flag is not {@code true}.
+     * @return the value read; maybe {@code null} if the flag is not {@code 0}.
      * @throws IOException {@inheritDoc}
      */
     @Override
     public T read(final BitInput input) throws IOException {
         requireNonNull(input, "input is null");
-        final boolean nonnull = input.readBoolean();
-        if (nonnull) {
-            return wrapped.read(input);
+        final int flag = input.readUnsignedInt(1);
+        if (flag == 0) {
+            return null;
         }
-        return null;
+        return super.read(input);
     }
-
-    private final ValueReader<? extends T> wrapped;
 }

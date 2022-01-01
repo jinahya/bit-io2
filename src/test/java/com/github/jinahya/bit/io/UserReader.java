@@ -24,7 +24,8 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.UserAdapter.NAME_ADAPTER;
 
-class UserReader implements ValueReader<User> {
+class UserReader
+        implements ValueReader<User> {
 
     @Override
     public User read(final BitInput input) throws IOException {
