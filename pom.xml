@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>bit-io2</artifactId>
-  <version>0.0.5-SNAPSHOT</version>
+  <version>0.0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
@@ -178,7 +178,7 @@
             </goals>
             <configuration>
               <rules>
-                <dependencyConvergence/>
+                <dependencyConvergence />
                 <requireJavaVersion>
                   <version>[1.8.0,)</version>
                 </requireJavaVersion>
@@ -206,6 +206,10 @@
         <version>3.2.0</version>
         <configuration>
           <archive>
+            <!-- https://dzone.com/articles/automatic-module-name-calling-all-java-library-maintainers -->
+            <manifestEntries>
+              <Automatic-Module-Name>com.github.jinahya.bit.io</Automatic-Module-Name>
+            </manifestEntries>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
         </configuration>
