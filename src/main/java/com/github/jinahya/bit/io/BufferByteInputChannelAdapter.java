@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * An extended class for adapting readable byte channels.
+ * An implementation uses a single-byte-capacity buffer for reading bytes from a channel.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

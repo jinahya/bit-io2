@@ -61,14 +61,14 @@ final class ByteIoTestParameters {
 
     static Stream<Arguments> buffer3() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
-        final ByteOutput output = BufferByteOutput.from(() -> newChannel(baos));
+        final ByteOutput output = BufferByteOutput.adapting(() -> newChannel(baos));
         final ByteInput input = BufferByteInput.adapting(() -> newChannel(new ByteArrayInputStream(baos.toByteArray())));
         return Stream.of(arguments(output, input));
     }
 
     static Stream<Arguments> buffer4() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
-        final ByteOutput output = BufferByteOutput.from(() -> newChannel(baos));
+        final ByteOutput output = BufferByteOutput.adapting(() -> newChannel(baos));
         final byte[] array;
         try {
             final Field f = ByteArrayOutputStream.class.getDeclaredField("buf");

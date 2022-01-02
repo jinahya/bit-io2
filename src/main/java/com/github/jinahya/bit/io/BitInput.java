@@ -344,7 +344,7 @@ public interface BitInput
 
     /**
      * Reads a value using specified reader. The {@code readValue(ValueReader)} method of {@code BitInput} interface
-     * invokes {@link ValueReader#read(BitInput)} method on specified {@code adapter} with {@code this} and returns the
+     * invokes {@link ValueReader#read(BitInput)} method on specified {@code reader} with {@code this} and returns the
      * result.
      *
      * @param reader the reader.
@@ -358,7 +358,7 @@ public interface BitInput
     }
 
     /**
-     * Skips specified number of bits by discarding bits.
+     * Reads (and discards) specified number of bits.
      *
      * @param bits the number of bits to skip; must be positive.
      * @throws IllegalArgumentException if {@code bits} is not positive.

@@ -365,12 +365,12 @@ public interface BitOutput
      * @throws IOException if an I/O error occurs.
      */
     default <T> void writeValue(final ValueWriter<? super T> writer, final T value) throws IOException {
-        Objects.requireNonNull(writer, "adapter is null");
+        Objects.requireNonNull(writer, "writer is null");
         writer.write(this, value);
     }
 
     /**
-     * Skips specified number of bits by padding zero bits.
+     * Writes specified number of zero-bits.
      *
      * @param bits the number of bit to skip; must be positive.
      * @throws IllegalArgumentException if {@code bits} is not positive.
@@ -378,7 +378,7 @@ public interface BitOutput
      */
     default void skip(int bits) throws IOException {
         if (bits <= 0) {
-            throw new IllegalArgumentException("bits(" + bits + ") <= 0");
+            throw new IllegalArgumentException("bits(" + bits + ") is not positive");
         }
         for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
             writeInt(false, Integer.SIZE, 0);
@@ -389,20 +389,20 @@ public interface BitOutput
     }
 
     /**
-     * Aligns to specified number of bytes by padding zero bits.
+     * Aligns to specified number of bytes by padding required number of zero-bits.
      *
      * @param bytes the number of bytes to align; must be positive.
-     * @return the number of bits padded while aligning.
+     * @return the number of zero-bits padded while aligning.
      * @throws IllegalArgumentException if {@code bytes} is not positive.
      * @throws IOException              if an I/O error occurs.
      */
     long align(int bytes) throws IOException;
 
     /**
-     * Aligns to a single byte by padding zero bits.  The {@code align()} method of {@code BitOutput} interface invokes
-     * {@link #align(int)} with {@value java.lang.Byte#BYTES}.
+     * Aligns to a single byte by padding required number of zero-bits.  The {@code align()} method of {@code BitOutput}
+     * interface invokes {@link #align(int)} with {@value java.lang.Byte#BYTES}.
      *
-     * @return the number of bits padded while aligning.
+     * @return the number of zero-bits padded while aligning.
      * @throws IOException if an I/O error occurs.
      * @see #align(int)
      */

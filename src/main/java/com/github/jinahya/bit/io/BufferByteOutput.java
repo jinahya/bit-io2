@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -35,19 +36,37 @@ public class BufferByteOutput
         extends ByteOutputAdapter<ByteBuffer> {
 
     /**
-     * Creates a new instance which writes bytes to a writable byte channel supplied by specified supplier.
+     * Creates a new instance which writes bytes to the channel supplied by specified supplier.
      *
-     * @param channelSupplier the supplier for the writable byte channel.
+     * @param channelSupplier the supplier of the channel.
      * @return a new instance.
      */
-    public static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        return new ByteBufferOutputChannelAdapter(() -> ByteBuffer.allocate(1), channelSupplier) {
-            @Override
-            protected void write(final ByteBuffer target, final int value) throws IOException {
-                super.write(target, value);
-                flush();
-            }
-        };
+    public static BufferByteOutput adapting(final Supplier<? extends WritableByteChannel> channelSupplier) {
+        return new BufferByteOutputChannelAdapter(() -> ByteBuffer.allocate(1), channelSupplier);
+    }
+
+    /**
+     * Creates a new instance which writes bytes to specified channel.
+     *
+     * @param channel the source channel to which bytes are written.
+     * @return a new instance.
+     */
+    public static BufferByteOutput adapting(final WritableByteChannel channel) {
+        Objects.requireNonNull(channel, "channel is null");
+        return adapting(() -> channel);
+    }
+
+    /**
+     * Creates a new instance which writes bytes from specified buffer.
+     *
+     * @param target the buffer to which bytes are written.
+     * @return a new instance.
+     */
+    public static ByteOutput of(final ByteBuffer target) {
+        Objects.requireNonNull(target, "target is null");
+        final ByteOutputAdapter<ByteBuffer> instance = new BufferByteOutput(empty());
+        instance.target(target);
+        return instance;
     }
 
     /**

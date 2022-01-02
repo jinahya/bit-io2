@@ -107,7 +107,7 @@ public class BitOutputAdapter
     @Override
     public long align(int bytes) throws IOException {
         if (bytes <= 0) {
-            throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
+            throw new IllegalArgumentException("bytes(" + bytes + ") is not positive");
         }
         long bits = 0L; // number of bits padded
         if (available < Byte.SIZE) {

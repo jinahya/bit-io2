@@ -97,7 +97,7 @@ public class BitInputAdapter
     @Override
     public long align(int bytes) throws IOException {
         if (bytes <= 0) {
-            throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
+            throw new IllegalArgumentException("bytes(" + bytes + ") is not positive");
         }
         long bits = 0L; // number of discarded bits
         if (available > 0) {

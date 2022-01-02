@@ -36,9 +36,9 @@ public class BufferByteInput
         extends ByteInputAdapter<ByteBuffer> {
 
     /**
-     * Creates a new instance which reads bytes from a readable byte channel supplied by specified supplier.
+     * Creates a new instance which reads bytes from the channel supplied by specified supplier.
      *
-     * @param channelSupplier the supplier for the readable byte channel.
+     * @param channelSupplier the supplier of the channel.
      * @return a new instance.
      */
     public static BufferByteInput adapting(final Supplier<? extends ReadableByteChannel> channelSupplier) {
@@ -47,9 +47,9 @@ public class BufferByteInput
     }
 
     /**
-     * Creates a new instance which reads bytes from a readable byte channel supplied by specified supplier.
+     * Creates a new instance which reads bytes from specified channel.
      *
-     * @param channel the supplier for the readable byte channel.
+     * @param channel the channel from which bytes are read.
      * @return a new instance.
      */
     public static BufferByteInput adapting(final ReadableByteChannel channel) {
@@ -58,7 +58,7 @@ public class BufferByteInput
     }
 
     /**
-     * Creates a new instance which reads bytes from specified byte buffer.
+     * Creates a new instance which reads bytes from specified buffer.
      *
      * @param source the byte buffer which bytes are read.
      * @return a new instance.
