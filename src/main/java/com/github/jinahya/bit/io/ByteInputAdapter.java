@@ -22,9 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * An abstract class implements {@link ByteInput} adapting a specific type of byte source.
@@ -53,7 +52,7 @@ public abstract class ByteInputAdapter<T>
      */
     public ByteInputAdapter(final Supplier<? extends T> sourceSupplier) {
         super();
-        this.sourceSupplier = requireNonNull(sourceSupplier, "sourceSupplier is null");
+        this.sourceSupplier = Objects.requireNonNull(sourceSupplier, "sourceSupplier is null");
     }
 
     /**
@@ -106,7 +105,7 @@ public abstract class ByteInputAdapter<T>
         if (source(false) != null) {
             throw new IllegalArgumentException("source already has been supplied");
         }
-        this.source = requireNonNull(source, "source is null");
+        this.source = Objects.requireNonNull(source, "source is null");
     }
 
     private final Supplier<? extends T> sourceSupplier;

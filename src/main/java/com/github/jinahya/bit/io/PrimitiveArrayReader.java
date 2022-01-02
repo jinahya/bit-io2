@@ -23,19 +23,17 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-
 abstract class PrimitiveArrayReader<T>
         implements ValueReader<T> {
 
     protected PrimitiveArrayReader(final int lengthSize) {
         super();
-        this.lengthSize = requireValidSizeForInt(true, lengthSize);
+        this.lengthSize = BitIoConstraints.requireValidSizeForInt(true, lengthSize);
     }
 
     protected int readLength(final BitInput input) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        return input.readUnsignedInt(lengthSize);
+        return BitIoUtils.readCount(input, lengthSize);
     }
 
     private final int lengthSize;

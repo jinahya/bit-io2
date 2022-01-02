@@ -21,11 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 /**
  * An interface for writing non-primitive object references.
@@ -33,7 +29,6 @@ import static java.util.Objects.requireNonNull;
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ValueReader
- * @see ValueAdapter
  */
 public interface ValueWriter<T> {
 
@@ -47,47 +42,14 @@ public interface ValueWriter<T> {
      * @throws IOException if an I/O error occurs.
      */
     static int writeLength(final BitOutput output, final int size, final int value) throws IOException {
-        requireNonNull(output, "output is null");
-        requireValidSizeForInt(true, size);
+        Objects.requireNonNull(output, "output is null");
+        BitIoConstraints.requireValidSizeForInt(true, size);
         if (value < 0) {
             throw new IllegalArgumentException("length(" + value + " is negative");
         }
         final int length = value & ((1 << size) - 1);
         output.writeUnsignedInt(size, length);
         return length;
-    }
-
-    /**
-     * Writes elements in specified collection using specified adapter.
-     *
-     * @param output     a bit output.
-     * @param size       the number of bits for the {@code size} of the collection.
-     * @param adapter    the value adapter for writing elements.
-     * @param collection the collection whose elements are written.
-     * @param <U>        element type parameter
-     * @throws IOException if an I/O error occurs.
-     */
-    static <U> void writeCollection(final BitOutput output, final int size, final ValueAdapter<? super U> adapter,
-                                    final Collection<? extends U> collection)
-            throws IOException {
-        requireNonNull(adapter, "adapter is null");
-        requireNonNull(collection, "collection is null");
-        final int length = writeLength(output, size, collection.size());
-        final Iterator<? extends U> iterator = collection.iterator();
-        for (int i = 0; i < length; i++) {
-            adapter.write(output, iterator.next());
-        }
-    }
-
-    /**
-     * Returns an adapter which pre-writes a {@code boolean} flag for indicating a nullability of the value.
-     *
-     * @param wrapped the adapter to be wrapped.
-     * @param <T>     value type parameter
-     * @return an adapter wraps specified adapter.
-     */
-    static <T> ValueWriter<T> nullable(final ValueWriter<? super T> wrapped) {
-        return new NullableValueWriter<>(wrapped);
     }
 
     /**

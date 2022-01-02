@@ -3,9 +3,8 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * An implementation uses a single-byte-capacity buffer for writing bytes to a writable channel.
@@ -24,7 +23,7 @@ class ByteBufferOutputChannelAdapter
     ByteBufferOutputChannelAdapter(final Supplier<? extends ByteBuffer> targetSupplier,
                                    final Supplier<? extends WritableByteChannel> channelSupplier) {
         super(targetSupplier);
-        this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        this.channelSupplier = Objects.requireNonNull(channelSupplier, "channelSupplier is null");
     }
 
     @Override
@@ -74,7 +73,7 @@ class ByteBufferOutputChannelAdapter
         if (channel(false) != null) {
             throw new IllegalStateException("channel already has been supplied");
         }
-        this.channel = requireNonNull(channel, "channel is null");
+        this.channel = Objects.requireNonNull(channel, "channel is null");
     }
 
     private final Supplier<? extends WritableByteChannel> channelSupplier;

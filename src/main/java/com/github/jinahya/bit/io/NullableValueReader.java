@@ -21,8 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 /**
  * A wrapper class for reading a null flag before reading values.
@@ -53,7 +52,7 @@ final class NullableValueReader<T>
      */
     @Override
     public T read(final BitInput input) throws IOException {
-        requireNonNull(input, "input is null");
+        Objects.requireNonNull(input, "input is null");
         final int flag = input.readUnsignedInt(1);
         if (flag == 0) {
             return null;

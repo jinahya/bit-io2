@@ -23,15 +23,14 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 public class ListWriter<T>
         extends SequenceValueWriter<List<T>> {
 
-    public ListWriter(final int lengthSize, final ValueAdapter<? super T> elementWriter) {
+    public ListWriter(final int lengthSize, final ValueWriter<? super T> elementWriter) {
         super(lengthSize);
-        this.elementWriter = requireNonNull(elementWriter, "elementWriter is null");
+        this.elementWriter = Objects.requireNonNull(elementWriter, "elementWriter is null");
     }
 
     @Override

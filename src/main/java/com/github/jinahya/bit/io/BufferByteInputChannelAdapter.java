@@ -4,9 +4,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * An extended class for adapting readable byte channels.
@@ -25,7 +24,7 @@ class BufferByteInputChannelAdapter
     BufferByteInputChannelAdapter(final Supplier<? extends ByteBuffer> sourceSupplier,
                                   final Supplier<? extends ReadableByteChannel> channelSupplier) {
         super(sourceSupplier);
-        this.channelSupplier = requireNonNull(channelSupplier, "channelSupplier is null");
+        this.channelSupplier = Objects.requireNonNull(channelSupplier, "channelSupplier is null");
     }
 
     @Override
@@ -65,7 +64,7 @@ class BufferByteInputChannelAdapter
         if (channel(false) != null) {
             throw new IllegalStateException("channel already has been supplied");
         }
-        this.channel = requireNonNull(channel, "channel is null");
+        this.channel = Objects.requireNonNull(channel, "channel is null");
     }
 
     private final Supplier<? extends ReadableByteChannel> channelSupplier;

@@ -23,19 +23,17 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-
 abstract class PrimitiveArrayWriter<T>
         implements ValueWriter<T> {
 
     protected PrimitiveArrayWriter(final int lengthSize) {
         super();
-        this.lengthSize = requireValidSizeForInt(true, lengthSize);
+        this.lengthSize = BitIoConstraints.requireValidSizeForInt(true, lengthSize);
     }
 
     protected void writeLength(final BitOutput output, final int length) throws IOException {
         Objects.requireNonNull(output, "output is null");
-        output.writeUnsignedInt(lengthSize, length);
+        BitIoUtils.writeCount(output, lengthSize, length);
     }
 
     private final int lengthSize;

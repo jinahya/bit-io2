@@ -21,11 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static com.github.jinahya.bit.io.BitIoConstants.mask;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static java.util.Objects.requireNonNull;
 
 /**
  * An implementation of {@link BitOutput} adapts an instance of {@link ByteOutput}.
@@ -43,7 +40,7 @@ public class BitOutputAdapter
      * @return a new instance.
      */
     public static BitOutput of(final ByteOutput output) {
-        requireNonNull(output, "output is null");
+        Objects.requireNonNull(output, "output is null");
         final BitOutputAdapter instance = new BitOutputAdapter(() -> null);
         instance.output(output);
         return instance;
@@ -56,7 +53,7 @@ public class BitOutputAdapter
      */
     public BitOutputAdapter(final Supplier<? extends ByteOutput> outputSupplier) {
         super();
-        this.outputSupplier = requireNonNull(outputSupplier, "outputSupplier is null");
+        this.outputSupplier = Objects.requireNonNull(outputSupplier, "outputSupplier is null");
     }
 
     /**
@@ -89,7 +86,7 @@ public class BitOutputAdapter
 
     @Override
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
-        requireValidSizeForInt(unsigned, size);
+        BitIoConstraints.requireValidSizeForInt(unsigned, size);
         if (!unsigned) {
             writeInt(true, 1, value < 0 ? 1 : 0);
             if (--size > 0) {
@@ -143,7 +140,7 @@ public class BitOutputAdapter
             return;
         }
         octet <<= size;
-        octet |= value & mask(size);
+        octet |= value & BitIoConstants.mask(size);
         available -= size;
         if (available == 0) {
             assert octet >= 0 && octet < 256;
@@ -168,7 +165,7 @@ public class BitOutputAdapter
         if (output(false) != null) {
             throw new IllegalStateException("output already has been supplied");
         }
-        this.output = requireNonNull(output, "output is null");
+        this.output = Objects.requireNonNull(output, "output is null");
     }
 
     private final Supplier<? extends ByteOutput> outputSupplier;

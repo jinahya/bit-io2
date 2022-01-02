@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -39,6 +40,7 @@ public class StreamByteOutput
      *
      * @param target the output stream to which bytes are written.
      * @return a new instance.
+     * @see StreamByteInput#of(InputStream)
      */
     public static ByteOutput of(final OutputStream target) {
         Objects.requireNonNull(target, "target is null");

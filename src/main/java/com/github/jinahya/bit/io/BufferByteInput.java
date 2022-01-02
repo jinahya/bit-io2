@@ -23,10 +23,8 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static java.nio.ByteBuffer.allocate;
-import static java.util.Objects.requireNonNull;
 
 /**
  * A byte input reads bytes from a {@link ByteBuffer}.
@@ -44,7 +42,8 @@ public class BufferByteInput
      * @return a new instance.
      */
     public static BufferByteInput adapting(final Supplier<? extends ReadableByteChannel> channelSupplier) {
-        return new BufferByteInputChannelAdapter(() -> (ByteBuffer) allocate(1).position(1), channelSupplier);
+        return new BufferByteInputChannelAdapter(() -> (ByteBuffer) ByteBuffer.allocate(1).position(1),
+                                                 channelSupplier);
     }
 
     /**
@@ -54,7 +53,7 @@ public class BufferByteInput
      * @return a new instance.
      */
     public static BufferByteInput adapting(final ReadableByteChannel channel) {
-        requireNonNull(channel, "channel is null");
+        Objects.requireNonNull(channel, "channel is null");
         return adapting(() -> channel);
     }
 
@@ -65,7 +64,7 @@ public class BufferByteInput
      * @return a new instance.
      */
     public static ByteInput of(final ByteBuffer source) {
-        requireNonNull(source, "source is null");
+        Objects.requireNonNull(source, "source is null");
         final ByteInputAdapter<ByteBuffer> instance = new BufferByteInput(empty());
         instance.source(source);
         return instance;

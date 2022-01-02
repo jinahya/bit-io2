@@ -20,13 +20,11 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-
 abstract class SequenceValueBase {
 
     SequenceValueBase(final int lengthSize) {
         super();
-        this.lengthSize = requireValidSizeForInt(true, lengthSize);
+        this.lengthSize = BitIoConstraints.requireValidSizeForInt(true, lengthSize);
     }
 
     final int lengthSize;

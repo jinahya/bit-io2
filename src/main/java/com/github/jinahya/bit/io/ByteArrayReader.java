@@ -22,15 +22,121 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-
 class ByteArrayReader
         extends PrimitiveArrayReader<byte[]> {
 
+    static class Unsigned
+            extends ByteArrayReader {
+
+        Unsigned(final int lengthSize, final int elementSize) {
+            super(lengthSize, BitIoConstraints.requireValidSizeForByte(true, elementSize));
+        }
+
+        @Override
+        byte readElement(final BitInput input) throws IOException {
+            return input.readUnsignedByte(elementSize);
+        }
+    }
+
+    static class Ascii
+            extends Unsigned {
+
+        Ascii(final int lengthSize) {
+            super(lengthSize, 7);
+        }
+    }
+
+    static class PrintableAscii
+            extends Ascii {
+
+        PrintableAscii(final int lengthSize) {
+            super(lengthSize);
+        }
+
+        @Override
+        byte readElement(final BitInput input) throws IOException {
+            final int e = input.readUnsignedInt(1);
+            if (e == 0b0) {
+                return (byte) (input.readUnsignedInt(6) + 0x20);
+            }
+            return (byte) (input.readUnsignedInt(5) + 0x60);
+        }
+    }
+
+    /**
+     * A writer for reading an array of UTF-8 bytes as a compressed manner.
+     *
+     * @see ByteArrayWriter.Utf8
+     */
+    static class Utf8
+            extends ByteArrayReader {
+
+        Utf8(final int lengthSize) {
+            super(lengthSize, Byte.SIZE);
+        }
+
+        @Override
+        void readElements(final BitInput input, final byte[] value) throws IOException {
+            for (int i = 0; i < value.length; i++) {
+                switch (input.readUnsignedInt(2)) {
+                    case 0b00:
+                        value[i] = (byte) input.readUnsignedInt(7);
+                        break;
+                    case 0b01:
+                        value[i] = (byte) (0b1100_0000 | input.readUnsignedInt(5));
+                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        break;
+                    case 0b10:
+                        value[i] = (byte) (0b1110_0000 | input.readUnsignedInt(4));
+                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        break;
+                    default: // 0b11
+                        value[i] = (byte) (0b1111_0000 | input.readUnsignedInt(3));
+                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates a new instance for reading an array of ASCII bytes.
+     *
+     * @param lengthSize    a number of bits for the length of an array.
+     * @param printableOnly a flag for printable characters only; {@code true} for printable characters only; {@code
+     *                      false} otherwise.
+     * @return a new instance.
+     */
+    public static ByteArrayReader ascii(final int lengthSize, final boolean printableOnly) {
+        if (printableOnly) {
+            return new PrintableAscii(lengthSize);
+        }
+        return new Ascii(lengthSize);
+    }
+
+    /**
+     * Creates a new instance for reading an array of UTF-8 bytes.
+     *
+     * @param lengthSize a number of bits for the length of an array.
+     * @return a new instance.
+     */
+    public static ByteArrayReader utf8(final int lengthSize) {
+        return new Utf8(lengthSize);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param lengthSize  a number of bits for the length of the array.
+     * @param elementSize a number of bits for each element in the array.
+     * @see ByteArrayWriter#ByteArrayWriter(int, int)
+     */
     public ByteArrayReader(final int lengthSize, final int elementSize) {
         super(lengthSize);
-        this.elementSize = requireValidSizeForInt(false, elementSize);
+        this.elementSize = BitIoConstraints.requireValidSizeForInt(false, elementSize);
     }
 
     @Override

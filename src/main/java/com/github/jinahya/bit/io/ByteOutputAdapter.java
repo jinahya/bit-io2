@@ -23,9 +23,8 @@ package com.github.jinahya.bit.io;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * An abstract class implements {@link ByteOutput} adapting a specific type of byte target.
@@ -54,7 +53,7 @@ public abstract class ByteOutputAdapter<T>
      */
     public ByteOutputAdapter(final Supplier<? extends T> targetSupplier) {
         super();
-        this.targetSupplier = requireNonNull(targetSupplier, "targetSupplier is null");
+        this.targetSupplier = Objects.requireNonNull(targetSupplier, "targetSupplier is null");
     }
 
     /**
@@ -125,7 +124,7 @@ public abstract class ByteOutputAdapter<T>
         if (target(false) != null) {
             throw new IllegalArgumentException("target already has been supplied");
         }
-        this.target = requireNonNull(target, "target is null");
+        this.target = Objects.requireNonNull(target, "target is null");
     }
 
     private final Supplier<? extends T> targetSupplier;

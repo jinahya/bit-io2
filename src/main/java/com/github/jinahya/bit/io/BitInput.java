@@ -22,13 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.Closeable;
 import java.io.IOException;
-
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
-import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.ThreadLocalRandom.current;
+import java.util.Objects;
 
 /**
  * An interface for reading values of an arbitrary number of bits.
@@ -71,7 +65,7 @@ public interface BitInput
      * @throws IOException if an I/O error occurs.
      */
     default byte readByte(final boolean unsigned, final int size) throws IOException {
-        return (byte) readInt(unsigned, requireValidSizeForByte(unsigned, size));
+        return (byte) readInt(unsigned, BitIoConstraints.requireValidSizeForByte(unsigned, size));
     }
 
     /**
@@ -124,7 +118,7 @@ public interface BitInput
      * @see #readInt(boolean, int)
      */
     default short readShort(final boolean unsigned, final int size) throws IOException {
-        return (short) readInt(unsigned, requireValidSizeForShort(unsigned, size));
+        return (short) readInt(unsigned, BitIoConstraints.requireValidSizeForShort(unsigned, size));
     }
 
     /**
@@ -152,26 +146,6 @@ public interface BitInput
      */
     default short readShort16() throws IOException {
         return readShort(Short.SIZE);
-    }
-
-    /**
-     * Reads a {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order. The {@code
-     * readShort16Le()} method of {@code BitInput} interface invokes {@link #readShort16()} method and returns the
-     * result whose bytes are reversed.
-     *
-     * @return a {@value java.lang.Short#SIZE}-bit signed {@code short} value read in little endian byte order.
-     * @throws IOException if an I/O error occurs.
-     * @see #readShort16()
-     * @see Short#reverseBytes(short)
-     * @deprecated Read a value with {@link #readShort16()} and reverse bytes using {@link Short#reverseBytes(short)}
-     * method.
-     */
-    @Deprecated // forRemoval = true
-    default short readShort16Le() throws IOException {
-        if (current().nextBoolean()) {
-            return Short.reverseBytes(readShort16());
-        }
-        return (short) ((readByte8() & 0xFF) | (readByte8() << Byte.SIZE));
     }
 
     /**
@@ -228,26 +202,6 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@value java.lang.Integer#SIZE}-bit signed {@code int} value in little endian byte order. The {@code
-     * readInt32Le()} method of {@code BitInput} interface invokes {@link #readInt32()} and returns the result whose
-     * bytes are reversed.
-     *
-     * @return a {@value java.lang.Integer#SIZE}-bit signed {@code int} value.
-     * @throws IOException if an I/O error occurs.
-     * @see #readInt32()
-     * @see Integer#reverseBytes(int)
-     * @deprecated Read the value with {@link #readInt32()} method and reverse bytes using {@link
-     * Integer#reverseBytes(int)} method.
-     */
-    @Deprecated // forRemoval = true
-    default int readInt32Le() throws IOException {
-        if (current().nextBoolean()) {
-            return Integer.reverseBytes(readInt32());
-        }
-        return readShort16Le() & 0xFFFF | readShort16Le() << Short.SIZE;
-    }
-
-    /**
      * Reads an unsigned {@code int} value of specified number of bits. The {@code readUnsignedInt(int)} method of
      * {@code BitInput} interface invokes {@link #readInt(boolean, int)} method with {@code true} and {@code size}
      * argument and returns the result.
@@ -273,7 +227,7 @@ public interface BitInput
      * @see #readInt(boolean, int)
      */
     default long readLong(final boolean unsigned, int size) throws IOException {
-        requireValidSizeForLong(unsigned, size);
+        BitIoConstraints.requireValidSizeForLong(unsigned, size);
         long value = 0L;
         if (!unsigned) {
             value -= readInt(true, 1);
@@ -321,25 +275,6 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@value java.lang.Long#SIZE}-bit signed {@code long} value in little endian byte order. The {@code
-     * readLong64Le()} method of {@code BitInput} interface invokes {@link #readLong64()} method and returns the result
-     * whose byte are reversed.
-     *
-     * @return a {@value java.lang.Long#SIZE}-bit signed {@code long} value read.
-     * @throws IOException if an I/O error occurs.
-     * @see Long#reverseBytes(long)
-     * @deprecated Read a value with {@link #readLong64()} and reverse bytes with {@link Long#reverseBytes(long)}
-     * method.
-     */
-    @Deprecated // forRemoval = true
-    default long readLong64Le() throws IOException {
-        if (current().nextBoolean()) {
-            return Long.reverseBytes(readLong64());
-        }
-        return readInt32Le() & 0xFFFFFFFFL | ((long) readInt32Le()) << Integer.SIZE;
-    }
-
-    /**
      * Reads an unsigned {@code long} value of specified number of bits. The {@code readUnsignedLong(int)} method of
      * {@code BitInput} interface invokes {@link #readLong(boolean, int)} method with {@code true} and given {@code
      * size} arguments and returns the result.
@@ -363,7 +298,7 @@ public interface BitInput
      * @see #readInt(boolean, int)
      */
     default char readChar(final int size) throws IOException {
-        return (char) readUnsignedInt(requireValidSizeForChar(size));
+        return (char) readUnsignedInt(BitIoConstraints.requireValidSizeForChar(size));
     }
 
     /**
@@ -408,17 +343,18 @@ public interface BitInput
     }
 
     /**
-     * Reads a value using specified adapter. The {@code readValue(ValueAdapter)} method of {@code BitInput} interface
-     * invokes {@link ValueAdapter#read(BitInput)} method on specified {@code adapter} with {@code this} and returns the
+     * Reads a value using specified reader. The {@code readValue(ValueReader)} method of {@code BitInput} interface
+     * invokes {@link ValueReader#read(BitInput)} method on specified {@code adapter} with {@code this} and returns the
      * result.
      *
-     * @param adapter the adapter.
-     * @param <T>     value type parameter
+     * @param reader the reader.
+     * @param <T>    value type parameter
      * @return a value read.
      * @throws IOException if an I/O error occurs.
      */
-    default <T> T readValue(final ValueAdapter<? extends T> adapter) throws IOException {
-        return requireNonNull(adapter, "adapter is null").read(this);
+    default <T> T readValue(final ValueReader<? extends T> reader) throws IOException {
+        Objects.requireNonNull(reader, "reader is null");
+        return reader.read(this);
     }
 
     /**

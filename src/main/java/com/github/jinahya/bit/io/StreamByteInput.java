@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -40,6 +41,7 @@ public class StreamByteInput
      *
      * @param source the Input stream to which bytes are written.
      * @return a new instance.
+     * @see StreamByteOutput#of(OutputStream)
      */
     public static ByteInput of(final InputStream source) {
         Objects.requireNonNull(source, "source is null");

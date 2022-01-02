@@ -23,14 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
-import static java.lang.Float.floatToRawIntBits;
-import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.ThreadLocalRandom.current;
+import java.util.Objects;
 
 /**
  * An interface for writing values of an arbitrary number of bits.
@@ -85,7 +78,7 @@ public interface BitOutput
      * @see #writeInt(boolean, int, int)
      */
     default void writeByte(final boolean unsigned, final int size, final byte value) throws IOException {
-        writeInt(unsigned, requireValidSizeForByte(unsigned, size), value);
+        writeInt(unsigned, BitIoConstraints.requireValidSizeForByte(unsigned, size), value);
     }
 
     /**
@@ -142,7 +135,7 @@ public interface BitOutput
      * @see #writeInt(boolean, int, int)
      */
     default void writeShort(final boolean unsigned, final int size, final short value) throws IOException {
-        writeInt(unsigned, requireValidSizeForShort(unsigned, size), value);
+        writeInt(unsigned, BitIoConstraints.requireValidSizeForShort(unsigned, size), value);
     }
 
     /**
@@ -169,27 +162,6 @@ public interface BitOutput
      */
     default void writeShort16(final short value) throws IOException {
         writeShort(Short.SIZE, value);
-    }
-
-    /**
-     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order. The
-     * {@code writeShort16Le(short)} method of {@code BitOutput} interface invokes {@link #writeShort16(short)} method
-     * with given value as its bytes reversed.
-     *
-     * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
-     * @throws IOException if an I/O error occurs.
-     * @see Short#reverseBytes(short)
-     * @deprecated Reverse specified value's bytes with {@link Short#reverseBytes(short)} method and writes the result
-     * with {@link #writeShort16(short)} method.
-     */
-    @Deprecated // forRemoval = true
-    default void writeShort16Le(final short value) throws IOException {
-        if (current().nextBoolean()) {
-            writeShort16(Short.reverseBytes(value));
-            return;
-        }
-        writeByte8((byte) value);
-        writeByte8((byte) (value >> Byte.SIZE));
     }
 
     /**
@@ -245,27 +217,6 @@ public interface BitOutput
     }
 
     /**
-     * Writes specified {@value java.lang.Integer#SIZE}-bit signed {@code int} value in little endian byte order. The
-     * {@code writeInt32Le(int)} method of {@code BitOutput} interface invokes {@link #writeInt32(int)} with given
-     * {@code value} as its byte are reversed.
-     *
-     * @param value the value to write.
-     * @throws IOException if an I/O error occurs.
-     * @see Integer#reverseBytes(int)
-     * @deprecated Reverse specified value's bytes using {@link Integer#reverseBytes(int)} and write the result with
-     * {@link #writeInt32(int)} method.
-     */
-    @Deprecated // forRemoval = true
-    default void writeInt32Le(final int value) throws IOException {
-        if (current().nextBoolean()) {
-            writeInt32(Integer.reverseBytes(value));
-            return;
-        }
-        writeShort16Le((short) value);
-        writeShort16Le((short) (value >> Short.SIZE));
-    }
-
-    /**
      * Writes specified unsigned {@code int} value of specified bit size. The {@code writeUnsignedInt(int, int)} method
      * of {@code BitOutput} interface invokes {@link #writeInt(boolean, int, int)} with {@code true} and given
      * arguments.
@@ -290,7 +241,7 @@ public interface BitOutput
      * @throws IOException if an I/O error occurs.
      */
     default void writeLong(final boolean unsigned, int size, final long value) throws IOException {
-        requireValidSizeForLong(unsigned, size);
+        BitIoConstraints.requireValidSizeForLong(unsigned, size);
         if (!unsigned) {
             writeInt(true, 1, value < 0L ? 0x01 : 0x00);
             if (--size > 0) {
@@ -335,27 +286,6 @@ public interface BitOutput
     }
 
     /**
-     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value in little endian byte order. The
-     * {@code writeLong64Le(long)} method of {@code BitOutput} interface invokes {@link #writeLong64(long)} method with
-     * given {@code value} argument as its bytes are reversed.
-     *
-     * @param value the value to write.
-     * @throws IOException if an I/O error occurs.
-     * @see Long#reverseBytes(long)
-     * @deprecated Reverse specified value's bytes using {@link Long#reverseBytes(long)} method and write the result
-     * with {@link #writeLong64(long)} method.
-     */
-    @Deprecated // forRemoval
-    default void writeLong64Le(final long value) throws IOException {
-        if (current().nextBoolean()) {
-            writeLong64(Long.reverseBytes(value));
-            return;
-        }
-        writeInt32Le((int) value);
-        writeInt32Le((int) (value >> Integer.SIZE));
-    }
-
-    /**
      * Writes specified unsigned {@code long} value of specified bit size. The {@code writeUnsignedLong(int, long)}
      * method of {@code BitOutput} interface invokes {@link #writeLong(boolean, int, long)} method with {@code true} and
      * given arguments.
@@ -381,7 +311,7 @@ public interface BitOutput
      * @see #writeUnsignedInt(int, int)
      */
     default void writeChar(final int size, final char value) throws IOException {
-        writeUnsignedInt(requireValidSizeForChar(size), value);
+        writeUnsignedInt(BitIoConstraints.requireValidSizeForChar(size), value);
     }
 
     /**
@@ -408,7 +338,7 @@ public interface BitOutput
      * @see #writeInt32(int)
      */
     default void writeFloat32(final float value) throws IOException {
-        writeInt(false, Integer.SIZE, floatToRawIntBits(value));
+        writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
     }
 
     /**
@@ -426,17 +356,17 @@ public interface BitOutput
     }
 
     /**
-     * Writes specified value using specified adapter. The {@code writeValue(ValueAdapter, T)} method of {@code
-     * BitOutput} interface invokes {@link ValueAdapter#write(BitOutput, Object)} with {@code this} and specified
-     * value.
+     * Writes specified value using specified writer. The {@code writeValue(ValueWriter, T)} method of {@code BitOutput}
+     * interface invokes {@link ValueWriter#write(BitOutput, Object)} with {@code this} and specified value.
      *
-     * @param adapter the adapter.
-     * @param value   the value to write.
-     * @param <T>     value type parameter
+     * @param writer the writer.
+     * @param value  the value to write.
+     * @param <T>    value type parameter
      * @throws IOException if an I/O error occurs.
      */
-    default <T> void writeValue(final ValueAdapter<? super T> adapter, final T value) throws IOException {
-        requireNonNull(adapter, "adapter is null").write(this, value);
+    default <T> void writeValue(final ValueWriter<? super T> writer, final T value) throws IOException {
+        Objects.requireNonNull(writer, "adapter is null");
+        writer.write(this, value);
     }
 
     /**

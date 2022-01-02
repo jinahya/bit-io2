@@ -21,8 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 /**
  * A reader class wraps another reader.
@@ -41,7 +40,7 @@ public abstract class FilterValueReader<T>
      */
     protected FilterValueReader(final ValueReader<? extends T> reader) {
         super();
-        this.reader = requireNonNull(reader, "reader is null");
+        this.reader = Objects.requireNonNull(reader, "reader is null");
     }
 
     /**

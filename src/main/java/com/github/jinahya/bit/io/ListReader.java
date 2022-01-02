@@ -23,20 +23,19 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 public class ListReader<T>
         extends SequenceValueReader<List<T>> {
 
     public ListReader(final int lengthSize, final ValueReader<? extends T> elementAdapter) {
         super(lengthSize);
-        this.elementAdapter = requireNonNull(elementAdapter, "elementAdapter is null");
+        this.elementAdapter = Objects.requireNonNull(elementAdapter, "elementAdapter is null");
     }
 
     @Override
     public List<T> read(final BitInput input) throws IOException {
-        requireNonNull(input, "input is null");
+        Objects.requireNonNull(input, "input is null");
         final int length = readLength(input);
         final List<T> value = new ArrayList<>();
         for (int i = 0; i < length; i++) {

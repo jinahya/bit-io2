@@ -21,8 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 /**
  * A wrapper class for writing a null flag before writing values.
@@ -40,7 +39,7 @@ public abstract class FilterValueWriter<T>
      */
     protected FilterValueWriter(final ValueWriter<? super T> writer) {
         super();
-        this.writer = requireNonNull(writer, "wrapped is null");
+        this.writer = Objects.requireNonNull(writer, "wrapped is null");
     }
 
     /**

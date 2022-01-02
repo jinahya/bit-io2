@@ -22,9 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsignedLong;
-
 class LongArrayReader
         extends PrimitiveArrayReader<long[]> {
 
@@ -32,7 +29,7 @@ class LongArrayReader
             extends LongArrayReader {
 
         public Unsigned(final int lengthSize, final int elementSize) {
-            super(lengthSize, requireValidSizeForUnsignedLong(elementSize));
+            super(lengthSize, BitIoConstraints.requireValidSizeForUnsignedLong(elementSize));
         }
 
         @Override
@@ -43,7 +40,7 @@ class LongArrayReader
 
     public LongArrayReader(final int lengthSize, final int elementSize) {
         super(lengthSize);
-        this.elementSize = requireValidSizeForLong(elementSize);
+        this.elementSize = BitIoConstraints.requireValidSizeForLong(elementSize);
     }
 
     @Override

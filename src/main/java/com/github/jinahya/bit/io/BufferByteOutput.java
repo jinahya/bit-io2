@@ -25,8 +25,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.util.function.Supplier;
 
-import static java.nio.ByteBuffer.allocate;
-
 /**
  * A byte output writes bytes to a {@link ByteBuffer}.
  *
@@ -43,7 +41,7 @@ public class BufferByteOutput
      * @return a new instance.
      */
     public static BufferByteOutput from(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        return new ByteBufferOutputChannelAdapter(() -> allocate(1), channelSupplier) {
+        return new ByteBufferOutputChannelAdapter(() -> ByteBuffer.allocate(1), channelSupplier) {
             @Override
             protected void write(final ByteBuffer target, final int value) throws IOException {
                 super.write(target, value);

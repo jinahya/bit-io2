@@ -22,9 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForUnsignedInt;
-
 class IntArrayReader
         extends PrimitiveArrayReader<int[]> {
 
@@ -32,7 +29,7 @@ class IntArrayReader
             extends IntArrayReader {
 
         Unsigned(final int lengthSize, final int elementSize) {
-            super(lengthSize, requireValidSizeForUnsignedInt(elementSize));
+            super(lengthSize, BitIoConstraints.requireValidSizeForUnsignedInt(elementSize));
         }
 
         @Override
@@ -43,7 +40,7 @@ class IntArrayReader
 
     public IntArrayReader(final int lengthSize, final int elementSize) {
         super(lengthSize);
-        this.elementSize = requireValidSizeForInt(false, elementSize);
+        this.elementSize = BitIoConstraints.requireValidSizeForInt(false, elementSize);
     }
 
     @Override

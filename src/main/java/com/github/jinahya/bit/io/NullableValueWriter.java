@@ -21,8 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-
-import static java.util.Objects.requireNonNull;
+import java.util.Objects;
 
 /**
  * A writer class for writing a {@code null} flag before writing a value.
@@ -53,7 +52,7 @@ final class NullableValueWriter<T>
      */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
-        requireNonNull(output, "output is null");
+        Objects.requireNonNull(output, "output is null");
         final int flag = value == null ? 0 : 1;
         output.writeUnsignedInt(1, flag);
         if (flag == 0) {

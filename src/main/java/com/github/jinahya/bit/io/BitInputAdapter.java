@@ -21,11 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static com.github.jinahya.bit.io.BitIoConstants.mask;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static java.util.Objects.requireNonNull;
 
 /**
  * An implementation of {@link BitInput} adapts an instance of {@link ByteInput}.
@@ -43,7 +40,7 @@ public class BitInputAdapter
      * @return a new instance.
      */
     public static BitInput of(final ByteInput input) {
-        requireNonNull(input, "input is null");
+        Objects.requireNonNull(input, "input is null");
         final BitInputAdapter instance = new BitInputAdapter(() -> null);
         instance.input(input);
         return instance;
@@ -56,7 +53,7 @@ public class BitInputAdapter
      */
     public BitInputAdapter(final Supplier<? extends ByteInput> inputSupplier) {
         super();
-        this.inputSupplier = requireNonNull(inputSupplier, "inputSupplier is null");
+        this.inputSupplier = Objects.requireNonNull(inputSupplier, "inputSupplier is null");
     }
 
     /**
@@ -76,7 +73,7 @@ public class BitInputAdapter
 
     @Override
     public int readInt(final boolean unsigned, int size) throws IOException {
-        requireValidSizeForInt(unsigned, size);
+        BitIoConstraints.requireValidSizeForInt(unsigned, size);
         int value = 0;
         if (!unsigned) {
             value -= readInt(true, 1);
@@ -137,7 +134,7 @@ public class BitInputAdapter
             return (unsigned8(available) << required) | unsigned8(required);
         }
         available -= size;
-        return (octet >> available) & mask(size);
+        return (octet >> available) & BitIoConstants.mask(size);
     }
 
 //    private ByteInput input() {
@@ -161,7 +158,7 @@ public class BitInputAdapter
         if (input(false) != null) {
             throw new IllegalStateException("input already has been supplied");
         }
-        this.input = requireNonNull(input, "input is null");
+        this.input = Objects.requireNonNull(input, "input is null");
     }
 
     private final Supplier<? extends ByteInput> inputSupplier;
