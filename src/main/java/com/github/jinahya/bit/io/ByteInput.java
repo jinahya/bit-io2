@@ -38,6 +38,7 @@ public interface ByteInput
      * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
+     * @implSpec The default implementation does nothing.
      */
     @Override
     default void close() throws IOException {

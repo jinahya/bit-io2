@@ -38,6 +38,7 @@ public interface ByteOutput
      * Flushes this output by writing any buffered output to the underlying output.
      *
      * @throws IOException if an I/O error occurs.
+     * @implSpec The default implementation does nothing.
      */
     @Override
     default void flush() throws IOException {
@@ -48,6 +49,7 @@ public interface ByteOutput
      * Closes this output and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
+     * @implSpec The default implementation does nothing.
      */
     @Override
     default void close() throws IOException {

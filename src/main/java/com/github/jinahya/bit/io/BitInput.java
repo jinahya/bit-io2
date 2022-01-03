@@ -34,10 +34,10 @@ public interface BitInput
         extends Closeable {
 
     /**
-     * Closes this input and releases any system resources associated with it. The {@code close} method of {@code
-     * BitInput} interface does nothing.
+     * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
+     * @implSpec The default implementation does nothing.
      */
     @Override
     default void close() throws IOException {
@@ -58,7 +58,7 @@ public interface BitInput
     /**
      * Reads a {@code byte} value of specified number of bits.
      *
-     * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
+     * @param unsigned a flag for indicating an unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} - ({@code
      *                 unsigned ? 1 : 0})), both inclusive.
      * @return a {@code byte} value of specified bit {@code size}.
