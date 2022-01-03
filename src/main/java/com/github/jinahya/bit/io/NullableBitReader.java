@@ -24,40 +24,39 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * A reader class wraps another reader.
+ * A wrapper class for reading a null flag before reading values.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see NullableValueWriter
+ * @see NullableBitWriter
  */
-public abstract class FilterValueReader<T>
-        implements ValueReader<T> {
+final class NullableBitReader<T>
+        extends FilterBitReader<T> {
 
     /**
-     * Creates a new instance with specified reader.
+     * Creates a new instance on top of specified reader.
      *
-     * @param reader the reader to filter.
+     * @param reader the reader to wrap.
      */
-    protected FilterValueReader(final ValueReader<? extends T> reader) {
-        super();
-        this.reader = Objects.requireNonNull(reader, "reader is null");
+    NullableBitReader(final BitReader<? extends T> reader) {
+        super(reader);
     }
 
     /**
-     * {@inheritDoc} The {@code read(BitInput)} method of {@code FilterValueReader} class invokes {@link
-     * #read(BitInput)} method on {@link #reader}.
+     * Reads a value from specified input. The {@code read(BitInput)} method of {@code NullableValueReader} class reads
+     * a {@code 1}-bit {@code int} value and reads a value if and only if the value is {@code 1}.
      *
      * @param input {@inheritDoc}
-     * @return {@inheritDoc}
+     * @return the value read; maybe {@code null} if the flag is not {@code 0}.
      * @throws IOException {@inheritDoc}
      */
     @Override
     public T read(final BitInput input) throws IOException {
-        return reader.read(input);
+        Objects.requireNonNull(input, "input is null");
+        final int flag = input.readUnsignedInt(1);
+        if (flag == 0) {
+            return null;
+        }
+        return super.read(input);
     }
-
-    /**
-     * The reader wrapped by this reader.
-     */
-    protected final ValueReader<? extends T> reader;
 }

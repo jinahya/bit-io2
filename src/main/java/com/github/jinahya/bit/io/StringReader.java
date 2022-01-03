@@ -32,7 +32,7 @@ import java.util.Objects;
  * @see StringWriter
  */
 public class StringReader
-        implements ValueReader<String> {
+        implements BitReader<String> {
 
     /**
      * Creates a new instance for reading ASCII strings.

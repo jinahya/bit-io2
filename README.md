@@ -22,15 +22,15 @@ Add this module as a dependency. Check the [central](https://search.maven.org/se
 Two interfaces are defined for reading/writing non-octet aligned values and two more interfaces are defined for reading/writing octets from/to various sources/targets.
 
 ```
-BitInput <- (Adapter) <- ByteInput <- (Adapter) <- DataInput
-                                                   InputStream
-                                                   ...
+BitInput(Adapter) <- ByteInput <- (Adapter) <- DataInput
+                                               InputStream
+                                               ...
 ```
 
 ```
-BitOutput -> (Adapter) -> ByteOutput -> (Adapter) -> DataOutput
-                                                     OutputStream
-                                                     ...
+BitOutput(Adapter) -> ByteOutput -> (Adapter) -> DataOutput
+                                                 OutputStream
+                                                 ...
 ```
 
 See [Specifications](https://github.com/jinahya/bit-io2/wiki/Specifications) and [Recipes](https://github.com/jinahya/bit-io2/wiki/Recipes) for more information.

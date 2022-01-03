@@ -357,14 +357,14 @@ public interface BitOutput
 
     /**
      * Writes specified value using specified writer. The {@code writeValue(ValueWriter, T)} method of {@code BitOutput}
-     * interface invokes {@link ValueWriter#write(BitOutput, Object)} with {@code this} and specified value.
+     * interface invokes {@link BitWriter#write(BitOutput, Object)} with {@code this} and specified value.
      *
      * @param writer the writer.
      * @param value  the value to write.
      * @param <T>    value type parameter
      * @throws IOException if an I/O error occurs.
      */
-    default <T> void writeValue(final ValueWriter<? super T> writer, final T value) throws IOException {
+    default <T> void writeValue(final BitWriter<? super T> writer, final T value) throws IOException {
         Objects.requireNonNull(writer, "writer is null");
         writer.write(this, value);
     }

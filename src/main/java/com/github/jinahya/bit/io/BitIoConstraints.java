@@ -91,9 +91,9 @@ final class BitIoConstraints {
     }
 
     /**
-     * Tests whether specified bit size is valid for a {@code char} value.
+     * Tests whether specified bit-size is valid for a {@code char} value.
      *
-     * @param size the bit size to test.
+     * @param size the bit-size to test.
      * @return specified {@code size}.
      * @throws IllegalArgumentException if {@code size} is not valid for a {@code char} value.
      */

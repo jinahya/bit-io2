@@ -23,14 +23,33 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * An abstract writer class for reading an array of primitive values.
+ *
+ * @param <T> array type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see PrimitiveArrayReader
+ */
 abstract class PrimitiveArrayWriter<T>
-        implements ValueWriter<T> {
+        implements BitWriter<T> {
 
+    /**
+     * Creates a new instance with specified number of bits for {@code length}.
+     *
+     * @param lengthSize the number of bits for the {@code length}.
+     */
     protected PrimitiveArrayWriter(final int lengthSize) {
         super();
-        this.lengthSize = BitIoConstraints.requireValidSizeForInt(true, lengthSize);
+        this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
     }
 
+    /**
+     * Writes specified {@code length} value.
+     *
+     * @param output a bit-output to which the length is written.
+     * @param length the value of {@code length} to write.
+     * @throws IOException if an I/O error occurs.
+     */
     protected void writeLength(final BitOutput output, final int length) throws IOException {
         Objects.requireNonNull(output, "output is null");
         BitIoUtils.writeCount(output, lengthSize, length);

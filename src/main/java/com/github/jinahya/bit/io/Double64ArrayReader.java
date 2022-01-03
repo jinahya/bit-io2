@@ -21,10 +21,34 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.UnaryOperator;
 
 class Double64ArrayReader
-        extends SequenceValueReader<double[]> {
+        extends PrimitiveArrayReader<double[]> {
 
+    public static double[] readFrom(final BitInput input, final UnaryOperator<BitReader<double[]>> operator)
+            throws IOException {
+        Objects.requireNonNull(input, "input is null");
+        Objects.requireNonNull(operator, "operator is null");
+        return operator.apply(new Double64ArrayReader(31)).read(input);
+    }
+
+    public static double[] readFrom(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
+        return readFrom(input, UnaryOperator.identity());
+    }
+
+    public static double[] readNullableFrom(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
+        return readFrom(input, BitReaders::nullable);
+    }
+
+    /**
+     * Creates a new instance with specified length-size.
+     *
+     * @param lengthSize the number of bits for the {@code length} of an array.
+     */
     public Double64ArrayReader(final int lengthSize) {
         super(lengthSize);
     }
@@ -33,9 +57,17 @@ class Double64ArrayReader
     public double[] read(final BitInput input) throws IOException {
         final int length = readLength(input);
         final double[] value = new double[length];
-        for (int i = 0; i < value.length; i++) {
-            value[i] = input.readDouble64();
-        }
+        readElements(input, value);
         return value;
+    }
+
+    void readElements(final BitInput input, final double[] elements) throws IOException {
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = readElement(input);
+        }
+    }
+
+    double readElement(final BitInput input) throws IOException {
+        return input.readDouble64();
     }
 }

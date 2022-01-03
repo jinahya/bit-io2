@@ -37,7 +37,7 @@ public interface BitInput
      * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation does nothing.
+     * @implNote The default implementation does nothing.
      */
     @Override
     default void close() throws IOException {
@@ -344,7 +344,7 @@ public interface BitInput
 
     /**
      * Reads a value using specified reader. The {@code readValue(ValueReader)} method of {@code BitInput} interface
-     * invokes {@link ValueReader#read(BitInput)} method on specified {@code reader} with {@code this} and returns the
+     * invokes {@link BitReader#read(BitInput)} method on specified {@code reader} with {@code this} and returns the
      * result.
      *
      * @param reader the reader.
@@ -352,7 +352,7 @@ public interface BitInput
      * @return a value read.
      * @throws IOException if an I/O error occurs.
      */
-    default <T> T readValue(final ValueReader<? extends T> reader) throws IOException {
+    default <T> T readValue(final BitReader<? extends T> reader) throws IOException {
         Objects.requireNonNull(reader, "reader is null");
         return reader.read(this);
     }

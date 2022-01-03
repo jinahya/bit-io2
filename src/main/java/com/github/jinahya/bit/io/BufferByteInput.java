@@ -42,8 +42,8 @@ public class BufferByteInput
      * @return a new instance.
      */
     public static BufferByteInput adapting(final Supplier<? extends ReadableByteChannel> channelSupplier) {
-        return new BufferByteInputChannelAdapter(() -> (ByteBuffer) ByteBuffer.allocate(1).position(1),
-                                                 channelSupplier);
+        final Supplier<ByteBuffer> bufferSupplier = () -> (ByteBuffer) ByteBuffer.allocate(1).position(1);
+        return new BufferByteInputChannelAdapter(bufferSupplier, channelSupplier);
     }
 
     /**
@@ -63,9 +63,9 @@ public class BufferByteInput
      * @param source the byte buffer which bytes are read.
      * @return a new instance.
      */
-    public static ByteInput of(final ByteBuffer source) {
+    public static BufferByteInput of(final ByteBuffer source) {
         Objects.requireNonNull(source, "source is null");
-        final ByteInputAdapter<ByteBuffer> instance = new BufferByteInput(empty());
+        final BufferByteInput instance = new BufferByteInput(BitIoUtils.empty());
         instance.source(source);
         return instance;
     }

@@ -34,14 +34,14 @@ public class BitInputAdapter
         implements BitInput {
 
     /**
-     * Creates a new instance on top of byte input.
+     * Creates a new instance which reads bytes from specified byte input.
      *
-     * @param input the byte input.
+     * @param input the byte input from which bytes are read.
      * @return a new instance.
      */
     public static BitInput of(final ByteInput input) {
         Objects.requireNonNull(input, "input is null");
-        final BitInputAdapter instance = new BitInputAdapter(() -> null);
+        final BitInputAdapter instance = new BitInputAdapter(BitIoUtils.empty());
         instance.input(input);
         return instance;
     }
@@ -136,13 +136,6 @@ public class BitInputAdapter
         available -= size;
         return (octet >> available) & BitIoConstants.mask(size);
     }
-
-//    private ByteInput input() {
-//        if (input(false) == null) {
-//            input(inputSupplier.get());
-//        }
-//        return input(false);
-//    }
 
     private ByteInput input(final boolean get) {
         if (get) {

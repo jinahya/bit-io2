@@ -20,17 +20,25 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
+/**
+ * Implementations of {@link BitReader}.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+public final class BitReaders {
 
-abstract class SequenceValueReader<T>
-        extends SequenceValueBase
-        implements ValueReader<T> {
-
-    SequenceValueReader(final int lengthSize) {
-        super(lengthSize);
+    /**
+     * Returns a wrapper reader which pre-reads a {@code boolean} flag indicating a {@code null} value.
+     *
+     * @param reader a reader to wrap.
+     * @param <T>    value type parameter
+     * @return a wrapper reader.
+     */
+    public static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
+        return new NullableBitReader<>(reader);
     }
 
-    int readLength(final BitInput input) throws IOException {
-        return ValueReader.readLength(input, lengthSize);
+    private BitReaders() {
+        throw new AssertionError("instantiation is not allowed");
     }
 }

@@ -42,9 +42,9 @@ public class StreamByteOutput
      * @return a new instance.
      * @see StreamByteInput#of(InputStream)
      */
-    public static ByteOutput of(final OutputStream target) {
+    public static StreamByteOutput of(final OutputStream target) {
         Objects.requireNonNull(target, "target is null");
-        final ByteOutputAdapter<OutputStream> instance = new StreamByteOutput(empty());
+        final StreamByteOutput instance = new StreamByteOutput(BitIoUtils.empty());
         instance.target(target);
         return instance;
     }

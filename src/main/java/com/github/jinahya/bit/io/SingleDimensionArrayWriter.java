@@ -21,26 +21,30 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
-public class ListWriter<T>
-        extends SequenceValueWriter<List<T>> {
+class SingleDimensionArrayWriter<E>
+        implements BitWriter<E[]> {
 
-    public ListWriter(final int lengthSize, final ValueWriter<? super T> elementWriter) {
-        super(lengthSize);
+    SingleDimensionArrayWriter(final int lengthSize, final Class<E> componentType,
+                               final BitWriter<? super E> elementWriter) {
+        super();
+        this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
+        this.componentType = Objects.requireNonNull(componentType, "componentType is null");
         this.elementWriter = Objects.requireNonNull(elementWriter, "elementWriter is null");
     }
 
     @Override
-    public void write(final BitOutput output, final List<T> value) throws IOException {
-        final int length = writeLength(output, value.size());
-        final Iterator<? extends T> iterator = value.iterator();
-        for (int i = 0; i < length; i++) {
-            elementWriter.write(output, iterator.next());
+    public void write(final BitOutput output, final E[] value) throws IOException {
+        BitIoUtils.writeCount(output, lengthSize, value.length);
+        for (final E element : value) {
+            elementWriter.write(output, element);
         }
     }
 
-    private final ValueWriter<? super T> elementWriter;
+    private final int lengthSize;
+
+    private final Class<E> componentType;
+
+    private final BitWriter<? super E> elementWriter;
 }

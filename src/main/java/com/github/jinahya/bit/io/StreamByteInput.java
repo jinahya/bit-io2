@@ -43,9 +43,9 @@ public class StreamByteInput
      * @return a new instance.
      * @see StreamByteOutput#of(OutputStream)
      */
-    public static ByteInput of(final InputStream source) {
+    public static StreamByteInput of(final InputStream source) {
         Objects.requireNonNull(source, "source is null");
-        final ByteInputAdapter<InputStream> instance = new StreamByteInput(empty());
+        final StreamByteInput instance = new StreamByteInput(BitIoUtils.empty());
         instance.source(source);
         return instance;
     }

@@ -28,11 +28,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class BitIoUtils_Size_Test {
+class BitIoUtils_Size_Int_Test {
 
-    //    @Disabled
     @Test
-    void size_NotNegative_Zero() {
+    void size_One_Zero() {
         final int value = 0;
         final int size = BitIoUtils.size(value);
         log.debug("size for {}: {}", value, size);
@@ -40,7 +39,15 @@ class BitIoUtils_Size_Test {
     }
 
     @Test
-    void size_NotNegative_One() {
+    void size_Two_NegativeOne() {
+        final int value = -1;
+        final int size = BitIoUtils.size(value);
+        log.debug("size for {}: {}", value, size);
+        assertThat(size).isEqualTo(2);
+    }
+
+    @Test
+    void size_One_PositiveOne() {
         final int value = 1;
         final int size = BitIoUtils.size(value);
         log.debug("size for {}: {}", value, size);
@@ -48,18 +55,34 @@ class BitIoUtils_Size_Test {
     }
 
     @Test
-    void size_NotNegative_MaxValue() {
+    void size_SIZE_MinValue() {
+        final int value = Integer.MIN_VALUE;
+        final int size = BitIoUtils.size(value);
+        log.debug("size for {}: {} (MIN_VALUE)", value, size);
+        assertThat(size).isEqualTo(Integer.SIZE);
+    }
+
+    @Test
+    void size_SIZEm1_MaxValue() {
         final int value = Integer.MAX_VALUE;
         final int size = BitIoUtils.size(value);
-        log.debug("size for {}: {}", value, size);
+        log.debug("size for {}: {} (MAX_VALUE)", value, size);
         assertThat(size).isEqualTo(Integer.SIZE - 1);
     }
 
     @Test
-    void size_NotNegative_Random() {
+    void size_LtSIZE_RandomPositive() {
         final int value = ThreadLocalRandom.current().nextInt() & Integer.MAX_VALUE;
         final int size = BitIoUtils.size(value);
-        log.debug("size for {}: {}", value, size);
+        log.debug("size for {}: {} (random positive)", value, size);
         assertThat(size).isPositive().isLessThan(Integer.SIZE);
+    }
+
+    @Test
+    void size_LeSIZE_RandomNegative() {
+        final int value = ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE;
+        final int size = BitIoUtils.size(value);
+        log.debug("size for {}: {} (random negative)", value, size);
+        assertThat(size).isPositive().isLessThanOrEqualTo(Integer.SIZE);
     }
 }

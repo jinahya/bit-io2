@@ -35,14 +35,14 @@ public class DataByteOutput
         extends ByteOutputAdapter<DataOutput> {
 
     /**
-     * Creates a new instance writes byte to specified data output.
+     * Creates a new instance writes bytes to specified data output.
      *
      * @param target the data output to which bytes are written.
      * @return a new instance.
      */
-    public static ByteOutput of(final DataOutput target) {
+    public static DataByteOutput of(final DataOutput target) {
         Objects.requireNonNull(target, "target is null");
-        final ByteOutputAdapter<DataOutput> instance = new DataByteOutput(empty());
+        final DataByteOutput instance = new DataByteOutput(BitIoUtils.empty());
         instance.target(target);
         return instance;
     }

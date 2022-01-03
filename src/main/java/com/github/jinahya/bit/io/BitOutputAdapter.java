@@ -34,9 +34,9 @@ public class BitOutputAdapter
         implements BitOutput {
 
     /**
-     * Creates a new instance with read bytes from specified byte input.
+     * Creates a new instance which writes bytes to specified byte output.
      *
-     * @param output the byte input.
+     * @param output the byte output to which bytes are written.
      * @return a new instance.
      */
     public static BitOutput of(final ByteOutput output) {

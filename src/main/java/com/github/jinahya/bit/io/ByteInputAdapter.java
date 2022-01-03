@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * An abstract class implements {@link ByteInput} adapting a specific type of byte source.
+ * An abstract class implements {@link ByteInput} for adapting a specific type of byte-source.
  *
  * @param <T> byte source parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -36,31 +36,21 @@ public abstract class ByteInputAdapter<T>
         implements ByteInput {
 
     /**
-     * Returns a supplier supplies {@code null}.
+     * Creates a new instance with specified byte-source supplier.
      *
-     * @param <T> result type parameter
-     * @return a supplier results {@code null}.
+     * @param sourceSupplier the byte-source supplier.
      */
-    static <T> Supplier<T> empty() {
-        return () -> null;
-    }
-
-    /**
-     * Creates a new instance with specified source supplier.
-     *
-     * @param sourceSupplier the source supplier.
-     */
-    public ByteInputAdapter(final Supplier<? extends T> sourceSupplier) {
+    protected ByteInputAdapter(final Supplier<? extends T> sourceSupplier) {
         super();
         this.sourceSupplier = Objects.requireNonNull(sourceSupplier, "sourceSupplier is null");
     }
 
     /**
-     * {@inheritDoc} {@inheritDoc} The {@code close()} method of {@code ByteInputAdapter} class invokes {@link
-     * Closeable#close()} method on the byte source which may not has been initialized yet in which case the method does
-     * nothing.
+     * {@inheritDoc}
      *
      * @throws IOException {@inheritDoc}
+     * @implNote The {@code close()} method of {@code ByteInputAdapter} class invokes {@link Closeable#close()} method
+     * on the byte source which may not has been initialized yet in which case the method does nothing.
      */
     @Override
     public void close() throws IOException {
@@ -71,11 +61,12 @@ public abstract class ByteInputAdapter<T>
     }
 
     /**
-     * {@inheritDoc} The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a
-     * byte source and returns the result.
+     * {@inheritDoc}
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @implNote The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a byte
+     * source and returns the result.
      */
     @Override
     public int read() throws IOException {
@@ -86,7 +77,8 @@ public abstract class ByteInputAdapter<T>
      * Reads an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value from specified source.
      *
      * @param source the source from which an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value is read.
-     * @return an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value read from the {@code source}.
+     * @return an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value read from the {@code source}; between
+     * {@code 0} and {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
      */
     protected abstract int read(T source) throws IOException;
@@ -103,7 +95,7 @@ public abstract class ByteInputAdapter<T>
 
     void source(final T source) {
         if (source(false) != null) {
-            throw new IllegalArgumentException("source already has been supplied");
+            throw new IllegalStateException("source already has been supplied");
         }
         this.source = Objects.requireNonNull(source, "source is null");
     }

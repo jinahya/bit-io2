@@ -42,7 +42,8 @@ public class BufferByteOutput
      * @return a new instance.
      */
     public static BufferByteOutput adapting(final Supplier<? extends WritableByteChannel> channelSupplier) {
-        return new BufferByteOutputChannelAdapter(() -> ByteBuffer.allocate(1), channelSupplier);
+        final Supplier<ByteBuffer> bufferSupplier = () -> ByteBuffer.allocate(1);
+        return new BufferByteOutputChannelAdapter(bufferSupplier, channelSupplier);
     }
 
     /**
@@ -62,9 +63,9 @@ public class BufferByteOutput
      * @param target the buffer to which bytes are written.
      * @return a new instance.
      */
-    public static ByteOutput of(final ByteBuffer target) {
+    public static BufferByteOutput of(final ByteBuffer target) {
         Objects.requireNonNull(target, "target is null");
-        final ByteOutputAdapter<ByteBuffer> instance = new BufferByteOutput(empty());
+        final BufferByteOutput instance = new BufferByteOutput(BitIoUtils.empty());
         instance.target(target);
         return instance;
     }

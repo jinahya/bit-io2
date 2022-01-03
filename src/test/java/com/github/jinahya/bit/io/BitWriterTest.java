@@ -20,17 +20,24 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
+import java.util.Objects;
 
-abstract class SequenceValueWriter<T>
-        extends SequenceValueBase
-        implements ValueWriter<T> {
+/**
+ * An abstract class for testing subclasses {@link BitWriter} class.
+ *
+ * @param <T> writer type parameter
+ * @param <U> value type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+abstract class BitWriterTest<T extends BitWriter<U>, U> {
 
-    SequenceValueWriter(final int lengthSize) {
-        super(lengthSize);
+    protected BitWriterTest(final Class<T> writerClass, final Class<U> valueClass) {
+        super();
+        this.writerClass = Objects.requireNonNull(writerClass, "writerClass is null");
+        this.valueClass = Objects.requireNonNull(valueClass, "valueClass is null");
     }
 
-    int writeLength(final BitOutput output, final int value) throws IOException {
-        return ValueWriter.writeLength(output, lengthSize, value);
-    }
+    protected final Class<T> writerClass;
+
+    protected final Class<U> valueClass;
 }

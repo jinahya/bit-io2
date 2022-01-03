@@ -20,12 +20,23 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-abstract class SequenceValueBase {
+import java.io.IOException;
 
-    SequenceValueBase(final int lengthSize) {
-        super();
-        this.lengthSize = BitIoConstraints.requireValidSizeForInt(true, lengthSize);
-    }
+/**
+ * An interface for reading objects of a specific type.
+ *
+ * @param <T> value type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see BitWriter
+ */
+public interface BitReader<T> {
 
-    final int lengthSize;
+    /**
+     * Reads a value from specified input.
+     *
+     * @param input the input from which the value is read.
+     * @return a value read.
+     * @throws IOException if an I/O error occurs.
+     */
+    T read(BitInput input) throws IOException;
 }

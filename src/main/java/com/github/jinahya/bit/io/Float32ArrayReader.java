@@ -21,21 +21,53 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.UnaryOperator;
 
 class Float32ArrayReader
-        extends SequenceValueReader<float[]> {
+        extends PrimitiveArrayReader<float[]> {
 
+    public static float[] readFrom(final BitInput input, final UnaryOperator<BitReader<float[]>> operator)
+            throws IOException {
+        Objects.requireNonNull(input, "input is null");
+        Objects.requireNonNull(operator, "operator is null");
+        return operator.apply(new Float32ArrayReader(31)).read(input);
+    }
+
+    public static float[] readFrom(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
+        return readFrom(input, UnaryOperator.identity());
+    }
+
+    public static float[] readNullableFrom(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
+        return readFrom(input, BitReaders::nullable);
+    }
+
+    /**
+     * Creates a new instance with specified length-size.
+     *
+     * @param lengthSize the number of bits for the {@code length} of an array.
+     */
     public Float32ArrayReader(final int lengthSize) {
         super(lengthSize);
     }
 
     @Override
     public float[] read(final BitInput input) throws IOException {
-        final int length = input.readUnsignedInt(lengthSize);
+        final int length = readLength(input);
         final float[] value = new float[length];
-        for (int i = 0; i < value.length; i++) {
-            value[i] = input.readFloat32();
-        }
+        readElements(input, value);
         return value;
+    }
+
+    void readElements(final BitInput input, final float[] elements) throws IOException {
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = readElement(input);
+        }
+    }
+
+    float readElement(final BitInput input) throws IOException {
+        return input.readFloat32();
     }
 }

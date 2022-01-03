@@ -21,19 +21,52 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.UnaryOperator;
 
 class Double64ArrayWriter
-        extends SequenceValueWriter<double[]> {
+        extends PrimitiveArrayWriter<double[]> {
 
+    public static void writeTo(final BitOutput output, final UnaryOperator<BitWriter<double[]>> operator,
+                               final double[] value)
+            throws IOException {
+        Objects.requireNonNull(output, "output is null");
+        operator.apply(new Double64ArrayWriter(31)).write(output, value);
+    }
+
+    public static void writeTo(final BitOutput output, final double[] value) throws IOException {
+        Objects.requireNonNull(output, "output is null");
+        Objects.requireNonNull(value, "value is null");
+        writeTo(output, UnaryOperator.identity(), value);
+    }
+
+    public static void writeNullableTo(final BitOutput output, final double[] value) throws IOException {
+        Objects.requireNonNull(output, "output is null");
+        writeTo(output, BitWriters::nullable, value);
+    }
+
+    /**
+     * Creates a new instance with specified length-size.
+     *
+     * @param lengthSize the number of bits for the {@code length} of an array.
+     */
     public Double64ArrayWriter(final int lengthSize) {
         super(lengthSize);
     }
 
     @Override
     public void write(final BitOutput output, final double[] value) throws IOException {
-        final int length = writeLength(output, value.length);
-        for (int i = 0; i < length; i++) {
-            output.writeDouble64(value[i]);
+        writeLength(output, value.length);
+        writeElements(output, value);
+    }
+
+    void writeElements(final BitOutput output, final double[] elements) throws IOException {
+        for (final double element : elements) {
+            writeElement(output, element);
         }
+    }
+
+    void writeElement(final BitOutput output, final double element) throws IOException {
+        output.writeDouble64(element);
     }
 }

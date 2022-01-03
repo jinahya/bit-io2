@@ -23,21 +23,21 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * An abstract class for testing subclasses {@link ValueWriter} class.
+ * An abstract class for testing subclasses of {@link BitReader} class.
  *
- * @param <T> writer type parameter
+ * @param <T> reader type parameter
  * @param <U> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-abstract class ValueWriterTest<T extends ValueWriter<U>, U> {
+abstract class BitReaderTest<T extends BitReader<U>, U> {
 
-    protected ValueWriterTest(final Class<T> writerClass, final Class<U> valueClass) {
+    protected BitReaderTest(final Class<T> readerClass, final Class<U> valueClass) {
         super();
-        this.writerClass = Objects.requireNonNull(writerClass, "writerClass is null");
+        this.readerClass = Objects.requireNonNull(readerClass, "readerClass is null");
         this.valueClass = Objects.requireNonNull(valueClass, "valueClass is null");
     }
 
-    protected final Class<T> writerClass;
+    protected final Class<T> readerClass;
 
     protected final Class<U> valueClass;
 }

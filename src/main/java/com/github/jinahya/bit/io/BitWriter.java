@@ -20,24 +20,23 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.Objects;
+import java.io.IOException;
 
 /**
- * An abstract class for testing subclasses of {@link ValueReader} class.
+ * An interface for writing objects of a specific type.
  *
- * @param <T> reader type parameter
- * @param <U> value type parameter
+ * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see BitReader
  */
-abstract class ValueReaderTest<T extends ValueReader<U>, U> {
+public interface BitWriter<T> {
 
-    protected ValueReaderTest(final Class<T> readerClass, final Class<U> valueClass) {
-        super();
-        this.readerClass = Objects.requireNonNull(readerClass, "readerClass is null");
-        this.valueClass = Objects.requireNonNull(valueClass, "valueClass is null");
-    }
-
-    protected final Class<T> readerClass;
-
-    protected final Class<U> valueClass;
+    /**
+     * Writes specified value to specified output.
+     *
+     * @param output the output to which the value is written.
+     * @param value  the value to write.
+     * @throws IOException if an I/O error occurs.
+     */
+    void write(BitOutput output, T value) throws IOException;
 }

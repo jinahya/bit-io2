@@ -24,27 +24,27 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * A wrapper class for writing a null flag before writing values.
+ * A writer class for writing a {@code null} flag before writing a value.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public abstract class FilterValueWriter<T>
-        implements ValueWriter<T> {
+final class NullableBitWriter<T>
+        extends FilterBitWriter<T> {
 
     /**
-     * Creates a new instance wrapping specified writer.
+     * Creates a new instance on top of specified writer.
      *
      * @param writer the writer to wrap.
      */
-    protected FilterValueWriter(final ValueWriter<? super T> writer) {
-        super();
-        this.writer = Objects.requireNonNull(writer, "wrapped is null");
+    NullableBitWriter(final BitWriter<? super T> writer) {
+        super(writer);
     }
 
     /**
-     * {@inheritDoc} The {@code write(BitOutput, Object)} method of {@code FilterValueWriter} class invokes {@link
-     * ValueWriter#write(BitOutput, Object)} method on {@link #writer} with {@code output} and {@code value}.
+     * Writes specified value to specified output. The {@code write(BitOutput, Object)} method of {@code
+     * NullableValueWriter} class writes a {@code 1}-bit {@code int} flag indicates a nullability of given value and
+     * writes the value if and only if the value is not {@code null}.
      *
      * @param output {@inheritDoc}
      * @param value  {@inheritDoc}
@@ -52,11 +52,12 @@ public abstract class FilterValueWriter<T>
      */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
-        writer.write(output, value);
+        Objects.requireNonNull(output, "output is null");
+        final int flag = value == null ? 0 : 1;
+        output.writeUnsignedInt(1, flag);
+        if (flag == 0) {
+            return;
+        }
+        super.write(output, value);
     }
-
-    /**
-     * The writer wrapped by this writer.
-     */
-    protected final ValueWriter<? super T> writer;
 }

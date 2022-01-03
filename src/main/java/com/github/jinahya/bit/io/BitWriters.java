@@ -20,7 +20,12 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-public final class ValueWriters<T> {
+/**
+ * Implementations of {@link BitWriter}.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+public final class BitWriters {
 
     /**
      * Returns a wrapper which pre-writes a {@code boolean} flag indicating whether the value is {@code null}.
@@ -29,11 +34,11 @@ public final class ValueWriters<T> {
      * @param <T>     value type parameter
      * @return a wrapper writer.
      */
-    public static <T> ValueWriter<T> nullable(final ValueWriter<? super T> wrapped) {
-        return new NullableValueWriter<>(wrapped);
+    public static <T> BitWriter<T> nullable(final BitWriter<? super T> wrapped) {
+        return new NullableBitWriter<>(wrapped);
     }
 
-    private ValueWriters() {
+    private BitWriters() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

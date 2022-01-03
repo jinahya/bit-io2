@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * An abstract class implements {@link ByteOutput} adapting a specific type of byte target.
+ * An abstract class implements {@link ByteOutput} for adapting a specific type of byte-target.
  *
  * @param <T> byte target parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -37,30 +37,21 @@ public abstract class ByteOutputAdapter<T>
         implements ByteOutput {
 
     /**
-     * Returns a supplier supplies {@code null}.
-     *
-     * @param <T> result type parameter
-     * @return a supplier results {@code null}.
-     */
-    static <T> Supplier<T> empty() {
-        return () -> null;
-    }
-
-    /**
      * Creates a new instance with specified target supplier.
      *
      * @param targetSupplier the target supplier.
      */
-    public ByteOutputAdapter(final Supplier<? extends T> targetSupplier) {
+    protected ByteOutputAdapter(final Supplier<? extends T> targetSupplier) {
         super();
         this.targetSupplier = Objects.requireNonNull(targetSupplier, "targetSupplier is null");
     }
 
     /**
-     * {@inheritDoc} The {@code flush()} method of {@code ByteOutputAdapter} class invokes {@link Flushable#flush()}
-     * method on the byte target which may not has been initialized yet in which case this method does nothing.
+     * {@inheritDoc}
      *
      * @throws IOException {@inheritDoc}
+     * @implNote The {@code flush()} method of {@code ByteOutputAdapter} class invokes {@link Flushable#flush()} method
+     * on the byte target which may not has been initialized yet in which case this method does nothing.
      */
     @Override
     public void flush() throws IOException {
@@ -71,10 +62,11 @@ public abstract class ByteOutputAdapter<T>
     }
 
     /**
-     * {@inheritDoc} The {@code close()} method of {@code ByteOutputAdapter} class invokes {@link Closeable#close()}
-     * method on the byte target which may not has been initialized yet in which case this method does nothing.
+     * {@inheritDoc}
      *
      * @throws IOException {@inheritDoc}
+     * @implNote The {@code close()} method of {@code ByteOutputAdapter} class invokes {@link Closeable#close()} method
+     * on the byte-target which may not has been initialized yet in which case this method does nothing.
      */
     @Override
     public void close() throws IOException {
@@ -85,44 +77,41 @@ public abstract class ByteOutputAdapter<T>
     }
 
     /**
-     * {@inheritDoc} The {@code write(int)} method of {@code ByteOutputAdapter} class invokes {@link #write(Object,
-     * int)} method with a byte target and specified value.
+     * {@inheritDoc}
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @implNote The {@code write(int)} method of {@code ByteOutputAdapter} class invokes {@link #write(Object, int)}
+     * method with a byte target and specified value.
      */
     @Override
     public void write(final int value) throws IOException {
-        write(target(), value);
+        write(target(true), value);
     }
 
     /**
      * Writes specified {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to specified target.
      *
      * @param target the target to which the {@code value} is written.
-     * @param value  the {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to write; between {@code 1} and
+     * @param value  the {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to write; between {@code 0} and
      *               {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
      */
     protected abstract void write(T target, int value) throws IOException;
 
-    T target() {
-        if (target(false) == null) {
-            target(targetSupplier.get());
-        }
-        return target;
-    }
-
     T target(final boolean get) {
         if (get) {
-            return target();
+            if (target(false) == null) {
+                target(targetSupplier.get());
+            }
+            return target(false);
         }
         return target;
     }
 
     void target(final T target) {
         if (target(false) != null) {
-            throw new IllegalArgumentException("target already has been supplied");
+            throw new IllegalStateException("target already has been supplied");
         }
         this.target = Objects.requireNonNull(target, "target is null");
     }

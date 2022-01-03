@@ -24,40 +24,41 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * A writer class for writing a {@code null} flag before writing a value.
+ * A wrapper class for writing a null flag before writing values.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see FilterBitReader
  */
-final class NullableValueWriter<T>
-        extends FilterValueWriter<T> {
+public abstract class FilterBitWriter<T>
+        implements BitWriter<T> {
 
     /**
-     * Creates a new instance on top of specified writer.
+     * Creates a new instance wrapping specified writer.
      *
      * @param writer the writer to wrap.
      */
-    NullableValueWriter(final ValueWriter<? super T> writer) {
-        super(writer);
+    protected FilterBitWriter(final BitWriter<? super T> writer) {
+        super();
+        this.writer = Objects.requireNonNull(writer, "wrapped is null");
     }
 
     /**
-     * Writes specified value to specified output. The {@code write(BitOutput, Object)} method of {@code
-     * NullableValueWriter} class writes a {@code 1}-bit {@code int} flag indicates a nullability of given value and
-     * writes the value if and only if the value is not {@code null}.
+     * {@inheritDoc}
      *
      * @param output {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @implNote The {@code write(BitOutput, Object)} method of {@code FilterBitWriter} class invokes {@link
+     * BitWriter#write(BitOutput, Object)} method on {@link #writer} with {@code output} and {@code value}.
      */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        final int flag = value == null ? 0 : 1;
-        output.writeUnsignedInt(1, flag);
-        if (flag == 0) {
-            return;
-        }
-        super.write(output, value);
+        writer.write(output, value);
     }
+
+    /**
+     * The writer wrapped by this writer.
+     */
+    protected final BitWriter<? super T> writer;
 }

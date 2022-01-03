@@ -58,7 +58,7 @@ class ByteArrayUtf8Test {
     void test(final byte[] expected, final int lengthSize) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final BitOutput output = BitOutputAdapter.of(StreamByteOutput.of(baos));
-        final ValueWriter<byte[]> writer = ByteArrayWriter.utf8(lengthSize);
+        final BitWriter<byte[]> writer = ByteArrayWriter.utf8(lengthSize);
         writer.write(output, expected);
         final long padded = output.align();
         output.flush();
@@ -66,7 +66,7 @@ class ByteArrayUtf8Test {
                   (baos.size() / (double) expected.length) * 100.0d);
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         final BitInput input = BitInputAdapter.of(StreamByteInput.of(bais));
-        final ValueReader<byte[]> reader = ByteArrayReader.utf8(lengthSize);
+        final BitReader<byte[]> reader = ByteArrayReader.utf8(lengthSize);
         final byte[] actual = reader.read(input);
         final long discarded = input.align();
         assertThat(actual).isEqualTo(expected);
