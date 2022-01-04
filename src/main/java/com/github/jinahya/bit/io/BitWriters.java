@@ -28,14 +28,16 @@ package com.github.jinahya.bit.io;
 public final class BitWriters {
 
     /**
-     * Returns a wrapper which pre-writes a {@code boolean} flag indicating whether the value is {@code null}.
+     * Returns a writer which handles nullable values.
      *
-     * @param wrapped a writer to wrap.
-     * @param <T>     value type parameter
+     * @param writer a writer to wrap.
+     * @param <T>    value type parameter
      * @return a wrapper writer.
+     * @deprecated Use {@link BitWriter#nullable(BitWriter)}
      */
-    public static <T> BitWriter<T> nullable(final BitWriter<? super T> wrapped) {
-        return new NullableBitWriter<>(wrapped);
+    @Deprecated
+    public static <T> BitWriter<T> nullable(final BitWriter<? super T> writer) {
+        return BitWriter.nullable(writer);
     }
 
     private BitWriters() {

@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * A writer class for writing a {@code null} flag before writing a value.
+ * A class for writing nullable values.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -35,20 +35,20 @@ final class NullableBitWriter<T>
     /**
      * Creates a new instance on top of specified writer.
      *
-     * @param writer the writer to wrap.
+     * @param writer the writer to filter.
      */
     NullableBitWriter(final BitWriter<? super T> writer) {
         super(writer);
     }
 
     /**
-     * Writes specified value to specified output. The {@code write(BitOutput, Object)} method of {@code
-     * NullableValueWriter} class writes a {@code 1}-bit {@code int} flag indicates a nullability of given value and
-     * writes the value if and only if the value is not {@code null}.
+     * {@inheritDoc}
      *
      * @param output {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @implSpec The overridden implementation writes a {@code 1}-bit {@code int} value({@code 0b0} for {@code null},
+     * {@code 0b1} for non-{@code null}) and writes {@code value} if and only if the value is not {@code null}.
      */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {

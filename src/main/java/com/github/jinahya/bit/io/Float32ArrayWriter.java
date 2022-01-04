@@ -42,7 +42,7 @@ class Float32ArrayWriter
 
     public static void writeNullableTo(final BitOutput output, final float[] value) throws IOException {
         Objects.requireNonNull(output, "output is null");
-        writeTo(output, BitWriters::nullable, value);
+        writeTo(output, BitWriter::nullable, value);
     }
 
     /**

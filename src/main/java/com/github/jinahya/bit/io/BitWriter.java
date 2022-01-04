@@ -32,6 +32,17 @@ import java.io.IOException;
 public interface BitWriter<T> {
 
     /**
+     * Returns a writer handles {@code null} values.
+     *
+     * @param writer the writer for writing values.
+     * @param <T>    value type parameter
+     * @return a writer handles {@code null} values.
+     */
+    static <T> BitWriter<T> nullable(final BitWriter<? super T> writer) {
+        return new NullableBitWriter<>(writer);
+    }
+
+    /**
      * Writes specified value to specified output.
      *
      * @param output the output to which the value is written.

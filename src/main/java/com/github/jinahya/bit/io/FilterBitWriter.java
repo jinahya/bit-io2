@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * A wrapper class for writing a null flag before writing values.
+ * A writer class for filtering other writers.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -34,13 +34,13 @@ public abstract class FilterBitWriter<T>
         implements BitWriter<T> {
 
     /**
-     * Creates a new instance wrapping specified writer.
+     * Creates a new instance on top of specified writer.
      *
-     * @param writer the writer to wrap.
+     * @param writer the writer to filter.
      */
     protected FilterBitWriter(final BitWriter<? super T> writer) {
         super();
-        this.writer = Objects.requireNonNull(writer, "wrapped is null");
+        this.writer = Objects.requireNonNull(writer, "writer is null");
     }
 
     /**

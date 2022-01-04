@@ -32,6 +32,17 @@ import java.io.IOException;
 public interface BitReader<T> {
 
     /**
+     * Returns a reader handles nullable values.
+     *
+     * @param reader a reader for reading values.
+     * @param <T>    value type parameter
+     * @return a reader handles nullable values.
+     */
+    static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
+        return new NullableBitReader<>(reader);
+    }
+
+    /**
      * Reads a value from specified input.
      *
      * @param input the input from which the value is read.

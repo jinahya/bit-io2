@@ -43,12 +43,13 @@ final class NullableBitReader<T>
     }
 
     /**
-     * Reads a value from specified input. The {@code read(BitInput)} method of {@code NullableValueReader} class reads
-     * a {@code 1}-bit {@code int} value and reads a value if and only if the value is {@code 1}.
+     * Reads a value from specified input.
      *
      * @param input {@inheritDoc}
      * @return the value read; maybe {@code null} if the flag is not {@code 0}.
      * @throws IOException {@inheritDoc}
+     * @implSpec The overridden implementation reads a {@code 1}-bit {@code int} value and reads a value if and only if
+     * the value is {@code 0b1}.
      */
     @Override
     public T read(final BitInput input) throws IOException {

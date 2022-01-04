@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * A reader class wraps another reader.
+ * A reader class for filtering other readers.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;

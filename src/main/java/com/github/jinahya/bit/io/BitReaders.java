@@ -33,9 +33,11 @@ public final class BitReaders {
      * @param reader a reader to wrap.
      * @param <T>    value type parameter
      * @return a wrapper reader.
+     * @deprecated Use {@link BitReader#nullable(BitReader)}
      */
+    @Deprecated
     public static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
-        return new NullableBitReader<>(reader);
+        return BitReader.nullable(reader);
     }
 
     private BitReaders() {

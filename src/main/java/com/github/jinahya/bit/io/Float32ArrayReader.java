@@ -41,7 +41,7 @@ class Float32ArrayReader
 
     public static float[] readNullableFrom(final BitInput input) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        return readFrom(input, BitReaders::nullable);
+        return readFrom(input, BitReader::nullable);
     }
 
     /**

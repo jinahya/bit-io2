@@ -41,25 +41,25 @@ class ByteArrayReader
     static class Ascii
             extends Unsigned {
 
+        static class Printable
+                extends Ascii {
+
+            Printable(final int lengthSize) {
+                super(lengthSize);
+            }
+
+            @Override
+            byte readElement(final BitInput input) throws IOException {
+                final int e = input.readUnsignedInt(1);
+                if (e == 0b0) {
+                    return (byte) (input.readUnsignedInt(6) + 0x20);
+                }
+                return (byte) (input.readUnsignedInt(5) + 0x60);
+            }
+        }
+
         Ascii(final int lengthSize) {
             super(lengthSize, 7);
-        }
-    }
-
-    static class PrintableAscii
-            extends Ascii {
-
-        PrintableAscii(final int lengthSize) {
-            super(lengthSize);
-        }
-
-        @Override
-        byte readElement(final BitInput input) throws IOException {
-            final int e = input.readUnsignedInt(1);
-            if (e == 0b0) {
-                return (byte) (input.readUnsignedInt(6) + 0x20);
-            }
-            return (byte) (input.readUnsignedInt(5) + 0x60);
         }
     }
 
@@ -123,7 +123,7 @@ class ByteArrayReader
      */
     public static ByteArrayReader ascii(final int lengthSize, final boolean printableOnly) {
         if (printableOnly) {
-            return new PrintableAscii(lengthSize);
+            return new Ascii.Printable(lengthSize);
         }
         return new Ascii(lengthSize);
     }

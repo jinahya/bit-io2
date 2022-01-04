@@ -88,9 +88,9 @@ public class BitOutputAdapter
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
         BitIoConstraints.requireValidSizeForInt(unsigned, size);
         if (!unsigned) {
-            writeInt(true, 1, value < 0 ? 1 : 0);
+            writeUnsignedInt(1, value < 0 ? 1 : 0);
             if (--size > 0) {
-                writeInt(true, size, value);
+                writeUnsignedInt(size, value);
             }
             return;
         }
@@ -125,7 +125,7 @@ public class BitOutputAdapter
     }
 
     /**
-     * Writes specified unsigned value of specified bit size.
+     * Writes specified unsigned value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @param value the value to write.

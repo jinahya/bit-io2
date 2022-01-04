@@ -45,14 +45,15 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@code 1}-bit {@code boolean} value. This method reads a {@code 1}-bit unsigned {@code int} value and
-     * returns {@code true} for {@code 0b1} and {@code false} for {@code 0b0}.
+     * Reads a {@code 1}-bit <em>unsigned</em> {@code int} value and returns {@code true} for {@code 0b1} and {@code
+     * false} for {@code 0b0}
      *
      * @return the value read.
      * @throws IOException if an I/O error occurs.
+     * @see #readUnsignedInt(int)
      */
     default boolean readBoolean() throws IOException {
-        return readUnsignedInt(1) == 0x01;
+        return readUnsignedInt(1) == 0b01;
     }
 
     /**
@@ -63,17 +64,21 @@ public interface BitInput
      *                 unsigned ? 1 : 0})), both inclusive.
      * @return a {@code byte} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readInt(boolean, int)} method with given arguments and
+     * returns the result as a {@code byte} value.
      */
     default byte readByte(final boolean unsigned, final int size) throws IOException {
         return (byte) readInt(unsigned, BitIoConstraints.requireValidSizeForByte(unsigned, size));
     }
 
     /**
-     * Reads a signed {@code byte} value of specified number of bits.
+     * Reads a <em>signed</em> {@code byte} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return a signed {@code byte} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readByte(boolean, int)} method with {@code false} and {@code
+     * size} and returns the result.
      * @see #readByte(boolean, int)
      */
     default byte readByte(final int size) throws IOException {
@@ -81,12 +86,12 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@value java.lang.Byte#SIZE}-bit signed {@code byte} value. The {@code readByte8()} method of {@code
-     * BitInput} interface invokes {@link #readByte(int)} method with {@value java.lang.Byte#SIZE} and returns the
-     * result.
+     * Reads an {@value java.lang.Byte#SIZE}-bit {@code byte} value.
      *
      * @return a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readByte(int)} method with {@link java.lang.Byte#SIZE} and
+     * returns the result.
      * @see #readByte(int)
      */
     default byte readByte8() throws IOException {
@@ -94,14 +99,14 @@ public interface BitInput
     }
 
     /**
-     * Reads an unsigned {@code byte} value of specified number of bits. The {@code readUnsignedByte(int)} method of
-     * {@code BitInput} interface invokes {@link #readByte(boolean, int)} method with {@code true} and given {@code
-     * size} argument and returns the result.
+     * Reads an <em>unsigned</em> {@code byte} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Byte#SIZE}
      *             (exclusive).
      * @return an unsigned {@code byte} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readByte(boolean, int)} method with {@code true} and given
+     * {@code size} and returns the result.
      */
     default byte readUnsignedByte(final int size) throws IOException {
         return readByte(true, size);
@@ -115,6 +120,8 @@ public interface BitInput
      *                 {@code 1} : {@code 0})), both inclusive.
      * @return a {@code short} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readInt(boolean, int)} method with given arguments and
+     * returns the result as a {@code short} value.
      * @see #readInt(boolean, int)
      */
     default short readShort(final boolean unsigned, final int size) throws IOException {
@@ -122,13 +129,13 @@ public interface BitInput
     }
 
     /**
-     * Reads a signed {@code short} value of specified number of bits. The {@code readShort(int)} method of {@code
-     * BitInput} interface invokes {@link #readShort(boolean, int)} method with {@code false} and given {@code size}
-     * argument and returns the result.
+     * Reads a <em>signed</em> {@code short} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Short#SIZE}, both inclusive.
      * @return a signed {@code short} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readShort(boolean, int)} method with {@code false} and
+     * {@code size} and returns the result.
      * @see #readShort(boolean, int)
      */
     default short readShort(final int size) throws IOException {
@@ -136,12 +143,12 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@value java.lang.Short#SIZE}-bit signed {@code short} value. The {@code readShort16()} method of {@code
-     * BitInput} interface invokes {@link #readShort(int)} method with {@value java.lang.Short#SIZE} and returns the
-     * result.
+     * Reads a {@value java.lang.Short#SIZE}-bit {@code short} value.
      *
-     * @return a {@value java.lang.Short#SIZE}-bit signed {@code short} value read.
+     * @return a {@value java.lang.Short#SIZE}-bit {@code short} value read.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readShort(int)} method with {@link java.lang.Short#SIZE} and
+     * returns the result.
      * @see #readShort(int)
      */
     default short readShort16() throws IOException {
@@ -149,14 +156,14 @@ public interface BitInput
     }
 
     /**
-     * Reads an unsigned {@code short} value of specified number of bits. The {@code readUnsignedShort()} method of
-     * {@code BitInput} interface invokes {@link #readShort(boolean, int)} with {@code true} and given {@code size}
-     * argument and returns the result.
+     * Reads an <em>unsigned</em> {@code short} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Short#SIZE}
      *             (exclusive).
      * @return an unsigned {@code short} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readShort(boolean, int)} method with {@code true} and given
+     * {@code size} and returns the result.
      * @see #readShort(boolean, int)
      */
     default short readUnsignedShort(final int size) throws IOException {
@@ -175,13 +182,13 @@ public interface BitInput
     int readInt(boolean unsigned, int size) throws IOException;
 
     /**
-     * Reads a signed {@code int} value of specified number of bits. The {@code readInt(int)} method of {@code BitInput}
-     * interface invokes {@link #readInt(boolean, int)} with {@code false} and given {@code size} argument and returns
-     * the result.
+     * Reads a signed {@code int} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
      * @return a signed {@code int} value.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readInt(boolean, int)} method with {@code false} and given
+     * {@code size} and returns the result.
      * @see #readInt(boolean, int)
      */
     default int readInt(final int size) throws IOException {
@@ -189,12 +196,12 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@value java.lang.Integer#SIZE}-bit signed {@code int} value. The {@code readInt32()} method of {@code
-     * BitInput} interface invokes {@link #readInt(int)} method with {@value java.lang.Integer#SIZE} and returns the
-     * result.
+     * Reads a {@value java.lang.Integer#SIZE}-bit {@code int} value.
      *
-     * @return a {@value java.lang.Integer#SIZE}-bit signed {@code int} value read.
+     * @return a {@value java.lang.Integer#SIZE}-bit {@code int} value read.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readInt(int)} method with {@link java.lang.Integer#SIZE} and
+     * returns the result.
      * @see #readInt(int)
      */
     default int readInt32() throws IOException {
@@ -202,14 +209,14 @@ public interface BitInput
     }
 
     /**
-     * Reads an unsigned {@code int} value of specified number of bits. The {@code readUnsignedInt(int)} method of
-     * {@code BitInput} interface invokes {@link #readInt(boolean, int)} method with {@code true} and {@code size}
-     * argument and returns the result.
+     * Reads an <em>unsigned</em> {@code int} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
      *             (exclusive).
      * @return an unsigned {@code int} value.
      * @throws IOException if an error occurs.
+     * @implNote The default implementation invokes {@link #readInt(boolean, int)} method with {@code true} and {@code
+     * size} and returns the result.
      * @see #readInt(boolean, int)
      */
     default int readUnsignedInt(final int size) throws IOException {
@@ -249,13 +256,13 @@ public interface BitInput
     }
 
     /**
-     * Reads a signed {@code long} value of specified number of bits. The {@code readLong(int)} method of {@code
-     * BitInput} interface invokes {@link #readLong(boolean, int)} method with {@code false} and given {@code size}
-     * argument and returns the result.
+     * Reads a <em>signed</em> {@code long} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
      * @return a signed {@code long} value.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readLong(boolean, int)} method with {@code false} and given
+     * {@code size} and returns the result.
      * @see #readLong(boolean, int)
      */
     default long readLong(final int size) throws IOException {
@@ -263,11 +270,12 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@value java.lang.Long#SIZE}-bit signed {@code long} value. The {@code readLong64()} method of {@code
-     * BitInput} interface invokes {@link #readLong(int)} with {@value java.lang.Long#SIZE} and returns the result.
+     * Reads a {@value java.lang.Long#SIZE}-bit {@code long} value.
      *
-     * @return a {@value java.lang.Long#SIZE}-bit signed {@code long} value.
+     * @return a {@value java.lang.Long#SIZE}-bit {@code long} value.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readLong(int)} method with {@link java.lang.Long#SIZE} and
+     * returns the result.
      * @see #readLong(int)
      */
     default long readLong64() throws IOException {
@@ -275,14 +283,14 @@ public interface BitInput
     }
 
     /**
-     * Reads an unsigned {@code long} value of specified number of bits. The {@code readUnsignedLong(int)} method of
-     * {@code BitInput} interface invokes {@link #readLong(boolean, int)} method with {@code true} and given {@code
-     * size} arguments and returns the result.
+     * Reads an <em>unsigned</em> {@code long} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
      *             (exclusive).
      * @return an unsigned {@code long} value.
      * @throws IOException if an error occurs.
+     * @implNote The default implementation invokes {@link #readLong(boolean, int)} method with {@code true} and given
+     * {@code size} and returns the result.
      * @see #readLong(boolean, int)
      */
     default long readUnsignedLong(final int size) throws IOException {
@@ -295,19 +303,21 @@ public interface BitInput
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Character#SIZE}, both inclusive.
      * @return a {@code char} value read.
      * @throws IOException if an I/O error occurs.
-     * @see #readInt(boolean, int)
+     * @implNote The default implementation invokes {@link #readUnsignedInt(int)} method with given {@code size} and
+     * returns the result as casted to a {@code char} value.
+     * @see #readUnsignedInt(int)
      */
     default char readChar(final int size) throws IOException {
         return (char) readUnsignedInt(BitIoConstraints.requireValidSizeForChar(size));
     }
 
     /**
-     * Reads a {@value java.lang.Character#SIZE}-bit {@code char} value. The {@code readChar16()} method of {@code
-     * BitInput} interface invokes {@link #readChar(int)} method with {@value java.lang.Character#SIZE} and returns the
-     * result.
+     * Reads a {@value java.lang.Character#SIZE}-bit {@code char} value.
      *
      * @return a {@code char} value.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #readChar(int)} method with {@link java.lang.Character#SIZE}
+     * and returns the result.
      * @see #readChar(int)
      */
     default char readChar16() throws IOException {
@@ -315,12 +325,12 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@value java.lang.Float#SIZE}-bit {@code float} value. The {@code readFloat32()} method of {@code
-     * BitInput} interface reads a {@value java.lang.Integer#SIZE}-bit signed {@code int} value and returns the values
-     * as converted to a {@code float} using {@link Float#intBitsToFloat(int)} method.
+     * Reads a {@value java.lang.Float#SIZE}-bit {@code float} value.
      *
      * @return a {@value java.lang.Float#SIZE}-bit {@code float} value
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation reads a {@value java.lang.Integer#SIZE}-bit signed {@code int} value and
+     * returns the value as converted to a {@code float} value using {@link Float#intBitsToFloat(int)} method.
      * @see #readInt32()
      * @see Float#intBitsToFloat(int)
      */
@@ -329,12 +339,12 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value. The {@code readDouble64()} method of {@code
-     * BitInput} interface reads a {@value java.lang.Long#SIZE}-bit signed {@code long} value and returns the value as
-     * converted to a {@code double} using {@link Double#longBitsToDouble(long)} method.
+     * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value.
      *
      * @return a {@value java.lang.Double#SIZE}-bit {@code double} value
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation reads a {@value java.lang.Long#SIZE}-bit signed {@code long} value and
+     * returns the value as converted to a {@code double} value using {@link Double#longBitsToDouble(long)} method.
      * @see #readLong64()
      * @see Double#longBitsToDouble(long)
      */
@@ -343,16 +353,16 @@ public interface BitInput
     }
 
     /**
-     * Reads a value using specified reader. The {@code readValue(ValueReader)} method of {@code BitInput} interface
-     * invokes {@link BitReader#read(BitInput)} method on specified {@code reader} with {@code this} and returns the
-     * result.
+     * Reads a value using specified reader.
      *
      * @param reader the reader.
      * @param <T>    value type parameter
      * @return a value read.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link BitReader#read(BitInput)} method on specified {@code reader}
+     * with {@code this} and returns the result.
      */
-    default <T> T readValue(final BitReader<? extends T> reader) throws IOException {
+    default <T> T readObject(final BitReader<? extends T> reader) throws IOException {
         Objects.requireNonNull(reader, "reader is null");
         return reader.read(this);
     }
@@ -377,24 +387,28 @@ public interface BitInput
     }
 
     /**
-     * Aligns to specified number of bytes by discarding required number of bits.
+     * Aligns to specified number of <em>bytes</em> by discarding required number of bits.
      *
      * @param bytes the number of bytes to align; must be positive.
-     * @return the number of bits discarded while aligning.
+     * @return the number of bits discarded while aligning; not negative, always.
      * @throws IllegalArgumentException if {@code bytes} is not positive.
      * @throws IOException              if an I/O error occurs.
      */
     long align(int bytes) throws IOException;
 
     /**
-     * Aligns to a single byte by discarding required number of bits. The {@code align()} method of {@code BitInput}
-     * interface invokes {@link #align(int)} method with {@value java.lang.Byte#BYTES}.
+     * Aligns to a single <em>byte</em> by discarding required number of bits.
      *
-     * @return the number of bits discarded while aligning.
+     * @return the number of bits discarded while aligning; between {@code 0} (inclusive) and {@value
+     * java.lang.Byte#SIZE} (exclusive).
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #align(int)} method with {@link java.lang.Byte#BYTES}.
      * @see #align(int)
      */
     default long align() throws IOException {
-        return align(Byte.BYTES);
+        final long d = align(Byte.BYTES);
+        assert d >= 0L;
+        assert d < Byte.SIZE;
+        return d;
     }
 }

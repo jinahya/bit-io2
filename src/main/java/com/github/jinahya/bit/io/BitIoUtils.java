@@ -124,40 +124,6 @@ final class BitIoUtils {
         output.writeUnsignedInt(size, value);
     }
 
-//    static void writeNullFlag(final BitOutput output, final Object value) throws IOException {
-//        Objects.requireNonNull(output, "output is null");
-//
-//        output.writeUnsignedInt(1, value == null ? 0 : 1);
-//    }
-//
-//    static <T> void writeNullable(final BitOutput output, final ValueWriter<? super T> writer, final T value)
-//            throws IOException {
-//        Objects.requireNonNull(output, "output is null");
-//        writeNullFlag(output, value);
-//        if (value != null) {
-//            writer.write(output, value);
-//        }
-//    }
-//
-//    /**
-//     * Reads a flag for following value.
-//     *
-//     * @param input a bit input.
-//     * @return {@code true} if the value is {@code null}; {@code false} otherwise.
-//     * @throws IOException if an I/O error occurs.
-//     */
-//    static boolean readNullFlag(final BitInput input) throws IOException {
-//        Objects.requireNonNull(input, "input is null");
-//        return input.readUnsignedInt(1) == 0;
-//    }
-//
-//    static <T> T readNullable(final BitInput input, final ValueReader<? extends T> reader)
-//            throws IOException {
-//        Objects.requireNonNull(input, "input is null");
-//        Objects.requireNonNull(reader, "reader is null");
-//        return readNullFlag(input) ? null : reader.read(input);
-//    }
-
     private BitIoUtils() {
         throw new AssertionError("instantiation is not allowed");
     }

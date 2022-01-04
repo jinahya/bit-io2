@@ -41,7 +41,7 @@ final class BitIoConstants {
     }
 
     /**
-     * Returns a bit mask for specified bit size.
+     * Returns a bit mask for specified number of bits.
      *
      * @param size the number of bits to mask.
      * @return a bit mask.

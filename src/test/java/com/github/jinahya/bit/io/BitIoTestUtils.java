@@ -20,14 +20,66 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import io.vavr.CheckedConsumer;
+import io.vavr.CheckedFunction1;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Objects;
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 final class BitIoTestUtils {
 
-    static <R> R writeAndRead(final BiFunction<? super BitInput, ? super BitOutput, ? extends R> function) {
-        Objects.requireNonNull(function, "function is null");
-        return null;
+    static <R> R wr1(final Function<? super BitOutput, ? extends Function<? super BitInput, ? extends R>> f1)
+            throws IOException {
+        Objects.requireNonNull(f1, "f1 is null");
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final BitOutput o = BitOutputAdapter.of(StreamByteOutput.of(baos));
+        final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
+        final long padded = o.align();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final BitInput i = BitInputAdapter.of(StreamByteInput.of(bais));
+        try {
+            return f2.apply(i);
+        } finally {
+            final long discarded = i.align();
+            assert discarded == padded;
+        }
+    }
+
+    static <R> R wr2(final Function<? super BitOutput, ? extends Consumer<? super BitInput>> f1) throws IOException {
+        Objects.requireNonNull(f1, "f1 is null");
+        return wr1(o -> {
+            final Consumer<? super BitInput> c1 = f1.apply(o);
+            return i -> {
+                c1.accept(i);
+                return null;
+            };
+        });
+    }
+
+    static <R> R wr1v(
+            final CheckedFunction1<? super BitOutput, ? extends CheckedFunction1<? super BitInput, ? extends R>> f1)
+            throws IOException {
+        Objects.requireNonNull(f1, "f1 is null");
+        return wr1(o -> {
+            final CheckedFunction1<? super BitInput, ? extends R> f2 = f1.unchecked().apply(o);
+            return i -> f2.unchecked().apply(i);
+        });
+    }
+
+    static <R> R wr2v(final CheckedFunction1<? super BitOutput, ? extends CheckedConsumer<? super BitInput>> f1)
+            throws IOException {
+        Objects.requireNonNull(f1, "f1 is null");
+        return wr1v(o -> {
+            final CheckedConsumer<? super BitInput> c1 = f1.unchecked().apply(o);
+            return i -> {
+                c1.unchecked().accept(i);
+                return null;
+            };
+        });
     }
 
     private BitIoTestUtils() {
