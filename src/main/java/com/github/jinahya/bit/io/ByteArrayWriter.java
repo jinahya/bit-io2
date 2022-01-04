@@ -25,10 +25,10 @@ import java.io.IOException;
 class ByteArrayWriter
         extends PrimitiveArrayWriter<byte[]> {
 
-    static class ByteArrayWriterUnsigned
+    static class Unsigned
             extends ByteArrayWriter {
 
-        ByteArrayWriterUnsigned(final int lengthSize, final int elementSize) {
+        Unsigned(final int lengthSize, final int elementSize) {
             super(lengthSize, BitIoConstraints.requireValidSizeForByte(true, elementSize));
         }
 
@@ -39,7 +39,7 @@ class ByteArrayWriter
     }
 
     static class Ascii
-            extends ByteArrayWriterUnsigned {
+            extends Unsigned {
 
         static class Printable
                 extends Ascii {
@@ -111,6 +111,17 @@ class ByteArrayWriter
                 output.writeUnsignedInt(6, value[++i] & 0xFF);
             }
         }
+    }
+
+    /**
+     * Creates a new instance for writing an array of unsigned bytes.
+     *
+     * @param lengthSize  a number of bits for the length of the array.
+     * @param elementSize a number of bits for each element.
+     * @return a new instance.
+     */
+    public static ByteArrayWriter unsigned(final int lengthSize, final int elementSize) {
+        return new Unsigned(lengthSize, elementSize);
     }
 
     /**

@@ -103,6 +103,17 @@ class ByteArrayReader
     }
 
     /**
+     * Creates a new instance for reading an array of unsigned bytes.
+     *
+     * @param lengthSize  a number of bits for the length of an array.
+     * @param elementSize a number of bits for each element.
+     * @return a new instance.
+     */
+    public static ByteArrayReader unsigned(final int lengthSize, final int elementSize) {
+        return new Unsigned(lengthSize, elementSize);
+    }
+
+    /**
      * Creates a new instance for reading an array of ASCII bytes.
      *
      * @param lengthSize    a number of bits for the length of an array.
