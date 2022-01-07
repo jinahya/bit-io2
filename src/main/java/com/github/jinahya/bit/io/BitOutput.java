@@ -373,6 +373,16 @@ public interface BitOutput
         writer.write(this, value);
     }
 
+    default void writeBytes(final byte[] array, final int offset, final int length) throws IOException {
+        Objects.requireNonNull(array, "array is null");
+        if (offset < 0) {
+            throw new IllegalArgumentException("offset(" + offset + ") is negative");
+        }
+        if (offset + length > array.length) {
+            throw new ArrayIndexOutOfBoundsException("offset(" + offset + " + length(" + length + ") > array.length(" + array.length + ")");
+        }
+    }
+
     /**
      * Writes specified number of zero-bits.
      *

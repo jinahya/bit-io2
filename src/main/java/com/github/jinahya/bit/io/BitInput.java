@@ -367,6 +367,10 @@ public interface BitInput
         return reader.read(this);
     }
 
+    default byte[] readBytes(final byte[] array, final int offset, final int length) throws IOException {
+        return array;
+    }
+
     /**
      * Reads (and discards) specified number of bits.
      *
