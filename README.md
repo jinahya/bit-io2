@@ -19,6 +19,8 @@ Add this module as a dependency. Check the [central](https://search.maven.org/se
 
 ## How it works?
 
+### `BitInput` and `BitOutput`
+
 Two interfaces are defined for reading/writing non-octet aligned values and two more interfaces are defined for reading/writing octets from/to various sources/targets.
 
 ```
@@ -32,5 +34,7 @@ BitOutput(Adapter) -> ByteOutput -> (Adapter) -> DataOutput
                                                  OutputStream
                                                  ...
 ```
+
+### `ByteInput` and `ByteOutput`
 
 See [Specifications](https://github.com/jinahya/bit-io2/wiki/Specifications) and [Recipes](https://github.com/jinahya/bit-io2/wiki/Recipes) for more information.

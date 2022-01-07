@@ -27,9 +27,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static java.util.concurrent.ThreadLocalRandom.current;
 
 final class BitIoTestUtils {
 
@@ -61,7 +62,7 @@ final class BitIoTestUtils {
     static <R> R wr1(final Function<? super BitOutput, ? extends Function<? super BitInput, ? extends R>> f1)
             throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
-        if (ThreadLocalRandom.current().nextBoolean()) {
+        if (current().nextBoolean()) {
             return w1(o -> {
                 final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
                 assert f2 != null : "f2 is null";
@@ -78,20 +79,19 @@ final class BitIoTestUtils {
                     }
                 };
             });
-        } else {
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            final BitOutput o = BitOutputAdapter.of(StreamByteOutput.of(baos));
-            final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
-            final long padded = o.align();
-            final byte[] bytes = baos.toByteArray();
-            final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-            final BitInput i = BitInputAdapter.of(StreamByteInput.of(bais));
-            try {
-                return f2.apply(i);
-            } finally {
-                final long discarded = i.align();
-                assert discarded == padded;
-            }
+        }
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final BitOutput o = BitOutputAdapter.of(StreamByteOutput.of(baos));
+        final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
+        final long padded = o.align();
+        final byte[] bytes = baos.toByteArray();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        final BitInput i = BitInputAdapter.of(StreamByteInput.of(bais));
+        try {
+            return f2.apply(i);
+        } finally {
+            final long discarded = i.align();
+            assert discarded == padded;
         }
     }
 

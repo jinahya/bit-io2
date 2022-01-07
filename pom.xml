@@ -86,22 +86,6 @@
       <version>3.21.0</version>
       <scope>test</scope>
     </dependency>
-    <!--    <dependency>-->
-    <!--      <groupId>org.jboss.weld</groupId>-->
-    <!--      <artifactId>weld-junit5</artifactId>-->
-    <!--      <version>2.0.1.Final</version>-->
-    <!--      <scope>test</scope>-->
-    <!--      <exclusions>-->
-    <!--        <exclusion>&lt;!&ndash; dependencyConvergence &ndash;&gt;-->
-    <!--          <groupId>org.junit.jupiter</groupId>-->
-    <!--          <artifactId>junit-jupiter-api</artifactId>-->
-    <!--        </exclusion>-->
-    <!--        <exclusion> &lt;!&ndash; dependencyConvergence &ndash;&gt;-->
-    <!--          <groupId>org.junit.jupiter</groupId>-->
-    <!--          <artifactId>junit-jupiter-engine</artifactId>-->
-    <!--        </exclusion>-->
-    <!--      </exclusions>-->
-    <!--    </dependency>-->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
