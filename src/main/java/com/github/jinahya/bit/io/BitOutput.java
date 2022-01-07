@@ -373,6 +373,22 @@ public interface BitOutput
         writer.write(this, value);
     }
 
+    default <T> void writeArray(final T[] array, final int offset, final int length, final BitWriter<? super T> writer)
+            throws IOException {
+        Objects.requireNonNull(array, "array is null");
+        if (offset < 0) {
+            throw new IllegalArgumentException("offset(" + offset + ") is negative");
+        }
+        if (offset + length > array.length) {
+            throw new ArrayIndexOutOfBoundsException(array.length);
+        }
+        Objects.requireNonNull(writer, "reader is null");
+        final int limit = offset + length;
+        for (int i = offset; i < limit; i++) {
+            writer.write(this, array[i]);
+        }
+    }
+
     /**
      * Writes specified number of zero-bits.
      *
