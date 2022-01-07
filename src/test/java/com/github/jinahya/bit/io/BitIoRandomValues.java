@@ -23,7 +23,6 @@ package com.github.jinahya.bit.io;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
@@ -139,11 +138,11 @@ final class BitIoRandomValues {
 
     // ------------------------------------------------------------------------------------------------------------ char
     static int randomSizeForChar() {
-        return requireValidSizeForChar(current().nextInt(Character.SIZE) + 1); // 1 ~ 16
+        return BitIoConstraints.requireValidSizeForChar(current().nextInt(Character.SIZE) + 1); // 1 ~ 16
     }
 
     static char randomValueForChar(final int size) {
-        return (char) (current().nextInt() >>> (Integer.SIZE - requireValidSizeForChar(size)));
+        return (char) (current().nextInt() >>> (Integer.SIZE - BitIoConstraints.requireValidSizeForChar(size)));
     }
 
     static char randomValueForChar16() {

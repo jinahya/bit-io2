@@ -21,11 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static com.github.jinahya.bit.io.BitIoConstants.mask;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static java.util.Objects.requireNonNull;
 
 /**
  * An implementation of {@link BitInput} adapts an instance of {@link ByteInput}.
@@ -33,7 +30,21 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitOutputAdapter
  */
-public class BitInputAdapter implements BitInput {
+public class BitInputAdapter
+        implements BitInput {
+
+    /**
+     * Creates a new instance which reads bytes from specified byte input.
+     *
+     * @param input the byte input from which bytes are read.
+     * @return a new instance.
+     */
+    public static BitInput of(final ByteInput input) {
+        Objects.requireNonNull(input, "input is null");
+        final BitInputAdapter instance = new BitInputAdapter(BitIoUtils.empty());
+        instance.input(input);
+        return instance;
+    }
 
     /**
      * Creates a new instance with specified input supplier.
@@ -42,7 +53,7 @@ public class BitInputAdapter implements BitInput {
      */
     public BitInputAdapter(final Supplier<? extends ByteInput> inputSupplier) {
         super();
-        this.inputSupplier = requireNonNull(inputSupplier, "inputSupplier is null");
+        this.inputSupplier = Objects.requireNonNull(inputSupplier, "inputSupplier is null");
     }
 
     /**
@@ -54,6 +65,7 @@ public class BitInputAdapter implements BitInput {
     @Override
     public void close() throws IOException {
         BitInput.super.close(); // does nothing.
+        final ByteInput input = input(false);
         if (input != null) {
             input.close();
         }
@@ -61,7 +73,7 @@ public class BitInputAdapter implements BitInput {
 
     @Override
     public int readInt(final boolean unsigned, int size) throws IOException {
-        requireValidSizeForInt(unsigned, size);
+        BitIoConstraints.requireValidSizeForInt(unsigned, size);
         int value = 0;
         if (!unsigned) {
             value -= readInt(true, 1);
@@ -85,7 +97,7 @@ public class BitInputAdapter implements BitInput {
     @Override
     public long align(int bytes) throws IOException {
         if (bytes <= 0) {
-            throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
+            throw new IllegalArgumentException("bytes(" + bytes + ") is not positive");
         }
         long bits = 0L; // number of discarded bits
         if (available > 0) {
@@ -103,17 +115,16 @@ public class BitInputAdapter implements BitInput {
     }
 
     /**
-     * Reads an unsigned {@code int} value of specified bit size.
+     * Reads an unsigned {@code int} value of specified numbr of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return an unsigned {@code int} value.
      * @throws IOException if an I/O error occurs.
      */
     private int unsigned8(final int size) throws IOException {
-        assert size > 0;
-        assert size <= Byte.SIZE;
+        assert size > 0 && size <= Byte.SIZE;
         if (available == 0) {
-            octet = input().read();
+            octet = input(true).read();
             assert octet >= 0 && octet < 256;
             count++;
             available = Byte.SIZE;
@@ -123,31 +134,28 @@ public class BitInputAdapter implements BitInput {
             return (unsigned8(available) << required) | unsigned8(required);
         }
         available -= size;
-        return (octet >> available) & mask(size);
+        return (octet >> available) & BitIoConstants.mask(size);
     }
 
-    /**
-     * Returns an instance of {@link ByteInput}.
-     *
-     * @return an instance of {@link ByteInput}.
-     */
-    private ByteInput input() {
-        if (input == null) {
-            input = inputSupplier.get();
+    private ByteInput input(final boolean get) {
+        if (get) {
+            if (input(false) == null) {
+                input(inputSupplier.get());
+            }
+            return input(false);
         }
         return input;
     }
 
-    /**
-     * A supplier for {@link #input}.
-     */
+    private void input(final ByteInput input) {
+        if (input(false) != null) {
+            throw new IllegalStateException("input already has been supplied");
+        }
+        this.input = Objects.requireNonNull(input, "input is null");
+    }
+
     private final Supplier<? extends ByteInput> inputSupplier;
 
-    /**
-     * A value supplied from {@link #inputSupplier}.
-     *
-     * @see #input()
-     */
     private ByteInput input;
 
     /**

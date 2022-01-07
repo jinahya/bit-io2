@@ -31,12 +31,14 @@ import java.io.IOException;
  * @see ByteOutput
  */
 @FunctionalInterface
-public interface ByteInput extends Closeable {
+public interface ByteInput
+        extends Closeable {
 
     /**
      * Closes this input and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation does nothing.
      */
     @Override
     default void close() throws IOException {

@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.DataInput;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -30,7 +31,21 @@ import java.util.function.Supplier;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see DataByteOutput
  */
-public class DataByteInput extends ByteInputAdapter<DataInput> {
+public class DataByteInput
+        extends ByteInputAdapter<DataInput> {
+
+    /**
+     * Creates a new instance reads byte from specified data input.
+     *
+     * @param source the data input from which bytes are read.
+     * @return a new instance.
+     */
+    public static DataByteInput of(final DataInput source) {
+        Objects.requireNonNull(source, "source is null");
+        final DataByteInput instance = new DataByteInput(BitIoUtils.empty());
+        instance.source(source);
+        return instance;
+    }
 
     /**
      * Creates a new instance with specified source supplier.
@@ -48,6 +63,7 @@ public class DataByteInput extends ByteInputAdapter<DataInput> {
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @see DataInput#readUnsignedByte()
      */
     @Override
     protected int read(final DataInput source) throws IOException {

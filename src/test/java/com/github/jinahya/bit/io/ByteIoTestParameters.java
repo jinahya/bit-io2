@@ -61,14 +61,14 @@ final class ByteIoTestParameters {
 
     static Stream<Arguments> buffer3() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
-        final ByteOutput output = BufferByteOutput.from(() -> newChannel(baos));
-        final ByteInput input = BufferByteInput.from(() -> newChannel(new ByteArrayInputStream(baos.toByteArray())));
+        final ByteOutput output = BufferByteOutput.adapting(() -> newChannel(baos));
+        final ByteInput input = BufferByteInput.adapting(() -> newChannel(new ByteArrayInputStream(baos.toByteArray())));
         return Stream.of(arguments(output, input));
     }
 
     static Stream<Arguments> buffer4() {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream(BYTES);
-        final ByteOutput output = BufferByteOutput.from(() -> newChannel(baos));
+        final ByteOutput output = BufferByteOutput.adapting(() -> newChannel(baos));
         final byte[] array;
         try {
             final Field f = ByteArrayOutputStream.class.getDeclaredField("buf");
@@ -77,7 +77,7 @@ final class ByteIoTestParameters {
         } catch (final ReflectiveOperationException roe) {
             throw new RuntimeException(roe);
         }
-        final ByteInput input = BufferByteInput.from(() -> newChannel(new ByteArrayInputStream(array)));
+        final ByteInput input = BufferByteInput.adapting(() -> newChannel(new ByteArrayInputStream(array)));
         return Stream.of(arguments(output, input));
     }
 
@@ -104,13 +104,13 @@ final class ByteIoTestParameters {
     // -----------------------------------------------------------------------------------------------------------------
     static Stream<Arguments> byteIos() {
         return Stream.of(
-                buffer(),
-                buffer2(),
-                buffer3(),
-                buffer4(),
-                data(),
-                stream()
-        )
+                        buffer(),
+                        buffer2(),
+                        buffer3(),
+                        buffer4(),
+                        data(),
+                        stream()
+                )
                 .flatMap(s -> s);
     }
 

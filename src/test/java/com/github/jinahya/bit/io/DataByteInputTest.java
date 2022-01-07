@@ -37,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see DataByteOutputTest
  */
-class DataByteInputTest extends ByteInputAdapterTest<DataByteInput, DataInput> {
+class DataByteInputTest
+        extends ByteInputAdapterTest<DataByteInput, DataInput> {
 
     /**
      * Creates a new instance.

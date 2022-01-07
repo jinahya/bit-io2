@@ -23,14 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForByte;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
-import static java.lang.Float.floatToRawIntBits;
-import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.ThreadLocalRandom.current;
+import java.util.Objects;
 
 /**
  * An interface for writing values of an arbitrary number of bits.
@@ -38,13 +31,14 @@ import static java.util.concurrent.ThreadLocalRandom.current;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitInput
  */
-public interface BitOutput extends Flushable, Closeable {
+public interface BitOutput
+        extends Flushable, Closeable {
 
     /**
-     * Flushes this output by writing any buffered output to the underlying output. The {@code flush()} method of {@code
-     * BitOutput} interface does nothing.
+     * Flushes this output by writing any buffered output to the underlying output.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation does nothing.
      */
     @Override
     default void flush() throws IOException {
@@ -52,10 +46,10 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Closes this output and releases any system resources associated with it. The {@code close} method of {@code
-     * BitOutput} interface does nothing.
+     * Closes this output and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation does nothing.
      */
     @Override
     default void close() throws IOException {
@@ -63,14 +57,14 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified {@code 1}-bit {@code boolean} value. This method writes {@code 0b1} for {@code true} and {@code
-     * 0b0} for {@code false}.
+     * Writes a {@code 1}-bit <em>unsigned</em> {@code int} value({@code 0b1} for {@code true} and {@code 0b0} for
+     * {@code false}) for specified {@code boolean} value.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
      */
-    default void writeBoolean(boolean value) throws IOException {
-        writeInt(true, 1, value ? 0x01 : 0x00);
+    default void writeBoolean(final boolean value) throws IOException {
+        writeUnsignedInt(1, value ? 0b01 : 0b00);
     }
 
     /**
@@ -81,39 +75,50 @@ public interface BitOutput extends Flushable, Closeable {
      *                 unsigned ? 1: 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeInt(boolean, int, int)} with given arguments.
+     * @see #writeInt(boolean, int, int)
      */
     default void writeByte(final boolean unsigned, final int size, final byte value) throws IOException {
-        writeInt(unsigned, requireValidSizeForByte(unsigned, size), value);
+        writeInt(unsigned, BitIoConstraints.requireValidSizeForByte(unsigned, size), value);
     }
 
     /**
-     * Writes specified signed {@code byte} value of specified number of bits.
+     * Writes specified <em>signed</em> {@code byte} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invoke {@link #writeByte(boolean, int, byte)} method with {@code false} and
+     * given arguments.
+     * @see #writeByte(boolean, int, byte)
      */
     default void writeByte(final int size, final byte value) throws IOException {
         writeByte(false, size, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Byte#SIZE}-bit signed {@code byte} value.
+     * Writes specified {@value java.lang.Byte#SIZE}-bit {@code byte} value.
      *
-     * @param value the {@value java.lang.Byte#SIZE}-bit signed {@code byte} value to write.
+     * @param value the {@value java.lang.Byte#SIZE}-bit {@code byte} value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeByte(int, byte)} method with {@link
+     * java.lang.Byte#SIZE} and {@code value}.
+     * @see #writeByte(int, byte)
      */
     default void writeByte8(final byte value) throws IOException {
         writeByte(Byte.SIZE, value);
     }
 
     /**
-     * Writes specified unsigned {@code byte} value of specified bit size.
+     * Writes specified <em>unsigned</em> {@code byte} value of specified number of bits.
      *
      * @param size  the number of lower bits to write; between {@code 1} (inclusive) and {@value java.lang.Byte#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeByte(boolean, int, byte)} method with {@code true} and
+     * given arguments.
+     * @see #writeByte(boolean, int, byte)
      */
     default void writeUnsignedByte(final int size, final byte value) throws IOException {
         writeByte(true, size, value);
@@ -127,27 +132,34 @@ public interface BitOutput extends Flushable, Closeable {
      *                 unsigned ? 1 : 0})), both inclusive.
      * @param value    the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeInt(boolean, int, int)} method with given arguments.
+     * @see #writeInt(boolean, int, int)
      */
     default void writeShort(final boolean unsigned, final int size, final short value) throws IOException {
-        writeInt(unsigned, requireValidSizeForShort(unsigned, size), value);
+        writeInt(unsigned, BitIoConstraints.requireValidSizeForShort(unsigned, size), value);
     }
 
     /**
-     * Writes specified signed {@code short} value of specified number of bits.
+     * Writes specified <em>signed</em> {@code short} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and ({@value java.lang.Short#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeShort(boolean, int, short)} method with {@code false}
+     * and given arguments.
+     * @see #writeShort(boolean, int, short)
      */
     default void writeShort(final int size, final short value) throws IOException {
         writeShort(false, size, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value.
+     * Writes specified {@value java.lang.Short#SIZE}-bit {@code short} value.
      *
-     * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
+     * @param value the {@value java.lang.Short#SIZE}-bit {@code short} value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeShort(int, short)} method with {@value
+     * java.lang.Short#SIZE} and {@code value}.
      * @see #writeShort(int, short)
      */
     default void writeShort16(final short value) throws IOException {
@@ -155,30 +167,15 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified {@value java.lang.Short#SIZE}-bit signed {@code short} value in little endian byte order.
-     *
-     * @param value the {@value java.lang.Short#SIZE}-bit signed {@code short} value to write.
-     * @throws IOException if an I/O error occurs.
-     * @deprecated Reverse specified value's bytes with {@link Short#reverseBytes(short)} method and writes the result
-     * with {@link #writeShort16(short)} method.
-     */
-    @Deprecated // forRemoval = true
-    default void writeShort16Le(final short value) throws IOException {
-        if (current().nextBoolean()) {
-            writeShort16(Short.reverseBytes(value));
-            return;
-        }
-        writeByte8((byte) value);
-        writeByte8((byte) (value >> Byte.SIZE));
-    }
-
-    /**
-     * Writes specified unsigned {@code short} value of specified bit size.
+     * Writes specified <em>unsigned</em> {@code short} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Short#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeShort(boolean, int, short)} with {@code true} and given
+     * arguments.
+     * @see #writeShort(boolean, int, short)
      */
     default void writeUnsignedShort(final int size, final short value) throws IOException {
         writeShort(true, size, value);
@@ -196,51 +193,42 @@ public interface BitOutput extends Flushable, Closeable {
     void writeInt(boolean unsigned, int size, int value) throws IOException;
 
     /**
-     * Writes specified signed {@code int} value of specified bit size.
+     * Writes specified <em>signed</em> {@code int} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeInt(boolean, int, int)} method with {@code false} and
+     * given arguments.
+     * @see #writeInt(boolean, int, int)
      */
     default void writeInt(final int size, final int value) throws IOException {
         writeInt(false, size, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Integer#SIZE}-bit signed value.
+     * Writes specified {@value java.lang.Integer#SIZE}-bit int value.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeInt(int, int)} method with {@link
+     * java.lang.Integer#SIZE} and {@code value}.
+     * @see #writeInt(int, int)
      */
     default void writeInt32(final int value) throws IOException {
         writeInt(Integer.SIZE, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Integer#SIZE}-bit signed {@code int} value in little endian byte order.
-     *
-     * @param value the value to write.
-     * @throws IOException if an I/O error occurs.
-     * @deprecated Reverse specified value's bytes using {@link Integer#reverseBytes(int)} and write the result with
-     * {@link #writeInt32(int)} method.
-     */
-    @Deprecated // forRemoval = true
-    default void writeInt32Le(final int value) throws IOException {
-        if (current().nextBoolean()) {
-            writeInt32(Integer.reverseBytes(value));
-            return;
-        }
-        writeShort16Le((short) value);
-        writeShort16Le((short) (value >> Short.SIZE));
-    }
-
-    /**
-     * Writes specified unsigned {@code int} value of specified bit size.
+     * Writes specified <em>unsigned</em> {@code int} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeInt(boolean, int, int)} with {@code true} and given
+     * arguments.
+     * @see #writeInt(boolean, int, int)
      */
     default void writeUnsignedInt(final int size, final int value) throws IOException {
         writeInt(true, size, value);
@@ -256,7 +244,7 @@ public interface BitOutput extends Flushable, Closeable {
      * @throws IOException if an I/O error occurs.
      */
     default void writeLong(final boolean unsigned, int size, final long value) throws IOException {
-        requireValidSizeForLong(unsigned, size);
+        BitIoConstraints.requireValidSizeForLong(unsigned, size);
         if (!unsigned) {
             writeInt(true, 1, value < 0L ? 0x01 : 0x00);
             if (--size > 0) {
@@ -274,67 +262,59 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified signed {@code long} value of specified bit size.
+     * Writes specified <em>signed</em> {@code long} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeLong(boolean, int, long)} method with {@code false} and
+     * given arguments.
+     * @see #writeLong(boolean, int, long)
      */
     default void writeLong(final int size, final long value) throws IOException {
         writeLong(false, size, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value.
+     * Writes specified {@value java.lang.Long#SIZE}-bit {@code long} value.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeLong(int, long)} method with {@link
+     * java.lang.Long#SIZE} and {@code value}.
+     * @see #writeLong(int, long)
      */
     default void writeLong64(final long value) throws IOException {
         writeLong(Long.SIZE, value);
     }
 
     /**
-     * Writes specified {@value java.lang.Long#SIZE}-bit signed {@code long} value in little endian byte order.
-     *
-     * @param value the value to write.
-     * @throws IOException if an I/O error occurs.
-     * @deprecated Reverse specified value's bytes using {@link Long#reverseBytes(long)} method and write the result
-     * with {@link #writeLong64(long)} method.
-     */
-    @Deprecated // forRemoval
-    default void writeLong64Le(final long value) throws IOException {
-        if (current().nextBoolean()) {
-            writeLong64(Long.reverseBytes(value));
-            return;
-        }
-        writeInt32Le((int) value);
-        writeInt32Le((int) (value >> Integer.SIZE));
-    }
-
-    /**
-     * Writes specified unsigned {@code long} value of specified bit size.
+     * Writes specified <em>unsigned</em> {@code long} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
      *              (exclusive).
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeLong(boolean, int, long)} method with {@code true} and
+     * given arguments.
+     * @see #writeLong(boolean, int, long)
      */
     default void writeUnsignedLong(final int size, final long value) throws IOException {
         writeLong(true, size, value);
     }
 
     /**
-     * Writes specified {@code char} value of specified bit size.
+     * Writes specified {@code char} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Character#SIZE}, both
      *              inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @see #writeChar16(char)
+     * @implNote The default implementation invokes {@link #writeUnsignedInt(int, int)} method with given arguments.
+     * @see #writeUnsignedInt(int, int)
      */
     default void writeChar(final int size, final char value) throws IOException {
-        writeInt(true, requireValidSizeForChar(size), value);
+        writeUnsignedInt(BitIoConstraints.requireValidSizeForChar(size), value);
     }
 
     /**
@@ -342,6 +322,8 @@ public interface BitOutput extends Flushable, Closeable {
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #writeChar(int, char)} method with {@link
+     * java.lang.Character#SIZE} and {@code value}.
      * @see #writeChar(int, char)
      */
     default void writeChar16(final char value) throws IOException {
@@ -349,49 +331,50 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value. The {@code writeFloat32(float)} method of
-     * {@code BitOutput} interface writes specified value as a {@value java.lang.Integer#SIZE}-bit {@code int} value
-     * converted with {@link Float#floatToRawIntBits(float)} method.
+     * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value.
      *
      * @param value the {@code float} value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation writes specified value as a {@value java.lang.Integer#SIZE}-bit {@code int}
+     * value converted with {@link Float#floatToRawIntBits(float)} method.
      * @see Float#floatToRawIntBits(float)
      * @see #writeInt32(int)
      */
     default void writeFloat32(final float value) throws IOException {
-        writeInt(false, Integer.SIZE, floatToRawIntBits(value));
+        writeInt32(Float.floatToRawIntBits(value));
     }
 
     /**
-     * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value. The {@code writeDouble64(double)}
-     * method of {@code BitOutput} interface writes specified value as a {@value java.lang.Long#SIZE}-bit {@code long}
-     * value converted with {@link Double#doubleToRawLongBits(double)} method.
+     * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value.
      *
      * @param value the {@code double} value to write.
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation writes specified value as a {@value java.lang.Long#SIZE}-bit {@code long}
+     * value converted with {@link Double#doubleToRawLongBits(double)} method.
      * @see Double#doubleToRawLongBits(double)
      * @see #writeLong64(long)
      */
     default void writeDouble64(final double value) throws IOException {
-        writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
+        writeLong64(Double.doubleToRawLongBits(value));
     }
 
     /**
-     * Writes specified value using specified adapter. The {@code writeValue(ValueAdapter, T)} method of {@code
-     * BitOutput} interface invokes {@link ValueAdapter#write(BitOutput, Object)} with {@code this} and specified
-     * value.
+     * Writes specified value using specified writer.
      *
-     * @param adapter the adapter.
-     * @param value   the value to write.
-     * @param <T>     value type parameter
+     * @param writer the writer.
+     * @param value  the value to write.
+     * @param <T>    value type parameter
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link BitWriter#write(BitOutput, Object)} with {@code this} and
+     * {@code value}.
      */
-    default <T> void writeValue(final ValueAdapter<? super T> adapter, final T value) throws IOException {
-        requireNonNull(adapter, "adapter is null").write(this, value);
+    default <T> void writeObject(final BitWriter<? super T> writer, final T value) throws IOException {
+        Objects.requireNonNull(writer, "writer is null");
+        writer.write(this, value);
     }
 
     /**
-     * Skips specified number of bits by padding zero bits.
+     * Writes specified number of zero-bits.
      *
      * @param bits the number of bit to skip; must be positive.
      * @throws IllegalArgumentException if {@code bits} is not positive.
@@ -399,7 +382,7 @@ public interface BitOutput extends Flushable, Closeable {
      */
     default void skip(int bits) throws IOException {
         if (bits <= 0) {
-            throw new IllegalArgumentException("bits(" + bits + ") <= 0");
+            throw new IllegalArgumentException("bits(" + bits + ") is not positive");
         }
         for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
             writeInt(false, Integer.SIZE, 0);
@@ -410,24 +393,28 @@ public interface BitOutput extends Flushable, Closeable {
     }
 
     /**
-     * Aligns to specified number of bytes by padding zero bits.
+     * Aligns to specified number of <em>bytes</em> by padding required number of zero-bits.
      *
      * @param bytes the number of bytes to align; must be positive.
-     * @return the number of bits padded while aligning.
+     * @return the number of zero-bits padded while aligning.
      * @throws IllegalArgumentException if {@code bytes} is not positive.
      * @throws IOException              if an I/O error occurs.
      */
     long align(int bytes) throws IOException;
 
     /**
-     * Aligns to a single byte by padding zero bits.  The {@code align()} method of {@code BitOutput} interface invokes
-     * {@link #align(int)} with {@value java.lang.Byte#BYTES}.
+     * Aligns to a single <em>byte</em> by padding required number of zero-bits.
      *
-     * @return the number of bits padded while aligning.
+     * @return the number of zero-bits padded while aligning; between {@code 0} (inclusive) and {@value
+     * java.lang.Byte#SIZE} (exclusive).
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation invokes {@link #align(int)} method with {@value java.lang.Byte#BYTES}.
      * @see #align(int)
      */
     default long align() throws IOException {
-        return align(Byte.BYTES);
+        final long p = align(Byte.BYTES);
+        assert p >= 0L;
+        assert p < Byte.SIZE;
+        return p;
     }
 }

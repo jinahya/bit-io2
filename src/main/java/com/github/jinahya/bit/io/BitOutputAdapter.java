@@ -21,11 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import static com.github.jinahya.bit.io.BitIoConstants.mask;
-import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForInt;
-import static java.util.Objects.requireNonNull;
 
 /**
  * An implementation of {@link BitOutput} adapts an instance of {@link ByteOutput}.
@@ -33,7 +30,21 @@ import static java.util.Objects.requireNonNull;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitInputAdapter
  */
-public class BitOutputAdapter implements BitOutput {
+public class BitOutputAdapter
+        implements BitOutput {
+
+    /**
+     * Creates a new instance which writes bytes to specified byte output.
+     *
+     * @param output the byte output to which bytes are written.
+     * @return a new instance.
+     */
+    public static BitOutput of(final ByteOutput output) {
+        Objects.requireNonNull(output, "output is null");
+        final BitOutputAdapter instance = new BitOutputAdapter(() -> null);
+        instance.output(output);
+        return instance;
+    }
 
     /**
      * Creates a new instance with specified output supplier.
@@ -42,7 +53,7 @@ public class BitOutputAdapter implements BitOutput {
      */
     public BitOutputAdapter(final Supplier<? extends ByteOutput> outputSupplier) {
         super();
-        this.outputSupplier = requireNonNull(outputSupplier, "outputSupplier is null");
+        this.outputSupplier = Objects.requireNonNull(outputSupplier, "outputSupplier is null");
     }
 
     /**
@@ -52,7 +63,8 @@ public class BitOutputAdapter implements BitOutput {
      */
     @Override
     public void flush() throws IOException {
-        BitOutput.super.flush(); // does nothing.
+        BitOutput.super.flush(); // <- does nothing.
+        final ByteOutput output = output(false);
         if (output != null) {
             output.flush();
         }
@@ -62,11 +74,11 @@ public class BitOutputAdapter implements BitOutput {
      * Closes this output and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
-     * @see ByteOutput#close()
      */
     @Override
     public void close() throws IOException {
-        BitOutput.super.close(); // does nothing.
+        BitOutput.super.close(); // <- does nothing.
+        final ByteOutput output = output(false);
         if (output != null) {
             output.close();
         }
@@ -74,11 +86,11 @@ public class BitOutputAdapter implements BitOutput {
 
     @Override
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
-        requireValidSizeForInt(unsigned, size);
+        BitIoConstraints.requireValidSizeForInt(unsigned, size);
         if (!unsigned) {
-            writeInt(true, 1, value < 0 ? 1 : 0);
+            writeUnsignedInt(1, value < 0 ? 1 : 0);
             if (--size > 0) {
-                writeInt(true, size, value);
+                writeUnsignedInt(size, value);
             }
             return;
         }
@@ -95,7 +107,7 @@ public class BitOutputAdapter implements BitOutput {
     @Override
     public long align(int bytes) throws IOException {
         if (bytes <= 0) {
-            throw new IllegalArgumentException("bytes(" + bytes + ") <= 0");
+            throw new IllegalArgumentException("bytes(" + bytes + ") is not positive");
         }
         long bits = 0L; // number of bits padded
         if (available < Byte.SIZE) {
@@ -113,15 +125,14 @@ public class BitOutputAdapter implements BitOutput {
     }
 
     /**
-     * Writes specified unsigned value of specified bit size.
+     * Writes specified unsigned value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
      */
     private void unsigned8(final int size, final int value) throws IOException {
-        assert size > 0;
-        assert size <= Byte.SIZE;
+        assert size > 0 && size <= Byte.SIZE;
         final int required = size - available;
         if (required > 0) {
             unsigned8(available, value >> required);
@@ -129,40 +140,36 @@ public class BitOutputAdapter implements BitOutput {
             return;
         }
         octet <<= size;
-        octet |= value & mask(size);
+        octet |= value & BitIoConstants.mask(size);
         available -= size;
         if (available == 0) {
             assert octet >= 0 && octet < 256;
-            output().write(octet);
+            output(true).write(octet);
             count++;
             octet = 0x00;
             available = Byte.SIZE;
         }
     }
 
-    /**
-     * Returns an instance of {@link ByteOutput}.
-     *
-     * @return an instance of {@link ByteOutput}.
-     */
-    private ByteOutput output() {
-        if (output == null) {
-            output = outputSupplier.get();
+    private ByteOutput output(final boolean get) {
+        if (get) {
+            if (output(false) == null) {
+                output(outputSupplier.get());
+            }
+            return output(false);
         }
         return output;
     }
 
-    /**
-     * The supplier for {@link #output}.
-     */
+    private void output(final ByteOutput output) {
+        if (output(false) != null) {
+            throw new IllegalStateException("output already has been supplied");
+        }
+        this.output = Objects.requireNonNull(output, "output is null");
+    }
 
     private final Supplier<? extends ByteOutput> outputSupplier;
 
-    /**
-     * A value supplied from {@link #outputSupplier}.
-     *
-     * @see #output()
-     */
     private ByteOutput output;
 
     /**

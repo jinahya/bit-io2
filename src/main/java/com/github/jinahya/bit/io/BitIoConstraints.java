@@ -29,7 +29,7 @@ final class BitIoConstraints {
 
     private static int requirePositive(final int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("size(" + size + ") <= 0");
+            throw new IllegalArgumentException("size(" + size + ") is not positive");
         }
         return size;
     }
@@ -39,7 +39,7 @@ final class BitIoConstraints {
             throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
         }
         if (size == Byte.SIZE && unsigned) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned byte");
+            throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned byte");
         }
         return size;
     }
@@ -49,7 +49,7 @@ final class BitIoConstraints {
             throw new IllegalArgumentException("size(" + size + ") > " + Short.SIZE);
         }
         if (size == Short.SIZE && unsigned) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned short");
+            throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned short");
         }
         return size;
     }
@@ -59,9 +59,17 @@ final class BitIoConstraints {
             throw new IllegalArgumentException("size(" + size + ") > " + Integer.SIZE);
         }
         if (size == Integer.SIZE && unsigned) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned int");
+            throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned int");
         }
         return size;
+    }
+
+    static int requireValidSizeForInt(final int size) {
+        return requireValidSizeForInt(false, size);
+    }
+
+    static int requireValidSizeForUnsignedInt(final int size) {
+        return requireValidSizeForInt(true, size);
     }
 
     static int requireValidSizeForLong(final boolean unsigned, final int size) {
@@ -69,15 +77,23 @@ final class BitIoConstraints {
             throw new IllegalArgumentException("size(" + size + ") > " + Long.SIZE);
         }
         if (size == Long.SIZE && unsigned) {
-            throw new IllegalArgumentException("invalid size(" + size + ") for unsigned long");
+            throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned long");
         }
         return size;
     }
 
+    static int requireValidSizeForLong(final int size) {
+        return requireValidSizeForLong(false, size);
+    }
+
+    static int requireValidSizeForUnsignedLong(final int size) {
+        return requireValidSizeForLong(true, size);
+    }
+
     /**
-     * Tests whether specified bit size is valid for a {@code char} value.
+     * Tests whether specified bit-size is valid for a {@code char} value.
      *
-     * @param size the bit size to test.
+     * @param size the bit-size to test.
      * @return specified {@code size}.
      * @throws IllegalArgumentException if {@code size} is not valid for a {@code char} value.
      */

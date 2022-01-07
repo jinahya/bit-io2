@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -30,7 +31,21 @@ import java.util.function.Supplier;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see DataByteInput
  */
-public class DataByteOutput extends ByteOutputAdapter<DataOutput> {
+public class DataByteOutput
+        extends ByteOutputAdapter<DataOutput> {
+
+    /**
+     * Creates a new instance writes bytes to specified data output.
+     *
+     * @param target the data output to which bytes are written.
+     * @return a new instance.
+     */
+    public static DataByteOutput of(final DataOutput target) {
+        Objects.requireNonNull(target, "target is null");
+        final DataByteOutput instance = new DataByteOutput(BitIoUtils.empty());
+        instance.target(target);
+        return instance;
+    }
 
     /**
      * Creates a new instance with specified target supplier.
@@ -48,6 +63,7 @@ public class DataByteOutput extends ByteOutputAdapter<DataOutput> {
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @see DataOutput#write(int)
      */
     @Override
     protected void write(final DataOutput target, final int value) throws IOException {

@@ -30,8 +30,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
-import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith({MockitoExtension.class})
@@ -48,7 +48,7 @@ public class BitOutputTest {
      */
     @Test
     void testWriteBoolean() throws IOException {
-        output.writeBoolean(current().nextBoolean());
+        output.writeBoolean(ThreadLocalRandom.current().nextBoolean());
     }
 
     // ------------------------------------------------------------------------------------------------------- writeByte
@@ -142,13 +142,13 @@ public class BitOutputTest {
      */
     @Test
     void testSkip() throws IOException {
-        output.skip(current().nextInt(1, 128));
+        output.skip(ThreadLocalRandom.current().nextInt(1, 128));
     }
 
     // ----------------------------------------------------------------------------------------------------------- align
     @Test
     void testAlignWithBytes() throws IOException {
-        output.align(current().nextInt(1, 128));
+        output.align(ThreadLocalRandom.current().nextInt(1, 128));
     }
 
     @Test

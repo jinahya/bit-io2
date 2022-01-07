@@ -31,12 +31,14 @@ import java.io.IOException;
  * @see ByteInput
  */
 @FunctionalInterface
-public interface ByteOutput extends Flushable, Closeable {
+public interface ByteOutput
+        extends Flushable, Closeable {
 
     /**
      * Flushes this output by writing any buffered output to the underlying output.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation does nothing.
      */
     @Override
     default void flush() throws IOException {
@@ -47,6 +49,7 @@ public interface ByteOutput extends Flushable, Closeable {
      * Closes this output and releases any system resources associated with it.
      *
      * @throws IOException if an I/O error occurs.
+     * @implNote The default implementation does nothing.
      */
     @Override
     default void close() throws IOException {

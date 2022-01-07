@@ -29,7 +29,8 @@ import static java.util.concurrent.ThreadLocalRandom.current;
 
 final class NonBlockingByteChannels {
 
-    private static class Readable implements ReadableByteChannel {
+    private static class Readable
+            implements ReadableByteChannel {
 
         @Override
         public int read(final ByteBuffer dst) throws IOException {
@@ -56,7 +57,8 @@ final class NonBlockingByteChannels {
         return new Readable();
     }
 
-    private static class Writable implements WritableByteChannel {
+    private static class Writable
+            implements WritableByteChannel {
 
         @Override
         public int write(final ByteBuffer src) throws IOException {

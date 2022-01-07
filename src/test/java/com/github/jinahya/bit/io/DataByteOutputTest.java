@@ -35,7 +35,8 @@ import static java.util.concurrent.ThreadLocalRandom.current;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see DataByteInputTest
  */
-class DataByteOutputTest extends ByteOutputAdapterTest<DataByteOutput, DataOutput> {
+class DataByteOutputTest
+        extends ByteOutputAdapterTest<DataByteOutput, DataOutput> {
 
     /**
      * Creates a new instance.

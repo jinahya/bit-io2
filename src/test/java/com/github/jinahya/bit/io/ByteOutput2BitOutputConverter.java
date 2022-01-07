@@ -30,7 +30,8 @@ import org.junit.jupiter.params.converter.ArgumentConverter;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ByteInput2BitInputConverter
  */
-class ByteOutput2BitOutputConverter implements ArgumentConverter {
+class ByteOutput2BitOutputConverter
+        implements ArgumentConverter {
 
     // -----------------------------------------------------------------------------------------------------------------
     @Override
