@@ -26,8 +26,6 @@ import org.junit.jupiter.params.aggregator.DefaultArgumentsAccessor;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
@@ -49,17 +47,14 @@ class StringUtf8Test {
     @MethodSource({"randomStringStream"})
     @ParameterizedTest
     void test(final String expected) throws IOException {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput output = BitOutputAdapter.of(StreamByteOutput.of(baos));
-        final StringWriter writer = StringWriter.utf8();
-        writer.write(output, expected);
-        final long padded = output.align();
-        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final BitInput input = BitInputAdapter.of(StreamByteInput.of(bais));
-        final StringReader reader = StringReader.utf8();
-        final String actual = reader.read(input);
-        final long discarded = input.align();
-        assertThat(actual).isEqualTo(expected);
-        assertThat(discarded).isEqualTo(padded);
+        BitIoTestUtils.wr2v(o -> {
+            final StringWriter writer = StringWriter.utf8();
+            o.writeObject(writer, expected);
+            return i -> {
+                final StringReader reader = StringReader.utf8();
+                final String actual = i.readObject(reader);
+                assertThat(actual).isEqualTo(expected);
+            };
+        });
     }
 }

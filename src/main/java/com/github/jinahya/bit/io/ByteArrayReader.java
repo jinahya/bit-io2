@@ -58,15 +58,17 @@ class ByteArrayReader
             }
         }
 
+        static Ascii printable(final int lengthSize) {
+            return new Printable(lengthSize);
+        }
+
         Ascii(final int lengthSize) {
             super(lengthSize, 7);
         }
     }
 
     /**
-     * A writer for reading an array of UTF-8 bytes as a compressed manner.
-     *
-     * @see ByteArrayWriter.Utf8
+     * A reader for reading an array of UTF-8 bytes as a compressed manner.
      */
     static class Utf8
             extends ByteArrayReader {
@@ -123,7 +125,7 @@ class ByteArrayReader
      */
     public static ByteArrayReader ascii(final int lengthSize, final boolean printableOnly) {
         if (printableOnly) {
-            return new Ascii.Printable(lengthSize);
+            return Ascii.printable(lengthSize);
         }
         return new Ascii(lengthSize);
     }
@@ -139,11 +141,30 @@ class ByteArrayReader
     }
 
     /**
+     * Returns a new instance which reads a {@code 31}-bit length and reads specified number of bits for each element.
+     *
+     * @param elementSize the number of bits for each byte.
+     * @return a new instance.
+     */
+    public static ByteArrayReader of31(final int elementSize) {
+        return new ByteArrayReader(Integer.SIZE - 1, elementSize);
+    }
+
+    /**
+     * Returns a new instance which reads a {@code 31}-bit length and reads {@value java.lang.Byte#SIZE} bits for each
+     * element.
+     *
+     * @return a new instance.
+     */
+    public static ByteArrayReader of318() {
+        return of31(Byte.SIZE);
+    }
+
+    /**
      * Creates a new instance.
      *
      * @param lengthSize  a number of bits for the length of the array.
      * @param elementSize a number of bits for each element in the array.
-     * @see ByteArrayWriter#ByteArrayWriter(int, int)
      */
     public ByteArrayReader(final int lengthSize, final int elementSize) {
         super(lengthSize);

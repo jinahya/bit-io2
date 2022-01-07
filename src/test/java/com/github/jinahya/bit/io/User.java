@@ -20,46 +20,56 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.RandomStringGenerator;
 
-import java.util.Objects;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 
+@EqualsAndHashCode
+@ToString
+@RequiredArgsConstructor
+@Slf4j
 class User {
 
-    static User newRandomInstance() {
-        final User instance = new User();
-        if (current().nextBoolean()) {
-            instance.name = new RandomStringGenerator.Builder().build().generate(current().nextInt(128));
+    static class Reader
+            implements BitReader<User> {
+
+        @Override
+        public User read(final BitInput input) throws IOException {
+            final String name = reader.read(input);
+            final int age = input.readUnsignedInt(7);
+            return new User(name, age);
         }
-        instance.age = current().nextInt(128);
-        return instance;
+
+        final BitReader<String> reader = new StringReader(ByteArrayReader.utf8(9), StandardCharsets.UTF_8);
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return age == user.age &&
-               Objects.equals(name, user.name);
+    static class Writer
+            implements BitWriter<User> {
+
+        @Override
+        public void write(final BitOutput output, final User value) throws IOException {
+            writer.write(output, value.name);
+            output.writeUnsignedInt(7, value.age);
+        }
+
+        final BitWriter<String> writer = new StringWriter(ByteArrayWriter.utf8(9), StandardCharsets.UTF_8);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, age);
+    static User newRandomInstance() {
+        final String name = new RandomStringGenerator.Builder().build().generate(current().nextInt(128));
+        log.debug("length: {}, codepointCount: {}, bytes: {}", name.length(), name.codePointCount(0, name.length()), name.getBytes(StandardCharsets.UTF_8).length);
+        final int age = current().nextInt(128);
+        return new User(name, age);
     }
 
-    @Override
-    public String toString() {
-        return super.toString() + "{"
-               + "name=" + name
-               + ",age=" + age
-               + "}";
-    }
+    final String name;
 
-    String name;
-
-    int age;
+    final int age;
 }

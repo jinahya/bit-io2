@@ -50,7 +50,7 @@ public abstract class FilterBitWriter<T>
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implNote The {@code write(BitOutput, Object)} method of {@code FilterBitWriter} class invokes {@link
-     * BitWriter#write(BitOutput, Object)} method on {@link #writer} with {@code output} and {@code value}.
+     * BitWriter#write(BitOutput, Object)} method on the wrapped {@code writer} with {@code output} and {@code value}.
      */
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
@@ -60,5 +60,5 @@ public abstract class FilterBitWriter<T>
     /**
      * The writer wrapped by this writer.
      */
-    protected final BitWriter<? super T> writer;
+    private final BitWriter<? super T> writer;
 }

@@ -35,13 +35,13 @@ public class StringReader
         implements BitReader<String> {
 
     /**
-     * Creates a new instance for reading ASCII strings.
+     * Creates a new instance for reading {@link StandardCharsets#US_ASCII} decoded strings in a compressed-manner.
      *
      * @param maximumCharacters a maximum number of characters of a string; must be non-negative.
      * @param printableOnly     a flag for printable characters only; {@code true} for printable characters; {@code
      *                          false} otherwise.
      * @return a new instance.
-     * @see StringWriter#ascii(int, boolean)
+     * @see ByteArrayReader#ascii(int, boolean)
      */
     public static StringReader ascii(final int maximumCharacters, final boolean printableOnly) {
         if (maximumCharacters < 0) {
@@ -52,20 +52,23 @@ public class StringReader
     }
 
     /**
-     * Creates a new instance for writing UTF-8 strings.
+     * Creates a new instance for reading {@link StandardCharsets#UTF_8} decoded strings in a compressed-manner.
      *
      * @return a new instance.
-     * @see StringWriter#utf8()
+     * @see ByteArrayReader#utf8(int)
      */
     public static StringReader utf8() {
-        return new StringReader(ByteArrayReader.utf8(31), StandardCharsets.UTF_8);
+        final ByteArrayReader delegate = ByteArrayReader.utf8(Integer.SIZE - 1);
+        return new StringReader(delegate, StandardCharsets.UTF_8);
     }
 
     /**
      * Creates a new instance with specified arguments.
      *
      * @param delegate a reader for reading encoded bytes.
-     * @param charset  a charset for decoding values.
+     * @param charset  a charset for decoding a value.
+     * @see ByteArrayReader#of31(int)
+     * @see ByteArrayReader#of318()
      */
     public StringReader(final ByteArrayReader delegate, final Charset charset) {
         super();

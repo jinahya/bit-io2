@@ -33,10 +33,10 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class StringAsciiTest {
+class StringAsciiPrintableTest {
 
     static Stream<Arguments> randomBytesAndMaximumCharactersStream() {
-        return ByteArrayAsciiRwTest.randomBytesAndLengthSizeStream()
+        return ByteArrayAsciiPrintableRwTest.randomBytesAndLengthSizeStream()
                 .map(a -> {
                     final DefaultArgumentsAccessor accessor = new DefaultArgumentsAccessor(a.get());
                     final byte[] randomBytes = accessor.get(0, byte[].class);
@@ -50,10 +50,10 @@ class StringAsciiTest {
     @ParameterizedTest
     void test(final String expected, final int maximumCharacters) throws IOException {
         BitIoTestUtils.wr2v(o -> {
-            final StringWriter writer = StringWriter.ascii(maximumCharacters, false);
+            final StringWriter writer = StringWriter.ascii(maximumCharacters, true);
             o.writeObject(writer, expected);
             return i -> {
-                final StringReader reader = StringReader.ascii(maximumCharacters, false);
+                final StringReader reader = StringReader.ascii(maximumCharacters, true);
                 final String actual = i.readObject(reader);
                 assertThat(actual).isEqualTo(expected);
             };

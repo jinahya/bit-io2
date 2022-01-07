@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * An interface for reading objects of a specific type.
@@ -32,14 +33,25 @@ import java.io.IOException;
 public interface BitReader<T> {
 
     /**
-     * Returns a reader handles nullable values.
+     * Returns a reader which reads a {@code 1}-bit {@code null}-flag and reads non-{@code null} values only.
      *
      * @param reader a reader for reading values.
      * @param <T>    value type parameter
-     * @return a reader handles nullable values.
+     * @return a reader for nullable values.
+     * @see BitWriter#nullable(BitWriter)
      */
     static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
-        return new NullableBitReader<>(reader);
+        return new FilterBitReader<T>(reader) {
+            @Override
+            public T read(final BitInput input) throws IOException {
+                Objects.requireNonNull(input, "input is null");
+                final int flag = input.readUnsignedInt(1);
+                if (flag == 0) {
+                    return null;
+                }
+                return super.read(input);
+            }
+        };
     }
 
     /**

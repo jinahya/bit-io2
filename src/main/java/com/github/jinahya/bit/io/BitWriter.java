@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * An interface for writing objects of a specific type.
@@ -32,14 +33,26 @@ import java.io.IOException;
 public interface BitWriter<T> {
 
     /**
-     * Returns a writer handles {@code null} values.
+     * Returns a writer writes a {@code 1}-bit {@code null}-flag and writes non-{@code null} values only.
      *
      * @param writer the writer for writing values.
      * @param <T>    value type parameter
-     * @return a writer handles {@code null} values.
+     * @return a writer for nullable values.
+     * @see BitReader#nullable(BitReader)
      */
     static <T> BitWriter<T> nullable(final BitWriter<? super T> writer) {
-        return new NullableBitWriter<>(writer);
+        return new FilterBitWriter<T>(writer) {
+            @Override
+            public void write(final BitOutput output, final T value) throws IOException {
+                Objects.requireNonNull(output, "output is null");
+                final int flag = value == null ? 0 : 1;
+                output.writeUnsignedInt(1, flag);
+                if (flag == 0) {
+                    return;
+                }
+                super.write(output, value);
+            }
+        };
     }
 
     /**
