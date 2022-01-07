@@ -64,7 +64,6 @@ class User {
 
     static User newRandomInstance() {
         final String name = new RandomStringGenerator.Builder().build().generate(current().nextInt(128));
-        log.debug("length: {}, codepointCount: {}, bytes: {}", name.length(), name.codePointCount(0, name.length()), name.getBytes(StandardCharsets.UTF_8).length);
         final int age = current().nextInt(128);
         return new User(name, age);
     }
