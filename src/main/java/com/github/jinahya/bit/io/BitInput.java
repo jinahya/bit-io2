@@ -304,7 +304,7 @@ public interface BitInput
      * @return a {@code char} value read.
      * @throws IOException if an I/O error occurs.
      * @implNote The default implementation invokes {@link #readUnsignedInt(int)} method with given {@code size} and
-     * returns the result as casted to a {@code char} value.
+     * returns the result as a {@code char}.
      * @see #readUnsignedInt(int)
      */
     default char readChar(final int size) throws IOException {
