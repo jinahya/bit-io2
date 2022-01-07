@@ -21,28 +21,9 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.function.UnaryOperator;
 
 class Float32ArrayReader
         extends PrimitiveArrayReader<float[]> {
-
-    public static float[] readFrom(final BitInput input, final UnaryOperator<BitReader<float[]>> operator)
-            throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        Objects.requireNonNull(operator, "operator is null");
-        return operator.apply(new Float32ArrayReader(31)).read(input);
-    }
-
-    public static float[] readFrom(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        return readFrom(input, UnaryOperator.identity());
-    }
-
-    public static float[] readNullableFrom(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        return readFrom(input, BitReader::nullable);
-    }
 
     /**
      * Creates a new instance with specified length-size.

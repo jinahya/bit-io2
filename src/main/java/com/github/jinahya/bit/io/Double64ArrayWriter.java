@@ -21,29 +21,9 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.function.UnaryOperator;
 
 class Double64ArrayWriter
         extends PrimitiveArrayWriter<double[]> {
-
-    public static void writeTo(final BitOutput output, final UnaryOperator<BitWriter<double[]>> operator,
-                               final double[] value)
-            throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        operator.apply(new Double64ArrayWriter(31)).write(output, value);
-    }
-
-    public static void writeTo(final BitOutput output, final double[] value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        Objects.requireNonNull(value, "value is null");
-        writeTo(output, UnaryOperator.identity(), value);
-    }
-
-    public static void writeNullableTo(final BitOutput output, final double[] value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        writeTo(output, BitWriter::nullable, value);
-    }
 
     /**
      * Creates a new instance with specified length-size.
