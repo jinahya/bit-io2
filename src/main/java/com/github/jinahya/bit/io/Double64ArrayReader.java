@@ -21,28 +21,9 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.function.UnaryOperator;
 
 class Double64ArrayReader
         extends PrimitiveArrayReader<double[]> {
-
-    public static double[] readFrom(final BitInput input, final UnaryOperator<BitReader<double[]>> operator)
-            throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        Objects.requireNonNull(operator, "operator is null");
-        return operator.apply(new Double64ArrayReader(31)).read(input);
-    }
-
-    public static double[] readFrom(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        return readFrom(input, UnaryOperator.identity());
-    }
-
-    public static double[] readNullableFrom(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        return readFrom(input, BitReader::nullable);
-    }
 
     /**
      * Creates a new instance with specified length-size.

@@ -30,16 +30,62 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
+
 final class BitIoTestUtils {
+
+    static <R> R w1(
+            final Function<? super BitOutput, Function<? super byte[], ? extends R>> f1) throws IOException {
+        Objects.requireNonNull(f1, "f1 is null");
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final BitOutput o = BitOutputAdapter.of(StreamByteOutput.of(baos));
+        final Function<? super byte[], ? extends R> f2 = f1.apply(o);
+        final long padded = o.align();
+        assert padded >= 0L;
+        o.flush();
+        final byte[] bytes = baos.toByteArray();
+        assert f2 != null : "f2 is null";
+        return f2.apply(bytes);
+    }
+
+    static <R> R w1v(
+            final CheckedFunction1<? super BitOutput, CheckedFunction1<? super byte[], ? extends R>> f1)
+            throws IOException {
+        Objects.requireNonNull(f1, "f1 is null");
+        return w1(o -> {
+            final CheckedFunction1<? super byte[], ? extends R> f2 = f1.unchecked().apply(o);
+            assert f2 != null : "f2 is null";
+            return b -> f2.unchecked().apply(b);
+        });
+    }
 
     static <R> R wr1(final Function<? super BitOutput, ? extends Function<? super BitInput, ? extends R>> f1)
             throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
+        if (current().nextBoolean()) {
+            return w1(o -> {
+                final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
+                assert f2 != null : "f2 is null";
+                return b -> {
+                    final ByteArrayInputStream bais = new ByteArrayInputStream(b);
+                    final BitInput input = BitInputAdapter.of(StreamByteInput.of(bais));
+                    final R result = f2.apply(input);
+                    try {
+                        final long discarded = input.align();
+                        assert discarded >= 0L;
+                        return result;
+                    } catch (final IOException ioe) {
+                        throw new RuntimeException(ioe);
+                    }
+                };
+            });
+        }
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final BitOutput o = BitOutputAdapter.of(StreamByteOutput.of(baos));
         final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
         final long padded = o.align();
-        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final byte[] bytes = baos.toByteArray();
+        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         final BitInput i = BitInputAdapter.of(StreamByteInput.of(bais));
         try {
             return f2.apply(i);
