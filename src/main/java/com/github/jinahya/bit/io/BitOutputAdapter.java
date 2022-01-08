@@ -133,6 +133,13 @@ public class BitOutputAdapter
      */
     private void unsigned8(final int size, final int value) throws IOException {
         assert size > 0 && size <= Byte.SIZE;
+        if (size == Byte.SIZE && available == Byte.SIZE) { // write, a full 8-bit octet, directly to the output
+            output(true).write(value);
+            count++;
+            assert octet == 0x00 : "'octet' should be remained as 0x00";
+            assert available == Byte.SIZE : "'available' should be remained as Byte.SIZE";
+            return;
+        }
         final int required = size - available;
         if (required > 0) {
             unsigned8(available, value >> required);
