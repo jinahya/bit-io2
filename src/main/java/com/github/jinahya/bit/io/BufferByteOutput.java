@@ -81,7 +81,7 @@ public class BufferByteOutput
 
     /**
      * {@inheritDoc} The {@code write(ByteBuffer, int)} method of {@code BufferByteOutput} class invokes {@link
-     * ByteBuffer#put(byte)} method on specified byte buffer with specified value casted as a {@code byte} value.
+     * ByteBuffer#put(byte)} method on specified byte buffer with specified value as a {@code byte} value.
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}

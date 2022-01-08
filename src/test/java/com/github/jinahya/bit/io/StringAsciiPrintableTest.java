@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class StringAsciiPrintableTest {
 
     static Stream<Arguments> randomBytesAndMaximumCharactersStream() {
-        return ByteArrayAsciiPrintableRwTest.randomBytesAndLengthSizeStream()
+        return ByteArrayAsciiPrintableTest.randomBytesAndLengthSizeStream()
                 .map(a -> {
                     final DefaultArgumentsAccessor accessor = new DefaultArgumentsAccessor(a.get());
                     final byte[] randomBytes = accessor.get(0, byte[].class);
