@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -56,6 +57,19 @@ public class BufferByteInput
         Objects.requireNonNull(channel, "channel is null");
         return adapting(() -> channel);
     }
+
+
+
+//    /**
+//     * Creates a new instance which reads bytes from the channel supplied by specified supplier.
+//     *
+//     * @param channelSupplier the supplier of the channel.
+//     * @return a new instance.
+//     */
+//    public static BufferByteInput adapting(final Supplier<? extends AsynchronousByteChannel> channelSupplier) {
+//        final Supplier<ByteBuffer> bufferSupplier = () -> (ByteBuffer) ByteBuffer.allocate(1).position(1);
+//        return new BufferByteInputChannelAdapter(bufferSupplier, channelSupplier);
+//    }
 
     /**
      * Creates a new instance which reads bytes from specified buffer.

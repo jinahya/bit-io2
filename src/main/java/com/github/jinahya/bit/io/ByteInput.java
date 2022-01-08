@@ -22,7 +22,14 @@ package com.github.jinahya.bit.io;
 
 import java.io.Closeable;
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.Objects;
 
 /**
  * An interface for reading bytes.
@@ -33,6 +40,55 @@ import java.io.IOException;
 @FunctionalInterface
 public interface ByteInput
         extends Closeable {
+
+    /**
+     * Returns a new instance which reads bytes from specified file.
+     *
+     * @param file the file from which bytes are read.
+     * @return a new instance.
+     */
+    static ByteInput from(final File file) {
+        return StreamByteInput.from(file);
+    }
+
+    /**
+     * Returns a new instance which reads bytes from specified path.
+     *
+     * @param path    the path from which bytes are read.
+     * @param options an array of open options.
+     * @return a new instance.
+     */
+    static ByteInput from(final Path path, final OpenOption... options) {
+        Objects.requireNonNull(path, "path is null");
+        Objects.requireNonNull(options, "options is null");
+        return BufferByteInput.adapting(() -> {
+            try {
+                return FileChannel.open(path, options);
+            } catch (final IOException ioe) {
+                throw new RuntimeException("failed to open " + path, ioe);
+            }
+        });
+    }
+
+    /**
+     * Returns a new instance which reads bytes from specified path.
+     *
+     * @param path the path from which bytes are read.
+     * @return a new instance.
+     */
+    static ByteInput from(final Path path) {
+        return from(path, StandardOpenOption.READ);
+    }
+
+    /**
+     * Returns a new instance which reads bytes from specified random access file.
+     *
+     * @param file the file from which bytes are read.
+     * @return a new instance.
+     */
+    static ByteInput of(final RandomAccessFile file) {
+        return RandomAccessFileByteInput.of(file);
+    }
 
     /**
      * Closes this input and releases any system resources associated with it.

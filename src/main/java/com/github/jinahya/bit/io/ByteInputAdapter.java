@@ -55,6 +55,7 @@ public abstract class ByteInputAdapter<T>
     @Override
     public void close() throws IOException {
         ByteInput.super.close(); // does nothing.
+        final T source = source(false);
         if (source instanceof Closeable) {
             ((Closeable) source).close();
         }

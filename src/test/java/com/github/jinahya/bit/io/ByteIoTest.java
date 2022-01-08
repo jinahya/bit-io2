@@ -36,7 +36,7 @@ abstract class ByteIoTest<O extends ByteOutput, I extends ByteInput> {
     protected abstract I newInput(final byte[] bytes);
 
     @Test
-    void writeAndRead() throws IOException {
+    void wr() throws IOException {
         final int count = ThreadLocalRandom.current().nextInt(1024);
         final byte[] expected = new byte[count];
         for (int i = 0; i < count; i++) {

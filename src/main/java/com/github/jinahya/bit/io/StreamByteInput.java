@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,6 +50,23 @@ public class StreamByteInput
         final StreamByteInput instance = new StreamByteInput(BitIoUtils.empty());
         instance.source(source);
         return instance;
+    }
+
+    /**
+     * Returns a new instance which reads bytes from specified file.
+     *
+     * @param file the file from which bytes are read.
+     * @return a new instance.
+     */
+    static StreamByteInput from(final File file) {
+        Objects.requireNonNull(file, "file is null");
+        return new StreamByteInput(() -> {
+            try {
+                return new FileInputStream(file);
+            } catch (final IOException ioe) {
+                throw new RuntimeException("failed to open " + file, ioe);
+            }
+        });
     }
 
     /**

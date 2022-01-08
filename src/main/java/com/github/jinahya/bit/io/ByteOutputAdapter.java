@@ -56,6 +56,7 @@ public abstract class ByteOutputAdapter<T>
     @Override
     public void flush() throws IOException {
         ByteOutput.super.flush(); // does nothing.
+        final T target = target(false);
         if (target instanceof Flushable) {
             ((Flushable) target).flush();
         }
@@ -71,6 +72,7 @@ public abstract class ByteOutputAdapter<T>
     @Override
     public void close() throws IOException {
         ByteOutput.super.close(); // does nothing.
+        final T target = target(false);
         if (target instanceof Closeable) {
             ((Closeable) target).close();
         }

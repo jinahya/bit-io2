@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -55,6 +56,10 @@ class BufferByteOutputChannelAdapter
                 channel(true).write(target);
             }
             target.clear();
+            final WritableByteChannel channel = channel(false);
+            if (channel instanceof FileChannel) {
+                ((FileChannel) channel).force(false);
+            }
         }
     }
 

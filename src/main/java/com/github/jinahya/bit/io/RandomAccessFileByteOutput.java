@@ -21,49 +21,48 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * A byte output writes bytes to an instance of {@link OutputStream}.
+ * A byte output writes bytes to an instance of {@link java.io.RandomAccessFile}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see StreamByteInput
+ * @see RandomAccessFileByteInput
  */
-public class StreamByteOutput
-        extends ByteOutputAdapter<OutputStream> {
+class RandomAccessFileByteOutput
+        extends ByteOutputAdapter<RandomAccessFile> {
 
     /**
      * Returns a new instance which writes bytes to specified file.
      *
      * @param file the file to which bytes are written.
      * @return a new instance.
+     * @see RandomAccessFileByteInput#from(File)
      */
-    static StreamByteOutput from(final File file) {
+    static RandomAccessFileByteOutput from(final File file) {
         Objects.requireNonNull(file, "file is null");
-        return new StreamByteOutput(() -> {
+        return new RandomAccessFileByteOutput(() -> {
             try {
-                return new FileOutputStream(file);
+                return new RandomAccessFile(file, "rwd");
             } catch (final IOException ioe) {
-                throw new RuntimeException("failed to open " + file, ioe);
+                throw new RuntimeException(ioe);
             }
         });
     }
 
     /**
-     * Creates a new byte output on top of specified output stream.
+     * Creates a new byte output which reads bytes from specified random access file.
      *
-     * @param target the output stream to which bytes are written.
+     * @param target the random access file to which bytes are written.
      * @return a new instance.
-     * @see StreamByteInput#of(InputStream)
+     * @see RandomAccessFileByteInput#of(RandomAccessFile)
      */
-    public static StreamByteOutput of(final OutputStream target) {
+    public static RandomAccessFileByteOutput of(final RandomAccessFile target) {
         Objects.requireNonNull(target, "target is null");
-        final StreamByteOutput instance = new StreamByteOutput(BitIoUtils.empty());
+        final RandomAccessFileByteOutput instance = new RandomAccessFileByteOutput(BitIoUtils.empty());
         instance.target(target);
         return instance;
     }
@@ -73,20 +72,21 @@ public class StreamByteOutput
      *
      * @param targetSupplier the target supplier.
      */
-    public StreamByteOutput(final Supplier<? extends OutputStream> targetSupplier) {
+    public RandomAccessFileByteOutput(final Supplier<? extends RandomAccessFile> targetSupplier) {
         super(targetSupplier);
     }
 
     /**
-     * {@inheritDoc} The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes {@link
-     * OutputStream#write(int)} method on specified output stream with specified value.
+     * {@inheritDoc}
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @implSpec The {@code write(RandomAccessFile, int)} method of {@code RandomAccessFileByteOutput} class invokes
+     * {@link RandomAccessFile#write(int)} method on {@code target} with {@code value}.
      */
     @Override
-    protected void write(final OutputStream target, final int value) throws IOException {
+    protected void write(final RandomAccessFile target, final int value) throws IOException {
         target.write(value);
     }
 }
