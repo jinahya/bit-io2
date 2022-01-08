@@ -115,7 +115,7 @@ public class BitInputAdapter
     }
 
     /**
-     * Reads an unsigned {@code int} value of specified numbr of bits.
+     * Reads an unsigned {@code int} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return an unsigned {@code int} value.
@@ -128,6 +128,10 @@ public class BitInputAdapter
             assert octet >= 0 && octet < 256;
             count++;
             available = Byte.SIZE;
+        }
+        if (available == Byte.SIZE && size == Byte.SIZE) { // return, directly, a full 8-bit octet
+            available = 0;
+            return octet;
         }
         final int required = size - available;
         if (required > 0) {
