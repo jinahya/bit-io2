@@ -67,7 +67,6 @@ public class StringReader
      *
      * @param delegate a reader for reading encoded bytes.
      * @param charset  a charset for decoding a value.
-     * @see ByteArrayReader#of31(int)
      * @see ByteArrayReader#of318()
      */
     public StringReader(final ByteArrayReader delegate, final Charset charset) {

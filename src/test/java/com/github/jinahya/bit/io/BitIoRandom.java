@@ -62,27 +62,19 @@ final class BitIoRandom {
     static <R> R applyNextValueForByte_v(final boolean unsigned, final int size,
                                          final CheckedFunction1<? super Integer, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return applyNextValueForByte(unsigned, size, v -> {
-            return function.unchecked().apply(v);
-        });
+        return applyNextValueForByte(unsigned, size, v -> function.unchecked().apply(v));
     }
 
     static <R> R applyNextByte(final boolean unsigned,
                                final IntFunction<? extends IntFunction<? extends R>> function) {
         Objects.requireNonNull(function, "function is null");
-        return applyNextSizeForByte(unsigned, s -> {
-            return applyNextValueForByte(unsigned, s, v -> {
-                return function.apply(s).apply(v);
-            });
-        });
+        return applyNextSizeForByte(unsigned, s -> applyNextValueForByte(unsigned, s, v -> function.apply(s).apply(v)));
     }
 
     static <R> R applyNextByte_v(
             final boolean unsigned,
             final CheckedFunction1<? super Integer, ? extends CheckedFunction1<? super Integer, ? extends R>> function) {
-        return applyNextByte(unsigned, s -> v -> {
-            return function.unchecked().apply(s).unchecked().apply(v);
-        });
+        return applyNextByte(unsigned, s -> v -> function.unchecked().apply(s).unchecked().apply(v));
     }
 
     // ----------------------------------------------------------------------------------------------------------- short
@@ -116,27 +108,20 @@ final class BitIoRandom {
 
     static <R> R applyNextValueForShort_v(final boolean unsigned, final int size,
                                           final CheckedFunction1<? super Integer, ? extends R> function) {
-        return applyNextValueForShort(unsigned, size, v -> {
-            return function.unchecked().apply(v);
-        });
+        return applyNextValueForShort(unsigned, size, v -> function.unchecked().apply(v));
     }
 
     static <R> R applyNextShort(final boolean unsigned,
                                 final IntFunction<? extends IntFunction<? extends R>> function) {
         Objects.requireNonNull(function, "function is null");
-        return applyNextSizeForShort(unsigned, s -> {
-            return applyNextValueForShort(unsigned, s, v -> {
-                return function.apply(s).apply(v);
-            });
-        });
+        return applyNextSizeForShort(
+                unsigned, s -> applyNextValueForShort(unsigned, s, v -> function.apply(s).apply(v)));
     }
 
     static <R> R applyNextShort_v(
             final boolean unsigned,
             final CheckedFunction1<? super Integer, ? extends CheckedFunction1<? super Integer, ? extends R>> function) {
-        return applyNextShort(unsigned, s -> v -> {
-            return function.unchecked().apply(s).unchecked().apply(v);
-        });
+        return applyNextShort(unsigned, s -> v -> function.unchecked().apply(s).unchecked().apply(v));
     }
 
     // ------------------------------------------------------------------------------------------------------------- int
@@ -166,19 +151,13 @@ final class BitIoRandom {
 
     static <R> R applyNextInt(final boolean unsigned, final IntFunction<? extends IntFunction<? extends R>> function) {
         Objects.requireNonNull(function, "function is null");
-        return applyNextSizeForInt(unsigned, s -> {
-            return applyNextValueForInt(unsigned, s, v -> {
-                return function.apply(s).apply(v);
-            });
-        });
+        return applyNextSizeForInt(unsigned, s -> applyNextValueForInt(unsigned, s, v -> function.apply(s).apply(v)));
     }
 
     static <R> R applyNextInt_v(
             final boolean unsigned,
             final CheckedFunction1<? super Integer, ? extends CheckedFunction1<? super Integer, ? extends R>> function) {
-        return applyNextInt(unsigned, s -> v -> {
-            return function.unchecked().apply(s).unchecked().apply(v);
-        });
+        return applyNextInt(unsigned, s -> v -> function.unchecked().apply(s).unchecked().apply(v));
     }
 
     // ------------------------------------------------------------------------------------------------------------ long
@@ -210,19 +189,53 @@ final class BitIoRandom {
     static <R> R applyNextLong(final boolean unsigned,
                                final IntFunction<? extends LongFunction<? extends R>> function) {
         Objects.requireNonNull(function, "function is null");
-        return applyNextSizeForLong(unsigned, s -> {
-            return applyNextValueForLong(unsigned, s, v -> {
-                return function.apply(s).apply(v);
-            });
-        });
+        return applyNextSizeForLong(unsigned, s -> applyNextValueForLong(unsigned, s, v -> function.apply(s).apply(v)));
     }
 
     static <R> R applyNextLong_v(
             final boolean unsigned,
             final CheckedFunction1<? super Integer, ? extends CheckedFunction1<Long, ? extends R>> function) {
-        return applyNextLong(unsigned, s -> v -> {
-            return function.unchecked().apply(s).unchecked().apply(v);
-        });
+        return applyNextLong(unsigned, s -> v -> function.unchecked().apply(s).unchecked().apply(v));
+    }
+
+    // ------------------------------------------------------------------------------------------------------------ char
+    static int nextSizeForChar() {
+        final int size = current().nextInt(1, Character.SIZE + 1);
+        return BitIoConstraints.requireValidSizeForChar(size);
+    }
+
+    static <R> R applyNextSizeForChar(final IntFunction<? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        return function.apply(nextSizeForChar());
+    }
+
+    static char nextValueForChar(final int size) {
+        BitIoConstraints.requireValidSizeForChar(size);
+        final char value = (char) (current().nextInt() >>> (Integer.SIZE - size));
+        assert value >> size == 0;
+        return value;
+    }
+
+    static <R> R applyNextValueForChar(final int size, final IntFunction<? extends R> function) {
+        BitIoConstraints.requireValidSizeForChar(size);
+        Objects.requireNonNull(function, "function is null");
+        return function.apply(nextValueForChar(size));
+    }
+
+    static <R> R applyNextValueForChar_v(final int size,
+                                         final CheckedFunction1<? super Integer, ? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        return applyNextValueForChar(size, v -> function.unchecked().apply(v));
+    }
+
+    static <R> R applyNextChar(final IntFunction<? extends IntFunction<? extends R>> function) {
+        Objects.requireNonNull(function, "function is null");
+        return applyNextSizeForChar(s -> applyNextValueForChar(s, v -> function.apply(s).apply(v)));
+    }
+
+    static <R> R applyNextChar_v(
+            final CheckedFunction1<? super Integer, ? extends CheckedFunction1<? super Integer, ? extends R>> function) {
+        return applyNextChar(s -> v -> function.unchecked().apply(s).unchecked().apply(v));
     }
 
     private BitIoRandom() {

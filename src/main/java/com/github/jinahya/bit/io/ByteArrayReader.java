@@ -146,7 +146,7 @@ class ByteArrayReader
      * @param elementSize the number of bits for each byte.
      * @return a new instance.
      */
-    public static ByteArrayReader of31(final int elementSize) {
+    static ByteArrayReader of31(final int elementSize) {
         return new ByteArrayReader(Integer.SIZE - 1, elementSize);
     }
 

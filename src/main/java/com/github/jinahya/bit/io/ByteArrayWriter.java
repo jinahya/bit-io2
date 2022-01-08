@@ -154,7 +154,7 @@ class ByteArrayWriter
      * @param elementSize the number of bits for each byte.
      * @return a new instance.
      */
-    public static ByteArrayWriter of31(final int elementSize) {
+    static ByteArrayWriter of31(final int elementSize) {
         return new ByteArrayWriter(Integer.SIZE - 1, elementSize);
     }
 

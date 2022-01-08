@@ -68,7 +68,6 @@ public class StringWriter
      *
      * @param delegate a writer for writing encoded bytes.
      * @param charset  a charset for encoding a value.
-     * @see ByteArrayWriter#of31(int)
      * @see ByteArrayWriter#of318()
      */
     public StringWriter(final ByteArrayWriter delegate, final Charset charset) {

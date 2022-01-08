@@ -29,10 +29,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -40,13 +40,13 @@ class ByteArrayTest {
 
     static byte[] randomize(final byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = (byte) ThreadLocalRandom.current().nextInt(0x00, 0x100);
+            bytes[i] = (byte) current().nextInt(0x00, 0x100);
         }
         return bytes;
     }
 
     static byte[] randomBytes() {
-        final int length = ThreadLocalRandom.current().nextInt(128);
+        final int length = current().nextInt(128);
         return randomize(new byte[length]);
     }
 

@@ -47,9 +47,7 @@ class LongArrayReader
     public long[] read(final BitInput input) throws IOException {
         final int length = readLength(input);
         final long[] value = new long[length];
-        for (int i = 0; i < value.length; i++) {
-            value[i] = readElement(input);
-        }
+        readElements(input, value);
         return value;
     }
 

@@ -50,7 +50,7 @@ public abstract class FilterBitReader<T>
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implNote The {@code read(BitInput)} method of {@code FilterBitReader} class invokes {@link #read(BitInput)}
-     * method on {@link #reader}.
+     * method on {@link #reader} and returns the result.
      */
     @Override
     public T read(final BitInput input) throws IOException {
