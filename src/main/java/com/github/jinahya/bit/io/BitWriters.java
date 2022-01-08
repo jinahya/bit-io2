@@ -21,7 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 /**
- * Implementations of {@link BitWriter}.
+ * A utility class related to {@link BitWriter}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

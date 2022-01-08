@@ -50,7 +50,7 @@ public abstract class ByteInputAdapter<T>
      *
      * @throws IOException {@inheritDoc}
      * @implNote The {@code close()} method of {@code ByteInputAdapter} class invokes {@link Closeable#close()} method
-     * on the byte source which may not has been initialized yet in which case the method does nothing.
+     * on the byte source which may not have been initialized yet in which case the method does nothing.
      */
     @Override
     public void close() throws IOException {

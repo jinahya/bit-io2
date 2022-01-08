@@ -36,11 +36,11 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArrayAsciiRwTest {
+class ByteArrayAsciiPrintableTest {
 
     static byte[] randomize(final byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = (byte) ThreadLocalRandom.current().nextInt(0x00, 0x80);
+            bytes[i] = (byte) ThreadLocalRandom.current().nextInt(0x20, 0x7F);
         }
         return bytes;
     }
@@ -62,16 +62,16 @@ class ByteArrayAsciiRwTest {
     private void run(final byte[] expected, final int lengthSize) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final BitOutput output = BitOutputAdapter.of(StreamByteOutput.of(baos));
-        final BitWriter<byte[]> writer = ByteArrayWriter.ascii(lengthSize, false);
+        final BitWriter<byte[]> writer = ByteArrayWriter.ascii(lengthSize, true);
         writer.write(output, expected);
         final long padded = output.align();
         if (expected.length > 0) {
-            log.debug("uncompressed: {}, compressed: {}, rate: {}", expected.length, baos.size(),
+            log.debug("given: {}, written: {}, ratio: {}", expected.length, baos.size(),
                       (baos.size() / (double) expected.length) * 100.0d);
         }
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         final BitInput input = BitInputAdapter.of(StreamByteInput.of(bais));
-        final BitReader<byte[]> reader = ByteArrayReader.ascii(lengthSize, false);
+        final BitReader<byte[]> reader = ByteArrayReader.ascii(lengthSize, true);
         final byte[] actual = reader.read(input);
         final long discarded = input.align();
         assertThat(actual).isEqualTo(expected);

@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArrayUnsignedRwTest {
+class ByteArrayUnsignedTest {
 
     static byte[] randomize(final byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {
@@ -54,7 +54,7 @@ class ByteArrayUnsignedRwTest {
         return IntStream.range(0, 16)
                 .mapToObj(i -> {
                     final byte[] randomBytes = randomBytes();
-                    return Arguments.of(randomBytes);
+                    return Arguments.of(new Object[]{randomBytes});
                 });
     }
 
@@ -65,7 +65,7 @@ class ByteArrayUnsignedRwTest {
         writer.write(output, expected);
         final long padded = output.align();
         if (expected.length > 0) {
-            log.debug("uncompressed: {}, compressed: {}, rate: {}", expected.length, baos.size(),
+            log.debug("given: {}, written: {}, rate: {}", expected.length, baos.size(),
                       (baos.size() / (double) expected.length) * 100.0d);
         }
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());

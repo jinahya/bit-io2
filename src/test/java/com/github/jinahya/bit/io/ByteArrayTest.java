@@ -36,11 +36,11 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArrayAsciiPrintableRwTest {
+class ByteArrayTest {
 
     static byte[] randomize(final byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = (byte) ThreadLocalRandom.current().nextInt(0x20, 0x7F);
+            bytes[i] = (byte) ThreadLocalRandom.current().nextInt(0x00, 0x100);
         }
         return bytes;
     }
@@ -50,67 +50,66 @@ class ByteArrayAsciiPrintableRwTest {
         return randomize(new byte[length]);
     }
 
-    static Stream<Arguments> randomBytesAndLengthSizeStream() {
+    static Stream<Arguments> randomBytesStream() {
         return IntStream.range(0, 16)
                 .mapToObj(i -> {
                     final byte[] randomBytes = randomBytes();
-                    final int lengthSize = BitIoUtils.size(randomBytes.length);
-                    return Arguments.of(randomBytes, lengthSize);
+                    return Arguments.of(new Object[]{randomBytes});
                 });
     }
 
-    private void run(final byte[] expected, final int lengthSize) throws IOException {
+    private void run(final byte[] expected) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final BitOutput output = BitOutputAdapter.of(StreamByteOutput.of(baos));
-        final BitWriter<byte[]> writer = ByteArrayWriter.ascii(lengthSize, true);
+        final BitWriter<byte[]> writer = new ByteArrayWriter(7, 8);
         writer.write(output, expected);
         final long padded = output.align();
         if (expected.length > 0) {
-            log.debug("uncompressed: {}, compressed: {}, rate: {}", expected.length, baos.size(),
+            log.debug("given: {}, written: {}, rate: {}", expected.length, baos.size(),
                       (baos.size() / (double) expected.length) * 100.0d);
         }
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         final BitInput input = BitInputAdapter.of(StreamByteInput.of(bais));
-        final BitReader<byte[]> reader = ByteArrayReader.ascii(lengthSize, true);
+        final BitReader<byte[]> reader = new ByteArrayReader(7, 8);
         final byte[] actual = reader.read(input);
         final long discarded = input.align();
         assertThat(actual).isEqualTo(expected);
         assertThat(discarded).isEqualTo(padded);
     }
 
-    @MethodSource({"randomBytesAndLengthSizeStream"})
+    @MethodSource({"randomBytesStream"})
     @ParameterizedTest
-    void test(final byte[] randomBytes, final int lengthSize) throws IOException {
-        run(randomBytes, lengthSize);
+    void test(final byte[] randomBytes) throws IOException {
+        run(randomBytes);
     }
 
     @Test
     void test__empty() throws IOException {
-        run(new byte[0], 1);
+        run(new byte[0]);
     }
 
     @Test
     void test__one() throws IOException {
-        run(randomize(new byte[1]), 1);
+        run(randomize(new byte[1]));
     }
 
     @Test
     void test__two() throws IOException {
-        run(randomize(new byte[2]), 2);
+        run(randomize(new byte[2]));
     }
 
     @Test
     void test__three() throws IOException {
-        run(randomize(new byte[3]), 2);
+        run(randomize(new byte[3]));
     }
 
     @Test
     void test__four() throws IOException {
-        run(randomize(new byte[4]), 3);
+        run(randomize(new byte[4]));
     }
 
     @Test
     void test__five() throws IOException {
-        run(randomize(new byte[5]), 3);
+        run(randomize(new byte[5]));
     }
 }
