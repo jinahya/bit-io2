@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.Closeable;
-import java.io.EOFException;
 import java.io.IOException;
 
 /**
@@ -49,8 +48,7 @@ public interface ByteInput
      * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.
      *
      * @return an unsigned {@value java.lang.Byte#SIZE}-bit value; between {@code 0} and {@code 255}, both inclusive.
-     * @throws EOFException if reached to an end.
-     * @throws IOException  if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
      */
     int read() throws IOException;
 }
