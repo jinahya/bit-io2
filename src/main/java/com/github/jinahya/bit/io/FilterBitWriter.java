@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * An abstract class for writing values of a hetero type.
+ * An abstract class for filtering another writer.
  *
  * @param <T> value type parameter
  * @param <U> filtered value type parameter

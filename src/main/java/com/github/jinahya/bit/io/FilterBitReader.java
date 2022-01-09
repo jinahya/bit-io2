@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * A abstract class for reading values of a hetero type.
+ * A abstract class for filter another reader.
  *
  * @param <T> value type parameter
  * @param <U> filtered value type parameter
