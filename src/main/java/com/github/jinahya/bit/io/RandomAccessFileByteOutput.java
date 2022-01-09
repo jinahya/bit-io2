@@ -82,7 +82,7 @@ class RandomAccessFileByteOutput
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implSpec The {@code write(RandomAccessFile, int)} method of {@code RandomAccessFileByteOutput} class invokes
+     * @implNote The {@code write(RandomAccessFile, int)} method of {@code RandomAccessFileByteOutput} class invokes
      * {@link RandomAccessFile#write(int)} method on {@code target} with {@code value}.
      */
     @Override

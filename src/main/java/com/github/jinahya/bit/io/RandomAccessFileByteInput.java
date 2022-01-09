@@ -82,7 +82,7 @@ class RandomAccessFileByteInput
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implSpec The {@code read(InputStream)} method of {@code RandomAccessFileByteInput} class invokes {@link
+     * @implNote The {@code read(InputStream)} method of {@code RandomAccessFileByteInput} class invokes {@link
      * RandomAccessFile#readUnsignedByte()} method on specified source and returns the result.
      */
     @Override
