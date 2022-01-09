@@ -7,8 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,6 +34,30 @@ class BitInputDefaultTest {
             final int size = current().nextInt() | Integer.MIN_VALUE;
             assertThatThrownBy(() -> input.readByte(size))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void readByte__Unsigned() {
+            final boolean unsigned = true;
+            final int size = BitIoRandom.nextSizeForByte(unsigned);
+            assertThatCode(() -> input.readByte(unsigned, size))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void readByte__Signed() {
+            final boolean unsigned = false;
+            final int size = BitIoRandom.nextSizeForByte(unsigned);
+            assertThatCode(() -> input.readByte(unsigned, size))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        void readByte__() {
+            final boolean unsigned = false;
+            final int size = BitIoRandom.nextSizeForByte(unsigned);
+            assertThatCode(() -> input.readByte(size))
+                    .doesNotThrowAnyException();
         }
     }
 

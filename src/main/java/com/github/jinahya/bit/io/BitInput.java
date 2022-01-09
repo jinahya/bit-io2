@@ -182,7 +182,7 @@ public interface BitInput
     int readInt(boolean unsigned, int size) throws IOException;
 
     /**
-     * Reads a signed {@code int} value of specified number of bits.
+     * Reads a <em>signed</em> {@code int} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
      * @return a signed {@code int} value.
