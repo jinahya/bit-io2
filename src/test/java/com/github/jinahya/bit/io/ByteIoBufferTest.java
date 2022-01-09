@@ -27,11 +27,11 @@ class ByteIoBufferTest
 
     @Override
     protected BufferByteOutput newOutput(final int bytes) {
-        return BufferByteOutput.of(ByteBuffer.allocate(bytes));
+        return BufferByteOutput.from(ByteBuffer.allocate(bytes));
     }
 
     @Override
     protected BufferByteInput newInput(final byte[] bytes) {
-        return BufferByteInput.of(ByteBuffer.wrap(bytes));
+        return BufferByteInput.from(ByteBuffer.wrap(bytes));
     }
 }

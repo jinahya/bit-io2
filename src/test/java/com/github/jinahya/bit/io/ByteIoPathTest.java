@@ -15,8 +15,8 @@ class ByteIoPathTest {
     void wr__(@TempDir final Path tempDir) throws IOException {
         final Path path = Files.createTempFile(tempDir, null, null);
         ByteIoTestUtilities.wrv(
-                () -> ByteOutput.from(path),
-                () -> ByteInput.from(path),
+                () -> BufferByteOutput.from(path),
+                () -> BufferByteInput.from(path),
                 o -> {
                     final int count = current().nextInt(128);
                     for (int j = 0; j < count; j++) {

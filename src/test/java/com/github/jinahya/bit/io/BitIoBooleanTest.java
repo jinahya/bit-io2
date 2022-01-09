@@ -20,19 +20,22 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.junit.jupiter.api.RepeatedTest;
 
-class ByteIoStreamTest
-        extends ByteIoTest<StreamByteOutput, StreamByteInput> {
+import java.io.IOException;
 
-    @Override
-    protected StreamByteOutput newOutput(final int bytes) {
-        return StreamByteOutput.from(new ByteArrayOutputStream());
-    }
+import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    @Override
-    protected StreamByteInput newInput(final byte[] bytes) {
-        return StreamByteInput.from(new ByteArrayInputStream(bytes));
+class BitIoBooleanTest {
+
+    @RepeatedTest(16)
+    void wr_random() throws IOException {
+        final boolean expected = current().nextBoolean();
+        final boolean actual = BitIoTestUtils.wr1v(o -> {
+            o.writeBoolean(expected);
+            return BitInput::readBoolean;
+        });
+        assertThat(actual).isEqualTo(expected);
     }
 }

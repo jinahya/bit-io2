@@ -38,8 +38,9 @@ public class BitOutputAdapter
      *
      * @param output the byte output to which bytes are written.
      * @return a new instance.
+     * @apiNote Closing the result does not close the {@code output}.
      */
-    public static BitOutput of(final ByteOutput output) {
+    public static BitOutput from(final ByteOutput output) {
         Objects.requireNonNull(output, "output is null");
         final BitOutputAdapter instance = new BitOutputAdapter(() -> null);
         instance.output(output);
@@ -78,9 +79,11 @@ public class BitOutputAdapter
     @Override
     public void close() throws IOException {
         BitOutput.super.close(); // <- does nothing.
-        final ByteOutput output = output(false);
-        if (output != null) {
-            output.close();
+        if (closeOutput) {
+            final ByteOutput output = output(false);
+            if (output != null) {
+                output.close();
+            }
         }
     }
 
@@ -162,6 +165,7 @@ public class BitOutputAdapter
         if (get) {
             if (output(false) == null) {
                 output(outputSupplier.get());
+                closeOutput = true;
             }
             return output(false);
         }
@@ -177,7 +181,9 @@ public class BitOutputAdapter
 
     private final Supplier<? extends ByteOutput> outputSupplier;
 
-    private ByteOutput output;
+    private ByteOutput output = null;
+
+    private boolean closeOutput = false;
 
     /**
      * The current octet.

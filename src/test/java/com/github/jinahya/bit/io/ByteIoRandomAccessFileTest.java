@@ -5,7 +5,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 
@@ -15,8 +14,8 @@ class ByteIoRandomAccessFileTest {
     void wr__(@TempDir final File tempDir) throws IOException {
         final File file = File.createTempFile("tmp", null, tempDir);
         ByteIoTestUtilities.wrv(
-                () -> ByteOutput.of(new RandomAccessFile(file, "rwd")),
-                () -> ByteInput.of(new RandomAccessFile(file, "r")),
+                () -> RandomAccessFileByteOutput.from(file),
+                () -> RandomAccessFileByteInput.from(file),
                 o -> {
                     final int count = current().nextInt(128);
                     for (int j = 0; j < count; j++) {

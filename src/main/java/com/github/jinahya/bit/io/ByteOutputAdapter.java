@@ -72,9 +72,11 @@ public abstract class ByteOutputAdapter<T>
     @Override
     public void close() throws IOException {
         ByteOutput.super.close(); // does nothing.
-        final T target = target(false);
-        if (target instanceof Closeable) {
-            ((Closeable) target).close();
+        if (closeTarget) {
+            final T target = target(false);
+            if (target instanceof Closeable) {
+                ((Closeable) target).close();
+            }
         }
     }
 
@@ -105,6 +107,7 @@ public abstract class ByteOutputAdapter<T>
         if (get) {
             if (target(false) == null) {
                 target(targetSupplier.get());
+                closeTarget = true;
             }
             return target(false);
         }
@@ -120,5 +123,7 @@ public abstract class ByteOutputAdapter<T>
 
     private final Supplier<? extends T> targetSupplier;
 
-    private T target;
+    private T target = null;
+
+    private boolean closeTarget = false;
 }

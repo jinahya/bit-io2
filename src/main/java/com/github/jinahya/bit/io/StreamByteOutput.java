@@ -38,6 +38,21 @@ public class StreamByteOutput
         extends ByteOutputAdapter<OutputStream> {
 
     /**
+     * Creates a new instance which writes bytes to output stream.
+     *
+     * @param target the output stream to which bytes are written.
+     * @return a new instance.
+     * @apiNote Closing the result does not close the {@code target}.
+     * @see StreamByteInput#from(InputStream)
+     */
+    public static StreamByteOutput from(final OutputStream target) {
+        Objects.requireNonNull(target, "target is null");
+        final StreamByteOutput instance = new StreamByteOutput(BitIoUtils.empty());
+        instance.target(target);
+        return instance;
+    }
+
+    /**
      * Returns a new instance which writes bytes to specified file.
      *
      * @param file the file to which bytes are written.
@@ -52,20 +67,6 @@ public class StreamByteOutput
                 throw new RuntimeException("failed to open " + file, ioe);
             }
         });
-    }
-
-    /**
-     * Creates a new byte output on top of specified output stream.
-     *
-     * @param target the output stream to which bytes are written.
-     * @return a new instance.
-     * @see StreamByteInput#of(InputStream)
-     */
-    public static StreamByteOutput of(final OutputStream target) {
-        Objects.requireNonNull(target, "target is null");
-        final StreamByteOutput instance = new StreamByteOutput(BitIoUtils.empty());
-        instance.target(target);
-        return instance;
     }
 
     /**

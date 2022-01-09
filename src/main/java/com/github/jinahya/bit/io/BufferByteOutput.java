@@ -22,7 +22,11 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -40,6 +44,7 @@ public class BufferByteOutput
      *
      * @param channelSupplier the supplier of the channel.
      * @return a new instance.
+     * @apiNote Closing the result output also closes the {@code channel}.
      */
     public static BufferByteOutput adapting(final Supplier<? extends WritableByteChannel> channelSupplier) {
         final Supplier<ByteBuffer> bufferSupplier = () -> ByteBuffer.allocate(1);
@@ -51,10 +56,46 @@ public class BufferByteOutput
      *
      * @param channel the source channel to which bytes are written.
      * @return a new instance.
+     * @apiNote Closing the result output does not close the {@code channel}.
      */
     public static BufferByteOutput adapting(final WritableByteChannel channel) {
         Objects.requireNonNull(channel, "channel is null");
-        return adapting(() -> channel);
+        final Supplier<ByteBuffer> bufferSupplier = () -> ByteBuffer.allocate(1);
+        final BufferByteOutputChannelAdapter adapter
+                = new BufferByteOutputChannelAdapter(bufferSupplier, BitIoUtils.empty());
+        adapter.channel(channel);
+        return adapter;
+    }
+
+    /**
+     * Returns a new instance which writes bytes to specified path.
+     *
+     * @param path    the path to which bytes are written.
+     * @param options an array of open options.
+     * @return a new instance.
+     */
+    static ByteOutput from(final Path path, final OpenOption... options) {
+        Objects.requireNonNull(path, "path is null");
+        Objects.requireNonNull(options, "options is null");
+        return adapting(() -> {
+            try {
+                return FileChannel.open(path, options);
+            } catch (final IOException ioe) {
+                throw new RuntimeException("failed to open " + path, ioe);
+            }
+        });
+    }
+
+    /**
+     * Returns a new instance which writes bytes to specified path.
+     *
+     * @param path the path to which bytes are written.
+     * @return a new instance.
+     * @implNote The {@code from(Path)} method invokes {@link #from(Path, OpenOption...)} method with {@code path} and
+     * {@link StandardOpenOption#WRITE}.
+     */
+    static ByteOutput from(final Path path) {
+        return from(path, StandardOpenOption.WRITE);
     }
 
     /**
@@ -63,7 +104,7 @@ public class BufferByteOutput
      * @param target the buffer to which bytes are written.
      * @return a new instance.
      */
-    public static BufferByteOutput of(final ByteBuffer target) {
+    public static BufferByteOutput from(final ByteBuffer target) {
         Objects.requireNonNull(target, "target is null");
         final BufferByteOutput instance = new BufferByteOutput(BitIoUtils.empty());
         instance.target(target);
@@ -94,9 +135,9 @@ public class BufferByteOutput
 
     @Override
     void target(final ByteBuffer target) {
-        super.target(target);
-        if (target(false).capacity() == 0) {
-            throw new RuntimeException("target.capacity is zero");
+        if (Objects.requireNonNull(target, "target is null").capacity() == 0) {
+            throw new IllegalArgumentException("target.capacity is zero");
         }
+        super.target(target);
     }
 }

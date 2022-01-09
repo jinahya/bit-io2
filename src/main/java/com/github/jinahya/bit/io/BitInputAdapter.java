@@ -38,8 +38,9 @@ public class BitInputAdapter
      *
      * @param input the byte input from which bytes are read.
      * @return a new instance.
+     * @apiNote Closing the result does not close the {@code input}.
      */
-    public static BitInput of(final ByteInput input) {
+    public static BitInput from(final ByteInput input) {
         Objects.requireNonNull(input, "input is null");
         final BitInputAdapter instance = new BitInputAdapter(BitIoUtils.empty());
         instance.input(input);
@@ -65,9 +66,11 @@ public class BitInputAdapter
     @Override
     public void close() throws IOException {
         BitInput.super.close(); // does nothing.
-        final ByteInput input = input(false);
-        if (input != null) {
-            input.close();
+        if (closeInput) {
+            final ByteInput input = input(false);
+            if (input != null) {
+                input.close();
+            }
         }
     }
 
@@ -145,6 +148,7 @@ public class BitInputAdapter
         if (get) {
             if (input(false) == null) {
                 input(inputSupplier.get());
+                closeInput = true;
             }
             return input(false);
         }
@@ -160,7 +164,9 @@ public class BitInputAdapter
 
     private final Supplier<? extends ByteInput> inputSupplier;
 
-    private ByteInput input;
+    private ByteInput input = null;
+
+    private boolean closeInput = false;
 
     /**
      * The current octet.

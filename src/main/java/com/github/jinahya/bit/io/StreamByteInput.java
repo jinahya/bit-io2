@@ -39,13 +39,14 @@ public class StreamByteInput
         extends ByteInputAdapter<InputStream> {
 
     /**
-     * Creates a new byte Input on top of specified Input stream.
+     * Creates a new instance which read byte from specified Input stream.
      *
      * @param source the Input stream to which bytes are written.
      * @return a new instance.
-     * @see StreamByteOutput#of(OutputStream)
+     * @apiNote Closing the result does not close the {@code source}.
+     * @see StreamByteOutput#from(OutputStream)
      */
-    public static StreamByteInput of(final InputStream source) {
+    public static StreamByteInput from(final InputStream source) {
         Objects.requireNonNull(source, "source is null");
         final StreamByteInput instance = new StreamByteInput(BitIoUtils.empty());
         instance.source(source);

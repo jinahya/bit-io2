@@ -14,8 +14,8 @@ class ByteIoFileTest {
     void wr__(@TempDir final File tempDir) throws IOException {
         final File file = File.createTempFile("tmp", null, tempDir);
         ByteIoTestUtilities.wrv(
-                () -> ByteOutput.from(file),
-                () -> ByteInput.from(file),
+                () -> StreamByteOutput.from(file),
+                () -> StreamByteInput.from(file),
                 o -> {
                     final int count = current().nextInt(128);
                     for (int j = 0; j < count; j++) {

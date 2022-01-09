@@ -61,7 +61,7 @@ class ByteArrayAsciiPrintableTest {
 
     private void run(final byte[] expected, final int lengthSize) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput output = BitOutputAdapter.of(StreamByteOutput.of(baos));
+        final BitOutput output = BitOutputAdapter.from(StreamByteOutput.from(baos));
         final BitWriter<byte[]> writer = ByteArrayWriter.ascii(lengthSize, true);
         writer.write(output, expected);
         final long padded = output.align();
@@ -70,7 +70,7 @@ class ByteArrayAsciiPrintableTest {
                       (baos.size() / (double) expected.length) * 100.0d);
         }
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final BitInput input = BitInputAdapter.of(StreamByteInput.of(bais));
+        final BitInput input = BitInputAdapter.from(StreamByteInput.from(bais));
         final BitReader<byte[]> reader = ByteArrayReader.ascii(lengthSize, true);
         final byte[] actual = reader.read(input);
         final long discarded = input.align();

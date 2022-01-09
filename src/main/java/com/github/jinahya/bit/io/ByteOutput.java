@@ -21,15 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.Flushable;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Objects;
 
 /**
  * An interface for writing bytes.
@@ -40,55 +33,6 @@ import java.util.Objects;
 @FunctionalInterface
 public interface ByteOutput
         extends Flushable, Closeable {
-
-    /**
-     * Returns a new instance which writes bytes to specified file.
-     *
-     * @param file the file to which bytes are written.
-     * @return a new instance.
-     */
-    static ByteOutput from(final File file) {
-        return StreamByteOutput.from(file);
-    }
-
-    /**
-     * Returns a new instance which writes bytes to specified random access file.
-     *
-     * @param file the file to which bytes are written.
-     * @return a new instance.
-     */
-    static ByteOutput of(final RandomAccessFile file) {
-        return RandomAccessFileByteOutput.of(file);
-    }
-
-    /**
-     * Returns a new instance which writes bytes to specified path.
-     *
-     * @param path    the path to which bytes are written.
-     * @param options an array of open options.
-     * @return a new instance.
-     */
-    static ByteOutput from(final Path path, final OpenOption... options) {
-        Objects.requireNonNull(path, "path is null");
-        Objects.requireNonNull(options, "options is null");
-        return BufferByteOutput.adapting(() -> {
-            try {
-                return FileChannel.open(path, options);
-            } catch (final IOException ioe) {
-                throw new RuntimeException("failed to open " + path, ioe);
-            }
-        });
-    }
-
-    /**
-     * Returns a new instance which writes bytes to specified path.
-     *
-     * @param path    the path to which bytes are written.
-     * @return a new instance.
-     */
-    static ByteOutput from(final Path path) {
-        return from(path, StandardOpenOption.WRITE);
-    }
 
     /**
      * Flushes this output by writing any buffered output to the underlying output.

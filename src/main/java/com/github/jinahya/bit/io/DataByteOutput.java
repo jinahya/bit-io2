@@ -40,7 +40,7 @@ public class DataByteOutput
      * @param target the data output to which bytes are written.
      * @return a new instance.
      */
-    public static DataByteOutput of(final DataOutput target) {
+    public static DataByteOutput from(final DataOutput target) {
         Objects.requireNonNull(target, "target is null");
         final DataByteOutput instance = new DataByteOutput(BitIoUtils.empty());
         instance.target(target);

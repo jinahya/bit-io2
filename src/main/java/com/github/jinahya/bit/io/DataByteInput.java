@@ -40,7 +40,7 @@ public class DataByteInput
      * @param source the data input from which bytes are read.
      * @return a new instance.
      */
-    public static DataByteInput of(final DataInput source) {
+    public static DataByteInput from(final DataInput source) {
         Objects.requireNonNull(source, "source is null");
         final DataByteInput instance = new DataByteInput(BitIoUtils.empty());
         instance.source(source);

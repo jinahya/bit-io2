@@ -50,9 +50,11 @@ class BufferByteInputChannelAdapter
     @Override
     public void close() throws IOException {
         super.close();
-        final ReadableByteChannel channel = channel(false);
-        if (channel != null) {
-            channel.close();
+        if (closeChannel) {
+            final ReadableByteChannel channel = channel(false);
+            if (channel != null) {
+                channel.close();
+            }
         }
     }
 
@@ -74,13 +76,14 @@ class BufferByteInputChannelAdapter
         if (get) {
             if (channel(false) == null) {
                 channel(channelSupplier.get());
+                closeChannel = true;
             }
             return channel(false);
         }
         return channel;
     }
 
-    private void channel(final ReadableByteChannel channel) {
+    void channel(final ReadableByteChannel channel) {
         if (channel(false) != null) {
             throw new IllegalStateException("channel already has been supplied");
         }
@@ -89,5 +92,7 @@ class BufferByteInputChannelAdapter
 
     private final Supplier<? extends ReadableByteChannel> channelSupplier;
 
-    private ReadableByteChannel channel;
+    private ReadableByteChannel channel = null;
+
+    private boolean closeChannel = false;
 }

@@ -66,9 +66,11 @@ class BufferByteOutputChannelAdapter
     @Override
     public void close() throws IOException {
         super.close();
-        final WritableByteChannel channel = channel(false);
-        if (channel != null) {
-            channel.close();
+        if (closeChannel) {
+            final WritableByteChannel channel = channel(false);
+            if (channel != null) {
+                channel.close();
+            }
         }
     }
 
@@ -88,13 +90,14 @@ class BufferByteOutputChannelAdapter
         if (get) {
             if (channel(false) == null) {
                 channel(channelSupplier.get());
+                closeChannel = true;
             }
             return channel(false);
         }
         return channel;
     }
 
-    private void channel(final WritableByteChannel channel) {
+    void channel(final WritableByteChannel channel) {
         if (channel(false) != null) {
             throw new IllegalStateException("channel already has been supplied");
         }
@@ -103,5 +106,7 @@ class BufferByteOutputChannelAdapter
 
     private final Supplier<? extends WritableByteChannel> channelSupplier;
 
-    private WritableByteChannel channel;
+    private WritableByteChannel channel = null;
+
+    private boolean closeChannel = false;
 }
