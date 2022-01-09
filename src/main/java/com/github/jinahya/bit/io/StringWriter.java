@@ -32,7 +32,7 @@ import java.util.Objects;
  * @see StringReader
  */
 public class StringWriter
-        implements BitWriter<String> {
+        extends FilterBitWriter<String, byte[]> {
 
     /**
      * Creates a new instance for writing {@link StandardCharsets#US_ASCII}-encoded strings in a compressed-manner.
@@ -71,17 +71,14 @@ public class StringWriter
      * @see ByteArrayWriter#of318()
      */
     public StringWriter(final ByteArrayWriter delegate, final Charset charset) {
-        super();
-        this.delegate = Objects.requireNonNull(delegate, "delegate is null");
+        super(delegate);
         this.charset = Objects.requireNonNull(charset, "charset is null");
     }
 
     @Override
     public void write(final BitOutput output, final String value) throws IOException {
-        delegate.write(output, value.getBytes(charset));
+        writer.write(output, value.getBytes(charset));
     }
-
-    private final ByteArrayWriter delegate;
 
     private final Charset charset;
 }

@@ -20,17 +20,17 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
 import java.util.Objects;
 
 /**
- * A reader class for filtering other readers.
+ * A abstract class for reading values of a hetero type.
  *
  * @param <T> value type parameter
+ * @param <U> filtered value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see FilterBitWriter
  */
-public abstract class FilterBitReader<T>
+public abstract class FilterBitReader<T, U>
         implements BitReader<T> {
 
     /**
@@ -38,27 +38,13 @@ public abstract class FilterBitReader<T>
      *
      * @param reader the reader to filter.
      */
-    protected FilterBitReader(final BitReader<? extends T> reader) {
+    protected FilterBitReader(final BitReader<? extends U> reader) {
         super();
         this.reader = Objects.requireNonNull(reader, "reader is null");
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param input {@inheritDoc}
-     * @return {@inheritDoc}
-     * @throws IOException {@inheritDoc}
-     * @implNote The {@code read(BitInput)} method of {@code FilterBitReader} class invokes {@link #read(BitInput)}
-     * method on {@link #reader} and returns the result.
-     */
-    @Override
-    public T read(final BitInput input) throws IOException {
-        return reader.read(input);
-    }
-
-    /**
      * The reader wrapped by this reader.
      */
-    protected final BitReader<? extends T> reader;
+    protected final BitReader<? extends U> reader;
 }

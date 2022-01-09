@@ -32,7 +32,7 @@ import java.util.Objects;
  * @see StringWriter
  */
 public class StringReader
-        implements BitReader<String> {
+        extends FilterBitReader<String, byte[]> {
 
     /**
      * Creates a new instance for reading {@link StandardCharsets#US_ASCII} decoded strings in a compressed-manner.
@@ -70,17 +70,14 @@ public class StringReader
      * @see ByteArrayReader#of318()
      */
     public StringReader(final ByteArrayReader delegate, final Charset charset) {
-        super();
-        this.delegate = Objects.requireNonNull(delegate, "delegate is null");
+        super(delegate);
         this.charset = Objects.requireNonNull(charset, "charset is null");
     }
 
     @Override
     public String read(final BitInput input) throws IOException {
-        return new String(delegate.read(input), charset);
+        return new String(reader.read(input), charset);
     }
-
-    private final ByteArrayReader delegate;
 
     private final Charset charset;
 }

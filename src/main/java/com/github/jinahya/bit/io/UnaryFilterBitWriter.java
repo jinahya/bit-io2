@@ -20,31 +20,38 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.Objects;
+import java.io.IOException;
 
 /**
- * An abstract class for writing values of a hetero type.
+ * A writer class for filtering other writers.
  *
  * @param <T> value type parameter
- * @param <U> filtered value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see FilterBitReader
+ * @see UnaryFilterBitReader
  */
-public abstract class FilterBitWriter<T, U>
-        implements BitWriter<T> {
+public abstract class UnaryFilterBitWriter<T>
+        extends FilterBitWriter<T, T> {
 
     /**
      * Creates a new instance on top of specified writer.
      *
      * @param writer the writer to filter.
      */
-    protected FilterBitWriter(final BitWriter<? super U> writer) {
-        super();
-        this.writer = Objects.requireNonNull(writer, "writer is null");
+    protected UnaryFilterBitWriter(final BitWriter<? super T> writer) {
+        super(writer);
     }
 
     /**
-     * The writer wrapped by this writer.
+     * {@inheritDoc}
+     *
+     * @param output {@inheritDoc}
+     * @param value  {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     * @implNote The {@code write(BitOutput, Object)} method of {@code FilterBitWriter} class invokes {@link
+     * BitWriter#write(BitOutput, Object)} method on the wrapped {@code writer} with {@code output} and {@code value}.
      */
-    protected final BitWriter<? super U> writer;
+    @Override
+    public void write(final BitOutput output, final T value) throws IOException {
+        writer.write(output, value);
+    }
 }

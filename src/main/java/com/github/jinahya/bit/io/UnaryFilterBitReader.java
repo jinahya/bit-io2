@@ -20,31 +20,38 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.Objects;
+import java.io.IOException;
 
 /**
- * An abstract class for writing values of a hetero type.
+ * A reader class for filtering other readers.
  *
  * @param <T> value type parameter
- * @param <U> filtered value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see FilterBitReader
+ * @see UnaryFilterBitWriter
  */
-public abstract class FilterBitWriter<T, U>
-        implements BitWriter<T> {
+public abstract class UnaryFilterBitReader<T>
+        extends FilterBitReader<T, T> {
 
     /**
-     * Creates a new instance on top of specified writer.
+     * Creates a new instance with specified reader.
      *
-     * @param writer the writer to filter.
+     * @param reader the reader to filter.
      */
-    protected FilterBitWriter(final BitWriter<? super U> writer) {
-        super();
-        this.writer = Objects.requireNonNull(writer, "writer is null");
+    protected UnaryFilterBitReader(final BitReader<? extends T> reader) {
+        super(reader);
     }
 
     /**
-     * The writer wrapped by this writer.
+     * {@inheritDoc}
+     *
+     * @param input {@inheritDoc}
+     * @return {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     * @implNote The {@code read(BitInput)} method of {@code FilterBitReader} class invokes {@link #read(BitInput)}
+     * method on {@link #reader} and returns the result.
      */
-    protected final BitWriter<? super U> writer;
+    @Override
+    public T read(final BitInput input) throws IOException {
+        return reader.read(input);
+    }
 }
