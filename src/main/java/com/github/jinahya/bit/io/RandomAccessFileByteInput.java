@@ -59,6 +59,7 @@ class RandomAccessFileByteInput
      * @param source the random access file from which bytes are read.
      * @return a new instance.
      * @see RandomAccessFileByteOutput#of(RandomAccessFile)
+     * @apiNote Closing the result does not close the {@code source}.
      */
     public static RandomAccessFileByteInput of(final RandomAccessFile source) {
         Objects.requireNonNull(source, "source is null");

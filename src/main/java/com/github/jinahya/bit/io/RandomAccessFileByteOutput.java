@@ -59,6 +59,7 @@ class RandomAccessFileByteOutput
      * @param target the random access file to which bytes are written.
      * @return a new instance.
      * @see RandomAccessFileByteInput#of(RandomAccessFile)
+     * @apiNote Closing the result does not close the {@code source}.
      */
     public static RandomAccessFileByteOutput of(final RandomAccessFile target) {
         Objects.requireNonNull(target, "target is null");
