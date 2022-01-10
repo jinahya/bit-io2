@@ -41,6 +41,7 @@ public interface BitReader<T> {
      * @see BitWriter#nullable(BitWriter)
      */
     static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
+        Objects.requireNonNull(reader, "reader is null");
         return new FilterBitReader<T, T>(reader) {
             @Override
             public T read(final BitInput input) throws IOException {
@@ -49,7 +50,7 @@ public interface BitReader<T> {
                 if (flag == 0) {
                     return null;
                 }
-                return super.reader.read(input);
+                return getReader().read(input);
             }
         };
     }

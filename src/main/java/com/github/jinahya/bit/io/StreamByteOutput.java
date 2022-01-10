@@ -23,7 +23,6 @@ package com.github.jinahya.bit.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -43,11 +42,10 @@ public class StreamByteOutput
      * @param target the output stream to which bytes are written.
      * @return a new instance.
      * @apiNote Closing the result does not close the {@code target}.
-     * @see StreamByteInput#from(InputStream)
      */
     public static StreamByteOutput from(final OutputStream target) {
         Objects.requireNonNull(target, "target is null");
-        final StreamByteOutput instance = new StreamByteOutput(BitIoUtils.empty());
+        final StreamByteOutput instance = new StreamByteOutput(BitIoUtils.emptySupplier());
         instance.target(target);
         return instance;
     }

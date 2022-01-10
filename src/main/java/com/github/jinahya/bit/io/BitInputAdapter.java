@@ -42,7 +42,7 @@ public class BitInputAdapter
      */
     public static BitInput from(final ByteInput input) {
         Objects.requireNonNull(input, "input is null");
-        final BitInputAdapter instance = new BitInputAdapter(BitIoUtils.empty());
+        final BitInputAdapter instance = new BitInputAdapter(BitIoUtils.emptySupplier());
         instance.input(input);
         return instance;
     }

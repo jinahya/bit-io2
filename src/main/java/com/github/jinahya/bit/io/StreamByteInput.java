@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -44,11 +43,10 @@ public class StreamByteInput
      * @param source the Input stream to which bytes are written.
      * @return a new instance.
      * @apiNote Closing the result does not close the {@code source}.
-     * @see StreamByteOutput#from(OutputStream)
      */
     public static StreamByteInput from(final InputStream source) {
         Objects.requireNonNull(source, "source is null");
-        final StreamByteInput instance = new StreamByteInput(BitIoUtils.empty());
+        final StreamByteInput instance = new StreamByteInput(BitIoUtils.emptySupplier());
         instance.source(source);
         return instance;
     }

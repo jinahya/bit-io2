@@ -41,6 +41,7 @@ public interface BitWriter<T> {
      * @see BitReader#nullable(BitReader)
      */
     static <T> BitWriter<T> nullable(final BitWriter<? super T> writer) {
+        Objects.requireNonNull(writer, "writer is null");
         return new FilterBitWriter<T, T>(writer) {
             @Override
             public void write(final BitOutput output, final T value) throws IOException {
@@ -50,7 +51,7 @@ public interface BitWriter<T> {
                 if (flag == 0) {
                     return;
                 }
-                super.writer.write(output, value);
+                getWriter().write(output, value);
             }
         };
     }

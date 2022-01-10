@@ -49,7 +49,7 @@ class BufferByteInputChannelAdapter
 
     @Override
     public void close() throws IOException {
-        super.close();
+        super.close(); // does nothing, effectively.
         if (closeChannel) {
             final ReadableByteChannel channel = channel(false);
             if (channel != null) {

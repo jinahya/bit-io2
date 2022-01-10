@@ -77,7 +77,8 @@ public class StringWriter
 
     @Override
     public void write(final BitOutput output, final String value) throws IOException {
-        writer.write(output, value.getBytes(charset));
+        final byte[] bytes = value.getBytes(charset);
+        getWriter().write(output, bytes);
     }
 
     private final Charset charset;

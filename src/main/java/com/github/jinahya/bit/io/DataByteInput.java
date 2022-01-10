@@ -39,10 +39,11 @@ public class DataByteInput
      *
      * @param source the data input from which bytes are read.
      * @return a new instance.
+     * @apiNote Closing the result input does not close the {@code source}.
      */
     public static DataByteInput from(final DataInput source) {
         Objects.requireNonNull(source, "source is null");
-        final DataByteInput instance = new DataByteInput(BitIoUtils.empty());
+        final DataByteInput instance = new DataByteInput(BitIoUtils.emptySupplier());
         instance.source(source);
         return instance;
     }

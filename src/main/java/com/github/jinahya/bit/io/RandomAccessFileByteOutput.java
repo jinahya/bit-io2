@@ -63,7 +63,7 @@ class RandomAccessFileByteOutput
      */
     public static RandomAccessFileByteOutput of(final RandomAccessFile target) {
         Objects.requireNonNull(target, "target is null");
-        final RandomAccessFileByteOutput instance = new RandomAccessFileByteOutput(BitIoUtils.empty());
+        final RandomAccessFileByteOutput instance = new RandomAccessFileByteOutput(BitIoUtils.emptySupplier());
         instance.target(target);
         return instance;
     }

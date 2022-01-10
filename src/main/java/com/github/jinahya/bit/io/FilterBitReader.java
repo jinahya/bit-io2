@@ -34,9 +34,9 @@ public abstract class FilterBitReader<T, U>
         implements BitReader<T> {
 
     /**
-     * Creates a new instance with specified reader.
+     * Creates a new instance which wraps specified reader.
      *
-     * @param reader the reader to filter.
+     * @param reader the reader to wrap.
      */
     protected FilterBitReader(final BitReader<? extends U> reader) {
         super();
@@ -44,7 +44,16 @@ public abstract class FilterBitReader<T, U>
     }
 
     /**
+     * Returns the reader wrapped by this reader.
+     *
+     * @return the reader wrapped by this reader.
+     */
+    protected BitReader<? extends U> getReader() {
+        return reader;
+    }
+
+    /**
      * The reader wrapped by this reader.
      */
-    protected final BitReader<? extends U> reader;
+    private final BitReader<? extends U> reader;
 }

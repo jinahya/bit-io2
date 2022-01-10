@@ -38,7 +38,7 @@ abstract class PrimitiveArrayReader<T>
      *
      * @param lengthSize the number of bits for the {@code length}.
      */
-    protected PrimitiveArrayReader(final int lengthSize) {
+    PrimitiveArrayReader(final int lengthSize) {
         super();
         this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
     }
@@ -50,7 +50,7 @@ abstract class PrimitiveArrayReader<T>
      * @return a value of {@code length}.
      * @throws IOException if an I/O error occurs.
      */
-    protected int readLength(final BitInput input) throws IOException {
+    int readLength(final BitInput input) throws IOException {
         Objects.requireNonNull(input, "input is null");
         return BitIoUtils.readCount(input, lengthSize);
     }

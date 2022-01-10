@@ -76,7 +76,8 @@ public class StringReader
 
     @Override
     public String read(final BitInput input) throws IOException {
-        return new String(reader.read(input), charset);
+        final byte[] bytes = getReader().read(input);
+        return new String(bytes, charset);
     }
 
     private final Charset charset;

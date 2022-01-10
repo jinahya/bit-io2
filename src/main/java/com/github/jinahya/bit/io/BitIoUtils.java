@@ -89,7 +89,7 @@ final class BitIoUtils {
      * @param <T> result type parameter
      * @return a supplier results {@code null}.
      */
-    static <T> Supplier<T> empty() {
+    static <T> Supplier<T> emptySupplier() {
         return () -> null;
     }
 

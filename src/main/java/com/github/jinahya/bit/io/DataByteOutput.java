@@ -39,10 +39,11 @@ public class DataByteOutput
      *
      * @param target the data output to which bytes are written.
      * @return a new instance.
+     * @apiNote Closing the result output does not close the {@code target}.
      */
     public static DataByteOutput from(final DataOutput target) {
         Objects.requireNonNull(target, "target is null");
-        final DataByteOutput instance = new DataByteOutput(BitIoUtils.empty());
+        final DataByteOutput instance = new DataByteOutput(BitIoUtils.emptySupplier());
         instance.target(target);
         return instance;
     }

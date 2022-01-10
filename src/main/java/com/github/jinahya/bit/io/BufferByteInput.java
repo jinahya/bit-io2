@@ -63,7 +63,7 @@ public class BufferByteInput
         Objects.requireNonNull(channel, "channel is null");
         final Supplier<ByteBuffer> bufferSupplier = () -> (ByteBuffer) ByteBuffer.allocate(1).position(1);
         final BufferByteInputChannelAdapter adapter
-                = new BufferByteInputChannelAdapter(bufferSupplier, BitIoUtils.empty());
+                = new BufferByteInputChannelAdapter(bufferSupplier, BitIoUtils.emptySupplier());
         adapter.channel(channel);
         return adapter;
     }
@@ -107,7 +107,7 @@ public class BufferByteInput
      */
     public static BufferByteInput from(final ByteBuffer source) {
         Objects.requireNonNull(source, "source is null");
-        final BufferByteInput instance = new BufferByteInput(BitIoUtils.empty());
+        final BufferByteInput instance = new BufferByteInput(BitIoUtils.emptySupplier());
         instance.source(source);
         return instance;
     }

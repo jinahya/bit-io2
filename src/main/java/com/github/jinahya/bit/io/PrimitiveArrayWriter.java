@@ -38,7 +38,7 @@ abstract class PrimitiveArrayWriter<T>
      *
      * @param lengthSize the number of bits for the {@code length}.
      */
-    protected PrimitiveArrayWriter(final int lengthSize) {
+    PrimitiveArrayWriter(final int lengthSize) {
         super();
         this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
     }
@@ -50,7 +50,7 @@ abstract class PrimitiveArrayWriter<T>
      * @param length the value of {@code length} to write.
      * @throws IOException if an I/O error occurs.
      */
-    protected void writeLength(final BitOutput output, final int length) throws IOException {
+    void writeLength(final BitOutput output, final int length) throws IOException {
         Objects.requireNonNull(output, "output is null");
         BitIoUtils.writeCount(output, lengthSize, length);
     }

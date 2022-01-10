@@ -34,9 +34,9 @@ public abstract class FilterBitWriter<T, U>
         implements BitWriter<T> {
 
     /**
-     * Creates a new instance on top of specified writer.
+     * Creates a new instance which wraps specified writer.
      *
-     * @param writer the writer to filter.
+     * @param writer the writer to wrap.
      */
     protected FilterBitWriter(final BitWriter<? super U> writer) {
         super();
@@ -44,7 +44,16 @@ public abstract class FilterBitWriter<T, U>
     }
 
     /**
+     * Returns the writer wrapped by this writer.
+     *
+     * @return the writer wrapped by this writer.
+     */
+    protected BitWriter<? super U> getWriter() {
+        return writer;
+    }
+
+    /**
      * The writer wrapped by this writer.
      */
-    protected final BitWriter<? super U> writer;
+    private final BitWriter<? super U> writer;
 }

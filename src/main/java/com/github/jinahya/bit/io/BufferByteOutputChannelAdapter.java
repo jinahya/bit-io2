@@ -49,7 +49,7 @@ class BufferByteOutputChannelAdapter
 
     @Override
     public void flush() throws IOException {
-        super.flush();
+        super.flush(); // does nothing, effectively.
         final ByteBuffer target = target(false);
         if (target != null) {
             for (target.flip(); target.hasRemaining(); ) {
@@ -65,7 +65,7 @@ class BufferByteOutputChannelAdapter
 
     @Override
     public void close() throws IOException {
-        super.close();
+        super.close(); // does nothing, effectively.
         if (closeChannel) {
             final WritableByteChannel channel = channel(false);
             if (channel != null) {
