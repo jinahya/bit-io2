@@ -77,10 +77,10 @@ public class ChannelByteInput
      */
     public ChannelByteInput(final Supplier<? extends ReadableByteChannel> supplier, final ByteBuffer buffer) {
         super(supplier);
-        this.buffer = Objects.requireNonNull(buffer, "buffer is null");
-        if (this.buffer.capacity() == 0) {
+        if (Objects.requireNonNull(buffer, "buffer is null").capacity() == 0) {
             throw new IllegalArgumentException("buffer.capacity is zero");
         }
+        this.buffer = buffer;
     }
 
     @Override
