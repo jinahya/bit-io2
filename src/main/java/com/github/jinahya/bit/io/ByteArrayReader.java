@@ -22,7 +22,12 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-class ByteArrayReader
+/**
+ * A reader for reading array of bytes.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+public class ByteArrayReader
         extends PrimitiveArrayReader<byte[]> {
 
     static class Unsigned
@@ -131,7 +136,7 @@ class ByteArrayReader
     }
 
     /**
-     * Creates a new instance for reading an array of UTF-8 bytes.
+     * Creates a new instance for reading an array of UTF-8 bytes in a compressed-manner.
      *
      * @param lengthSize a number of bits for the length of an array.
      * @return a new instance.

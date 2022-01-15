@@ -103,7 +103,7 @@ final class BitIoUtils {
      */
     static int readCount(final BitInput input, final int size) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        BitIoConstraints.requireValidSizeForInt(true, size);
+        BitIoConstraints.requireValidSizeForUnsignedInt(size);
         return input.readUnsignedInt(size);
     }
 
@@ -113,15 +113,17 @@ final class BitIoUtils {
      * @param output a bit-output to which the value is written.
      * @param size   the number of bits.
      * @param value  an unsigned value of {@code size} bits.
+     * @return the {@value} right-shifted by {@code size}.
      * @throws IOException if an I/O error occurs.
      */
-    static void writeCount(final BitOutput output, final int size, final int value) throws IOException {
+    static int writeCount(final BitOutput output, final int size, final int value) throws IOException {
         Objects.requireNonNull(output, "output is null");
-        BitIoConstraints.requireValidSizeForInt(true, size);
+        BitIoConstraints.requireValidSizeForUnsignedInt(size);
         if (value < 0) {
             throw new IllegalArgumentException("value(" + value + ") is negative");
         }
         output.writeUnsignedInt(size, value);
+        return value >> (Integer.SIZE - size);
     }
 
     private BitIoUtils() {

@@ -55,7 +55,7 @@ class ByteArrayUtf8Test {
 
     @MethodSource({"randomBytesAndLengthSizeStream"})
     @ParameterizedTest
-    void wr__(final byte[] expected, final int lengthSize) throws IOException {
+    void utf8__(final byte[] expected, final int lengthSize) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final BitOutput output = BitOutputAdapter.from(StreamByteOutput.from(baos));
         final BitWriter<byte[]> writer = ByteArrayWriter.utf8(lengthSize);

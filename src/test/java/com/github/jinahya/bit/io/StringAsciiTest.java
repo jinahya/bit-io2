@@ -35,25 +35,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class StringAsciiTest {
 
-    static Stream<Arguments> randomBytesAndMaximumCharactersStream() {
+    static Stream<Arguments> randomBytesStream() {
         return ByteArrayAsciiTest.randomBytesAndLengthSizeStream()
                 .map(a -> {
                     final DefaultArgumentsAccessor accessor = new DefaultArgumentsAccessor(a.get());
                     final byte[] randomBytes = accessor.get(0, byte[].class);
-                    final Integer lengthSize = accessor.getInteger(1);
-                    final int maximumCharacters = (int) Math.pow(2, lengthSize);
-                    return Arguments.of(new String(randomBytes, StandardCharsets.US_ASCII), maximumCharacters);
+                    return Arguments.of(new String(randomBytes, StandardCharsets.US_ASCII));
                 });
     }
 
-    @MethodSource({"randomBytesAndMaximumCharactersStream"})
+    @MethodSource({"randomBytesStream"})
     @ParameterizedTest
-    void test(final String expected, final int maximumCharacters) throws IOException {
+    void test(final String expected) throws IOException {
         BitIoTestUtils.wr2v(o -> {
-            final StringWriter writer = StringWriter.ascii(maximumCharacters, false);
+            final StringWriter writer = StringWriter.ascii(false);
             o.writeObject(writer, expected);
             return i -> {
-                final StringReader reader = StringReader.ascii(maximumCharacters, false);
+                final StringReader reader = StringReader.ascii(false);
                 final String actual = i.readObject(reader);
                 assertThat(actual).isEqualTo(expected);
             };

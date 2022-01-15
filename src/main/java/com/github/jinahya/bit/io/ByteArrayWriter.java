@@ -22,7 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
-class ByteArrayWriter
+public class ByteArrayWriter
         extends PrimitiveArrayWriter<byte[]> {
 
     static class Unsigned

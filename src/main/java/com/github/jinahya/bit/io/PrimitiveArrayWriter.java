@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * An abstract writer class for reading an array of primitive values.
+ * An abstract class for writing an array of primitive values.
  *
  * @param <T> array type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;

@@ -24,35 +24,33 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * An abstract class for reading an array of primitive values.
+ * A class for writing arrays of a specific type.
  *
  * @param <T> array type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see PrimitiveArrayWriter
+ * @see ArrayBitReader
  */
-abstract class PrimitiveArrayReader<T>
-        implements BitReader<T> {
+public class ArrayBitWriter<T>
+        extends FilterBitWriter<T[], T> {
 
     /**
      * Creates a new instance with specified number of bits for {@code length}.
      *
      * @param lengthSize the number of bits for the {@code length}.
      */
-    PrimitiveArrayReader(final int lengthSize) {
-        super();
+    ArrayBitWriter(final int lengthSize, final BitWriter<? super T> elementWriter) {
+        super(elementWriter);
         this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
     }
 
-    /**
-     * Reads {@code length}.
-     *
-     * @param input a bit-input from which the length is read.
-     * @return a value of {@code length}.
-     * @throws IOException if an I/O error occurs.
-     */
-    int readLength(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        return BitIoUtils.readCount(input, lengthSize);
+    @Override
+    public void write(final BitOutput output, final T[] value) throws IOException {
+        Objects.requireNonNull(output, "output is null");
+        Objects.requireNonNull(value, "value is null");
+        final int length = BitIoUtils.writeCount(output, lengthSize, value.length);
+        for (int i = 0; i < length; i++) {
+            getWriter().write(output, value[i]);
+        }
     }
 
     private final int lengthSize;

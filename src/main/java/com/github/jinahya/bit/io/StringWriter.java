@@ -37,18 +37,13 @@ public class StringWriter
     /**
      * Creates a new instance for writing {@link StandardCharsets#US_ASCII}-encoded strings in a compressed-manner.
      *
-     * @param maximumCharacters a maximum number of characters of a string; must be non-negative.
-     * @param printableOnly     a flag for printable characters only; {@code true} for printable characters; {@code
-     *                          false} otherwise.
+     * @param printableOnly a flag for printable characters only; {@code true} for printable characters; {@code false}
+     *                      otherwise.
      * @return a new instance.
      * @see ByteArrayWriter#ascii(int, boolean)
      */
-    public static StringWriter ascii(final int maximumCharacters, final boolean printableOnly) {
-        if (maximumCharacters < 0) {
-            throw new IllegalArgumentException("maximumCharacters(" + maximumCharacters + " is negative");
-        }
-        final int lengthSize = BitIoUtils.size(maximumCharacters);
-        final ByteArrayWriter delegate = ByteArrayWriter.ascii(lengthSize, printableOnly);
+    public static StringWriter ascii(final boolean printableOnly) {
+        final ByteArrayWriter delegate = ByteArrayWriter.ascii(Integer.SIZE - 1, printableOnly);
         return new StringWriter(delegate, StandardCharsets.US_ASCII);
     }
 
@@ -77,6 +72,7 @@ public class StringWriter
 
     @Override
     public void write(final BitOutput output, final String value) throws IOException {
+        Objects.requireNonNull(output, "output is null");
         final byte[] bytes = value.getBytes(charset);
         getWriter().write(output, bytes);
     }

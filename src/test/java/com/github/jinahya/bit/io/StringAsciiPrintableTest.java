@@ -50,10 +50,10 @@ class StringAsciiPrintableTest {
     @ParameterizedTest
     void test(final String expected, final int maximumCharacters) throws IOException {
         BitIoTestUtils.wr2v(o -> {
-            final StringWriter writer = StringWriter.ascii(maximumCharacters, true);
+            final StringWriter writer = StringWriter.ascii(true);
             o.writeObject(writer, expected);
             return i -> {
-                final StringReader reader = StringReader.ascii(maximumCharacters, true);
+                final StringReader reader = StringReader.ascii(true);
                 final String actual = i.readObject(reader);
                 assertThat(actual).isEqualTo(expected);
             };

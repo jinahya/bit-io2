@@ -23,7 +23,6 @@ package com.github.jinahya.bit.io;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.Objects;
 import java.util.function.Supplier;
 

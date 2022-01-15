@@ -20,6 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import sun.nio.cs.US_ASCII;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -37,18 +39,14 @@ public class StringReader
     /**
      * Creates a new instance for reading {@link StandardCharsets#US_ASCII} decoded strings in a compressed-manner.
      *
-     * @param maximumCharacters a maximum number of characters of a string; must be non-negative.
-     * @param printableOnly     a flag for printable characters only; {@code true} for printable characters; {@code
-     *                          false} otherwise.
+     * @param printableOnly a flag for printable characters only; {@code true} for printable characters; {@code false}
+     *                      otherwise.
      * @return a new instance.
      * @see ByteArrayReader#ascii(int, boolean)
      */
-    public static StringReader ascii(final int maximumCharacters, final boolean printableOnly) {
-        if (maximumCharacters < 0) {
-            throw new IllegalArgumentException("maximumCharacters(" + maximumCharacters + " is negative");
-        }
-        final int lengthSize = BitIoUtils.size(maximumCharacters);
-        return new StringReader(ByteArrayReader.ascii(lengthSize, printableOnly), StandardCharsets.US_ASCII);
+    public static StringReader ascii(final boolean printableOnly) {
+        final ByteArrayReader delegate = ByteArrayReader.ascii(Integer.SIZE - 1, printableOnly);
+        return new StringReader(delegate, StandardCharsets.US_ASCII);
     }
 
     /**
@@ -76,6 +74,7 @@ public class StringReader
 
     @Override
     public String read(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
         final byte[] bytes = getReader().read(input);
         return new String(bytes, charset);
     }
