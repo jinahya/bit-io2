@@ -58,8 +58,8 @@ class RandomAccessFileByteInput
      *
      * @param source the random access file from which bytes are read.
      * @return a new instance.
-     * @see RandomAccessFileByteOutput#of(RandomAccessFile)
      * @apiNote Closing the result does not close the {@code source}.
+     * @see RandomAccessFileByteOutput#of(RandomAccessFile)
      */
     public static RandomAccessFileByteInput of(final RandomAccessFile source) {
         Objects.requireNonNull(source, "source is null");
@@ -83,8 +83,8 @@ class RandomAccessFileByteInput
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code read(InputStream)} method of {@code RandomAccessFileByteInput} class invokes {@link
-     * RandomAccessFile#readUnsignedByte()} method on specified source and returns the result.
+     * @implNote The {@code read(InputStream)} method of {@code RandomAccessFileByteInput} class invokes
+     * {@link RandomAccessFile#readUnsignedByte()} method on specified source and returns the result.
      */
     @Override
     protected int read(final RandomAccessFile source) throws IOException {

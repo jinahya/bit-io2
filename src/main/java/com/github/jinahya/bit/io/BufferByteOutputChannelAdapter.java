@@ -52,10 +52,10 @@ class BufferByteOutputChannelAdapter
         super.flush(); // does nothing, effectively.
         final ByteBuffer target = target(false);
         if (target != null) {
-            for (target.flip(); target.hasRemaining(); ) {
+            for (((java.nio.Buffer) target).flip(); target.hasRemaining(); ) {
                 channel(true).write(target);
             }
-            target.clear();
+            ((java.nio.Buffer) target).clear();
             final WritableByteChannel channel = channel(false);
             if (channel instanceof FileChannel) {
                 ((FileChannel) channel).force(false);
@@ -77,7 +77,7 @@ class BufferByteOutputChannelAdapter
     @Override
     protected void write(final ByteBuffer target, final int value) throws IOException {
         while (!target.hasRemaining()) {
-            target.flip(); // limit -> position, position -> zero
+            ((java.nio.Buffer) target).flip(); // limit -> position, position -> zero
             while (target.position() == 0) {
                 channel(true).write(target);
             }

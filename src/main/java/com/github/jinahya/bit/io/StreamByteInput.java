@@ -78,8 +78,8 @@ public class StreamByteInput
     }
 
     /**
-     * {@inheritDoc} The {@code read(InputStream)} method of {@code StreamByteInput} class invokes {@link
-     * InputStream#read()} method on specified input stream and returns the result.
+     * {@inheritDoc} The {@code read(InputStream)} method of {@code StreamByteInput} class invokes
+     * {@link InputStream#read()} method on specified input stream and returns the result.
      *
      * @param source {@inheritDoc}
      * @return {@inheritDoc}

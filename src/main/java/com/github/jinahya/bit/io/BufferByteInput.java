@@ -48,7 +48,8 @@ public class BufferByteInput
      */
     public static BufferByteInput adapting(
             final Supplier<? extends ReadableByteChannel> channelSupplier) {
-        final Supplier<ByteBuffer> bufferSupplier = () -> (ByteBuffer) ByteBuffer.allocate(1).position(1);
+        final Supplier<ByteBuffer> bufferSupplier
+                = () -> (ByteBuffer) ((java.nio.Buffer) ByteBuffer.allocate(1)).position(1);
         return new BufferByteInputChannelAdapter(bufferSupplier, channelSupplier);
     }
 
@@ -61,7 +62,8 @@ public class BufferByteInput
      */
     public static BufferByteInput adapting(final ReadableByteChannel channel) {
         Objects.requireNonNull(channel, "channel is null");
-        final Supplier<ByteBuffer> bufferSupplier = () -> (ByteBuffer) ByteBuffer.allocate(1).position(1);
+        final Supplier<ByteBuffer> bufferSupplier
+                = () -> (ByteBuffer) ((java.nio.Buffer) ByteBuffer.allocate(1)).position(1);
         final BufferByteInputChannelAdapter adapter
                 = new BufferByteInputChannelAdapter(bufferSupplier, BitIoUtils.emptySupplier());
         adapter.channel(channel);
@@ -127,9 +129,9 @@ public class BufferByteInput
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code read(ByteBuffer)} method of {@code BufferByteInput} class invokes {@link ByteBuffer#get()
-     * get()} method on {@code source} and returns the result as an unsigned {@value java.lang.Byte#SIZE}-bit {@code
-     * int}.
+     * @implNote The {@code read(ByteBuffer)} method of {@code BufferByteInput} class invokes
+     * {@link ByteBuffer#get() get()} method on {@code source} and returns the result as an unsigned
+     * {@value java.lang.Byte#SIZE}-bit {@code int}.
      */
     @Override
     protected int read(final ByteBuffer source) throws IOException {

@@ -45,8 +45,8 @@ public interface BitInput
     }
 
     /**
-     * Reads a {@code 1}-bit <em>unsigned</em> {@code int} value and returns {@code true} for {@code 0b1} and {@code
-     * false} for {@code 0b0}
+     * Reads a {@code 1}-bit <em>unsigned</em> {@code int} value and returns {@code true} for {@code 0b1} and
+     * {@code false} for {@code 0b0}
      *
      * @return the value read.
      * @throws IOException if an I/O error occurs.
@@ -60,8 +60,8 @@ public interface BitInput
      * Reads a {@code byte} value of specified number of bits.
      *
      * @param unsigned a flag for indicating an unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} - ({@code
-     *                 unsigned ? 1 : 0})), both inclusive.
+     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} -
+     *                 ({@code unsigned ? 1 : 0})), both inclusive.
      * @return a {@code byte} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
      * @implNote The default implementation invokes {@link #readInt(boolean, int)} method with given arguments and
@@ -77,8 +77,8 @@ public interface BitInput
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return a signed {@code byte} value of specified bit {@code size}.
      * @throws IOException if an I/O error occurs.
-     * @implNote The default implementation invokes {@link #readByte(boolean, int)} method with {@code false} and {@code
-     * size} and returns the result.
+     * @implNote The default implementation invokes {@link #readByte(boolean, int)} method with {@code false} and
+     * {@code size} and returns the result.
      * @see #readByte(boolean, int)
      */
     default byte readByte(final int size) throws IOException {
@@ -174,8 +174,8 @@ public interface BitInput
      * Reads an {@code int} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Integer#SIZE} - ({@code
-     *                 unsigned ? 1: 0})), both inclusive.
+     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Integer#SIZE} -
+     *                 ({@code unsigned ? 1: 0})), both inclusive.
      * @return an {@code int} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
      */
@@ -215,8 +215,8 @@ public interface BitInput
      *             (exclusive).
      * @return an unsigned {@code int} value.
      * @throws IOException if an error occurs.
-     * @implNote The default implementation invokes {@link #readInt(boolean, int)} method with {@code true} and {@code
-     * size} and returns the result.
+     * @implNote The default implementation invokes {@link #readInt(boolean, int)} method with {@code true} and
+     * {@code size} and returns the result.
      * @see #readInt(boolean, int)
      */
     default int readUnsignedInt(final int size) throws IOException {
@@ -227,8 +227,8 @@ public interface BitInput
      * Reads a {@code long} value of specified number of bits.
      *
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
-     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Long#SIZE} - ({@code
-     *                 unsigned ? 1: 0})), both inclusive.
+     * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Long#SIZE} -
+     *                 ({@code unsigned ? 1: 0})), both inclusive.
      * @return a {@code long} value of specified number of bits.
      * @throws IOException if an I/O error occurs.
      * @see #readInt(boolean, int)
@@ -399,8 +399,8 @@ public interface BitInput
     /**
      * Aligns to a single <em>byte</em> by discarding required number of bits.
      *
-     * @return the number of bits discarded while aligning; between {@code 0} (inclusive) and {@value
-     * java.lang.Byte#SIZE} (exclusive).
+     * @return the number of bits discarded while aligning; between {@code 0} (inclusive) and
+     * {@value java.lang.Byte#SIZE} (exclusive).
      * @throws IOException if an I/O error occurs.
      * @implNote The default implementation invokes {@link #align(int)} method with {@link java.lang.Byte#BYTES}.
      * @see #align(int)

@@ -58,8 +58,8 @@ public class DataByteInput
     }
 
     /**
-     * {@inheritDoc} The {@code read(DataInput)} method of {@link DataByteInput} class invokes {@link
-     * DataInput#readUnsignedByte()} method on specified data input and returns the result.
+     * {@inheritDoc} The {@code read(DataInput)} method of {@link DataByteInput} class invokes
+     * {@link DataInput#readUnsignedByte()} method on specified data input and returns the result.
      *
      * @param source {@inheritDoc}
      * @return {@inheritDoc}

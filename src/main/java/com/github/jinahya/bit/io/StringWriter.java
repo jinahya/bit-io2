@@ -38,8 +38,8 @@ public class StringWriter
      * Creates a new instance for writing {@link StandardCharsets#US_ASCII}-encoded strings in a compressed-manner.
      *
      * @param maximumCharacters a maximum number of characters of a string; must be non-negative.
-     * @param printableOnly     a flag for printable characters only; {@code true} for printable characters; {@code
-     *                          false} otherwise.
+     * @param printableOnly     a flag for printable characters only; {@code true} for printable characters;
+     *                          {@code false} otherwise.
      * @return a new instance.
      * @see ByteArrayWriter#ascii(int, boolean)
      */

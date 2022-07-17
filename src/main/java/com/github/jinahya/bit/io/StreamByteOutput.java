@@ -77,8 +77,8 @@ public class StreamByteOutput
     }
 
     /**
-     * {@inheritDoc} The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes {@link
-     * OutputStream#write(int)} method on specified output stream with specified value.
+     * {@inheritDoc} The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes
+     * {@link OutputStream#write(int)} method on specified output stream with specified value.
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}

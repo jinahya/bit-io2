@@ -38,8 +38,8 @@ public class StringReader
      * Creates a new instance for reading {@link StandardCharsets#US_ASCII} decoded strings in a compressed-manner.
      *
      * @param maximumCharacters a maximum number of characters of a string; must be non-negative.
-     * @param printableOnly     a flag for printable characters only; {@code true} for printable characters; {@code
-     *                          false} otherwise.
+     * @param printableOnly     a flag for printable characters only; {@code true} for printable characters;
+     *                          {@code false} otherwise.
      * @return a new instance.
      * @see ByteArrayReader#ascii(int, boolean)
      */

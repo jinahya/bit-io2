@@ -1,5 +1,25 @@
 package com.github.jinahya.bit.io;
 
+/*-
+ * #%L
+ * bit-io2
+ * %%
+ * Copyright (C) 2020 - 2022 Jinahya, Inc.
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -86,10 +106,10 @@ public class ChannelByteOutput
     @Override
     public void flush() throws IOException {
         super.flush(); // does nothing, effectively.
-        for (buffer.flip(); buffer.hasRemaining(); ) {
+        for (((java.nio.Buffer) buffer).flip(); buffer.hasRemaining(); ) {
             target(true).write(buffer);
         }
-        buffer.clear();
+        ((java.nio.Buffer) buffer).clear();
         final WritableByteChannel channel = target(false);
         if (channel instanceof FileChannel) {
             ((FileChannel) channel).force(false);
@@ -108,7 +128,7 @@ public class ChannelByteOutput
     @Override
     protected void write(final WritableByteChannel target, final int value) throws IOException {
         assert !buffer.hasRemaining();
-        for (buffer.flip(); target.write(buffer) == 0; ) {
+        for (((java.nio.Buffer) buffer).flip(); target.write(buffer) == 0; ) {
         }
         buffer.compact();
         assert buffer.hasRemaining();

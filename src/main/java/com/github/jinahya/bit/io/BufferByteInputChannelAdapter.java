@@ -61,13 +61,13 @@ class BufferByteInputChannelAdapter
     @Override
     protected int read(final ByteBuffer source) throws IOException {
         while (!source.hasRemaining()) {
-            source.clear(); // position -> zero, limit -> capacity
+            ((java.nio.Buffer) source).clear(); // position -> zero, limit -> capacity
             while (source.position() == 0) {
                 if (channel(true).read(source) == -1) {
                     throw new EOFException("channel has reached end-of-stream");
                 }
             }
-            source.flip(); // limit -> position, position -> zero
+            ((java.nio.Buffer) source).flip(); // limit -> position, position -> zero
         }
         return super.read(source);
     }
