@@ -46,8 +46,7 @@ public class BufferByteInput
      * @return a new instance.
      * @apiNote Closing the result input also closes the {@code channel}.
      */
-    public static BufferByteInput adapting(
-            final Supplier<? extends ReadableByteChannel> channelSupplier) {
+    public static BufferByteInput adapting(final Supplier<? extends ReadableByteChannel> channelSupplier) {
         final Supplier<ByteBuffer> bufferSupplier
                 = () -> (ByteBuffer) ((java.nio.Buffer) ByteBuffer.allocate(1)).position(1);
         return new BufferByteInputChannelAdapter(bufferSupplier, channelSupplier);

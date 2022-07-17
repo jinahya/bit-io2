@@ -30,10 +30,11 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitWriter
  */
+@FunctionalInterface
 public interface BitReader<T> {
 
     /**
-     * Returns a reader which reads a {@code 1}-bit {@code null}-flag and reads non-{@code null} values only.
+     * Returns a reader which can handle {@code null} values.
      *
      * @param reader a reader for reading values.
      * @param <T>    value type parameter
@@ -46,11 +47,11 @@ public interface BitReader<T> {
             @Override
             public T read(final BitInput input) throws IOException {
                 Objects.requireNonNull(input, "input is null");
-                final int flag = input.readUnsignedInt(1);
-                if (flag == 0) {
-                    return null;
+                final boolean nonnull = input.readBoolean();
+                if (nonnull) {
+                    return getReader().read(input);
                 }
-                return getReader().read(input);
+                return null;
             }
         };
     }
