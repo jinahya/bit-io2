@@ -30,10 +30,11 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see BitReader
  */
+@FunctionalInterface
 public interface BitWriter<T> {
 
     /**
-     * Returns a writer writes a {@code 1}-bit {@code null}-flag and writes non-{@code null} values only.
+     * Returns a writer which can handle {@code null} values.
      *
      * @param writer the writer for writing values.
      * @param <T>    value type parameter
@@ -46,12 +47,11 @@ public interface BitWriter<T> {
             @Override
             public void write(final BitOutput output, final T value) throws IOException {
                 Objects.requireNonNull(output, "output is null");
-                final int flag = value == null ? 0 : 1;
-                output.writeUnsignedInt(1, flag);
-                if (flag == 0) {
-                    return;
+                final boolean nonnull = value != null;
+                output.writeBoolean(nonnull);
+                if (nonnull) {
+                    getWriter().write(output, value);
                 }
-                getWriter().write(output, value);
             }
         };
     }

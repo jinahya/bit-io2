@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -61,7 +62,7 @@ public class StreamByteInput
         Objects.requireNonNull(file, "file is null");
         return new StreamByteInput(() -> {
             try {
-                return new FileInputStream(file);
+                return Files.newInputStream(file.toPath());
             } catch (final IOException ioe) {
                 throw new RuntimeException("failed to open " + file, ioe);
             }
@@ -78,8 +79,8 @@ public class StreamByteInput
     }
 
     /**
-     * {@inheritDoc} The {@code read(InputStream)} method of {@code StreamByteInput} class invokes {@link
-     * InputStream#read()} method on specified input stream and returns the result.
+     * {@inheritDoc} The {@code read(InputStream)} method of {@code StreamByteInput} class invokes
+     * {@link InputStream#read()} method on specified input stream and returns the result.
      *
      * @param source {@inheritDoc}
      * @return {@inheritDoc}

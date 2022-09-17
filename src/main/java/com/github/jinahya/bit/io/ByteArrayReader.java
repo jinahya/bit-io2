@@ -124,8 +124,8 @@ public class ByteArrayReader
      * Creates a new instance for reading an array of ASCII bytes.
      *
      * @param lengthSize    a number of bits for the length of an array.
-     * @param printableOnly a flag for printable characters only; {@code true} for printable characters only; {@code
-     *                      false} otherwise.
+     * @param printableOnly a flag for printable characters only; {@code true} for printable characters only;
+     *                      {@code false} otherwise.
      * @return a new instance.
      */
     public static ByteArrayReader ascii(final int lengthSize, final boolean printableOnly) {

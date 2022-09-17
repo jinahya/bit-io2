@@ -20,8 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import sun.nio.cs.US_ASCII;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -39,8 +37,9 @@ public class StringReader
     /**
      * Creates a new instance for reading {@link StandardCharsets#US_ASCII} decoded strings in a compressed-manner.
      *
-     * @param printableOnly a flag for printable characters only; {@code true} for printable characters; {@code false}
-     *                      otherwise.
+     * @param maximumCharacters a maximum number of characters of a string; must be non-negative.
+     * @param printableOnly     a flag for printable characters only; {@code true} for printable characters;
+     *                          {@code false} otherwise.
      * @return a new instance.
      * @see ByteArrayReader#ascii(int, boolean)
      */
