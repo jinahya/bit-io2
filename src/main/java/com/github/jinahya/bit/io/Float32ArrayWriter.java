@@ -47,6 +47,6 @@ class Float32ArrayWriter
     }
 
     void writeElement(final BitOutput output, final float element) throws IOException {
-        output.writeFloat32(element);
+        output.writeFloat(element);
     }
 }

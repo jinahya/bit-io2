@@ -40,9 +40,9 @@ class BitIoInt32Test {
     @ParameterizedTest
     void wr(final int expected) throws IOException {
         BitIoTestUtils.wr2v(o -> {
-            o.writeInt32(expected);
+            o.writeInt(expected);
             return i -> {
-                final int actual = i.readInt32();
+                final int actual = i.readInt();
                 assertThat(actual).isEqualTo(expected);
             };
         });

@@ -41,9 +41,9 @@ class BitIoLong64Test {
     @ParameterizedTest
     void wr(final long expected) throws IOException {
         BitIoTestUtils.wr2v(o -> {
-            o.writeLong64(expected);
+            o.writeLong(expected);
             return i -> {
-                final long actual = i.readLong64();
+                final long actual = i.readLong();
                 assertThat(actual).isEqualTo(expected);
             };
         });

@@ -144,7 +144,7 @@ class BitIoShortTest {
 
     @DisplayName("8")
     @Nested
-    class Short8Test {
+    class ShortTest {
 
         @RepeatedTest(16)
         void wr_random() {
@@ -152,9 +152,9 @@ class BitIoShortTest {
             final int size = Short.SIZE;
             BitIoRandom.applyNextValueForShort_v(unsigned, size, e -> {
                 return BitIoTestUtils.wr2v(o -> {
-                    o.writeShort16(e.shortValue());
+                    o.writeShort(e.shortValue());
                     return i -> {
-                        final short actual = i.readShort16();
+                        final short actual = i.readShort();
                         assertThat(actual).isEqualTo(e.shortValue());
                     };
                 });
