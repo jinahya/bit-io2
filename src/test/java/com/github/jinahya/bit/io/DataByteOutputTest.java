@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.DataOutput;
@@ -28,6 +29,7 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.ByteStreams.black;
 import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.mockito.Mockito.mock;
 
 /**
  * A class for testing {@link DataByteOutputTest} class.
@@ -43,6 +45,17 @@ class DataByteOutputTest
      */
     DataByteOutputTest() {
         super(DataByteOutput.class, DataOutput.class);
+    }
+
+    @Nested
+    class FromTest {
+
+        @Test
+        void from__() throws IOException {
+            final var source = mock(DataOutput.class);
+            try (DataByteOutput output = DataByteOutput.from(source)) {
+            }
+        }
     }
 
     /**

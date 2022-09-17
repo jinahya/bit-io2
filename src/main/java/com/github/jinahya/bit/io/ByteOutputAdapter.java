@@ -106,7 +106,7 @@ public abstract class ByteOutputAdapter<T>
     T target(final boolean get) {
         if (get) {
             if (target(false) == null) {
-                target(targetSupplier.get());
+                target(Objects.requireNonNull(targetSupplier.get(), "null supplied from " + targetSupplier));
                 closeTarget = true;
             }
             return target(false);
@@ -116,7 +116,7 @@ public abstract class ByteOutputAdapter<T>
 
     void target(final T target) {
         if (target(false) != null) {
-            throw new IllegalStateException("target already has been supplied");
+            throw new IllegalStateException("target already has been set");
         }
         this.target = Objects.requireNonNull(target, "target is null");
     }

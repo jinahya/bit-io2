@@ -40,9 +40,12 @@ public class BitInputAdapter
      * @return a new instance.
      * @apiNote Closing the result does not close the {@code input}.
      */
+    @SuppressWarnings({"unchecked"})
     public static BitInput from(final ByteInput input) {
         Objects.requireNonNull(input, "input is null");
-        final BitInputAdapter instance = new BitInputAdapter(BitIoUtils.emptySupplier());
+//        final BitInputAdapter instance = new BitInputAdapter(BitIoUtils.emptySupplier());
+        final BitInputAdapter instance
+                = new BitInputAdapter((Supplier<? extends ByteInput>) BitIoConstants.EMPTY_SUPPLIER());
         instance.input(input);
         return instance;
     }

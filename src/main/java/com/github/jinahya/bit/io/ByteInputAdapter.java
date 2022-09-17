@@ -54,7 +54,7 @@ public abstract class ByteInputAdapter<T>
      */
     @Override
     public void close() throws IOException {
-        ByteInput.super.close(); // does nothing.
+        ByteInput.super.close();
         if (closeSource) {
             final T source = source(false);
             if (source instanceof Closeable) {
@@ -89,7 +89,7 @@ public abstract class ByteInputAdapter<T>
     T source(final boolean get) {
         if (get) {
             if (source(false) == null) {
-                source(sourceSupplier.get());
+                source(Objects.requireNonNull(sourceSupplier.get(), "null supplied from " + sourceSupplier));
                 closeSource = true;
             }
             return source(false);
@@ -99,7 +99,7 @@ public abstract class ByteInputAdapter<T>
 
     void source(final T source) {
         if (source(false) != null) {
-            throw new IllegalStateException("source already has been supplied");
+            throw new IllegalStateException("source already has been set");
         }
         this.source = Objects.requireNonNull(source, "source is null");
     }

@@ -20,7 +20,9 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.EOFException;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -129,12 +131,16 @@ public class BufferByteInput
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implNote The {@code read(ByteBuffer)} method of {@code BufferByteInput} class invokes
-     * {@link ByteBuffer#get() get()} method on {@code source} and returns the result as an unsigned
-     * {@value java.lang.Byte#SIZE}-bit {@code int}.
+     * {@link ByteBuffer#get() get()} method on the {@code source} and returns the result as an unsigned
+     * {@value java.lang.Byte#SIZE}-bit {@code int} value.
      */
     @Override
     protected int read(final ByteBuffer source) throws IOException {
-        return source.get() & 0xFF;
+//        try {
+            return source.get() & 0xFF;
+//        } catch (final BufferUnderflowException bue) {
+//            throw new EOFException(bue.toString());
+//        }
     }
 
     @Override

@@ -43,7 +43,10 @@ public class DataByteOutput
      */
     public static DataByteOutput from(final DataOutput target) {
         Objects.requireNonNull(target, "target is null");
-        final DataByteOutput instance = new DataByteOutput(BitIoUtils.emptySupplier());
+        @SuppressWarnings({"unchecked"})
+        final DataByteOutput instance = new DataByteOutput(
+                (Supplier<? extends DataOutput>) BitIoConstants.EMPTY_SUPPLIER()
+        );
         instance.target(target);
         return instance;
     }
@@ -58,13 +61,13 @@ public class DataByteOutput
     }
 
     /**
-     * {@inheritDoc} The {@code write(DataOutput, int)} method of {@code DataByteOutput} class invokes
-     * {@link DataOutput#writeByte(int)} method on data output with specified value.
+     * {@inheritDoc}
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @see DataOutput#write(int)
+     * @implNote The {@code write(DataOutput, int)} method of {@code DataByteOutput} class invokes
+     * {@link DataOutput#writeByte(int)} method on data output with specified value.
      */
     @Override
     protected void write(final DataOutput target, final int value) throws IOException {

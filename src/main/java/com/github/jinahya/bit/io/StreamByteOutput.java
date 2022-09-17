@@ -21,11 +21,9 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -47,7 +45,10 @@ public class StreamByteOutput
      */
     public static StreamByteOutput from(final OutputStream target) {
         Objects.requireNonNull(target, "target is null");
-        final StreamByteOutput instance = new StreamByteOutput(BitIoUtils.emptySupplier());
+        @SuppressWarnings({"unchecked"})
+        final StreamByteOutput instance = new StreamByteOutput(
+                (Supplier<? extends OutputStream>) BitIoConstants.EMPTY_SUPPLIER()
+        );
         instance.target(target);
         return instance;
     }
@@ -79,12 +80,13 @@ public class StreamByteOutput
     }
 
     /**
-     * {@inheritDoc} The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes
-     * {@link OutputStream#write(int)} method on specified output stream with specified value.
+     * {@inheritDoc}
      *
      * @param target {@inheritDoc}
      * @param value  {@inheritDoc}
      * @throws IOException {@inheritDoc}
+     * @implNote The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes
+     * {@link OutputStream#write(int)} method on specified output stream with specified value.
      */
     @Override
     protected void write(final OutputStream target, final int value) throws IOException {

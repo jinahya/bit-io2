@@ -39,7 +39,6 @@ public interface BitReader<T> {
      * @param reader a reader for reading values.
      * @param <T>    value type parameter
      * @return a reader for nullable values.
-     * @see BitWriter#nullable(BitWriter)
      */
     static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
         Objects.requireNonNull(reader, "reader is null");
