@@ -41,9 +41,9 @@ class BitIoFloat32Test {
     @ParameterizedTest
     void wr(final double expected) throws IOException {
         BitIoTestUtils.wr2v(o -> {
-            o.writeFloat32((float) expected);
+            o.writeFloat((float) expected);
             return i -> {
-                final float actual = i.readFloat32();
+                final float actual = i.readFloat();
                 assertThat(actual).isEqualTo((float) expected);
             };
         });

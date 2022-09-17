@@ -50,11 +50,11 @@ public class BitOutputAdapter
     /**
      * Creates a new instance with specified output supplier.
      *
-     * @param outputSupplier the output supplier.
+     * @param supplier the output supplier.
      */
-    public BitOutputAdapter(final Supplier<? extends ByteOutput> outputSupplier) {
+    public BitOutputAdapter(final Supplier<? extends ByteOutput> supplier) {
         super();
-        this.outputSupplier = Objects.requireNonNull(outputSupplier, "outputSupplier is null");
+        this.supplier = Objects.requireNonNull(supplier, "supplier is null");
     }
 
     /**
@@ -64,7 +64,7 @@ public class BitOutputAdapter
      */
     @Override
     public void flush() throws IOException {
-        BitOutput.super.flush(); // <- does nothing.
+        BitOutput.super.flush();
         final ByteOutput output = output(false);
         if (output != null) {
             output.flush();
@@ -78,8 +78,8 @@ public class BitOutputAdapter
      */
     @Override
     public void close() throws IOException {
-        BitOutput.super.close(); // <- does nothing.
-        if (closeOutput) {
+        BitOutput.super.close();
+        if (close) {
             final ByteOutput output = output(false);
             if (output != null) {
                 output.close();
@@ -164,8 +164,8 @@ public class BitOutputAdapter
     private ByteOutput output(final boolean get) {
         if (get) {
             if (output(false) == null) {
-                output(outputSupplier.get());
-                closeOutput = true;
+                output(supplier.get());
+                close = true;
             }
             return output(false);
         }
@@ -174,16 +174,19 @@ public class BitOutputAdapter
 
     private void output(final ByteOutput output) {
         if (output(false) != null) {
-            throw new IllegalStateException("output already has been supplied");
+            throw new IllegalStateException("output already has been set");
         }
         this.output = Objects.requireNonNull(output, "output is null");
     }
 
-    private final Supplier<? extends ByteOutput> outputSupplier;
+    private final Supplier<? extends ByteOutput> supplier;
 
     private ByteOutput output = null;
 
-    private boolean closeOutput = false;
+    /**
+     * a flag indicates that the {@code output} is supplied from the {@code supplier}; not directly set.
+     */
+    private boolean close = false;
 
     /**
      * The current octet.

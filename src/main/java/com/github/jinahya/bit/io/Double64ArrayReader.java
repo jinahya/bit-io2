@@ -49,6 +49,6 @@ class Double64ArrayReader
     }
 
     double readElement(final BitInput input) throws IOException {
-        return input.readDouble64();
+        return input.readDouble();
     }
 }

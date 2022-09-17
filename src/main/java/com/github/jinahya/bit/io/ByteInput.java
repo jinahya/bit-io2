@@ -49,6 +49,7 @@ public interface ByteInput
      *
      * @return an unsigned {@value java.lang.Byte#SIZE}-bit value; between {@code 0} and {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
+     * @implSpec An {@link java.io.EOFException} should be thrown when no bytes are available.
      */
     int read() throws IOException;
 }

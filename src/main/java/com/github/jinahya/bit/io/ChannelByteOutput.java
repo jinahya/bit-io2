@@ -44,6 +44,7 @@ public class ChannelByteOutput
      *
      * @param channel the channel to which bytes are written.
      * @param buffer  a buffer to use; must have a non-zero capacity.
+     * @return a new instance.
      * @apiNote Closing the result output does not close the {@code channel}.
      */
     public static ChannelByteOutput from(final WritableByteChannel channel, final ByteBuffer buffer) {
@@ -60,6 +61,7 @@ public class ChannelByteOutput
      * @param path    the path to which bytes are written.
      * @param buffer  a buffer to use; must have a non-zero capacity.
      * @param options an array of open options.
+     * @return a new instance.
      * @see #from(Path, ByteBuffer)
      */
     public static ChannelByteOutput from(final Path path, final ByteBuffer buffer, final OpenOption... options) {
@@ -83,6 +85,7 @@ public class ChannelByteOutput
      *
      * @param path   the path to which bytes are written.
      * @param buffer a buffer to use; must have a non-zero capacity.
+     * @return a new instance.
      * @see #from(Path, ByteBuffer, OpenOption...)
      */
     public static ChannelByteOutput from(final Path path, final ByteBuffer buffer) {

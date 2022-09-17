@@ -29,7 +29,7 @@ final class BitIoConstraints {
 
     private static int requirePositive(final int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("size(" + size + ") is not positive");
+            throw new IllegalArgumentException("negative size: " + size);
         }
         return size;
     }

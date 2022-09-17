@@ -41,9 +41,9 @@ class BitIoDouble64Test {
     @ParameterizedTest
     void wr(final double expected) throws IOException {
         BitIoTestUtils.wr2v(o -> {
-            o.writeDouble64(expected);
+            o.writeDouble(expected);
             return i -> {
-                final double actual = i.readDouble64();
+                final double actual = i.readDouble();
                 assertThat(actual).isEqualTo(expected);
             };
         });

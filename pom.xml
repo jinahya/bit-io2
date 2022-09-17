@@ -48,9 +48,10 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
     <!--    <maven.compiler.release>${maven.compiler.target}</maven.compiler.release>-->
-    <maven.compiler.testSource>${maven.compiler.source}</maven.compiler.testSource>
+    <!--    <maven.compiler.testSource>${maven.compiler.source}</maven.compiler.testSource>-->
+    <maven.compiler.testSource>17</maven.compiler.testSource>
     <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
-    <!--    <maven.compiler.testRelease>${maven.compiler.testTarget}</maven.compiler.testRelease>-->
+    <maven.compiler.testRelease>${maven.compiler.testTarget}</maven.compiler.testRelease>
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-surefire>3.0.0-M6</version.maven-surefire>
     <version.org.junit.jupiter>5.8.2</version.org.junit.jupiter>

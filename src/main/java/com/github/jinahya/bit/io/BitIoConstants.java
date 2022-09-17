@@ -20,6 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.util.function.Supplier;
+
 /**
  * Defines constants for bit-io.
  *
@@ -48,6 +50,15 @@ final class BitIoConstants {
      */
     static int mask(final int size) {
         return MASKS[size - 1];
+    }
+
+    private static Supplier<?> EMPTY_SUPPLIER = () -> null;
+
+    static Supplier<?> EMPTY_SUPPLIER() {
+        if (EMPTY_SUPPLIER == null) {
+            EMPTY_SUPPLIER = () -> null;
+        }
+        return EMPTY_SUPPLIER;
     }
 
     /**

@@ -49,6 +49,6 @@ class Float32ArrayReader
     }
 
     float readElement(final BitInput input) throws IOException {
-        return input.readFloat32();
+        return input.readFloat();
     }
 }

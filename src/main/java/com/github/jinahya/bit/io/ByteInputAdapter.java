@@ -26,9 +26,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * An abstract class implements {@link ByteInput} for adapting a specific type of byte-source.
+ * An abstract class implements {@link ByteInput} for adapting a specific type of byte source.
  *
- * @param <T> byte source parameter
+ * @param <T> byte source type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ByteOutputAdapter
  */
@@ -38,11 +38,11 @@ public abstract class ByteInputAdapter<T>
     /**
      * Creates a new instance with specified byte-source supplier.
      *
-     * @param sourceSupplier the byte-source supplier.
+     * @param supplier the byte-source supplier.
      */
-    protected ByteInputAdapter(final Supplier<? extends T> sourceSupplier) {
+    protected ByteInputAdapter(final Supplier<? extends T> supplier) {
         super();
-        this.sourceSupplier = Objects.requireNonNull(sourceSupplier, "sourceSupplier is null");
+        this.supplier = Objects.requireNonNull(supplier, "supplier is null");
     }
 
     /**
@@ -54,8 +54,8 @@ public abstract class ByteInputAdapter<T>
      */
     @Override
     public void close() throws IOException {
-        ByteInput.super.close(); // does nothing.
-        if (closeSource) {
+        ByteInput.super.close();
+        if (close) {
             final T source = source(false);
             if (source instanceof Closeable) {
                 ((Closeable) source).close();
@@ -89,8 +89,8 @@ public abstract class ByteInputAdapter<T>
     T source(final boolean get) {
         if (get) {
             if (source(false) == null) {
-                source(sourceSupplier.get());
-                closeSource = true;
+                source(supplier.get());
+                close = true;
             }
             return source(false);
         }
@@ -99,14 +99,14 @@ public abstract class ByteInputAdapter<T>
 
     void source(final T source) {
         if (source(false) != null) {
-            throw new IllegalStateException("source already has been supplied");
+            throw new IllegalStateException("source already has been set");
         }
         this.source = Objects.requireNonNull(source, "source is null");
     }
 
-    private final Supplier<? extends T> sourceSupplier;
+    private final Supplier<? extends T> supplier;
 
     private T source = null;
 
-    private boolean closeSource = false;
+    private boolean close = false;
 }

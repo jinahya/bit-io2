@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.DataInput;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import static com.github.jinahya.bit.io.ByteStreams.white;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * A class for testing {@link DataByteInput} class.
@@ -45,6 +47,17 @@ class DataByteInputTest
      */
     DataByteInputTest() {
         super(DataByteInput.class, DataInput.class);
+    }
+
+    @Nested
+    class FromTest {
+
+        @Test
+        void from__() throws IOException {
+            final var source = mock(DataInput.class);
+            try (DataByteInput input = DataByteInput.from(source)) {
+            }
+        }
     }
 
     /**

@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -47,7 +46,10 @@ public class StreamByteInput
      */
     public static StreamByteInput from(final InputStream source) {
         Objects.requireNonNull(source, "source is null");
-        final StreamByteInput instance = new StreamByteInput(BitIoUtils.emptySupplier());
+        @SuppressWarnings({"unchecked"})
+        final StreamByteInput instance = new StreamByteInput(
+                (Supplier<? extends InputStream>) BitIoConstants.EMPTY_SUPPLIER()
+        );
         instance.source(source);
         return instance;
     }
@@ -79,13 +81,14 @@ public class StreamByteInput
     }
 
     /**
-     * {@inheritDoc} The {@code read(InputStream)} method of {@code StreamByteInput} class invokes
-     * {@link InputStream#read()} method on specified input stream and returns the result.
+     * {@inheritDoc}
      *
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws EOFException if the {@link InputStream#read()} operation returns {@code -1}.
      * @throws IOException  {@inheritDoc}
+     * @implNote The {@code read(InputStream)} method of {@code StreamByteInput} class invokes
+     * {@link InputStream#read()} method on specified input stream and returns the result.
      */
     @Override
     protected int read(final InputStream source) throws IOException {

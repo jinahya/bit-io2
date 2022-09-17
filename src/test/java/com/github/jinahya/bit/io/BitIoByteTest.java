@@ -144,7 +144,7 @@ class BitIoByteTest {
 
     @DisplayName("8")
     @Nested
-    class Byte8Test {
+    class ByteTest {
 
         @RepeatedTest(16)
         void byte8_random() {
@@ -152,9 +152,9 @@ class BitIoByteTest {
             final int size = Byte.SIZE;
             BitIoRandom.applyNextValueForByte_v(unsigned, size, e -> {
                 return BitIoTestUtils.wr2v(o -> {
-                    o.writeByte8(e.byteValue());
+                    o.writeByte(e.byteValue());
                     return i -> {
-                        final byte actual = i.readByte8();
+                        final byte actual = i.readByte();
                         assertThat(actual).isEqualTo(e.byteValue());
                     };
                 });

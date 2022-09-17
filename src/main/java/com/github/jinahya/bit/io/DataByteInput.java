@@ -43,7 +43,10 @@ public class DataByteInput
      */
     public static DataByteInput from(final DataInput source) {
         Objects.requireNonNull(source, "source is null");
-        final DataByteInput instance = new DataByteInput(BitIoUtils.emptySupplier());
+        @SuppressWarnings({"unchecked"})
+        final DataByteInput instance = new DataByteInput(
+                (Supplier<? extends DataInput>) BitIoConstants.EMPTY_SUPPLIER()
+        );
         instance.source(source);
         return instance;
     }
@@ -58,13 +61,13 @@ public class DataByteInput
     }
 
     /**
-     * {@inheritDoc} The {@code read(DataInput)} method of {@link DataByteInput} class invokes
-     * {@link DataInput#readUnsignedByte()} method on specified data input and returns the result.
+     * {@inheritDoc}
      *
      * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @see DataInput#readUnsignedByte()
+     * @implNote The {@code read(DataInput)} method of {@link DataByteInput} class invokes
+     * {@link DataInput#readUnsignedByte()} method on specified data input and returns the result.
      */
     @Override
     protected int read(final DataInput source) throws IOException {

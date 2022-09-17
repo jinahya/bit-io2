@@ -47,6 +47,6 @@ class Double64ArrayWriter
     }
 
     void writeElement(final BitOutput output, final double element) throws IOException {
-        output.writeDouble64(element);
+        output.writeDouble(element);
     }
 }
