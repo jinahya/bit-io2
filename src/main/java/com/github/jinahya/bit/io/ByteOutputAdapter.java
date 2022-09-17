@@ -27,9 +27,9 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * An abstract class implements {@link ByteOutput} for adapting a specific type of byte-target.
+ * An abstract class implements {@link ByteOutput} for adapting a specific type of byte target.
  *
- * @param <T> byte target parameter
+ * @param <T> byte target type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ByteInputAdapter
  */
@@ -39,11 +39,11 @@ public abstract class ByteOutputAdapter<T>
     /**
      * Creates a new instance with specified target supplier.
      *
-     * @param targetSupplier the target supplier.
+     * @param supplier the target supplier.
      */
-    protected ByteOutputAdapter(final Supplier<? extends T> targetSupplier) {
+    protected ByteOutputAdapter(final Supplier<? extends T> supplier) {
         super();
-        this.targetSupplier = Objects.requireNonNull(targetSupplier, "targetSupplier is null");
+        this.supplier = Objects.requireNonNull(supplier, "supplier is null");
     }
 
     /**
@@ -55,7 +55,7 @@ public abstract class ByteOutputAdapter<T>
      */
     @Override
     public void flush() throws IOException {
-        ByteOutput.super.flush(); // does nothing.
+        ByteOutput.super.flush();
         final T target = target(false);
         if (target instanceof Flushable) {
             ((Flushable) target).flush();
@@ -71,8 +71,8 @@ public abstract class ByteOutputAdapter<T>
      */
     @Override
     public void close() throws IOException {
-        ByteOutput.super.close(); // does nothing.
-        if (closeTarget) {
+        ByteOutput.super.close();
+        if (close) {
             final T target = target(false);
             if (target instanceof Closeable) {
                 ((Closeable) target).close();
@@ -106,8 +106,8 @@ public abstract class ByteOutputAdapter<T>
     T target(final boolean get) {
         if (get) {
             if (target(false) == null) {
-                target(Objects.requireNonNull(targetSupplier.get(), "null supplied from " + targetSupplier));
-                closeTarget = true;
+                target(supplier.get());
+                close = true;
             }
             return target(false);
         }
@@ -121,9 +121,9 @@ public abstract class ByteOutputAdapter<T>
         this.target = Objects.requireNonNull(target, "target is null");
     }
 
-    private final Supplier<? extends T> targetSupplier;
+    private final Supplier<? extends T> supplier;
 
     private T target = null;
 
-    private boolean closeTarget = false;
+    private boolean close = false;
 }
