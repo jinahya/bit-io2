@@ -53,11 +53,11 @@ public class BitInputAdapter
     /**
      * Creates a new instance with specified input supplier.
      *
-     * @param inputSupplier the input supplier.
+     * @param supplier the input supplier.
      */
-    public BitInputAdapter(final Supplier<? extends ByteInput> inputSupplier) {
+    public BitInputAdapter(final Supplier<? extends ByteInput> supplier) {
         super();
-        this.inputSupplier = Objects.requireNonNull(inputSupplier, "inputSupplier is null");
+        this.supplier = Objects.requireNonNull(supplier, "supplier is null");
     }
 
     /**
@@ -68,8 +68,8 @@ public class BitInputAdapter
      */
     @Override
     public void close() throws IOException {
-        BitInput.super.close(); // does nothing.
-        if (closeInput) {
+        BitInput.super.close();
+        if (close) {
             final ByteInput input = input(false);
             if (input != null) {
                 input.close();
@@ -150,8 +150,8 @@ public class BitInputAdapter
     private ByteInput input(final boolean get) {
         if (get) {
             if (input(false) == null) {
-                input(inputSupplier.get());
-                closeInput = true;
+                input(supplier.get());
+                close = true;
             }
             return input(false);
         }
@@ -160,16 +160,19 @@ public class BitInputAdapter
 
     private void input(final ByteInput input) {
         if (input(false) != null) {
-            throw new IllegalStateException("input already has been supplied");
+            throw new IllegalStateException("input already has been set");
         }
         this.input = Objects.requireNonNull(input, "input is null");
     }
 
-    private final Supplier<? extends ByteInput> inputSupplier;
+    private final Supplier<? extends ByteInput> supplier;
 
     private ByteInput input = null;
 
-    private boolean closeInput = false;
+    /**
+     * a flag indicates that the {@code input} is supplied from the {@code supplier}; not directly set.
+     */
+    private boolean close = false;
 
     /**
      * The current octet.

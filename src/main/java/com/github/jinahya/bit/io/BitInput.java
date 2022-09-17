@@ -374,7 +374,7 @@ public interface BitInput
      * Aligns to specified number of <em>bytes</em> by discarding required number of bits.
      *
      * @param bytes the number of bytes to align; must be positive.
-     * @return the number of bits discarded while aligning; not negative, always.
+     * @return the number of bits discarded while aligning; non-negative, always.
      * @throws IllegalArgumentException if {@code bytes} is not positive.
      * @throws IOException              if an I/O error occurs.
      */
@@ -389,9 +389,9 @@ public interface BitInput
      * @implNote The default implementation invokes {@link #align(int)} method with {@value java.lang.Byte#BYTES}.
      */
     default long align() throws IOException {
-        final long d = align(Byte.BYTES);
-        assert d >= 0L;
-        assert d < Byte.SIZE;
-        return d;
+        final long discarded = align(Byte.BYTES);
+        assert discarded >= 0L;
+        assert discarded < Byte.SIZE;
+        return discarded;
     }
 }

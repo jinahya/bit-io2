@@ -60,6 +60,7 @@ public class ChannelByteInput
      * @param path    the path from which bytes are read.
      * @param buffer  a buffer to use; must have a non-zero capacity.
      * @param options an array of open options.
+     * @return a new instance.
      * @see #from(Path, ByteBuffer)
      */
     public static ChannelByteInput from(final Path path, final ByteBuffer buffer, final OpenOption... options) {

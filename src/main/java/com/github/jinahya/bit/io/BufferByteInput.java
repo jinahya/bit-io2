@@ -20,9 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -137,7 +135,7 @@ public class BufferByteInput
     @Override
     protected int read(final ByteBuffer source) throws IOException {
 //        try {
-            return source.get() & 0xFF;
+        return source.get() & 0xFF;
 //        } catch (final BufferUnderflowException bue) {
 //            throw new EOFException(bue.toString());
 //        }

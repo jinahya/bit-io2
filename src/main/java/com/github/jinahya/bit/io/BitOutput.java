@@ -380,7 +380,7 @@ public interface BitOutput
      * Aligns to specified number of <em>bytes</em> by padding required number of zero-bits.
      *
      * @param bytes the number of bytes to align; must be positive.
-     * @return the number of zero-bits padded while aligning.
+     * @return the number of zero-bits padded while aligning; non-negative, always.
      * @throws IllegalArgumentException if {@code bytes} is not positive.
      * @throws IOException              if an I/O error occurs.
      */
@@ -396,9 +396,9 @@ public interface BitOutput
      * @see #align(int)
      */
     default long align() throws IOException {
-        final long p = align(Byte.BYTES);
-        assert p >= 0L;
-        assert p < Byte.SIZE;
-        return p;
+        final long padded = align(Byte.BYTES);
+        assert padded >= 0L;
+        assert padded < Byte.SIZE;
+        return padded;
     }
 }

@@ -46,11 +46,10 @@ public abstract class ByteInputAdapter<T>
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code close()} method of {@code ByteInputAdapter} class invokes {@link Closeable#close()}
+     * method on the byte source which may not have been initialized yet in which case the method does nothing.
      *
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code close()} method of {@code ByteInputAdapter} class invokes {@link Closeable#close()} method
-     * on the byte source which may not have been initialized yet in which case the method does nothing.
      */
     @Override
     public void close() throws IOException {
@@ -64,12 +63,11 @@ public abstract class ByteInputAdapter<T>
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc} The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a
+     * byte source and returns the result.
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a byte
-     * source and returns the result.
      */
     @Override
     public int read() throws IOException {
