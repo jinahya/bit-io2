@@ -60,7 +60,7 @@ class ByteArrayUnsignedTest {
 
     private void run(final byte[] expected) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput output = BitOutputAdapter.from(StreamByteOutput.from(baos));
+        final BitOutput output = new BitOutputAdapter(new StreamByteOutput(baos));
         final BitWriter<byte[]> writer = ByteArrayWriter.unsigned(7, 7);
         writer.write(output, expected);
         final long padded = output.align();
@@ -69,7 +69,7 @@ class ByteArrayUnsignedTest {
                       (baos.size() / (double) expected.length) * 100.0d);
         }
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final BitInput input = BitInputAdapter.from(StreamByteInput.from(bais));
+        final BitInput input = new BitInputAdapter(new StreamByteInput(bais));
         final BitReader<byte[]> reader = ByteArrayReader.unsigned(7, 7);
         final byte[] actual = reader.read(input);
         final long discarded = input.align();

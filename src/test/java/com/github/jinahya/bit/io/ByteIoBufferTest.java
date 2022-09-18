@@ -32,6 +32,6 @@ class ByteIoBufferTest
 
     @Override
     protected BufferByteInput newInput(final byte[] bytes) {
-        return BufferByteInput.from(ByteBuffer.wrap(bytes));
+        return new BufferByteInput(ByteBuffer.wrap(bytes));
     }
 }

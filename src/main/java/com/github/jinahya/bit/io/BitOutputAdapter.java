@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * An implementation of {@link BitOutput} adapts an instance of {@link ByteOutput}.
@@ -34,27 +33,13 @@ public class BitOutputAdapter
         implements BitOutput {
 
     /**
-     * Creates a new instance which writes bytes to specified byte output.
+     * Creates a new instance on top of specified byte output.
      *
-     * @param output the byte output to which bytes are written.
-     * @return a new instance.
-     * @apiNote Closing the result does not close the {@code output}.
+     * @param output the byte output.
      */
-    public static BitOutput from(final ByteOutput output) {
-        Objects.requireNonNull(output, "output is null");
-        final BitOutputAdapter instance = new BitOutputAdapter(() -> null);
-        instance.output(output);
-        return instance;
-    }
-
-    /**
-     * Creates a new instance with specified output supplier.
-     *
-     * @param supplier the output supplier.
-     */
-    public BitOutputAdapter(final Supplier<? extends ByteOutput> supplier) {
+    public BitOutputAdapter(final ByteOutput output) {
         super();
-        this.supplier = Objects.requireNonNull(supplier, "supplier is null");
+        this.output = Objects.requireNonNull(output, "output is null");
     }
 
     /**
@@ -65,10 +50,7 @@ public class BitOutputAdapter
     @Override
     public void flush() throws IOException {
         BitOutput.super.flush();
-        final ByteOutput output = output(false);
-        if (output != null) {
-            output.flush();
-        }
+        output.flush();
     }
 
     /**
@@ -79,12 +61,7 @@ public class BitOutputAdapter
     @Override
     public void close() throws IOException {
         BitOutput.super.close();
-        if (close) {
-            final ByteOutput output = output(false);
-            if (output != null) {
-                output.close();
-            }
-        }
+        output.close();
     }
 
     @Override
@@ -137,7 +114,7 @@ public class BitOutputAdapter
     private void unsigned8(final int size, final int value) throws IOException {
         assert size > 0 && size <= Byte.SIZE;
         if (size == Byte.SIZE && available == Byte.SIZE) { // write, a full 8-bit octet, directly to the output
-            output(true).write(value);
+            output.write(value);
             count++;
             assert octet == 0x00 : "'octet' should be remained as 0x00";
             assert available == Byte.SIZE : "'available' should be remained as Byte.SIZE";
@@ -154,39 +131,14 @@ public class BitOutputAdapter
         available -= size;
         if (available == 0) {
             assert octet >= 0 && octet < 256;
-            output(true).write(octet);
+            output.write(octet);
             count++;
             octet = 0x00;
             available = Byte.SIZE;
         }
     }
 
-    private ByteOutput output(final boolean get) {
-        if (get) {
-            if (output(false) == null) {
-                output(supplier.get());
-                close = true;
-            }
-            return output(false);
-        }
-        return output;
-    }
-
-    private void output(final ByteOutput output) {
-        if (output(false) != null) {
-            throw new IllegalStateException("output already has been set");
-        }
-        this.output = Objects.requireNonNull(output, "output is null");
-    }
-
-    private final Supplier<? extends ByteOutput> supplier;
-
-    private ByteOutput output = null;
-
-    /**
-     * a flag indicates that the {@code output} is supplied from the {@code supplier}; not directly set.
-     */
-    private boolean close = false;
+    private final ByteOutput output;
 
     /**
      * The current octet.

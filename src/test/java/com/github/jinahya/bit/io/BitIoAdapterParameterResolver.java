@@ -38,8 +38,8 @@ class BitIoAdapterParameterResolver
     public Object resolveParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext)
             throws ParameterResolutionException {
         return BitIoAdapter.builder()
-                .input(BitInputAdapter.from(ByteInputTestUtilities.white()))
-                .output(BitOutputAdapter.from(ByteOutputTestUtilities.black()))
+                .input(new BitInputAdapter(ByteInputTestUtilities.white()))
+                .output(new BitOutputAdapter(ByteOutputTestUtilities.black()))
                 .build();
     }
 }

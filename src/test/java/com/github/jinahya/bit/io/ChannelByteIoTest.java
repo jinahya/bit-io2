@@ -46,14 +46,14 @@ class ChannelByteIoTest {
         final byte[] expected = new byte[current().nextInt(16)];
         current().nextBytes(expected);
         final Path path = Files.createTempFile(tempDir, null, null);
-        try (ByteOutput output = ChannelByteOutput.from(path, allocate(current().nextInt(1, 8)))) {
+        try (ByteOutput output = new ChannelByteOutput(path, allocate(current().nextInt(1, 8)))) {
             for (final byte b : expected) {
                 output.write(b & 0XFF);
             }
             output.flush();
         }
         final byte[] actual = new byte[expected.length];
-        try (ByteInput input = ChannelByteInput.from(
+        try (ByteInput input = new ChannelByteInput(
                 path, (ByteBuffer) allocate(current().nextInt(1, 8)).flip())) {
             for (int i = 0; i < actual.length; i++) {
                 actual[i] = (byte) input.read();

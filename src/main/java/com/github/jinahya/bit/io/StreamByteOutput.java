@@ -20,12 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * A byte output writes bytes to an instance of {@link OutputStream}.
@@ -37,59 +33,24 @@ public class StreamByteOutput
         extends ByteOutputAdapter<OutputStream> {
 
     /**
-     * Creates a new instance which writes bytes to output stream.
+     * Creates a new instance on top of specified output stream.
      *
      * @param target the output stream to which bytes are written.
-     * @return a new instance.
-     * @apiNote Closing the result does not close the {@code target}.
      */
-    public static StreamByteOutput from(final OutputStream target) {
-        Objects.requireNonNull(target, "target is null");
-        @SuppressWarnings({"unchecked"})
-        final StreamByteOutput instance = new StreamByteOutput(
-                (Supplier<? extends OutputStream>) BitIoConstants.EMPTY_SUPPLIER()
-        );
-        instance.target(target);
-        return instance;
-    }
-
-    /**
-     * Returns a new instance which writes bytes to specified file.
-     *
-     * @param file the file to which bytes are written.
-     * @return a new instance.
-     */
-    static StreamByteOutput from(final File file) {
-        Objects.requireNonNull(file, "file is null");
-        return new StreamByteOutput(() -> {
-            try {
-                return Files.newOutputStream(file.toPath());
-            } catch (final IOException ioe) {
-                throw new RuntimeException("failed to open " + file, ioe);
-            }
-        });
-    }
-
-    /**
-     * Creates a new instance with specified target supplier.
-     *
-     * @param targetSupplier the target supplier.
-     */
-    public StreamByteOutput(final Supplier<? extends OutputStream> targetSupplier) {
-        super(targetSupplier);
+    public StreamByteOutput(final OutputStream target) {
+        super(target);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param target {@inheritDoc}
-     * @param value  {@inheritDoc}
+     * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implNote The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes
      * {@link OutputStream#write(int)} method on specified output stream with specified value.
      */
     @Override
-    protected void write(final OutputStream target, final int value) throws IOException {
+    public void write(final int value) throws IOException {
         target.write(value);
     }
 }

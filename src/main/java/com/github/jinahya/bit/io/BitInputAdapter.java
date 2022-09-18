@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * An implementation of {@link BitInput} adapts an instance of {@link ByteInput}.
@@ -34,30 +33,13 @@ public class BitInputAdapter
         implements BitInput {
 
     /**
-     * Creates a new instance which reads bytes from specified byte input.
+     * Creates a new instance on top of specified byte input.
      *
-     * @param input the byte input from which bytes are read.
-     * @return a new instance.
-     * @apiNote Closing the result does not close the {@code input}.
+     * @param input the byte input.
      */
-    @SuppressWarnings({"unchecked"})
-    public static BitInput from(final ByteInput input) {
-        Objects.requireNonNull(input, "input is null");
-//        final BitInputAdapter instance = new BitInputAdapter(BitIoUtils.emptySupplier());
-        final BitInputAdapter instance
-                = new BitInputAdapter((Supplier<? extends ByteInput>) BitIoConstants.EMPTY_SUPPLIER());
-        instance.input(input);
-        return instance;
-    }
-
-    /**
-     * Creates a new instance with specified input supplier.
-     *
-     * @param supplier the input supplier.
-     */
-    public BitInputAdapter(final Supplier<? extends ByteInput> supplier) {
+    public BitInputAdapter(final ByteInput input) {
         super();
-        this.supplier = Objects.requireNonNull(supplier, "supplier is null");
+        this.input = Objects.requireNonNull(input, "input is null");
     }
 
     /**
@@ -69,12 +51,7 @@ public class BitInputAdapter
     @Override
     public void close() throws IOException {
         BitInput.super.close();
-        if (close) {
-            final ByteInput input = input(false);
-            if (input != null) {
-                input.close();
-            }
-        }
+        input.close();
     }
 
     @Override
@@ -130,7 +107,7 @@ public class BitInputAdapter
     private int unsigned8(final int size) throws IOException {
         assert size > 0 && size <= Byte.SIZE;
         if (available == 0) {
-            octet = input(true).read();
+            octet = input.read();
             assert octet >= 0 && octet < 256;
             count++;
             available = Byte.SIZE;
@@ -147,32 +124,7 @@ public class BitInputAdapter
         return (octet >> available) & BitIoConstants.mask(size);
     }
 
-    private ByteInput input(final boolean get) {
-        if (get) {
-            if (input(false) == null) {
-                input(supplier.get());
-                close = true;
-            }
-            return input(false);
-        }
-        return input;
-    }
-
-    private void input(final ByteInput input) {
-        if (input(false) != null) {
-            throw new IllegalStateException("input already has been set");
-        }
-        this.input = Objects.requireNonNull(input, "input is null");
-    }
-
-    private final Supplier<? extends ByteInput> supplier;
-
-    private ByteInput input = null;
-
-    /**
-     * a flag indicates that the {@code input} is supplied from the {@code supplier}; not directly set.
-     */
-    private boolean close = false;
+    private final ByteInput input;
 
     /**
      * The current octet.

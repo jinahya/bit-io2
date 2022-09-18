@@ -22,13 +22,8 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * A byte output writes bytes from a writable byte channel.
@@ -39,97 +34,71 @@ import java.util.function.Supplier;
 public class ChannelByteOutput
         extends ByteOutputAdapter<WritableByteChannel> {
 
-    /**
-     * Creates a new instance which writes bytes to specified channel using specified buffer.
-     *
-     * @param channel the channel to which bytes are written.
-     * @param buffer  a buffer to use; must have a non-zero capacity.
-     * @return a new instance.
-     * @apiNote Closing the result output does not close the {@code channel}.
-     */
-    public static ChannelByteOutput from(final WritableByteChannel channel, final ByteBuffer buffer) {
-        Objects.requireNonNull(channel, "channel is null");
-        Objects.requireNonNull(buffer, "buffer is null");
-        final ChannelByteOutput instance = new ChannelByteOutput(BitIoUtils.emptySupplier(), buffer);
-        instance.target(channel);
-        return instance;
-    }
+    private static class DelegatingBufferByteOutput
+            extends BufferByteOutput {
 
-    /**
-     * Creates a new instance which writes bytes to specified path.
-     *
-     * @param path    the path to which bytes are written.
-     * @param buffer  a buffer to use; must have a non-zero capacity.
-     * @param options an array of open options.
-     * @return a new instance.
-     * @see #from(Path, ByteBuffer)
-     */
-    public static ChannelByteOutput from(final Path path, final ByteBuffer buffer, final OpenOption... options) {
-        Objects.requireNonNull(path, "path is null");
-        Objects.requireNonNull(buffer, "buffer is null");
-        Objects.requireNonNull(options, "options is null");
-        return new ChannelByteOutput(
-                () -> {
-                    try {
-                        return FileChannel.open(path, options);
-                    } catch (final IOException ioe) {
-                        throw new RuntimeException("failed to open " + path, ioe);
-                    }
-                },
-                buffer
-        );
-    }
-
-    /**
-     * Creates a new instance which writes bytes to specified path.
-     *
-     * @param path   the path to which bytes are written.
-     * @param buffer a buffer to use; must have a non-zero capacity.
-     * @return a new instance.
-     * @see #from(Path, ByteBuffer, OpenOption...)
-     */
-    public static ChannelByteOutput from(final Path path, final ByteBuffer buffer) {
-        return from(path, buffer, StandardOpenOption.WRITE);
-    }
-
-    /**
-     * Creates a new instance with specified arguments.
-     *
-     * @param supplier a supplier for a channel.
-     * @param buffer   a buffer to use; must have a non-zero capacity.
-     */
-    public ChannelByteOutput(final Supplier<? extends WritableByteChannel> supplier, final ByteBuffer buffer) {
-        super(supplier);
-        if (Objects.requireNonNull(buffer, "buffer is null").capacity() == 0) {
-            throw new IllegalArgumentException("buffer.capacity is zero");
+        DelegatingBufferByteOutput(final ByteBuffer target, final WritableByteChannel channel) {
+            super(target);
+            this.channel = Objects.requireNonNull(channel, "channel is null");
         }
-        this.buffer = buffer;
+
+        @Override
+        public void flush() throws IOException {
+            super.flush();
+            for (target.flip(); target.hasRemaining(); ) {
+                channel.write(target);
+            }
+            target.clear();
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            channel.close();
+        }
+
+        @Override
+        public void write(final int value) throws IOException {
+            if (!target.hasRemaining()) {
+                target.flip();
+                while (target.position() == 0) {
+                    final int written = channel.write(target);
+                }
+                target.compact();
+            }
+            super.write(value);
+        }
+
+        private final WritableByteChannel channel;
+    }
+
+    /**
+     * Creates a new instance on top of specified channel which uses specified buffer.
+     *
+     * @param target the channel to which bytes are written.
+     * @param buffer a buffer to use; must have a non-zero capacity.
+     */
+    public ChannelByteOutput(final WritableByteChannel target, final ByteBuffer buffer) {
+        super(target);
+        this.delegate = new DelegatingBufferByteOutput(buffer, target);
     }
 
     @Override
     public void flush() throws IOException {
-        super.flush(); // does nothing, effectively.
-        for (((java.nio.Buffer) buffer).flip(); buffer.hasRemaining(); ) {
-            target(true).write(buffer);
-        }
-        ((java.nio.Buffer) buffer).clear();
-        final WritableByteChannel channel = target(false);
-        if (channel instanceof FileChannel) {
-            ((FileChannel) channel).force(false);
-        }
+        delegate.flush();
+        super.flush();
     }
 
     @Override
-    protected void write(final WritableByteChannel target, final int value) throws IOException {
-        if (!buffer.hasRemaining()) {
-            buffer.flip(); // limit -> current position, position -> zero
-            while (buffer.position() == 0) {
-                target.write(buffer);
-            }
-            buffer.compact();
-        }
-        buffer.put((byte) value);
+    public void close() throws IOException {
+        delegate.close();
+        super.close();
     }
 
-    private final ByteBuffer buffer;
+    @Override
+    public void write(final int value) throws IOException {
+        delegate.write(value);
+    }
+
+    private final BufferByteOutput delegate;
 }

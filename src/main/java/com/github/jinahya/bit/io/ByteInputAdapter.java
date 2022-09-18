@@ -23,7 +23,6 @@ package com.github.jinahya.bit.io;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * An abstract class implements {@link ByteInput} for adapting a specific type of byte source.
@@ -36,13 +35,13 @@ public abstract class ByteInputAdapter<T>
         implements ByteInput {
 
     /**
-     * Creates a new instance with specified byte-source supplier.
+     * Creates a new instance with specified byte source.
      *
-     * @param supplier the byte-source supplier.
+     * @param source the byte source.
      */
-    protected ByteInputAdapter(final Supplier<? extends T> supplier) {
+    protected ByteInputAdapter(final T source) {
         super();
-        this.supplier = Objects.requireNonNull(supplier, "supplier is null");
+        this.source = Objects.requireNonNull(source, "source is null");
     }
 
     /**
@@ -55,77 +54,10 @@ public abstract class ByteInputAdapter<T>
     @Override
     public void close() throws IOException {
         ByteInput.super.close();
-        if (close) {
-            final T source = source(false);
-            if (source instanceof Closeable) {
-                ((Closeable) source).close();
-            }
+        if (source instanceof Closeable) {
+            ((Closeable) source).close();
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     * @throws IOException {@inheritDoc}
-     * @implNote The {@code read()} method of {@code ByteInputAdapter} class invokes {@link #read(Object)} with a byte
-     * source and returns the result.
-     */
-    @Override
-    public int read() throws IOException {
-        return read(source(true));
-    }
-
-    /**
-     * Reads an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> {@code int} value from specified source.
-     *
-     * @param source the source from which an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> {@code int} value is
-     *               read.
-     * @return an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> {@code int} value read from the {@code source};
-     * between {@code 0} and {@code 255}, both inclusive.
-     * @throws IOException if an I/O error occurs.
-     */
-    protected abstract int read(T source) throws IOException;
-
-    /**
-     * Returns the byte source.
-     *
-     * @param get a flag for getting it from the {@link #supplier} when it's not already set; {@code true} for getting
-     *            it from the {@link #supplier}, {@code false} for returning the value as is, in which case the result
-     *            may be {@code null}.
-     * @return the byte source; {@code null} when it's not set yet.
-     */
-    T source(final boolean get) {
-        if (get) {
-            if (source(false) == null) {
-                source(supplier.get());
-                close = true;
-            }
-            return source(false);
-        }
-        return source;
-    }
-
-    /**
-     * Sets specified byte source.
-     *
-     * @param source the byte source.
-     * @throws IllegalStateException then there is already a byte source set.
-     */
-    void source(final T source) {
-        if (source(false) != null) {
-            throw new IllegalStateException("source already has been set");
-        }
-        this.source = Objects.requireNonNull(source, "source is null");
-    }
-
-    private final Supplier<? extends T> supplier;
-
-    private T source = null;
-
-    /**
-     * A flag for closing the {@link #source} within the {@link #close()} method; indicates that the {@link #source} is
-     * supplied from the {@link #supplier}, not directly set via {@link #source(Object)}  method.
-     */
-    private boolean close = false;
+    final T source;
 }

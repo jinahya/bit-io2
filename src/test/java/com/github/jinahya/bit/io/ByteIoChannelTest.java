@@ -34,6 +34,6 @@ class ByteIoChannelTest
 
     @Override
     protected BufferByteInput newInput(final byte[] bytes) {
-        return BufferByteInput.adapting(Channels.newChannel(new ByteArrayInputStream(bytes)));
+        return new BufferByteInput(Channels.newChannel(new ByteArrayInputStream(bytes)));
     }
 }

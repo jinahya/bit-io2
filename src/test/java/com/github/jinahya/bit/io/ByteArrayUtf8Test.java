@@ -57,7 +57,7 @@ class ByteArrayUtf8Test {
     @ParameterizedTest
     void utf8__(final byte[] expected, final int lengthSize) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput output = BitOutputAdapter.from(StreamByteOutput.from(baos));
+        final BitOutput output = new BitOutputAdapter(new StreamByteOutput(baos));
         final BitWriter<byte[]> writer = ByteArrayWriter.utf8(lengthSize);
         writer.write(output, expected);
         final long padded = output.align();
@@ -65,7 +65,7 @@ class ByteArrayUtf8Test {
         log.debug("given: {}, written: {}, rate: {}", expected.length, baos.size(),
                   (baos.size() / (double) expected.length) * 100.0d);
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final BitInput input = BitInputAdapter.from(StreamByteInput.from(bais));
+        final BitInput input = new BitInputAdapter(new StreamByteInput(bais));
         final BitReader<byte[]> reader = ByteArrayReader.utf8(lengthSize);
         final byte[] actual = reader.read(input);
         final long discarded = input.align();
