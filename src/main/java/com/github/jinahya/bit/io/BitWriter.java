@@ -41,7 +41,7 @@ public interface BitWriter<T> {
      * @return a writer for nullable values.
      * @see BitReader#nullable(BitReader)
      */
-    static <T> BitWriter<T> nullable(final BitWriter<? super T> writer) {
+    static <T> BitWriter<T> nullable(final BitWriter<T> writer) {
         Objects.requireNonNull(writer, "writer is null");
         return new FilterBitWriter<T, T>(writer) {
             @Override

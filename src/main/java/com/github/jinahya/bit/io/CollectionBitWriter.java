@@ -44,8 +44,7 @@ public class CollectionBitWriter<T extends Collection<U>, U>
      * @param <T>           element type parameter
      * @return a new instance.
      */
-    public static <T> CollectionBitWriter<List<T>, T> ofList(
-            final int sizeSize, final BitWriter<? super T> elementWriter) {
+    public static <T> CollectionBitWriter<List<T>, T> ofList(final int sizeSize, final BitWriter<T> elementWriter) {
         return new CollectionBitWriter<>(sizeSize, elementWriter);
     }
 
@@ -54,7 +53,7 @@ public class CollectionBitWriter<T extends Collection<U>, U>
      *
      * @param sizeSize the number of bits for the {@code length}.
      */
-    public CollectionBitWriter(final int sizeSize, final BitWriter<? super U> elementWriter) {
+    public CollectionBitWriter(final int sizeSize, final BitWriter<U> elementWriter) {
         super(elementWriter);
         this.sizeSize = BitIoConstraints.requireValidSizeForUnsignedInt(sizeSize);
     }

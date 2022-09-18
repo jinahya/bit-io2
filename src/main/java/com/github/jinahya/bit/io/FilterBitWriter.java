@@ -38,7 +38,7 @@ public abstract class FilterBitWriter<T, U>
      *
      * @param writer the writer to wrap.
      */
-    protected FilterBitWriter(final BitWriter<? super U> writer) {
+    protected FilterBitWriter(final BitWriter<U> writer) {
         super();
         this.writer = Objects.requireNonNull(writer, "writer is null");
     }
@@ -48,12 +48,12 @@ public abstract class FilterBitWriter<T, U>
      *
      * @return the writer wrapped by this writer.
      */
-    protected BitWriter<? super U> getWriter() {
+    protected BitWriter<U> getWriter() {
         return writer;
     }
 
     /**
      * The writer wrapped by this writer.
      */
-    private final BitWriter<? super U> writer;
+    private final BitWriter<U> writer;
 }

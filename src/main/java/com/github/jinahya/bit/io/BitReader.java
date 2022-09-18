@@ -40,7 +40,7 @@ public interface BitReader<T> {
      * @param <T>    value type parameter
      * @return a reader for nullable values.
      */
-    static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
+    static <T> BitReader<T> nullable(final BitReader<T> reader) {
         Objects.requireNonNull(reader, "reader is null");
         return new FilterBitReader<T, T>(reader) {
             @Override

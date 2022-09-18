@@ -38,7 +38,7 @@ public class ArrayBitWriter<T>
      *
      * @param lengthSize the number of bits for the {@code length}.
      */
-    ArrayBitWriter(final int lengthSize, final BitWriter<? super T> elementWriter) {
+    ArrayBitWriter(final int lengthSize, final BitWriter<T> elementWriter) {
         super(elementWriter);
         this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
     }

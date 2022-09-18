@@ -38,7 +38,7 @@ public abstract class FilterBitReader<T, U>
      *
      * @param reader the reader to wrap.
      */
-    protected FilterBitReader(final BitReader<? extends U> reader) {
+    protected FilterBitReader(final BitReader<U> reader) {
         super();
         this.reader = Objects.requireNonNull(reader, "reader is null");
     }
@@ -48,12 +48,12 @@ public abstract class FilterBitReader<T, U>
      *
      * @return the reader wrapped by this reader.
      */
-    protected BitReader<? extends U> getReader() {
+    protected BitReader<U> getReader() {
         return reader;
     }
 
     /**
      * The reader wrapped by this reader.
      */
-    private final BitReader<? extends U> reader;
+    private final BitReader<U> reader;
 }
