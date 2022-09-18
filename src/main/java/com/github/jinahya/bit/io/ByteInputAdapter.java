@@ -20,8 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -44,20 +42,5 @@ public abstract class ByteInputAdapter<T>
         this.source = Objects.requireNonNull(source, "source is null");
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws IOException {@inheritDoc}
-     * @implNote The {@code close()} method of {@code ByteInputAdapter} class invokes {@link Closeable#close()} method
-     * on the byte source which may not have been initialized yet in which case the method does nothing.
-     */
-    @Override
-    public void close() throws IOException {
-        ByteInput.super.close();
-        if (source instanceof Closeable) {
-            ((Closeable) source).close();
-        }
-    }
-
-    final T source;
+    protected final T source;
 }

@@ -27,7 +27,7 @@ class ByteIoBufferTest
 
     @Override
     protected BufferByteOutput newOutput(final int bytes) {
-        return BufferByteOutput.from(ByteBuffer.allocate(bytes));
+        return new BufferByteOutput(ByteBuffer.allocate(bytes));
     }
 
     @Override

@@ -23,10 +23,9 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
-import java.util.Objects;
 
 /**
- * A byte output writes bytes from a writable byte channel.
+ * A byte output writes bytes to a writable byte channel.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ChannelByteInput
@@ -34,65 +33,23 @@ import java.util.Objects;
 public class ChannelByteOutput
         extends ByteOutputAdapter<WritableByteChannel> {
 
-    private static class DelegatingBufferByteOutput
-            extends BufferByteOutput {
-
-        DelegatingBufferByteOutput(final ByteBuffer target, final WritableByteChannel channel) {
-            super(target);
-            this.channel = Objects.requireNonNull(channel, "channel is null");
-        }
-
-        @Override
-        public void flush() throws IOException {
-            super.flush();
-            for (target.flip(); target.hasRemaining(); ) {
-                channel.write(target);
-            }
-            target.clear();
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            channel.close();
-        }
-
-        @Override
-        public void write(final int value) throws IOException {
-            if (!target.hasRemaining()) {
-                target.flip();
-                while (target.position() == 0) {
-                    final int written = channel.write(target);
-                }
-                target.compact();
-            }
-            super.write(value);
-        }
-
-        private final WritableByteChannel channel;
-    }
-
     /**
-     * Creates a new instance on top of specified channel which uses specified buffer.
+     * Creates a new instance on top of specified channel.
      *
-     * @param target the channel to which bytes are written.
-     * @param buffer a buffer to use; must have a non-zero capacity.
+     * @param channel the channel to which bytes are written.
      */
-    public ChannelByteOutput(final WritableByteChannel target, final ByteBuffer buffer) {
-        super(target);
-        this.delegate = new DelegatingBufferByteOutput(buffer, target);
-    }
-
-    @Override
-    public void flush() throws IOException {
-        delegate.flush();
-        super.flush();
-    }
-
-    @Override
-    public void close() throws IOException {
-        delegate.close();
-        super.close();
+    public ChannelByteOutput(final WritableByteChannel channel) {
+        super(channel);
+        this.delegate = new BufferByteOutput(ByteBuffer.allocate(1)) {
+            @Override
+            public void write(final int value) throws IOException {
+                super.write(value);
+                for (target.flip(); target.hasRemaining(); ) {
+                    channel.write(target);
+                }
+                target.clear();
+            }
+        };
     }
 
     @Override

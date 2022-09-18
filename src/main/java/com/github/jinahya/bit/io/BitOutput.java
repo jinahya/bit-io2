@@ -20,8 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -31,30 +29,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitInput
  */
-public interface BitOutput
-        extends Flushable, Closeable {
-
-    /**
-     * Flushes this output by writing any buffered output to the underlying output.
-     *
-     * @throws IOException if an I/O error occurs.
-     * @implNote The default implementation does nothing.
-     */
-    @Override
-    default void flush() throws IOException {
-        // does nothing.
-    }
-
-    /**
-     * Closes this output and releases any system resources associated with it.
-     *
-     * @throws IOException if an I/O error occurs.
-     * @implNote The default implementation does nothing.
-     */
-    @Override
-    default void close() throws IOException {
-        // does nothing.
-    }
+public interface BitOutput {
 
     /**
      * Writes a {@code 1}-bit <em>unsigned</em> {@code int} value({@code 0b1} for {@code true} and {@code 0b0} for

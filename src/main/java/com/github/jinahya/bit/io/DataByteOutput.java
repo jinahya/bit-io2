@@ -22,8 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * A byte output writes bytes to an instance of {@link DataOutput}.
@@ -35,42 +33,24 @@ public class DataByteOutput
         extends ByteOutputAdapter<DataOutput> {
 
     /**
-     * Creates a new instance writes bytes to specified data output.
-     *
-     * @param target the data output to which bytes are written.
-     * @return a new instance.
-     * @apiNote Closing the result output does not close the {@code target}.
-     */
-    public static DataByteOutput from(final DataOutput target) {
-        Objects.requireNonNull(target, "target is null");
-        @SuppressWarnings({"unchecked"})
-        final DataByteOutput instance = new DataByteOutput(
-                (Supplier<? extends DataOutput>) BitIoConstants.EMPTY_SUPPLIER()
-        );
-        instance.target(target);
-        return instance;
-    }
-
-    /**
      * Creates a new instance with specified target supplier.
      *
-     * @param targetSupplier the target supplier.
+     * @param target the target supplier.
      */
-    public DataByteOutput(final Supplier<? extends DataOutput> targetSupplier) {
-        super(targetSupplier);
+    public DataByteOutput(final DataOutput target) {
+        super(target);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param target {@inheritDoc}
-     * @param value  {@inheritDoc}
+     * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implNote The {@code write(DataOutput, int)} method of {@code DataByteOutput} class invokes
      * {@link DataOutput#writeByte(int)} method on data output with specified value.
      */
     @Override
-    protected void write(final DataOutput target, final int value) throws IOException {
+    public void write(final int value) throws IOException {
         target.writeByte(value);
     }
 }

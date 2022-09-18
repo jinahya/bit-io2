@@ -24,7 +24,6 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Objects;
 
 /**
  * A byte input reads bytes from a readable byte channel.
@@ -35,55 +34,25 @@ import java.util.Objects;
 public class ChannelByteInput
         extends ByteInputAdapter<ReadableByteChannel> {
 
-    private static class DelegatingBufferByteInput
-            extends BufferByteInput {
-
-        DelegatingBufferByteInput(final ByteBuffer source, final ReadableByteChannel channel) {
-            super(source);
-            this.channel = Objects.requireNonNull(channel, "channel is null");
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close(); // effectively, does nothing.
-            channel.close();
-        }
-
-        @Override
-        public int read() throws IOException {
-            if (!source.hasRemaining()) {
-                source.clear();
-                while (source.position() == 0) {
+    /**
+     * Creates a new instance with specified channel.
+     *
+     * @param channel the channel from which bytes are read.
+     */
+    public ChannelByteInput(final ReadableByteChannel channel) {
+        super(channel);
+        this.delegate = new BufferByteInput(ByteBuffer.allocate(1)) {
+            @Override
+            public int read() throws IOException {
+                while (source.hasRemaining()) {
                     if (channel.read(source) == -1) {
                         throw new EOFException("reached to an end");
                     }
                 }
                 source.flip();
+                return super.read();
             }
-            return super.read();
-        }
-
-        private final ReadableByteChannel channel;
-    }
-
-    /**
-     * Creates a new instance with specified arguments.
-     *
-     * @param source a source for lazily opening a channel.
-     * @param buffer a non-zero capacity buffer to use.
-     */
-    public ChannelByteInput(final ReadableByteChannel source, final ByteBuffer buffer) {
-        super(source);
-        if (Objects.requireNonNull(buffer, "buffer is null").capacity() == 0) {
-            throw new IllegalArgumentException("buffer.capacity is zero");
-        }
-        this.delegate = new DelegatingBufferByteInput(buffer, source);
-    }
-
-    @Override
-    public void close() throws IOException {
-        delegate.close();
-        super.close();
+        };
     }
 
     @Override

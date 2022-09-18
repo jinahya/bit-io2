@@ -20,7 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -30,26 +29,14 @@ import java.io.IOException;
  * @see ByteOutput
  */
 @FunctionalInterface
-public interface ByteInput
-        extends Closeable {
+public interface ByteInput {
 
     /**
-     * Closes this input and releases any system resources associated with it.
+     * Reads an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> byte.
      *
+     * @return an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> byte; between {@code 0} and {@code 255}, both
+     * inclusive.
      * @throws IOException if an I/O error occurs.
-     * @implNote The default implementation does nothing.
-     */
-    @Override
-    default void close() throws IOException {
-        // does nothing.
-    }
-
-    /**
-     * Reads an unsigned {@value java.lang.Byte#SIZE}-bit value.
-     *
-     * @return an unsigned {@value java.lang.Byte#SIZE}-bit value; between {@code 0} and {@code 255}, both inclusive.
-     * @throws IOException if an I/O error occurs.
-     * @implSpec An {@link java.io.EOFException} should be thrown when no bytes are available.
      */
     int read() throws IOException;
 }

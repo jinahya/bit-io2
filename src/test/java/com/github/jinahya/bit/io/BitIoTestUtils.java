@@ -42,7 +42,6 @@ final class BitIoTestUtils {
         final Function<? super byte[], ? extends R> f2 = f1.apply(o);
         final long padded = o.align();
         assert padded >= 0L;
-        o.flush();
         final byte[] bytes = baos.toByteArray();
         assert f2 != null : "f2 is null";
         return f2.apply(bytes);

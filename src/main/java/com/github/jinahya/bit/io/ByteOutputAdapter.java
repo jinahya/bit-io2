@@ -20,9 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.Closeable;
-import java.io.Flushable;
-import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -45,36 +42,5 @@ public abstract class ByteOutputAdapter<T>
         this.target = Objects.requireNonNull(target, "target is null");
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws IOException {@inheritDoc}
-     * @implNote The {@code flush()} method of {@code ByteOutputAdapter} class invokes {@link Flushable#flush()} method
-     * on the byte target which may not have been initialized yet in which case this method does nothing.
-     */
-    @Override
-    public void flush() throws IOException {
-        ByteOutput.super.flush();
-        if (target instanceof Flushable) {
-            ((Flushable) target).flush();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws IOException {@inheritDoc}
-     * @implNote The {@code close()} method of {@code ByteOutputAdapter} class invokes {@link Closeable#close()} method
-     * on the byte-target which may not have been initialized yet in which case this method does nothing.
-     */
-    @Override
-    public void close() throws IOException {
-        flush();
-        ByteOutput.super.close();
-        if (target instanceof Closeable) {
-            ((Closeable) target).close();
-        }
-    }
-
-    final T target;
+    protected final T target;
 }

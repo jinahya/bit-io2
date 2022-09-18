@@ -20,7 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -30,19 +29,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitOutput
  */
-public interface BitInput
-        extends Closeable {
-
-    /**
-     * Closes this input and releases any system resources associated with it.
-     *
-     * @throws IOException if an I/O error occurs.
-     * @implNote The default implementation does nothing.
-     */
-    @Override
-    default void close() throws IOException {
-        // does nothing.
-    }
+public interface BitInput {
 
     /**
      * Reads a {@code 1}-bit <em>unsigned</em> {@code int} value and returns {@code true} for {@code 0b1} and

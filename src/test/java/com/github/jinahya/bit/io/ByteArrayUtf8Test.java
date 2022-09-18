@@ -61,7 +61,6 @@ class ByteArrayUtf8Test {
         final BitWriter<byte[]> writer = ByteArrayWriter.utf8(lengthSize);
         writer.write(output, expected);
         final long padded = output.align();
-        output.flush();
         log.debug("given: {}, written: {}, rate: {}", expected.length, baos.size(),
                   (baos.size() / (double) expected.length) * 100.0d);
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
