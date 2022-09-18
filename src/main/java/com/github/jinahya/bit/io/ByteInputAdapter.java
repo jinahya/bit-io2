@@ -77,15 +77,24 @@ public abstract class ByteInputAdapter<T>
     }
 
     /**
-     * Reads an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value from specified source.
+     * Reads an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> {@code int} value from specified source.
      *
-     * @param source the source from which an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value is read.
-     * @return an {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value read from the {@code source}; between
-     * {@code 0} and {@code 255}, both inclusive.
+     * @param source the source from which an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> {@code int} value is
+     *               read.
+     * @return an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> {@code int} value read from the {@code source};
+     * between {@code 0} and {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
      */
     protected abstract int read(T source) throws IOException;
 
+    /**
+     * Returns the byte source.
+     *
+     * @param get a flag for getting it from the {@link #supplier} when it's not already set; {@code true} for getting
+     *            it from the {@link #supplier}, {@code false} for returning the value as is, in which case the result
+     *            may be {@code null}.
+     * @return the byte source; {@code null} when it's not set yet.
+     */
     T source(final boolean get) {
         if (get) {
             if (source(false) == null) {
@@ -97,6 +106,12 @@ public abstract class ByteInputAdapter<T>
         return source;
     }
 
+    /**
+     * Sets specified byte source.
+     *
+     * @param source the byte source.
+     * @throws IllegalStateException then there is already a byte source set.
+     */
     void source(final T source) {
         if (source(false) != null) {
             throw new IllegalStateException("source already has been set");
@@ -108,5 +123,9 @@ public abstract class ByteInputAdapter<T>
 
     private T source = null;
 
+    /**
+     * A flag for closing the {@link #source} within the {@link #close()} method; indicates that the {@link #source} is
+     * supplied from the {@link #supplier}, not directly set via {@link #source(Object)}  method.
+     */
     private boolean close = false;
 }

@@ -86,7 +86,7 @@ public abstract class ByteOutputAdapter<T>
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implNote The {@code write(int)} method of {@code ByteOutputAdapter} class invokes {@link #write(Object, int)}
-     * method with a byte target and specified value.
+     * method with current byte target and {@code value}.
      */
     @Override
     public void write(final int value) throws IOException {
@@ -94,11 +94,11 @@ public abstract class ByteOutputAdapter<T>
     }
 
     /**
-     * Writes specified {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to specified target.
+     * Writes specified {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> {@code int} value to specified byte target.
      *
-     * @param target the target to which the {@code value} is written.
-     * @param value  the {@value java.lang.Byte#SIZE}-bit unsigned {@code int} value to write; between {@code 0} and
-     *               {@code 255}, both inclusive.
+     * @param target the byte target to which the {@code value} is written.
+     * @param value  the {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> {@code int} value to write; between
+     *               {@code 0} and {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
      */
     protected abstract void write(T target, int value) throws IOException;

@@ -40,7 +40,7 @@ public class ChannelByteOutput
         extends ByteOutputAdapter<WritableByteChannel> {
 
     /**
-     * Creates a new instance which writes bytes to specified channel.
+     * Creates a new instance which writes bytes to specified channel using specified buffer.
      *
      * @param channel the channel to which bytes are written.
      * @param buffer  a buffer to use; must have a non-zero capacity.
@@ -95,7 +95,7 @@ public class ChannelByteOutput
     /**
      * Creates a new instance with specified arguments.
      *
-     * @param supplier a supplier for lazily opening a channel.
+     * @param supplier a supplier for a channel.
      * @param buffer   a buffer to use; must have a non-zero capacity.
      */
     public ChannelByteOutput(final Supplier<? extends WritableByteChannel> supplier, final ByteBuffer buffer) {
@@ -120,22 +120,15 @@ public class ChannelByteOutput
     }
 
     @Override
-    public void write(final int value) throws IOException {
-        if (buffer.hasRemaining()) {
-            buffer.put((byte) value);
-            return;
-        }
-        super.write(value);
-    }
-
-    @Override
     protected void write(final WritableByteChannel target, final int value) throws IOException {
-        assert !buffer.hasRemaining();
-        for (((java.nio.Buffer) buffer).flip(); target.write(buffer) == 0; ) {
+        if (!buffer.hasRemaining()) {
+            buffer.flip(); // limit -> current position, position -> zero
+            while (buffer.position() == 0) {
+                target.write(buffer);
+            }
+            buffer.compact();
         }
-        buffer.compact();
-        assert buffer.hasRemaining();
-        write(value);
+        buffer.put((byte) value);
     }
 
     private final ByteBuffer buffer;
