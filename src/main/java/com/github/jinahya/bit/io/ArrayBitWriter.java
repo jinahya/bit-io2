@@ -49,7 +49,7 @@ public class ArrayBitWriter<T>
         Objects.requireNonNull(value, "value is null");
         final int length = BitIoUtils.writeCount(output, lengthSize, value.length);
         for (int i = 0; i < length; i++) {
-            getWriter().write(output, value[i]);
+            writer.write(output, value[i]);
         }
     }
 

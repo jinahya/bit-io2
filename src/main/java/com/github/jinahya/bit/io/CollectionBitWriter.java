@@ -65,7 +65,7 @@ public class CollectionBitWriter<T extends Collection<U>, U>
         final int count = BitIoUtils.writeCount(output, sizeSize, value.size());
         final Iterator<U> iterator = value.iterator();
         for (int i = 0; i < count; i++) {
-            getWriter().write(output, iterator.next());
+            writer.write(output, iterator.next());
         }
     }
 

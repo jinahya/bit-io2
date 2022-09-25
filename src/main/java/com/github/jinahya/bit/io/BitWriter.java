@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * An interface for writing objects of a specific type.
+ * An interface for writing non-primitive values.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -50,7 +50,7 @@ public interface BitWriter<T> {
                 final boolean nonnull = value != null;
                 output.writeBoolean(nonnull);
                 if (nonnull) {
-                    getWriter().write(output, value);
+                    writer.write(output, value);
                 }
             }
         };

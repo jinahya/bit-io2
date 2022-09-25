@@ -69,7 +69,7 @@ public class CollectionBitReader<T extends Collection<U>, U>
         final int capacity = BitIoUtils.readCount(input, sizeSize);
         final T value = collectionCreator.apply(capacity);
         for (int i = 0; i < capacity; i++) {
-            value.add(getReader().read(input));
+            value.add(reader.read(input));
         }
         return value;
     }

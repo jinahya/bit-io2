@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * A abstract class for filter another reader.
+ * A abstract reader class for filtering values read from other readers.
  *
  * @param <T> value type parameter
  * @param <U> filtered value type parameter
@@ -44,16 +44,7 @@ public abstract class FilterBitReader<T, U>
     }
 
     /**
-     * Returns the reader wrapped by this reader.
-     *
-     * @return the reader wrapped by this reader.
+     * The reader wrapped within this reader.
      */
-    protected BitReader<U> getReader() {
-        return reader;
-    }
-
-    /**
-     * The reader wrapped by this reader.
-     */
-    private final BitReader<U> reader;
+    protected final BitReader<U> reader;
 }

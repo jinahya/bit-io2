@@ -72,7 +72,7 @@ public class ArrayBitReader<T>
         final int length = BitIoUtils.readCount(input, lengthSize);
         final T[] value = arrayCreator.apply(length);
         for (int i = 0; i < value.length; i++) {
-            value[i] = getReader().read(input);
+            value[i] = reader.read(input);
         }
         return value;
     }
