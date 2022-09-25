@@ -20,7 +20,12 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.DataOutput;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.util.Objects;
 
 /**
@@ -30,6 +35,54 @@ import java.util.Objects;
  * @see BitInput
  */
 public interface BitOutput {
+
+    /**
+     * Creates a new instance on top of specified stream.
+     *
+     * @param stream the stream to which bytes are written.
+     * @return a new instance.
+     * @see BitInput#from(InputStream)
+     */
+    static BitOutput from(final OutputStream stream) {
+        Objects.requireNonNull(stream, "stream is null");
+        return new BitOutputAdapter(new StreamByteOutput(stream));
+    }
+
+    /**
+     * Creates a new instance on top of specified output.
+     *
+     * @param output the output to which bytes are written.
+     * @return a new instance.
+     * @see BitInput#from(java.io.DataInput)
+     */
+    static BitOutput from(final DataOutput output) {
+        Objects.requireNonNull(output, "output is null");
+        return new BitOutputAdapter(new DataByteOutput(output));
+    }
+
+    /**
+     * Creates a new instance on top of specified buffer.
+     *
+     * @param buffer the buffer to which bytes are written.
+     * @return a new instance.
+     * @see BitInput#from(java.io.DataInput)
+     */
+    static BitOutput from(final ByteBuffer buffer) {
+        Objects.requireNonNull(buffer, "buffer is null");
+        return new BitOutputAdapter(new BufferByteOutput(buffer));
+    }
+
+    /**
+     * Creates a new instance on top of specified channel.
+     *
+     * @param channel the channel to which bytes are written.
+     * @return a new instance.
+     * @see BitInput#from(java.nio.channels.ReadableByteChannel)
+     */
+    static BitOutput from(final WritableByteChannel channel) {
+        Objects.requireNonNull(channel, "channel is null");
+        return new BitOutputAdapter(new ChannelByteOutput(channel));
+    }
 
     /**
      * Writes a {@code 1}-bit <em>unsigned</em> {@code int} value({@code 0b1} for {@code true} and {@code 0b0} for

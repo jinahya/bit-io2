@@ -33,15 +33,12 @@ public class BufferByteOutput
         extends ByteOutputAdapter<ByteBuffer> {
 
     /**
-     * Creates a new instance with specified target buffer.
+     * Creates a new instance with specified byte buffer.
      *
-     * @param target the target buffer.
+     * @param target the byte buffer on which bytes are put.
      */
     public BufferByteOutput(final ByteBuffer target) {
         super(target);
-        if (target.capacity() == 0) {
-            throw new IllegalArgumentException("target.capacity is zero");
-        }
     }
 
     /**

@@ -20,7 +20,11 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.DataInput;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Objects;
 
 /**
@@ -30,6 +34,54 @@ import java.util.Objects;
  * @see BitOutput
  */
 public interface BitInput {
+
+    /**
+     * Creates a new instance on top of specified stream.
+     *
+     * @param stream the stream from which bytes are read.
+     * @return a new instance.
+     * @see BitOutput#from(java.io.OutputStream)
+     */
+    static BitInput from(final InputStream stream) {
+        Objects.requireNonNull(stream, "stream is null");
+        return new BitInputAdapter(new StreamByteInput(stream));
+    }
+
+    /**
+     * Creates a new instance on top of specified input.
+     *
+     * @param input the input from which bytes are read.
+     * @return a new instance.
+     * @see BitOutput#from(java.io.DataOutput)
+     */
+    static BitInput from(final DataInput input) {
+        Objects.requireNonNull(input, "input is null");
+        return new BitInputAdapter(new DataByteInput(input));
+    }
+
+    /**
+     * Creates a new instance on top of specified buffer.
+     *
+     * @param buffer the buffer from which bytes are read.
+     * @return a new instance.
+     * @see BitOutput#from(ByteBuffer)
+     */
+    static BitInput from(final ByteBuffer buffer) {
+        Objects.requireNonNull(buffer, "buffer is null");
+        return new BitInputAdapter(new BufferByteInput(buffer));
+    }
+
+    /**
+     * Creates a new instance on top of specified channel.
+     *
+     * @param channel the channel from which bytes are read.
+     * @return a new instance.
+     * @see BitOutput#from(java.nio.channels.WritableByteChannel)
+     */
+    static BitInput from(final ReadableByteChannel channel) {
+        Objects.requireNonNull(channel, "channel is null");
+        return new BitInputAdapter(new ChannelByteInput(channel));
+    }
 
     /**
      * Reads a {@code 1}-bit <em>unsigned</em> {@code int} value and returns {@code true} for {@code 0b1} and

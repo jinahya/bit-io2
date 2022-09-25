@@ -33,15 +33,12 @@ public class BufferByteInput
         extends ByteInputAdapter<ByteBuffer> {
 
     /**
-     * Creates a new instance with specified source supplier.
+     * Creates a new instance with specified byte buffer.
      *
-     * @param source the source supplier.
+     * @param source the byte buffer from which byte are gotten.
      */
     public BufferByteInput(final ByteBuffer source) {
         super(source);
-        if (source.capacity() == 0) {
-            throw new IllegalArgumentException("source.capacity is zero");
-        }
     }
 
     /**

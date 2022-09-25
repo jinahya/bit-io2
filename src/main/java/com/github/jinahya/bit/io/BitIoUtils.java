@@ -31,31 +31,31 @@ import java.util.function.Supplier;
  */
 final class BitIoUtils {
 
-    // https://stackoverflow.com/a/680040/330457
-    private static int log2(final int value) {
-        if (value <= 0) {
-            throw new IllegalArgumentException("value(" + value + ") is not positive");
-        }
-        final int result = Integer.SIZE - Integer.numberOfLeadingZeros(value);
-        assert result > 0;
-        return result;
-    }
+//    // https://stackoverflow.com/a/680040/330457
+//    private static int log2(final int value) {
+//        if (value <= 0) {
+//            throw new IllegalArgumentException("value(" + value + ") is not positive");
+//        }
+//        final int result = Integer.SIZE - Integer.numberOfLeadingZeros(value);
+//        assert result > 0;
+//        return result;
+//    }
 
-    /**
-     * Returns the number of required bits for specified value.
-     *
-     * @param value the value whose size is calculated.
-     * @return the number of required bits for {@code value}; always positive.
-     */
-    public static int size(final int value) {
-        if (value < 0) {
-            return size(~value) + 1;
-        }
-        if (value == 0) {
-            return 1;
-        }
-        return log2(value);
-    }
+//    /**
+//     * Returns the number of required bits for specified value.
+//     *
+//     * @param value the value whose size is calculated.
+//     * @return the number of required bits for {@code value}; always positive.
+//     */
+//    public static int size(final int value) {
+//        if (value < 0) {
+//            return size(~value) + 1;
+//        }
+//        if (value == 0) {
+//            return 1;
+//        }
+//        return log2(value);
+//    }
 
     // https://stackoverflow.com/a/680040/330457
     private static int log2(final long value) {
