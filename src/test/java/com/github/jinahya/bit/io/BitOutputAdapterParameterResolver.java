@@ -37,6 +37,6 @@ class BitOutputAdapterParameterResolver
     @Override
     public Object resolveParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return BitOutputAdapter.from(ByteOutputTestUtilities.black());
+        return new BitOutputAdapter(ByteOutputTestUtilities.black());
     }
 }

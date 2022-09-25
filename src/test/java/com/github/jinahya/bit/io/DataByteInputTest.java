@@ -55,8 +55,7 @@ class DataByteInputTest
         @Test
         void from__() throws IOException {
             final var source = mock(DataInput.class);
-            try (DataByteInput input = DataByteInput.from(source)) {
-            }
+            DataByteInput input = new DataByteInput(source);
         }
     }
 
@@ -65,7 +64,7 @@ class DataByteInputTest
      */
     @Test
     void assertReadThrowsEofExceptionWhenReachedToAnEnd() {
-        final DataByteInput input = new DataByteInput(() -> new DataInputStream(white(0L)));
+        final DataByteInput input = new DataByteInput(new DataInputStream(white(0L)));
         assertThrows(EOFException.class, input::read);
     }
 
@@ -77,7 +76,7 @@ class DataByteInputTest
      */
     @Test
     void testRead() throws IOException {
-        final DataByteInput input = new DataByteInput(() -> new DataInputStream(white(-1L)));
+        final DataByteInput input = new DataByteInput(new DataInputStream(white(-1L)));
         final int value = input.read();
         assertTrue(value >= 0 && value < 256);
     }

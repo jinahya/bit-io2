@@ -28,11 +28,11 @@ class ByteIoStreamTest
 
     @Override
     protected StreamByteOutput newOutput(final int bytes) {
-        return StreamByteOutput.from(new ByteArrayOutputStream());
+        return new StreamByteOutput(new ByteArrayOutputStream());
     }
 
     @Override
     protected StreamByteInput newInput(final byte[] bytes) {
-        return StreamByteInput.from(new ByteArrayInputStream(bytes));
+        return new StreamByteInput(new ByteArrayInputStream(bytes));
     }
 }

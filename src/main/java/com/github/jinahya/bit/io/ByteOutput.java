@@ -20,8 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 
 /**
@@ -31,36 +29,13 @@ import java.io.IOException;
  * @see ByteInput
  */
 @FunctionalInterface
-public interface ByteOutput
-        extends Flushable, Closeable {
+public interface ByteOutput {
 
     /**
-     * Flushes this output by writing any buffered output to the underlying output.
+     * Writes specified {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> byte.
      *
-     * @throws IOException if an I/O error occurs.
-     * @implNote The default implementation does nothing.
-     */
-    @Override
-    default void flush() throws IOException {
-        // does nothing.
-    }
-
-    /**
-     * Closes this output and releases any system resources associated with it.
-     *
-     * @throws IOException if an I/O error occurs.
-     * @implNote The default implementation does nothing.
-     */
-    @Override
-    default void close() throws IOException {
-        // does nothing.
-    }
-
-    /**
-     * Writes specified unsigned {@value java.lang.Byte#SIZE}-bit value.
-     *
-     * @param value the unsigned {@value java.lang.Byte#SIZE}-bit value to write; between {@code 0} and {@code 255},
-     *              both inclusive.
+     * @param value the {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> byte to write; between {@code 0} and
+     *              {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
      */
     void write(int value) throws IOException;

@@ -74,7 +74,7 @@ public class StringWriter
     public void write(final BitOutput output, final String value) throws IOException {
         Objects.requireNonNull(output, "output is null");
         final byte[] bytes = value.getBytes(charset);
-        getWriter().write(output, bytes);
+        writer.write(output, bytes);
     }
 
     private final Charset charset;

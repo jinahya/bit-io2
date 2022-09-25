@@ -20,11 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * A byte input reads bytes from an instance of {@link java.io.RandomAccessFile}.
@@ -36,58 +33,24 @@ class RandomAccessFileByteInput
         extends ByteInputAdapter<RandomAccessFile> {
 
     /**
-     * Returns a new instance which reads bytes from specified file.
-     *
-     * @param file the file from which bytes are read.
-     * @return a new instance.
-     * @see RandomAccessFileByteOutput#from(File)
-     */
-    static RandomAccessFileByteInput from(final File file) {
-        Objects.requireNonNull(file, "file is null");
-        return new RandomAccessFileByteInput(() -> {
-            try {
-                return new RandomAccessFile(file, "r");
-            } catch (final IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
-        });
-    }
-
-    /**
-     * Creates a new byte input which reads bytes from specified random access file.
-     *
-     * @param source the random access file from which bytes are read.
-     * @return a new instance.
-     * @apiNote Closing the result does not close the {@code source}.
-     * @see RandomAccessFileByteOutput#of(RandomAccessFile)
-     */
-    public static RandomAccessFileByteInput of(final RandomAccessFile source) {
-        Objects.requireNonNull(source, "source is null");
-        final RandomAccessFileByteInput instance = new RandomAccessFileByteInput(BitIoUtils.emptySupplier());
-        instance.source(source);
-        return instance;
-    }
-
-    /**
      * Creates a new instance with specified source supplier.
      *
-     * @param sourceSupplier the source supplier.
+     * @param source the source supplier.
      */
-    RandomAccessFileByteInput(final Supplier<? extends RandomAccessFile> sourceSupplier) {
-        super(sourceSupplier);
+    RandomAccessFileByteInput(final RandomAccessFile source) {
+        super(source);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implNote The {@code read(InputStream)} method of {@code RandomAccessFileByteInput} class invokes
-     * {@link RandomAccessFile#readUnsignedByte()} method on specified source and returns the result.
+     * {@link RandomAccessFile#readUnsignedByte()} method on {@link #source} and returns the result.
      */
     @Override
-    protected int read(final RandomAccessFile source) throws IOException {
+    public int read() throws IOException {
         return source.readUnsignedByte();
     }
 }
