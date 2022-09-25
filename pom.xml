@@ -242,10 +242,10 @@
         <executions>
           <execution>
             <id>check-signature-java18:1.0</id>
-            <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
             </goals>
+            <phase>process-classes</phase>
             <configuration>
               <signature>
                 <groupId>org.codehaus.mojo.signature</groupId>
@@ -273,7 +273,7 @@
             <id>validate</id>
             <phase>validate</phase>
             <goals>
-              <goal>check</goal>
+<!--              <goal>check</goal>-->
             </goals>
           </execution>
         </executions>
