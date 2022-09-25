@@ -37,6 +37,6 @@ class BitInputAdapterParameterResolver
     @Override
     public Object resolveParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return BitInputAdapter.from(ByteInputTestUtilities.white());
+        return new BitInputAdapter(ByteInputTestUtilities.white());
     }
 }

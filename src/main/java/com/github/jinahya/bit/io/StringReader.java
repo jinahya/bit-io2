@@ -73,7 +73,7 @@ public class StringReader
     @Override
     public String read(final BitInput input) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        final byte[] bytes = getReader().read(input);
+        final byte[] bytes = reader.read(input);
         return new String(bytes, charset);
     }
 

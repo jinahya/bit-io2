@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -34,8 +36,8 @@ class ByteIoFileTest {
     void wr__(@TempDir final File tempDir) throws IOException {
         final File file = File.createTempFile("tmp", null, tempDir);
         ByteIoTestUtilities.wrv(
-                () -> StreamByteOutput.from(file),
-                () -> StreamByteInput.from(file),
+                () -> new StreamByteOutput(new FileOutputStream(file)),
+                () -> new StreamByteInput(new FileInputStream(file)),
                 o -> {
                     final int count = current().nextInt(128);
                     for (int j = 0; j < count; j++) {

@@ -53,8 +53,7 @@ class DataByteOutputTest
         @Test
         void from__() throws IOException {
             final var source = mock(DataOutput.class);
-            try (DataByteOutput output = DataByteOutput.from(source)) {
-            }
+            DataByteOutput output = new DataByteOutput(source);
         }
     }
 
@@ -66,7 +65,7 @@ class DataByteOutputTest
      */
     @Test
     void testWrite() throws IOException {
-        final DataByteOutput output = new DataByteOutput(() -> new DataOutputStream(black(-1L)));
+        final DataByteOutput output = new DataByteOutput(new DataOutputStream(black(-1L)));
         output.write(current().nextInt(0, 256));
     }
 }

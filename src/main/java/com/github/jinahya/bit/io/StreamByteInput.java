@@ -21,12 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.EOFException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * A byte input reads bytes from an instance of {@link InputStream}.
@@ -38,60 +34,25 @@ public class StreamByteInput
         extends ByteInputAdapter<InputStream> {
 
     /**
-     * Creates a new instance which read byte from specified Input stream.
+     * Creates a new instance on top of specified input stream.
      *
-     * @param source the Input stream to which bytes are written.
-     * @return a new instance.
-     * @apiNote Closing the result does not close the {@code source}.
+     * @param source the input stream from which bytes are read.
      */
-    public static StreamByteInput from(final InputStream source) {
-        Objects.requireNonNull(source, "source is null");
-        @SuppressWarnings({"unchecked"})
-        final StreamByteInput instance = new StreamByteInput(
-                (Supplier<? extends InputStream>) BitIoConstants.EMPTY_SUPPLIER()
-        );
-        instance.source(source);
-        return instance;
-    }
-
-    /**
-     * Returns a new instance which reads bytes from specified file.
-     *
-     * @param file the file from which bytes are read.
-     * @return a new instance.
-     */
-    static StreamByteInput from(final File file) {
-        Objects.requireNonNull(file, "file is null");
-        return new StreamByteInput(() -> {
-            try {
-                return Files.newInputStream(file.toPath());
-            } catch (final IOException ioe) {
-                throw new RuntimeException("failed to open " + file, ioe);
-            }
-        });
-    }
-
-    /**
-     * Creates a new instance with specified source supplier.
-     *
-     * @param sourceSupplier the source supplier.
-     */
-    public StreamByteInput(final Supplier<? extends InputStream> sourceSupplier) {
-        super(sourceSupplier);
+    public StreamByteInput(final InputStream source) {
+        super(source);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws EOFException if the {@link InputStream#read()} operation returns {@code -1}.
      * @throws IOException  {@inheritDoc}
      * @implNote The {@code read(InputStream)} method of {@code StreamByteInput} class invokes
-     * {@link InputStream#read()} method on specified input stream and returns the result.
+     * {@link InputStream#read()} method on {@link #source} and returns the result.
      */
     @Override
-    protected int read(final InputStream source) throws IOException {
+    public int read() throws IOException {
         final int value = source.read();
         if (value == -1) {
             throw new EOFException("reached to an end");

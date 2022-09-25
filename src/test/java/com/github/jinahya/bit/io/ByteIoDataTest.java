@@ -30,11 +30,11 @@ class ByteIoDataTest
 
     @Override
     protected DataByteOutput newOutput(final int bytes) {
-        return DataByteOutput.from(new DataOutputStream(new ByteArrayOutputStream()));
+        return new DataByteOutput(new DataOutputStream(new ByteArrayOutputStream()));
     }
 
     @Override
     protected DataByteInput newInput(final byte[] bytes) {
-        return DataByteInput.from(new DataInputStream(new ByteArrayInputStream(bytes)));
+        return new DataByteInput(new DataInputStream(new ByteArrayInputStream(bytes)));
     }
 }

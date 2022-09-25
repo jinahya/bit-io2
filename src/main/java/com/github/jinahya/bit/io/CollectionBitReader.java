@@ -45,8 +45,7 @@ public class CollectionBitReader<T extends Collection<U>, U>
      * @param <T>           element type parameter
      * @return a new instance.
      */
-    public static <T> CollectionBitReader<List<T>, T> ofList(
-            final int sizeSize, final BitReader<? extends T> elementReader) {
+    public static <T> CollectionBitReader<List<T>, T> ofList(final int sizeSize, final BitReader<T> elementReader) {
         return new CollectionBitReader<>(sizeSize, elementReader, ArrayList::new);
     }
 
@@ -57,7 +56,7 @@ public class CollectionBitReader<T extends Collection<U>, U>
      * @param elementReader     a reader for reading each element.
      * @param collectionCreator a function for creating an instance of {@link T}.
      */
-    public CollectionBitReader(final int sizeSize, final BitReader<? extends U> elementReader,
+    public CollectionBitReader(final int sizeSize, final BitReader<U> elementReader,
                                final IntFunction<? extends T> collectionCreator) {
         super(elementReader);
         this.sizeSize = BitIoConstraints.requireValidSizeForUnsignedInt(sizeSize);
@@ -70,7 +69,7 @@ public class CollectionBitReader<T extends Collection<U>, U>
         final int capacity = BitIoUtils.readCount(input, sizeSize);
         final T value = collectionCreator.apply(capacity);
         for (int i = 0; i < capacity; i++) {
-            value.add(getReader().read(input));
+            value.add(reader.read(input));
         }
         return value;
     }

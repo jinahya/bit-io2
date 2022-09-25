@@ -34,13 +34,10 @@ final class ByteIoTestUtilities {
                     final Function<? super ByteOutput, ? extends Function<? super ByteInput, ? extends R>> f1)
             throws IOException {
         final Function<? super ByteInput, ? extends R> f2;
-        try (ByteOutput output = outputSupplier.get()) {
-            f2 = f1.apply(output);
-            output.flush();
-        }
-        try (ByteInput input = inputSupplier.get()) {
-            return f2.apply(input);
-        }
+        ByteOutput output = outputSupplier.get();
+        f2 = f1.apply(output);
+        ByteInput input = inputSupplier.get();
+        return f2.apply(input);
     }
 
     static <R> R wrv(

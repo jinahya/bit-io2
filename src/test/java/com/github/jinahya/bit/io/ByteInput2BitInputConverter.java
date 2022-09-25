@@ -39,6 +39,6 @@ class ByteInput2BitInputConverter
         if (!(source instanceof ByteInput)) {
             throw new ArgumentConversionException("can't convert " + source + " into an instance of " + BitInput.class);
         }
-        return new BitInputAdapter(() -> (ByteInput) source);
+        return new BitInputAdapter((ByteInput) source);
     }
 }

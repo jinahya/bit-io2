@@ -38,7 +38,7 @@ public class ArrayBitWriter<T>
      *
      * @param lengthSize the number of bits for the {@code length}.
      */
-    ArrayBitWriter(final int lengthSize, final BitWriter<? super T> elementWriter) {
+    ArrayBitWriter(final int lengthSize, final BitWriter<T> elementWriter) {
         super(elementWriter);
         this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
     }
@@ -49,7 +49,7 @@ public class ArrayBitWriter<T>
         Objects.requireNonNull(value, "value is null");
         final int length = BitIoUtils.writeCount(output, lengthSize, value.length);
         for (int i = 0; i < length; i++) {
-            getWriter().write(output, value[i]);
+            writer.write(output, value[i]);
         }
     }
 

@@ -59,7 +59,7 @@ public class ArrayBitReader<T>
      * @param elementReader a reader for reading each array element.
      * @param arrayCreator  a function for creating {@code T[]}.
      */
-    ArrayBitReader(final int lengthSize, final BitReader<? extends T> elementReader,
+    ArrayBitReader(final int lengthSize, final BitReader<T> elementReader,
                    final IntFunction<? extends T[]> arrayCreator) {
         super(elementReader);
         this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
@@ -72,7 +72,7 @@ public class ArrayBitReader<T>
         final int length = BitIoUtils.readCount(input, lengthSize);
         final T[] value = arrayCreator.apply(length);
         for (int i = 0; i < value.length; i++) {
-            value[i] = getReader().read(input);
+            value[i] = reader.read(input);
         }
         return value;
     }

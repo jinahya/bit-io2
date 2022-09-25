@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * An interface for reading objects of a specific type.
+ * An interface for reading non-primitive values.
  *
  * @param <T> value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -40,7 +40,7 @@ public interface BitReader<T> {
      * @param <T>    value type parameter
      * @return a reader for nullable values.
      */
-    static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
+    static <T> BitReader<T> nullable(final BitReader<T> reader) {
         Objects.requireNonNull(reader, "reader is null");
         return new FilterBitReader<T, T>(reader) {
             @Override
@@ -48,7 +48,7 @@ public interface BitReader<T> {
                 Objects.requireNonNull(input, "input is null");
                 final boolean nonnull = input.readBoolean();
                 if (nonnull) {
-                    return getReader().read(input);
+                    return reader.read(input);
                 }
                 return null;
             }

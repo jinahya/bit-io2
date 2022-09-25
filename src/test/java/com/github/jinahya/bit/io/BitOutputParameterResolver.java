@@ -25,21 +25,35 @@ import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
-class BitIoAdapterParameterResolver
+import java.io.IOException;
+
+class BitOutputParameterResolver
         implements ParameterResolver {
+
+    private static class _BitOutput
+            implements BitOutput {
+
+        @Override
+        public void writeInt(final boolean unsigned, final int size, final int value) throws IOException {
+            BitIoConstraints.requireValidSizeForInt(unsigned, size);
+            // does nothing
+        }
+
+        @Override
+        public long align(final int bytes) throws IOException {
+            return 0L;
+        }
+    }
 
     @Override
     public boolean supportsParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return parameterContext.getParameter().getType() == BitIoAdapter.class;
+        return parameterContext.getParameter().getType() == BitOutput.class;
     }
 
     @Override
     public Object resolveParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return BitIoAdapter.builder()
-                .input(new BitInputAdapter(ByteInputTestUtilities.white()))
-                .output(new BitOutputAdapter(ByteOutputTestUtilities.black()))
-                .build();
+        return new _BitOutput();
     }
 }

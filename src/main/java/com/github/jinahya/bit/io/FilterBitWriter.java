@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * An abstract class for filtering another writer.
+ * An abstract writer for filtering values written to other writers.
  *
  * @param <T> value type parameter
  * @param <U> filtered value type parameter
@@ -38,22 +38,13 @@ public abstract class FilterBitWriter<T, U>
      *
      * @param writer the writer to wrap.
      */
-    protected FilterBitWriter(final BitWriter<? super U> writer) {
+    protected FilterBitWriter(final BitWriter<U> writer) {
         super();
         this.writer = Objects.requireNonNull(writer, "writer is null");
     }
 
     /**
-     * Returns the writer wrapped by this writer.
-     *
-     * @return the writer wrapped by this writer.
+     * The writer wrapped within this writer.
      */
-    protected BitWriter<? super U> getWriter() {
-        return writer;
-    }
-
-    /**
-     * The writer wrapped by this writer.
-     */
-    private final BitWriter<? super U> writer;
+    protected final BitWriter<U> writer;
 }

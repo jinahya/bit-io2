@@ -22,8 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.DataInput;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * A byte input reads bytes from an instance of {@link DataInput}.
@@ -35,42 +33,24 @@ public class DataByteInput
         extends ByteInputAdapter<DataInput> {
 
     /**
-     * Creates a new instance reads byte from specified data input.
+     * Creates a new instance on top of specified data input.
      *
      * @param source the data input from which bytes are read.
-     * @return a new instance.
-     * @apiNote Closing the result input does not close the {@code source}.
      */
-    public static DataByteInput from(final DataInput source) {
-        Objects.requireNonNull(source, "source is null");
-        @SuppressWarnings({"unchecked"})
-        final DataByteInput instance = new DataByteInput(
-                (Supplier<? extends DataInput>) BitIoConstants.EMPTY_SUPPLIER()
-        );
-        instance.source(source);
-        return instance;
-    }
-
-    /**
-     * Creates a new instance with specified source supplier.
-     *
-     * @param sourceSupplier the source supplier.
-     */
-    public DataByteInput(final Supplier<? extends DataInput> sourceSupplier) {
-        super(sourceSupplier);
+    public DataByteInput(final DataInput source) {
+        super(source);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param source {@inheritDoc}
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implNote The {@code read(DataInput)} method of {@link DataByteInput} class invokes
-     * {@link DataInput#readUnsignedByte()} method on specified data input and returns the result.
+     * {@link DataInput#readUnsignedByte()} method on {@link #source} and returns the result.
      */
     @Override
-    protected int read(final DataInput source) throws IOException {
+    public int read() throws IOException {
         return source.readUnsignedByte();
     }
 }

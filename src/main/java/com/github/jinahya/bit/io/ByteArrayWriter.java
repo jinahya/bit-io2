@@ -101,7 +101,7 @@ public class ByteArrayWriter
                     output.writeUnsignedInt(6, value[++i] & 0xFF);
                     continue;
                 }
-                assert ((b & 0b1111_0111) == b);
+                assert (b & 0b1111_0111) == b;
                 output.writeUnsignedInt(2, 0b11);
                 output.writeUnsignedInt(3, b);
                 output.writeUnsignedInt(6, value[++i] & 0xFF);

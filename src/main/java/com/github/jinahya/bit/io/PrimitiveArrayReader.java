@@ -34,9 +34,9 @@ abstract class PrimitiveArrayReader<T>
         implements BitReader<T> {
 
     /**
-     * Creates a new instance with specified number of bits for {@code length}.
+     * Creates a new instance with specified number of bits for the {@code length} of the arrays.
      *
-     * @param lengthSize the number of bits for the {@code length}.
+     * @param lengthSize the number of bits for the {@code length} of the arrays.
      */
     PrimitiveArrayReader(final int lengthSize) {
         super();
