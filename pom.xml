@@ -28,9 +28,9 @@
     </license>
   </licenses>
 
-  <prerequisites>
-    <maven>3.5.4</maven> <!-- just for versions-maven-plugin -->
-  </prerequisites>
+<!--  <prerequisites>-->
+<!--    <maven>3.5.4</maven> &lt;!&ndash; just for versions-maven-plugin &ndash;&gt;-->
+<!--  </prerequisites>-->
 
   <scm>
     <connection>scm:git:git@github.com:jinahya/${project.artifactId}.git</connection>
@@ -154,6 +154,11 @@
           <version>${version.maven-surefire}</version>
         </plugin>
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.12.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.8</version>
@@ -187,17 +192,54 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
+<!--          <execution>-->
+<!--            <id>enforce</id>-->
+<!--            <goals>-->
+<!--              <goal>enforce</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <rules>-->
+<!--                <dependencyConvergence/>-->
+<!--                <requireJavaVersion>-->
+<!--                  <version>[1.8.0,)</version>-->
+<!--                </requireJavaVersion>-->
+<!--                <requireMavenVersion>-->
+<!--                  <version>[3.5.4,)</version>-->
+<!--                </requireMavenVersion>-->
+<!--              </rules>-->
+<!--            </configuration>-->
+<!--          </execution>-->
           <execution>
-            <id>enforce</id>
+            <id>enforce-dependency-convergence</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
                 <dependencyConvergence/>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <id>enforce-require-java-version</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
                 <requireJavaVersion>
                   <version>[1.8.0,)</version>
                 </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <id>enforce-require-maven-version</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
                 <requireMavenVersion>
                   <version>[3.5.4,)</version>
                 </requireMavenVersion>
@@ -344,7 +386,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <version>2.11.0</version>
         <reportSets>
           <reportSet>
             <reports>
