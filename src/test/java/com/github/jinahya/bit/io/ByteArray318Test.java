@@ -45,7 +45,7 @@ class ByteArray318Test {
     void of318__() throws IOException {
         final byte[] expected = new byte[current().nextInt(16)];
         for (int i = 0; i < expected.length; i++) {
-            expected[i] = BitIoRandom.nextValueForByte(false, Byte.SIZE);
+            expected[i] = BitIoTestUtils.nextValueForByte(false, Byte.SIZE);
         }
         final byte[] actual = BitIoTestUtils.wr1v(o -> {
             ByteArrayWriter.of318().write(o, expected);

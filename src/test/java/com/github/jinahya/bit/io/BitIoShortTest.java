@@ -98,7 +98,7 @@ class BitIoShortTest {
         @RepeatedTest(16)
         void wr_random() {
             final boolean unsigned = false;
-            BitIoRandom.applyNextShort_v(unsigned, s -> e -> {
+            BitIoTestUtils.applyNextShort_v(unsigned, s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeShort(unsigned, s, e.shortValue());
                     return i -> {
@@ -117,7 +117,7 @@ class BitIoShortTest {
         @RepeatedTest(16)
         void short__() {
             final boolean unsigned = true;
-            BitIoRandom.applyNextShort_v(unsigned, s -> e -> {
+            BitIoTestUtils.applyNextShort_v(unsigned, s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeShort(unsigned, s, e.shortValue());
                     return i -> {
@@ -130,7 +130,7 @@ class BitIoShortTest {
 
         @RepeatedTest(16)
         void unsignedShort__() {
-            BitIoRandom.applyNextShort_v(true, s -> e -> {
+            BitIoTestUtils.applyNextShort_v(true, s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeUnsignedShort(s, e.shortValue());
                     return i -> {
@@ -150,7 +150,7 @@ class BitIoShortTest {
         void wr_random() {
             final boolean unsigned = false;
             final int size = Short.SIZE;
-            BitIoRandom.applyNextValueForShort_v(unsigned, size, e -> {
+            BitIoTestUtils.applyNextValueForShort_v(unsigned, size, e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeShort(e.shortValue());
                     return i -> {

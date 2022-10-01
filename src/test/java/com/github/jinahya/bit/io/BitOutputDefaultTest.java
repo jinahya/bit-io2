@@ -59,8 +59,8 @@ class BitOutputDefaultTest {
         @Test
         void writeByte__Unsigned() {
             final boolean unsigned = true;
-            final int size = BitIoRandom.nextSizeForByte(unsigned);
-            final byte value = BitIoRandom.nextValueForByte(unsigned, size);
+            final int size = BitIoTestUtils.nextSizeForByte(unsigned);
+            final byte value = BitIoTestUtils.nextValueForByte(unsigned, size);
             assertThatCode(() -> output.writeByte(unsigned, size, value))
                     .doesNotThrowAnyException();
         }
@@ -68,8 +68,8 @@ class BitOutputDefaultTest {
         @Test
         void writeByte__Signed() {
             final boolean unsigned = false;
-            final int size = BitIoRandom.nextSizeForByte(unsigned);
-            final byte value = BitIoRandom.nextValueForByte(unsigned, size);
+            final int size = BitIoTestUtils.nextSizeForByte(unsigned);
+            final byte value = BitIoTestUtils.nextValueForByte(unsigned, size);
             assertThatCode(() -> output.writeByte(unsigned, size, value))
                     .doesNotThrowAnyException();
         }
@@ -77,8 +77,8 @@ class BitOutputDefaultTest {
         @Test
         void writeByte__() {
             final boolean unsigned = false;
-            final int size = BitIoRandom.nextSizeForByte(unsigned);
-            final byte value = BitIoRandom.nextValueForByte(unsigned, size);
+            final int size = BitIoTestUtils.nextSizeForByte(unsigned);
+            final byte value = BitIoTestUtils.nextValueForByte(unsigned, size);
             assertThatCode(() -> output.writeByte(size, value))
                     .doesNotThrowAnyException();
         }

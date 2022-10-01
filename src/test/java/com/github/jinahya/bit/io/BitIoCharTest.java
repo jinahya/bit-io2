@@ -37,7 +37,7 @@ class BitIoCharTest {
 
         @RepeatedTest(16)
         void wr__() {
-            BitIoRandom.applyNextChar_v(s -> e -> {
+            BitIoTestUtils.applyNextChar_v(s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeChar(s, (char) e.intValue());
                     return i -> {
@@ -75,7 +75,7 @@ class BitIoCharTest {
 
         @RepeatedTest(16)
         void wr_random() {
-            BitIoRandom.applyNextValueForChar_v(Character.SIZE, e -> {
+            BitIoTestUtils.applyNextValueForChar_v(Character.SIZE, e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeChar16((char) e.intValue());
                     return i -> {

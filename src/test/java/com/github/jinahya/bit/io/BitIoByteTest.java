@@ -98,7 +98,7 @@ class BitIoByteTest {
         @RepeatedTest(16)
         void wr__random() {
             final boolean unsigned = false;
-            BitIoRandom.applyNextByte_v(unsigned, s -> e -> {
+            BitIoTestUtils.applyNextByte_v(unsigned, s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeByte(unsigned, s, e.byteValue());
                     return i -> {
@@ -117,7 +117,7 @@ class BitIoByteTest {
         @RepeatedTest(16)
         void wr__random() {
             final boolean unsigned = true;
-            BitIoRandom.applyNextByte_v(unsigned, s -> e -> {
+            BitIoTestUtils.applyNextByte_v(unsigned, s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeByte(unsigned, s, e.byteValue());
                     return i -> {
@@ -130,7 +130,7 @@ class BitIoByteTest {
 
         @RepeatedTest(16)
         void we_unsigned__random() {
-            BitIoRandom.applyNextByte_v(true, s -> e -> {
+            BitIoTestUtils.applyNextByte_v(true, s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeUnsignedByte(s, e.byteValue());
                     return i -> {
@@ -150,7 +150,7 @@ class BitIoByteTest {
         void byte8_random() {
             final boolean unsigned = false;
             final int size = Byte.SIZE;
-            BitIoRandom.applyNextValueForByte_v(unsigned, size, e -> {
+            BitIoTestUtils.applyNextValueForByte_v(unsigned, size, e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeByte(e.byteValue());
                     return i -> {
