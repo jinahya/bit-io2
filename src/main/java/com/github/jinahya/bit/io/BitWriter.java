@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * An interface for writing non-primitive values.
@@ -42,18 +41,7 @@ public interface BitWriter<T> {
      * @see BitReader#nullable(BitReader)
      */
     static <T> BitWriter<T> nullable(final BitWriter<T> writer) {
-        Objects.requireNonNull(writer, "writer is null");
-        return new FilterBitWriter<T, T>(writer) {
-            @Override
-            public void write(final BitOutput output, final T value) throws IOException {
-                Objects.requireNonNull(output, "output is null");
-                final boolean nonnull = value != null;
-                output.writeBoolean(nonnull);
-                if (nonnull) {
-                    writer.write(output, value);
-                }
-            }
-        };
+        return new FilterBitWriter.Nullable<>(writer);
     }
 
     /**

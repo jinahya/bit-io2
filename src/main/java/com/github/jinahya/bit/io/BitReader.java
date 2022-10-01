@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * An interface for reading non-primitive values.
@@ -41,18 +40,7 @@ public interface BitReader<T> {
      * @return a reader for nullable values.
      */
     static <T> BitReader<T> nullable(final BitReader<T> reader) {
-        Objects.requireNonNull(reader, "reader is null");
-        return new FilterBitReader<T, T>(reader) {
-            @Override
-            public T read(final BitInput input) throws IOException {
-                Objects.requireNonNull(input, "input is null");
-                final boolean nonnull = input.readBoolean();
-                if (nonnull) {
-                    return reader.read(input);
-                }
-                return null;
-            }
-        };
+        return new FilterBitReader.Nullable<>(reader);
     }
 
     /**

@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * Utilities for bit-io.
@@ -30,32 +29,6 @@ import java.util.function.Supplier;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 final class BitIoUtils {
-
-//    // https://stackoverflow.com/a/680040/330457
-//    private static int log2(final int value) {
-//        if (value <= 0) {
-//            throw new IllegalArgumentException("value(" + value + ") is not positive");
-//        }
-//        final int result = Integer.SIZE - Integer.numberOfLeadingZeros(value);
-//        assert result > 0;
-//        return result;
-//    }
-
-//    /**
-//     * Returns the number of required bits for specified value.
-//     *
-//     * @param value the value whose size is calculated.
-//     * @return the number of required bits for {@code value}; always positive.
-//     */
-//    public static int size(final int value) {
-//        if (value < 0) {
-//            return size(~value) + 1;
-//        }
-//        if (value == 0) {
-//            return 1;
-//        }
-//        return log2(value);
-//    }
 
     // https://stackoverflow.com/a/680040/330457
     private static int log2(final long value) {
@@ -81,16 +54,6 @@ final class BitIoUtils {
             return 1;
         }
         return log2(value);
-    }
-
-    /**
-     * Returns a supplier which results {@code null}.
-     *
-     * @param <T> result type parameter
-     * @return a supplier results {@code null}.
-     */
-    static <T> Supplier<T> emptySupplier() {
-        return () -> null;
     }
 
     /**

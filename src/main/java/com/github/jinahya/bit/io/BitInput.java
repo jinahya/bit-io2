@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Objects;
@@ -40,11 +41,9 @@ public interface BitInput {
      *
      * @param stream the stream from which bytes are read.
      * @return a new instance.
-     * @see BitOutput#from(java.io.OutputStream)
      */
     static BitInput from(final InputStream stream) {
-        Objects.requireNonNull(stream, "stream is null");
-        return new BitInputAdapter(new StreamByteInput(stream));
+        return new BitInputAdapter(ByteInput.of(stream));
     }
 
     /**
@@ -52,11 +51,19 @@ public interface BitInput {
      *
      * @param input the input from which bytes are read.
      * @return a new instance.
-     * @see BitOutput#from(java.io.DataOutput)
      */
     static BitInput from(final DataInput input) {
-        Objects.requireNonNull(input, "input is null");
-        return new BitInputAdapter(new DataByteInput(input));
+        return new BitInputAdapter(ByteInput.of(input));
+    }
+
+    /**
+     * Creates a new instance on top of specified file.
+     *
+     * @param file the file from which bytes are read.
+     * @return a new instance.
+     */
+    static BitInput from(final RandomAccessFile file) {
+        return new BitInputAdapter(ByteInput.of(file));
     }
 
     /**
@@ -64,11 +71,9 @@ public interface BitInput {
      *
      * @param buffer the buffer from which bytes are read.
      * @return a new instance.
-     * @see BitOutput#from(ByteBuffer)
      */
     static BitInput from(final ByteBuffer buffer) {
-        Objects.requireNonNull(buffer, "buffer is null");
-        return new BitInputAdapter(new BufferByteInput(buffer));
+        return new BitInputAdapter(ByteInput.of(buffer));
     }
 
     /**
@@ -76,11 +81,9 @@ public interface BitInput {
      *
      * @param channel the channel from which bytes are read.
      * @return a new instance.
-     * @see BitOutput#from(java.nio.channels.WritableByteChannel)
      */
     static BitInput from(final ReadableByteChannel channel) {
-        Objects.requireNonNull(channel, "channel is null");
-        return new BitInputAdapter(new ChannelByteInput(channel));
+        return new BitInputAdapter(ByteInput.of(channel));
     }
 
     /**
@@ -88,8 +91,8 @@ public interface BitInput {
      *
      * @return the value read.
      * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation reads a {@code 1}-bit <em>unsigned</em> {@code int} value and returns
-     * {@code true} for {@code 0b1} and {@code false} for {@code 0b0}
+     * @implSpec The default implementation reads a {@code 1}-bit unsigned {@code int} value, and returns {@code true}
+     * for {@code 0b1} and {@code false} for {@code 0b0}
      */
     default boolean readBoolean() throws IOException {
         return readUnsignedInt(1) == 0x01;
@@ -111,7 +114,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads a <em>signed</em> {@code byte} value of specified number of bits.
+     * Reads a signed {@code byte} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @return a signed {@code byte} value of specified {@code size}.
@@ -124,7 +127,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads a <em>signed</em> {@value java.lang.Byte#SIZE}-bit {@code byte} value.
+     * Reads a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
      *
      * @return a signed {@value java.lang.Byte#SIZE}-bit {@code byte} value.
      * @throws IOException if an I/O error occurs.
@@ -136,7 +139,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads an <em>unsigned</em> {@code byte} value of specified number of bits.
+     * Reads an unsigned {@code byte} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Byte#SIZE}
      *             (exclusive).
@@ -165,7 +168,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads a <em>signed</em> {@code short} value of specified number of bits.
+     * Reads a signed {@code short} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Short#SIZE}, both inclusive.
      * @return a signed {@code short} value of specified bit {@code size}.
@@ -179,7 +182,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads a <em>signed</em> {@value java.lang.Short#SIZE}-bit {@code short} value.
+     * Reads a signed {@value java.lang.Short#SIZE}-bit {@code short} value.
      *
      * @return a {@value java.lang.Short#SIZE}-bit {@code short} value read.
      * @throws IOException if an I/O error occurs.
@@ -191,7 +194,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads an <em>unsigned</em> {@code short} value of specified number of bits.
+     * Reads an unsigned {@code short} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Short#SIZE}
      *             (exclusive).
@@ -216,7 +219,7 @@ public interface BitInput {
     int readInt(boolean unsigned, int size) throws IOException;
 
     /**
-     * Reads a <em>signed</em> {@code int} value of specified number of bits.
+     * Reads a signed {@code int} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
      * @return a signed {@code int} value.
@@ -229,7 +232,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads a <em>signed</em> {@value java.lang.Integer#SIZE}-bit {@code int} value.
+     * Reads a signed {@value java.lang.Integer#SIZE}-bit {@code int} value.
      *
      * @return a {@value java.lang.Integer#SIZE}-bit {@code int} value read.
      * @throws IOException if an I/O error occurs.
@@ -241,7 +244,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads an <em>unsigned</em> {@code int} value of specified number of bits.
+     * Reads an unsigned {@code int} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
      *             (exclusive).
@@ -287,7 +290,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads a <em>signed</em> {@code long} value of specified number of bits.
+     * Reads a signed {@code long} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
      * @return a signed {@code long} value.
@@ -300,7 +303,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads a <em>signed</em> {@value java.lang.Long#SIZE}-bit {@code long} value.
+     * Reads a signed {@value java.lang.Long#SIZE}-bit {@code long} value.
      *
      * @return a {@value java.lang.Long#SIZE}-bit {@code long} value.
      * @throws IOException if an I/O error occurs.
@@ -312,7 +315,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads an <em>unsigned</em> {@code long} value of specified number of bits.
+     * Reads an unsigned {@code long} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
      *             (exclusive).
@@ -410,7 +413,7 @@ public interface BitInput {
     }
 
     /**
-     * Aligns to specified number of <em>bytes</em> by reading (and discarding) required number of bits.
+     * Aligns to specified number of bytes by reading (and discarding) required number of bits.
      *
      * @param bytes the number of bytes to align; must be positive.
      * @return the number of bits discarded; non-negative, always.
@@ -420,7 +423,7 @@ public interface BitInput {
     long align(int bytes) throws IOException;
 
     /**
-     * Aligns to a single <em>byte</em> by reading (and discarding) required number of bits.
+     * Aligns to a single byte by reading (and discarding) required number of bits.
      *
      * @return the number of bits discarded; between {@code 0} (inclusive) and {@value java.lang.Byte#SIZE} (exclusive).
      * @throws IOException if an I/O error occurs.

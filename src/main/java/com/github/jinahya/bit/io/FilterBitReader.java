@@ -20,10 +20,12 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
- * A abstract reader class for filtering values read from other readers.
+ * A value reader for filtering values read from other readers.
  *
  * @param <T> value type parameter
  * @param <U> filtered value type parameter
@@ -34,17 +36,65 @@ public abstract class FilterBitReader<T, U>
         implements BitReader<T> {
 
     /**
-     * Creates a new instance which wraps specified reader.
+     * Creates a new instance which reads filtered values.
      *
-     * @param reader the reader to wrap.
+     * @param delegate a value reader for reading original values.
+     * @param mapper   a mapper for mapping values.
+     * @param <T>      filtered value type parameter
+     * @param <U>      original value type parameter
+     * @return a new instance.
+     * @see FilterBitWriter#mapping(BitWriter, Function)
      */
-    protected FilterBitReader(final BitReader<U> reader) {
-        super();
-        this.reader = Objects.requireNonNull(reader, "reader is null");
+    public static <T, U> FilterBitReader<T, U> mapping(final BitReader<? extends U> delegate,
+                                                       final Function<? super U, ? extends T> mapper) {
+        Objects.requireNonNull(mapper, "mapper is null");
+        return new FilterBitReader<T, U>(delegate) {
+            @Override
+            protected T map(final U value) {
+                return mapper.apply(value);
+            }
+        };
+    }
+
+    static final class Nullable<T>
+            extends FilterBitReader<T, T> {
+
+        Nullable(BitReader<? extends T> delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public T read(final BitInput input) throws IOException {
+            Objects.requireNonNull(input, "input is null");
+            final boolean nonnull = input.readBoolean();
+            if (nonnull) {
+                return super.read(input);
+            }
+            return null;
+        }
+
+        @Override
+        protected T map(final T value) {
+            return value;
+        }
     }
 
     /**
-     * The reader wrapped within this reader.
+     * Creates a new instance which wraps specified delegate.
+     *
+     * @param delegate the delegate to wrap.
      */
-    protected final BitReader<U> reader;
+    protected FilterBitReader(final BitReader<? extends U> delegate) {
+        super();
+        this.delegate = Objects.requireNonNull(delegate, "delegate is null");
+    }
+
+    @Override
+    public T read(final BitInput input) throws IOException {
+        return map(delegate.read(input));
+    }
+
+    protected abstract T map(final U value);
+
+    protected final BitReader<? extends U> delegate;
 }

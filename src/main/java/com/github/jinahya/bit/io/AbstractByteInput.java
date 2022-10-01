@@ -23,24 +23,27 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * An abstract class implements {@link ByteInput} for adapting a specific type of byte source.
+ * An abstract byte input from reading bytes from a byte source of specific type.
  *
  * @param <T> byte source type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ByteOutputAdapter
+ * @see AbstractByteOutput
  */
-public abstract class ByteInputAdapter<T>
+public abstract class AbstractByteInput<T>
         implements ByteInput {
 
     /**
-     * Creates a new instance with specified byte source.
+     * Creates a new instance on top of specified byte source.
      *
      * @param source the byte source.
      */
-    protected ByteInputAdapter(final T source) {
+    protected AbstractByteInput(final T source) {
         super();
         this.source = Objects.requireNonNull(source, "source is null");
     }
 
+    /**
+     * The byte source from which bytes are read.
+     */
     protected final T source;
 }

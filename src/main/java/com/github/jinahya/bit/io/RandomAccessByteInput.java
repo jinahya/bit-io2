@@ -24,33 +24,34 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 /**
- * A byte output writes bytes to an instance of {@link java.io.RandomAccessFile}.
+ * A byte input reads bytes from an instance of {@link java.io.RandomAccessFile}.
  *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see RandomAccessFileByteInput
+ * @author Jin Kwon &lt;onacit at gmail.com&gt;
+ * @see RandomAccessByteOutput
  */
-class RandomAccessFileByteOutput
-        extends ByteOutputAdapter<RandomAccessFile> {
+class RandomAccessByteInput
+        extends AbstractByteInput<RandomAccessFile> {
 
     /**
-     * Creates a new instance on top of specified random access file.
+     * Creates a new instance with specified source supplier.
      *
-     * @param target the random access file to which bytes are written.
+     * @param source the source supplier.
      */
-    public RandomAccessFileByteOutput(final RandomAccessFile target) {
-        super(target);
+    RandomAccessByteInput(final RandomAccessFile source) {
+        super(source);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @param value {@inheritDoc}
+     * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code write(RandomAccessFile, int)} method of {@code RandomAccessFileByteOutput} class invokes
-     * {@link RandomAccessFile#write(int)} method on {@link #target} with {@code value}.
+     * @implSpec The {@code read()} method of {@code RandomAccessFileByteInput} class invokes
+     * {@link RandomAccessFile#readUnsignedByte()} method on the {@link #source}, and returns the result.
+     * @see RandomAccessFile#readUnsignedByte()
      */
     @Override
-    public void write(final int value) throws IOException {
-        target.write(value);
+    public int read() throws IOException {
+        return source.readUnsignedByte();
     }
 }

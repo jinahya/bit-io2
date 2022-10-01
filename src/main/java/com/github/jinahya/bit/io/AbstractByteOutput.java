@@ -23,24 +23,27 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * An abstract class implements {@link ByteOutput} for adapting a specific type of byte target.
+ * An abstract byte output which writes bytes to a byte target of specific type.
  *
  * @param <T> byte target type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ByteInputAdapter
+ * @see AbstractByteInput
  */
-public abstract class ByteOutputAdapter<T>
+public abstract class AbstractByteOutput<T>
         implements ByteOutput {
 
     /**
-     * Creates a new instance with specified byte target.
+     * Creates a new instance on top of specified byte target.
      *
      * @param target the byte target.
      */
-    protected ByteOutputAdapter(final T target) {
+    protected AbstractByteOutput(final T target) {
         super();
         this.target = Objects.requireNonNull(target, "target is null");
     }
 
+    /**
+     * The byte target to which bytes are written.
+     */
     protected final T target;
 }

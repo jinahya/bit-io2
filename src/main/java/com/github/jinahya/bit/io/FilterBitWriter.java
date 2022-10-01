@@ -20,10 +20,12 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
- * An abstract writer for filtering values written to other writers.
+ * A value writer for filtering values written to other writers.
  *
  * @param <T> value type parameter
  * @param <U> filtered value type parameter
@@ -34,17 +36,64 @@ public abstract class FilterBitWriter<T, U>
         implements BitWriter<T> {
 
     /**
-     * Creates a new instance which wraps specified writer.
+     * Creates a new instance which writes filtered values.
      *
-     * @param writer the writer to wrap.
+     * @param delegate a value writer for writing mapped values.
+     * @param mapper   a mapper for mapping values.
+     * @param <T>      original value type parameter
+     * @param <U>      filtered value type parameter
+     * @return a new instance.
+     * @see FilterBitReader#mapping(BitReader, Function)
      */
-    protected FilterBitWriter(final BitWriter<U> writer) {
-        super();
-        this.writer = Objects.requireNonNull(writer, "writer is null");
+    public static <T, U> FilterBitWriter<T, U> mapping(final BitWriter<? super U> delegate,
+                                                       final Function<? super T, ? extends U> mapper) {
+        Objects.requireNonNull(mapper, "mapper is null");
+        return new FilterBitWriter<T, U>(delegate) {
+            @Override
+            protected U map(T value) {
+                return mapper.apply(value);
+            }
+        };
+    }
+
+    static final class Nullable<T>
+            extends FilterBitWriter<T, T> {
+
+        Nullable(BitWriter<? super T> delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public void write(final BitOutput output, final T value) throws IOException {
+            final boolean nonnull = value != null;
+            output.writeBoolean(nonnull);
+            if (nonnull) {
+                super.write(output, value);
+            }
+        }
+
+        @Override
+        protected T map(final T value) {
+            return value;
+        }
     }
 
     /**
-     * The writer wrapped within this writer.
+     * Creates a new instance which wraps specified delegate.
+     *
+     * @param delegate the delegate to wrap.
      */
-    protected final BitWriter<U> writer;
+    protected FilterBitWriter(final BitWriter<? super U> delegate) {
+        super();
+        this.delegate = Objects.requireNonNull(delegate, "delegate is null");
+    }
+
+    @Override
+    public void write(final BitOutput output, final T value) throws IOException {
+        delegate.write(output, map(value));
+    }
+
+    protected abstract U map(final T value);
+
+    protected final BitWriter<? super U> delegate;
 }

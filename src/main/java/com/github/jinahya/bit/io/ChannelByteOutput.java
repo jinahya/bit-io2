@@ -31,7 +31,7 @@ import java.nio.channels.WritableByteChannel;
  * @see ChannelByteInput
  */
 public class ChannelByteOutput
-        extends ByteOutputAdapter<WritableByteChannel> {
+        extends AbstractByteOutput<WritableByteChannel> {
 
     /**
      * Creates a new instance on top of specified channel.
@@ -40,14 +40,31 @@ public class ChannelByteOutput
      */
     public ChannelByteOutput(final WritableByteChannel channel) {
         super(channel);
-        this.delegate = new BufferByteOutput(ByteBuffer.allocate(1)) {
+        delegate = new BufferByteOutput(ByteBuffer.allocate(1)) {
             @Override
             public void write(final int value) throws IOException {
-                super.write(value);
-                for (target.flip(); target.hasRemaining(); ) {
-                    channel.write(target);
+                {
+                    assert target.capacity() == 1;
+                    assert target.limit() == 1;
+                    assert target.position() == 0;
+                    assert target.remaining() == 1;
                 }
-                target.clear();
+                super.write(value);
+                {
+                    assert target.capacity() == 1;
+                    assert target.limit() == 1;
+                    assert target.position() == 1;
+                    assert target.remaining() == 0;
+                }
+                for (target.flip(); target.hasRemaining(); ) {
+                    ChannelByteOutput.this.target.write(target);
+                }
+                {
+                    assert target.capacity() == 1;
+                    assert target.limit() == 1;
+                    assert target.position() == 1;
+                    assert target.remaining() == 0;
+                }
             }
         };
     }

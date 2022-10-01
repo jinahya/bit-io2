@@ -52,6 +52,9 @@ abstract class PrimitiveArrayWriter<T>
      */
     void writeLength(final BitOutput output, final int length) throws IOException {
         Objects.requireNonNull(output, "output is null");
+        if (length < 0) {
+            throw new IllegalArgumentException("negative length: " + length);
+        }
         BitIoUtils.writeCount(output, lengthSize, length);
     }
 

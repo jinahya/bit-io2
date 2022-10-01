@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
  * @see BufferByteOutput
  */
 public class BufferByteInput
-        extends ByteInputAdapter<ByteBuffer> {
+        extends AbstractByteInput<ByteBuffer> {
 
     /**
      * Creates a new instance with specified byte buffer.
@@ -46,9 +46,12 @@ public class BufferByteInput
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code read(ByteBuffer)} method of {@code BufferByteInput} class invokes
-     * {@link ByteBuffer#get() get()} method on the {@link #source} and returns the result as an unsigned
-     * {@value java.lang.Byte#SIZE}-bit {@code int} value.
+     * @apiNote This method may throw an {@link java.nio.BufferUnderflowException} when the
+     * {@link #source source buffer}'s current position is not smaller than its limit.
+     * @implSpec The {@code read()} method of {@code BufferByteInput} class invokes {@link ByteBuffer#get() get()}
+     * method on the {@link #source}, and returns the result as an unsigned {@value java.lang.Byte#SIZE}-bit {@code int}
+     * value.
+     * @see ByteBuffer#get()
      */
     @Override
     public int read() throws IOException {

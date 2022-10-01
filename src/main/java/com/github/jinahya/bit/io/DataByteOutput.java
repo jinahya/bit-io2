@@ -30,7 +30,7 @@ import java.io.IOException;
  * @see DataByteInput
  */
 public class DataByteOutput
-        extends ByteOutputAdapter<DataOutput> {
+        extends AbstractByteOutput<DataOutput> {
 
     /**
      * Creates a new instance with specified target supplier.
@@ -46,8 +46,9 @@ public class DataByteOutput
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code write(DataOutput, int)} method of {@code DataByteOutput} class invokes
-     * {@link DataOutput#writeByte(int)} method on data output with specified value.
+     * @implSpec The {@code write( int)} method of {@code DataByteOutput} class invokes
+     * {@link DataOutput#writeByte(int)} method on the {@link #target} with specified value.
+     * @see DataOutput#writeByte(int)
      */
     @Override
     public void write(final int value) throws IOException {

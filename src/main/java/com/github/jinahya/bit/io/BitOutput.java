@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
@@ -41,11 +40,9 @@ public interface BitOutput {
      *
      * @param stream the stream to which bytes are written.
      * @return a new instance.
-     * @see BitInput#from(InputStream)
      */
     static BitOutput from(final OutputStream stream) {
-        Objects.requireNonNull(stream, "stream is null");
-        return new BitOutputAdapter(new StreamByteOutput(stream));
+        return new BitOutputAdapter(ByteOutput.of(stream));
     }
 
     /**
@@ -53,11 +50,9 @@ public interface BitOutput {
      *
      * @param output the output to which bytes are written.
      * @return a new instance.
-     * @see BitInput#from(java.io.DataInput)
      */
     static BitOutput from(final DataOutput output) {
-        Objects.requireNonNull(output, "output is null");
-        return new BitOutputAdapter(new DataByteOutput(output));
+        return new BitOutputAdapter(ByteOutput.of(output));
     }
 
     /**
@@ -65,11 +60,9 @@ public interface BitOutput {
      *
      * @param buffer the buffer to which bytes are written.
      * @return a new instance.
-     * @see BitInput#from(java.io.DataInput)
      */
     static BitOutput from(final ByteBuffer buffer) {
-        Objects.requireNonNull(buffer, "buffer is null");
-        return new BitOutputAdapter(new BufferByteOutput(buffer));
+        return new BitOutputAdapter(ByteOutput.of(buffer));
     }
 
     /**
@@ -77,11 +70,9 @@ public interface BitOutput {
      *
      * @param channel the channel to which bytes are written.
      * @return a new instance.
-     * @see BitInput#from(java.nio.channels.ReadableByteChannel)
      */
     static BitOutput from(final WritableByteChannel channel) {
-        Objects.requireNonNull(channel, "channel is null");
-        return new BitOutputAdapter(new ChannelByteOutput(channel));
+        return new BitOutputAdapter(ByteOutput.of(channel));
     }
 
     /**
@@ -89,7 +80,7 @@ public interface BitOutput {
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation writes a {@code 1}-bit <em>unsigned</em> {@code int} value({@code 0b1} for
+     * @implSpec The default implementation writes a {@code 1}-bit unsigned {@code int} value({@code 0b1} for
      * {@code true}, {@code 0b0} for {@code false}) for the {@code value}.
      */
     default void writeBoolean(final boolean value) throws IOException {
@@ -111,13 +102,13 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified <em>signed</em> {@code byte} value of specified number of bits.
+     * Writes specified signed {@code byte} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
      * @implSpec The default implementation invoke {@link #writeByte(boolean, int, byte)} method with {@code false},
-     * {@code size}, and {@value}.
+     * {@code size}, and {@code value}.
      */
     default void writeByte(final int size, final byte value) throws IOException {
         writeByte(false, size, value);
@@ -190,7 +181,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@code short} value, of specified number of bits, as an <em>unsigned</em> value.
+     * Writes specified {@code short} value, of specified number of bits, as an unsigned value.
      *
      * @param size  the number of lower bits to write; between {@code 1} (inclusive) and {@value java.lang.Short#SIZE}
      *              (exclusive).
@@ -215,7 +206,7 @@ public interface BitOutput {
     void writeInt(boolean unsigned, int size, int value) throws IOException;
 
     /**
-     * Writes specified {@code int} value, of specified number of bits, as a <em>signed</em> value.
+     * Writes specified {@code int} value, of specified number of bits, as a signed value.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
      * @param value the value to write.
@@ -228,7 +219,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@value java.lang.Integer#SIZE}-bit <em>signed</em> {@code int} value.
+     * Writes specified {@value java.lang.Integer#SIZE}-bit signed {@code int} value.
      *
      * @param value the value to write.
      * @throws IOException if an I/O error occurs.
@@ -240,7 +231,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@code int} value, of specified number of bits, as an <em>unsigned</em> value.
+     * Writes specified {@code int} value, of specified number of bits, as an unsigned value.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
      *              (exclusive).
@@ -282,7 +273,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified <em>signed</em> {@code long} value of specified number of bits.
+     * Writes specified signed {@code long} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
      * @param value the value to write.
@@ -308,7 +299,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified <em>unsigned</em> {@code long} value of specified number of bits.
+     * Writes specified unsigned {@code long} value of specified number of bits.
      *
      * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
      *              (exclusive).
@@ -405,7 +396,7 @@ public interface BitOutput {
     }
 
     /**
-     * Aligns to specified number of <em>bytes</em> by padding required number of zero-bits.
+     * Aligns to specified number of bytes by padding required number of zero-bits.
      *
      * @param bytes the number of bytes to align; must be positive.
      * @return the number of zero-bits padded while aligning; non-negative, always.
@@ -415,7 +406,7 @@ public interface BitOutput {
     long align(int bytes) throws IOException;
 
     /**
-     * Aligns to a single <em>byte</em> by padding required number of zero-bits.
+     * Aligns to a single byte by padding required number of zero-bits.
      *
      * @return the number of zero-bits padded while aligning; between {@code 0} (inclusive) and
      * {@value java.lang.Byte#SIZE} (exclusive).

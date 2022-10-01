@@ -30,7 +30,7 @@ import java.io.IOException;
  * @see DataByteOutput
  */
 public class DataByteInput
-        extends ByteInputAdapter<DataInput> {
+        extends AbstractByteInput<DataInput> {
 
     /**
      * Creates a new instance on top of specified data input.
@@ -46,8 +46,9 @@ public class DataByteInput
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code read(DataInput)} method of {@link DataByteInput} class invokes
-     * {@link DataInput#readUnsignedByte()} method on {@link #source} and returns the result.
+     * @implSpec The {@code read()} method of {@code DataByteInput} class invokes {@link DataInput#readUnsignedByte()}
+     * method on {@link #source}, and returns the result.
+     * @see DataInput#readUnsignedByte()
      */
     @Override
     public int read() throws IOException {
