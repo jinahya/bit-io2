@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.aggregator.DefaultArgumentsAccessor;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
@@ -36,8 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class String_Ascii_Test {
 
     static Stream<String> randomValueStream() {
-        return ByteArray_Ascii_Test.randomBytesAndLengthSizeStream()
-                .map(a -> new DefaultArgumentsAccessor(a.get()).get(0, byte[].class))
+        return ByteArray_Ascii_Test.randomBytesStream()
                 .map(b -> new String(b, StandardCharsets.US_ASCII))
                 ;
     }

@@ -22,8 +22,6 @@ package com.github.jinahya.bit.io;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.aggregator.DefaultArgumentsAccessor;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
@@ -36,20 +34,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class String_Ascii_Printable_Test {
 
-    static Stream<Arguments> randomBytesAndMaximumCharactersStream() {
-        return ByteArray_Ascii_Printable_Test.randomBytesAndLengthSizeStream()
-                .map(a -> {
-                    final DefaultArgumentsAccessor accessor = new DefaultArgumentsAccessor(a.get());
-                    final byte[] randomBytes = accessor.get(0, byte[].class);
-                    final Integer lengthSize = accessor.getInteger(1);
-                    final int maximumCharacters = (int) Math.pow(2, lengthSize);
-                    return Arguments.of(new String(randomBytes, StandardCharsets.US_ASCII), maximumCharacters);
-                });
+    private static Stream<String> randomValueStream() {
+        return ByteArray_Ascii_Printable_Test.randomBytesStream()
+                .map(b -> new String(b, StandardCharsets.US_ASCII))
+                ;
     }
 
-    @MethodSource({"randomBytesAndMaximumCharactersStream"})
+    @MethodSource({"randomValueStream"})
     @ParameterizedTest
-    void test(final String expected, final int maximumCharacters) throws IOException {
+    void test(final String expected) throws IOException {
         wr1u(o -> {
             final var writer = StringWriter.ascii(true);
             o.writeObject(writer, expected);

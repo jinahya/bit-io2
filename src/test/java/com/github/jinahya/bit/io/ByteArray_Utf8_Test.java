@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ByteArray_Utf8_Test {
 
     static byte[] randomBytes() {
-        final int length = ThreadLocalRandom.current().nextInt(128);
+        final int length = ThreadLocalRandom.current().nextInt(1024);
         return new RandomStringGenerator.Builder().build().generate(length).getBytes(StandardCharsets.UTF_8);
     }
 
@@ -62,8 +62,10 @@ class ByteArray_Utf8_Test {
         final var writer = ByteArrayWriter.utf8(lengthSize);
         writer.write(output, expected);
         final var padded = output.align(1);
-        log.debug("given: {}, written: {}, rate: {}", expected.length, baos.size(),
-                  (baos.size() / (double) expected.length) * 100.0d);
+        {
+            final var given = expected.length + Integer.BYTES;
+            log.debug("given: {}, written: {}, rate: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
+        }
         final var bais = new ByteArrayInputStream(baos.toByteArray());
         final var input = ByteInputAdapter.from(bais);
         final var reader = ByteArrayReader.utf8(lengthSize);

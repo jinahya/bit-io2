@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class ByteArray_Ascii_Test {
 
-    static byte[] randomize(final byte[] bytes) {
+    private static byte[] randomize(final byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) ThreadLocalRandom.current().nextInt(0x00, 0x80);
         }
@@ -46,7 +46,7 @@ class ByteArray_Ascii_Test {
     }
 
     static byte[] randomBytes() {
-        final int length = ThreadLocalRandom.current().nextInt(128);
+        final int length = ThreadLocalRandom.current().nextInt(1024);
         return randomize(new byte[length]);
     }
 
@@ -61,20 +61,20 @@ class ByteArray_Ascii_Test {
     }
 
     private void run(final byte[] expected, final int lengthSize) throws IOException {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput output = new ByteOutputAdapter(new StreamByteOutput(baos));
-        final BitWriter<byte[]> writer = ByteArrayWriter.ascii(lengthSize, false);
+        final var baos = new ByteArrayOutputStream();
+        final var output = new ByteOutputAdapter(new StreamByteOutput(baos));
+        final var writer = ByteArrayWriter.ascii(lengthSize, false);
         writer.write(output, expected);
-        final long padded = output.align(1);
-        if (expected.length > 0) {
-            log.debug("given: {}, written: {}, ratio: {}", expected.length, baos.size(),
-                      (baos.size() / (double) expected.length) * 100.0d);
+        final var padded = output.align(1);
+        {
+            final var given = expected.length + Integer.BYTES;
+            log.debug("given: {}, written: {}, ratio: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
         }
-        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final BitInput input = new ByteInputAdapter(new StreamByteInput(bais));
-        final BitReader<byte[]> reader = ByteArrayReader.ascii(lengthSize, false);
-        final byte[] actual = reader.read(input);
-        final long discarded = input.align(1);
+        final var bais = new ByteArrayInputStream(baos.toByteArray());
+        final var input = new ByteInputAdapter(new StreamByteInput(bais));
+        final var reader = ByteArrayReader.ascii(lengthSize, false);
+        final var actual = reader.read(input);
+        final var discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
         assertThat(discarded).isEqualTo(padded);
     }
