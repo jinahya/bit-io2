@@ -30,13 +30,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class StringAsciiPrintableTest {
+class String_Ascii_Printable_Test {
 
     static Stream<Arguments> randomBytesAndMaximumCharactersStream() {
-        return ByteArrayAsciiPrintableTest.randomBytesAndLengthSizeStream()
+        return ByteArray_Ascii_Printable_Test.randomBytesAndLengthSizeStream()
                 .map(a -> {
                     final DefaultArgumentsAccessor accessor = new DefaultArgumentsAccessor(a.get());
                     final byte[] randomBytes = accessor.get(0, byte[].class);
@@ -49,13 +50,14 @@ class StringAsciiPrintableTest {
     @MethodSource({"randomBytesAndMaximumCharactersStream"})
     @ParameterizedTest
     void test(final String expected, final int maximumCharacters) throws IOException {
-        BitIoTestUtils.wr2v(o -> {
-            final StringWriter writer = StringWriter.ascii(true);
+        wr1u(o -> {
+            final var writer = StringWriter.ascii(true);
             o.writeObject(writer, expected);
             return i -> {
-                final StringReader reader = StringReader.ascii(true);
-                final String actual = i.readObject(reader);
+                final var reader = StringReader.ascii(true);
+                final var actual = i.readObject(reader);
                 assertThat(actual).isEqualTo(expected);
+                return null;
             };
         });
     }

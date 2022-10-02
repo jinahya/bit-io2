@@ -4,7 +4,7 @@ package com.github.jinahya.bit.io;
  * #%L
  * bit-io2
  * %%
- * Copyright (C) 2020 Jinahya, Inc.
+ * Copyright (C) 2020 - 2022 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,23 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-@Slf4j
-class BitIOIntArrayTest {
+import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
+import static org.assertj.core.api.Assertions.assertThat;
+
+class BitIo_Boolean_Test {
+
+    @ValueSource(booleans = {true, false})
+    @ParameterizedTest
+    void test__(final boolean expected) throws IOException {
+        final var actual = wr1u(o -> {
+            o.writeBoolean(expected);
+            return BitInput::readBoolean;
+        });
+        assertThat(actual).isEqualTo(expected);
+    }
 }

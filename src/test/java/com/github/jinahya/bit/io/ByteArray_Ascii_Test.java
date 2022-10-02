@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArrayAsciiTest {
+class ByteArray_Ascii_Test {
 
     static byte[] randomize(final byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {
@@ -50,13 +50,14 @@ class ByteArrayAsciiTest {
         return randomize(new byte[length]);
     }
 
-    static Stream<Arguments> randomBytesAndLengthSizeStream() {
+    static Stream<byte[]> randomBytesStream() {
         return IntStream.range(0, 16)
-                .mapToObj(i -> {
-                    final byte[] randomBytes = randomBytes();
-                    final int lengthSize = BitIoUtils.size(randomBytes.length);
-                    return Arguments.of(randomBytes, lengthSize);
-                });
+                .mapToObj(i -> randomBytes());
+    }
+
+    static Stream<Arguments> randomBytesAndLengthSizeStream() {
+        return randomBytesStream()
+                .map(b -> Arguments.of(b, BitIoUtils.size(b.length)));
     }
 
     private void run(final byte[] expected, final int lengthSize) throws IOException {
@@ -64,7 +65,7 @@ class ByteArrayAsciiTest {
         final BitOutput output = new ByteOutputAdapter(new StreamByteOutput(baos));
         final BitWriter<byte[]> writer = ByteArrayWriter.ascii(lengthSize, false);
         writer.write(output, expected);
-        final long padded = output.align();
+        final long padded = output.align(1);
         if (expected.length > 0) {
             log.debug("given: {}, written: {}, ratio: {}", expected.length, baos.size(),
                       (baos.size() / (double) expected.length) * 100.0d);

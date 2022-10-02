@@ -20,22 +20,21 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
 import static java.util.concurrent.ThreadLocalRandom.current;
-import static org.assertj.core.api.Assertions.assertThat;
 
-class BitIoBooleanTest {
+class BitIo_Skip_Test {
 
-    @RepeatedTest(16)
-    void wr_random() throws IOException {
-        final boolean expected = current().nextBoolean();
-        final boolean actual = BitIoTestUtils.wr1v(o -> {
-            o.writeBoolean(expected);
-            return BitInput::readBoolean;
+    @Test
+    void skip__() throws IOException {
+        wr2u(o -> {
+            final var bits = current().nextInt(1, 128);
+            o.skip(bits);
+            return i -> i.skip(bits);
         });
-        assertThat(actual).isEqualTo(expected);
     }
 }

@@ -23,36 +23,34 @@ package com.github.jinahya.bit.io;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.DefaultArgumentsAccessor;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class StringAsciiTest {
+class String_Utf8_Test {
 
-    static Stream<Arguments> randomBytesStream() {
-        return ByteArrayAsciiTest.randomBytesAndLengthSizeStream()
-                .map(a -> {
-                    final DefaultArgumentsAccessor accessor = new DefaultArgumentsAccessor(a.get());
-                    final byte[] randomBytes = accessor.get(0, byte[].class);
-                    return Arguments.of(new String(randomBytes, StandardCharsets.US_ASCII));
-                });
+    static Stream<String> randomValueStream() {
+        return ByteArray_Utf8_Test.randomBytesAndLengthSizeStream()
+                .map(a -> new DefaultArgumentsAccessor(a.get()).get(0, byte[].class))
+                .map(v -> new String(v, StandardCharsets.UTF_8))
+                ;
     }
 
-    @MethodSource({"randomBytesStream"})
+    @MethodSource({"randomValueStream"})
     @ParameterizedTest
     void test(final String expected) throws IOException {
-        BitIoTestUtils.wr2v(o -> {
-            final StringWriter writer = StringWriter.ascii(false);
+        wr2u(o -> {
+            final var writer = StringWriter.utf8();
             o.writeObject(writer, expected);
             return i -> {
-                final StringReader reader = StringReader.ascii(false);
-                final String actual = i.readObject(reader);
+                final var reader = StringReader.utf8();
+                final var actual = i.readObject(reader);
                 assertThat(actual).isEqualTo(expected);
             };
         });

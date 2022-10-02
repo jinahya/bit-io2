@@ -363,19 +363,19 @@ public interface BitOutput {
      */
     long align(int bytes) throws IOException;
 
-    /**
-     * Aligns to a single byte by padding required number of zero-bits.
-     *
-     * @return the number of zero-bits padded while aligning; between {@code 0} (inclusive) and
-     * {@value java.lang.Byte#SIZE} (exclusive).
-     * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation invokes {@link #align(int)} method with {@value java.lang.Byte#BYTES}.
-     * @see #align(int)
-     */
-    default long align() throws IOException {
-        final long padded = align(Byte.BYTES);
-        assert padded >= 0L;
-        assert padded < Byte.SIZE;
-        return padded;
-    }
+//    /**
+//     * Aligns to a single byte by padding required number of zero-bits.
+//     *
+//     * @return the number of zero-bits padded while aligning; between {@code 0} (inclusive) and
+//     * {@value java.lang.Byte#SIZE} (exclusive).
+//     * @throws IOException if an I/O error occurs.
+//     * @implSpec The default implementation invokes {@link #align(int)} method with {@value java.lang.Byte#BYTES}.
+//     * @see #align(int)
+//     */
+//    default long align() throws IOException {
+//        final long padded = align(Byte.BYTES);
+//        assert padded >= 0L;
+//        assert padded < Byte.SIZE;
+//        return padded;
+//    }
 }

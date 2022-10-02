@@ -314,21 +314,20 @@ final class BitIoTestUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    static <R> R w1(
-            final Function<? super BitOutput, Function<? super byte[], ? extends R>> f1) throws IOException {
+    static <R> R w1(final Function<? super BitOutput, Function<? super byte[], ? extends R>> f1)
+            throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput o = new ByteOutputAdapter(new StreamByteOutput(baos));
-        final Function<? super byte[], ? extends R> f2 = f1.apply(o);
-        final long padded = o.align();
+        final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        final BitOutput output = ByteOutputAdapter.from(stream);
+        final Function<? super byte[], ? extends R> f2 = f1.apply(output);
+        final long padded = output.align(1);
         assert padded >= 0L;
-        final byte[] bytes = baos.toByteArray();
+        final byte[] bytes = stream.toByteArray();
         assert f2 != null : "f2 is null";
         return f2.apply(bytes);
     }
 
-    static <R> R w1v(
-            final CheckedFunction1<? super BitOutput, CheckedFunction1<? super byte[], ? extends R>> f1)
+    static <R> R w1u(final CheckedFunction1<? super BitOutput, CheckedFunction1<? super byte[], ? extends R>> f1)
             throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
         return w1(o -> {
@@ -341,67 +340,60 @@ final class BitIoTestUtils {
     static <R> R wr1(final Function<? super BitOutput, ? extends Function<? super BitInput, ? extends R>> f1)
             throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
-        if (current().nextBoolean()) {
-            return w1(o -> {
-                final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
-                assert f2 != null : "f2 is null";
-                return b -> {
-                    final ByteArrayInputStream bais = new ByteArrayInputStream(b);
-                    final BitInput input = new ByteInputAdapter(new StreamByteInput(bais));
-                    final R result = f2.apply(input);
-                    try {
-                        final long discarded = input.align(1);
-                        assert discarded >= 0L;
-                        return result;
-                    } catch (final IOException ioe) {
-                        throw new RuntimeException(ioe);
-                    }
-                };
-            });
-        }
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput o = new ByteOutputAdapter(new StreamByteOutput(baos));
-        final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
-        final long padded = o.align();
-        final byte[] bytes = baos.toByteArray();
-        final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        final BitInput i = new ByteInputAdapter(new StreamByteInput(bais));
-        try {
-            return f2.apply(i);
-        } finally {
-            final long discarded = i.align(1);
-            assert discarded == padded;
-        }
+        return w1(o -> {
+            final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
+            assert f2 != null : "f2 is null";
+            return a -> {
+                final BitInput input = ByteInputAdapter.from(new ByteArrayInputStream(a));
+                final R result = f2.apply(input);
+                try {
+                    final long discarded = input.align(1);
+                    assert discarded >= 0L;
+                    return result;
+                } catch (final IOException ioe) {
+                    throw new RuntimeException(ioe);
+                }
+            };
+        });
     }
 
-    static <R> R wr2(final Function<? super BitOutput, ? extends Consumer<? super BitInput>> f1) throws IOException {
+    static <R> R wr1u(
+            final CheckedFunction1<? super BitOutput, ? extends CheckedFunction1<? super BitInput, ? extends R>> f1)
+            throws IOException {
+        return wr1(o -> f1.unchecked().apply(o).unchecked());
+    }
+
+    static void w2(final Function<? super BitOutput, Consumer<? super byte[]>> f1) throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
-        return wr1(o -> {
-            final Consumer<? super BitInput> c1 = f1.apply(o);
+        w1(o -> {
+            final var consumer = f1.apply(o);
             return i -> {
-                c1.accept(i);
+                consumer.accept(i);
                 return null;
             };
         });
     }
 
-    static <R> R wr1v(
-            final CheckedFunction1<? super BitOutput, ? extends CheckedFunction1<? super BitInput, ? extends R>> f1)
+    static void wr2(final Function<? super BitOutput, ? extends Consumer<? super BitInput>> f1)
             throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
-        return wr1(o -> {
-            final CheckedFunction1<? super BitInput, ? extends R> f2 = f1.unchecked().apply(o);
-            return i -> f2.unchecked().apply(i);
+        wr1(o -> {
+            final var consumer = f1.apply(o);
+            return i -> {
+                consumer.accept(i);
+                return null;
+            };
         });
     }
 
-    static <R> R wr2v(final CheckedFunction1<? super BitOutput, ? extends CheckedConsumer<? super BitInput>> f1)
+    static void wr2u(
+            final CheckedFunction1<? super BitOutput, ? extends CheckedConsumer<? super BitInput>> function)
             throws IOException {
-        Objects.requireNonNull(f1, "f1 is null");
-        return wr1v(o -> {
-            final CheckedConsumer<? super BitInput> c1 = f1.unchecked().apply(o);
+        Objects.requireNonNull(function, "function is null");
+        wr1u(o -> {
+            final var consumer = function.apply(o);
             return i -> {
-                c1.unchecked().accept(i);
+                consumer.accept(i);
                 return null;
             };
         });

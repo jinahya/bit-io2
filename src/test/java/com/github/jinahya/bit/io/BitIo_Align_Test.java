@@ -20,31 +20,32 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BitIoLong64Test {
+class BitIo_Align_Test {
 
-    static LongStream values() {
-        return IntStream.range(0, 16)
-                .mapToLong(i -> ThreadLocalRandom.current().nextLong());
-    }
-
-    @MethodSource({"values"})
-    @ParameterizedTest
-    void wr(final long expected) throws IOException {
-        BitIoTestUtils.wr2v(o -> {
-            o.writeLong(false, Long.SIZE, expected);
+    @RepeatedTest(16)
+    void align__() throws IOException {
+        wr2u(o -> {
+            final var bits = current().nextInt(1, 128);
+            final var skip = current().nextBoolean();
+            if (skip) {
+                o.skip(bits);
+            }
+            final var bytes = current().nextInt(1, 128);
+            final var padded = o.align(bytes);
             return i -> {
-                final long actual = i.readLong(false, Long.SIZE);
-                assertThat(actual).isEqualTo(expected);
+                if (skip) {
+                    i.skip(bits);
+                }
+                final var discarded = i.align(bytes);
+                assertThat(discarded).isEqualTo(padded);
             };
         });
     }

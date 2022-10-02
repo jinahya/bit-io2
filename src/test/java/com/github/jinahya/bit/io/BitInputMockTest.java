@@ -59,8 +59,7 @@ class BitInputMockTest {
         @ParameterizedTest(name = "[{index}] readByte(unsigned: {0})")
         void readByte__(final boolean unsigned) throws IOException {
             final var size = getRandomSizeForByte(unsigned);
-            assertThatCode(() -> input.readByte(unsigned, size))
-                    .doesNotThrowAnyException();
+            final var value = input.readByte(unsigned, size);
             verify(input, times(1))
                     .readInt(unsigned, size);
         }

@@ -63,7 +63,7 @@ class ByteArrayTest {
         final BitOutput output = new ByteOutputAdapter(new StreamByteOutput(baos));
         final BitWriter<byte[]> writer = new ByteArrayWriter(7, 8);
         writer.write(output, expected);
-        final long padded = output.align();
+        final long padded = output.align(1);
         if (expected.length > 0) {
             log.debug("given: {}, written: {}, rate: {}", expected.length, baos.size(),
                       (baos.size() / (double) expected.length) * 100.0d);
