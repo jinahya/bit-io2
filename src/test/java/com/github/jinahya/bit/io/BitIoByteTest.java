@@ -23,9 +23,6 @@ package com.github.jinahya.bit.io;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,7 +95,7 @@ class BitIoByteTest {
         @RepeatedTest(16)
         void wr__random() {
             final boolean unsigned = false;
-            BitIoTestUtils.applyNextByte_v(unsigned, s -> e -> {
+            BitIoTestUtils.applyRandomSizeAndValueForByteUnchecked(unsigned, s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeByte(unsigned, s, e.byteValue());
                     return i -> {
@@ -117,7 +114,7 @@ class BitIoByteTest {
         @RepeatedTest(16)
         void wr__random() {
             final boolean unsigned = true;
-            BitIoTestUtils.applyNextByte_v(unsigned, s -> e -> {
+            BitIoTestUtils.applyRandomSizeAndValueForByteUnchecked(unsigned, s -> e -> {
                 return BitIoTestUtils.wr2v(o -> {
                     o.writeByte(unsigned, s, e.byteValue());
                     return i -> {

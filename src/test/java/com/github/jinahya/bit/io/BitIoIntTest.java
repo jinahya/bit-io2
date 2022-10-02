@@ -31,7 +31,7 @@ class BitIoIntTest {
     @RepeatedTest(1)
     void unsigned() {
         final boolean unsigned = true;
-        BitIoTestUtils.applyNextInt_v(unsigned, s -> e -> {
+        BitIoTestUtils.applyRandomSizeAndValueForIntUnchecked(unsigned, s -> e -> {
             return BitIoTestUtils.wr2v(o -> {
                 o.writeInt(unsigned, s, e);
                 return i -> {
@@ -45,7 +45,7 @@ class BitIoIntTest {
     @RepeatedTest(1)
     void signed() {
         final boolean unsigned = false;
-        BitIoTestUtils.applyNextInt_v(unsigned, s -> e -> {
+        BitIoTestUtils.applyRandomSizeAndValueForIntUnchecked(unsigned, s -> e -> {
             return BitIoTestUtils.wr2v(o -> {
                 o.writeInt(unsigned, s, e);
                 return i -> {
