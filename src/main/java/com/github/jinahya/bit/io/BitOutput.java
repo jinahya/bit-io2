@@ -58,45 +58,6 @@ public interface BitOutput {
         writeInt(unsigned, size, value);
     }
 
-//    /**
-//     * Writes specified signed {@code byte} value of specified number of bits.
-//     *
-//     * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Byte#SIZE}, both inclusive.
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invoke {@link #writeByte(boolean, int, byte)} method with {@code false},
-//     * {@code size}, and {@code value}.
-//     */
-//    default void writeByte(final int size, final byte value) throws IOException {
-//        writeByte(false, size, value);
-//    }
-//
-//    /**
-//     * Writes specified {@value java.lang.Byte#SIZE}-bit {@code byte} value.
-//     *
-//     * @param value the {@value java.lang.Byte#SIZE}-bit {@code byte} value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeByte(int, byte)} method with
-//     * {@value java.lang.Byte#SIZE} and {@code value}.
-//     */
-//    default void writeByte(final byte value) throws IOException {
-//        writeByte(Byte.SIZE, value);
-//    }
-//
-//    /**
-//     * Writes specified {@code byte} value of specified number of bits as unsigned.
-//     *
-//     * @param size  the number of lower bits to write; between {@code 1} (inclusive) and {@value java.lang.Byte#SIZE}
-//     *              (exclusive).
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeByte(boolean, int, byte)} method with {@code true},
-//     * {@code size}, and {@code value}.
-//     */
-//    default void writeUnsignedByte(final int size, final byte value) throws IOException {
-//        writeByte(true, size, value);
-//    }
-
     /**
      * Writes specified {@code short} value of specified number of bits.
      *
@@ -112,45 +73,6 @@ public interface BitOutput {
         writeInt(unsigned, size, value);
     }
 
-//    /**
-//     * Writes specified {@code short} value, of specified number of bits, as a signed value.
-//     *
-//     * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Short#SIZE}, both inclusive.
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeShort(boolean, int, short)} method with {@code false},
-//     * {@code size}, and {@code value}.
-//     */
-//    default void writeShort(final int size, final short value) throws IOException {
-//        writeShort(false, size, value);
-//    }
-//
-//    /**
-//     * Writes specified {@value java.lang.Short#SIZE}-bit {@code short} value.
-//     *
-//     * @param value the {@value java.lang.Short#SIZE}-bit {@code short} value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeShort(int, short)} method with
-//     * {@value java.lang.Short#SIZE} and {@code value}.
-//     */
-//    default void writeShort(final short value) throws IOException {
-//        writeShort(Short.SIZE, value);
-//    }
-//
-//    /**
-//     * Writes specified {@code short} value, of specified number of bits, as an unsigned value.
-//     *
-//     * @param size  the number of lower bits to write; between {@code 1} (inclusive) and {@value java.lang.Short#SIZE}
-//     *              (exclusive).
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeShort(boolean, int, short)} with {@code true},
-//     * {@code size}, and {@code value}.
-//     */
-//    default void writeUnsignedShort(final int size, final short value) throws IOException {
-//        writeShort(true, size, value);
-//    }
-
     /**
      * Writes specified {@code int} value of specified number of bits.
      *
@@ -161,45 +83,6 @@ public interface BitOutput {
      * @throws IOException if an I/O error occurs.
      */
     void writeInt(boolean unsigned, int size, int value) throws IOException;
-
-//    /**
-//     * Writes specified {@code int} value, of specified number of bits, as a signed value.
-//     *
-//     * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Integer#SIZE}, both inclusive.
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeInt(boolean, int, int)} method with {@code false},
-//     * {@code size}, and {@code value}.
-//     */
-//    default void writeInt(final int size, final int value) throws IOException {
-//        writeInt(false, size, value);
-//    }
-//
-//    /**
-//     * Writes specified {@value java.lang.Integer#SIZE}-bit signed {@code int} value.
-//     *
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeInt(int, int)} method with
-//     * {@value java.lang.Integer#SIZE} and {@code value}.
-//     */
-//    default void writeInt(final int value) throws IOException {
-//        writeInt(Integer.SIZE, value);
-//    }
-//
-//    /**
-//     * Writes specified {@code int} value, of specified number of bits, as an unsigned value.
-//     *
-//     * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Integer#SIZE}
-//     *              (exclusive).
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeInt(boolean, int, int)} with {@code true},
-//     * {@code size}, and {@code value}.
-//     */
-//    default void writeUnsignedInt(final int size, final int value) throws IOException {
-//        writeInt(true, size, value);
-//    }
 
     /**
      * Writes specified {@code long} value of specified number of bits.
@@ -229,46 +112,6 @@ public interface BitOutput {
         }
     }
 
-//    /**
-//     * Writes specified signed {@code long} value of specified number of bits.
-//     *
-//     * @param size  the number of bits to write; between {@code 1} and {@value java.lang.Long#SIZE}, both inclusive.
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeLong(boolean, int, long)} method with {@code false} and
-//     * given arguments.
-//     */
-//    default void writeLong(final int size, final long value) throws IOException {
-//        writeLong(false, size, value);
-//    }
-//
-//    /**
-//     * Writes specified {@value java.lang.Long#SIZE}-bit {@code long} value.
-//     *
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeLong(int, long)} method with
-//     * {@value java.lang.Long#SIZE} and {@code value}.
-//     * @see #writeLong(int, long)
-//     */
-//    default void writeLong(final long value) throws IOException {
-//        writeLong(Long.SIZE, value);
-//    }
-//
-//    /**
-//     * Writes specified unsigned {@code long} value of specified number of bits.
-//     *
-//     * @param size  the number of bits to write; between {@code 1} (inclusive) and {@value java.lang.Long#SIZE}
-//     *              (exclusive).
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeLong(boolean, int, long)} method with {@code true} and
-//     * given arguments.
-//     */
-//    default void writeUnsignedLong(final int size, final long value) throws IOException {
-//        writeLong(true, size, value);
-//    }
-
     /**
      * Writes specified {@code char} value of specified number of bits.
      *
@@ -282,18 +125,6 @@ public interface BitOutput {
         BitIoConstraints.requireValidSizeForChar(size);
         writeInt(true, size, value);
     }
-
-//    /**
-//     * Writes specified {@value java.lang.Character#SIZE}-bit {@code char} value.
-//     *
-//     * @param value the value to write.
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #writeChar(int, char)} method with
-//     * {@value java.lang.Character#SIZE} and {@code value}.
-//     */
-//    default void writeChar(final char value) throws IOException {
-//        writeChar(Character.SIZE, value);
-//    }
 
     /**
      * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value.
@@ -362,20 +193,4 @@ public interface BitOutput {
      * @throws IOException              if an I/O error occurs.
      */
     long align(int bytes) throws IOException;
-
-//    /**
-//     * Aligns to a single byte by padding required number of zero-bits.
-//     *
-//     * @return the number of zero-bits padded while aligning; between {@code 0} (inclusive) and
-//     * {@value java.lang.Byte#SIZE} (exclusive).
-//     * @throws IOException if an I/O error occurs.
-//     * @implSpec The default implementation invokes {@link #align(int)} method with {@value java.lang.Byte#BYTES}.
-//     * @see #align(int)
-//     */
-//    default long align() throws IOException {
-//        final long padded = align(Byte.BYTES);
-//        assert padded >= 0L;
-//        assert padded < Byte.SIZE;
-//        return padded;
-//    }
 }
