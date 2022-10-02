@@ -20,24 +20,23 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.InputStream;
+import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * A class for testing factory method defined in {@link BitInput} interface.
- *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitOutput_FromOutputStream_Test
- */
-class BitInput_FromInputStream_Test {
+class BitIo_Boolean_Test {
 
-    @Test
-    void __NullInputStream() {
-        final var bitInput = BitInput.from(InputStream.nullInputStream());
-        assertThat(bitInput)
-                .isNotNull();
+    @ValueSource(booleans = {true, false})
+    @ParameterizedTest
+    void test__(final boolean expected) throws IOException {
+        final var actual = wr1u(o -> {
+            o.writeBoolean(expected);
+            return BitInput::readBoolean;
+        });
+        assertThat(actual).isEqualTo(expected);
     }
 }

@@ -20,24 +20,68 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.DataOutput;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.util.Objects;
 
 /**
  * An implementation of {@link BitOutput} adapts an instance of {@link ByteOutput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitInputAdapter
+ * @see ByteInputAdapter
  */
-public class BitOutputAdapter
+public class ByteOutputAdapter
         implements BitOutput {
+
+    /**
+     * Creates a new instance on top of specified stream.
+     *
+     * @param stream the stream to which bytes are written.
+     * @return a new instance.
+     */
+    static BitOutput from(final OutputStream stream) {
+        return new ByteOutputAdapter(ByteOutput.of(stream));
+    }
+
+    /**
+     * Creates a new instance on top of specified output.
+     *
+     * @param output the output to which bytes are written.
+     * @return a new instance.
+     */
+    static BitOutput from(final DataOutput output) {
+        return new ByteOutputAdapter(ByteOutput.of(output));
+    }
+
+    /**
+     * Creates a new instance on top of specified buffer.
+     *
+     * @param buffer the buffer to which bytes are written.
+     * @return a new instance.
+     */
+    static BitOutput from(final ByteBuffer buffer) {
+        return new ByteOutputAdapter(ByteOutput.of(buffer));
+    }
+
+    /**
+     * Creates a new instance on top of specified channel.
+     *
+     * @param channel the channel to which bytes are written.
+     * @return a new instance.
+     */
+    static BitOutput from(final WritableByteChannel channel) {
+        return new ByteOutputAdapter(ByteOutput.of(channel));
+    }
 
     /**
      * Creates a new instance on top of specified byte output.
      *
      * @param output the byte output.
      */
-    public BitOutputAdapter(final ByteOutput output) {
+    public ByteOutputAdapter(final ByteOutput output) {
         super();
         this.output = Objects.requireNonNull(output, "output is null");
     }
@@ -46,9 +90,9 @@ public class BitOutputAdapter
     public void writeInt(final boolean unsigned, int size, int value) throws IOException {
         BitIoConstraints.requireValidSizeForInt(unsigned, size);
         if (!unsigned) {
-            writeUnsignedInt(1, value < 0 ? 1 : 0);
+            writeInt(true, 1, value < 0 ? 1 : 0);
             if (--size > 0) {
-                writeUnsignedInt(size, value);
+                writeInt(true, size, value);
             }
             return;
         }

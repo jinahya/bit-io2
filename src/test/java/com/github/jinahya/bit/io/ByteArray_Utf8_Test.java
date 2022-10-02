@@ -37,37 +37,40 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArrayUtf8Test {
+class ByteArray_Utf8_Test {
 
     static byte[] randomBytes() {
-        final int length = ThreadLocalRandom.current().nextInt(128);
+        final int length = ThreadLocalRandom.current().nextInt(1024);
         return new RandomStringGenerator.Builder().build().generate(length).getBytes(StandardCharsets.UTF_8);
     }
 
+    static Stream<byte[]> randomBytesStream() {
+        return IntStream.range(0, 16)
+                .mapToObj(i -> randomBytes());
+    }
+
     static Stream<Arguments> randomBytesAndLengthSizeStream() {
-        return IntStream.range(0, 8)
-                .mapToObj(i -> {
-                    final byte[] randomBytes = randomBytes();
-                    final int lengthSize = BitIoUtils.size(randomBytes.length);
-                    return Arguments.of(randomBytes, lengthSize);
-                });
+        return randomBytesStream()
+                .map(b -> Arguments.of(b, BitIoUtils.size(b.length)));
     }
 
     @MethodSource({"randomBytesAndLengthSizeStream"})
     @ParameterizedTest
     void utf8__(final byte[] expected, final int lengthSize) throws IOException {
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput output = new BitOutputAdapter(new StreamByteOutput(baos));
-        final BitWriter<byte[]> writer = ByteArrayWriter.utf8(lengthSize);
+        final var baos = new ByteArrayOutputStream();
+        final var output = ByteOutputAdapter.from(baos);
+        final var writer = ByteArrayWriter.utf8(lengthSize);
         writer.write(output, expected);
-        final long padded = output.align();
-        log.debug("given: {}, written: {}, rate: {}", expected.length, baos.size(),
-                  (baos.size() / (double) expected.length) * 100.0d);
-        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final BitInput input = new BitInputAdapter(new StreamByteInput(bais));
-        final BitReader<byte[]> reader = ByteArrayReader.utf8(lengthSize);
-        final byte[] actual = reader.read(input);
-        final long discarded = input.align();
+        final var padded = output.align(1);
+        {
+            final var given = expected.length + Integer.BYTES;
+            log.debug("given: {}, written: {}, rate: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
+        }
+        final var bais = new ByteArrayInputStream(baos.toByteArray());
+        final var input = ByteInputAdapter.from(bais);
+        final var reader = ByteArrayReader.utf8(lengthSize);
+        final var actual = reader.read(input);
+        final var discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
         assertThat(discarded).isEqualTo(padded);
     }

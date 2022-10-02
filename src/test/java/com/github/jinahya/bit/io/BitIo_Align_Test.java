@@ -24,18 +24,29 @@ import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BitIoBooleanTest {
+class BitIo_Align_Test {
 
     @RepeatedTest(16)
-    void wr_random() throws IOException {
-        final boolean expected = current().nextBoolean();
-        final boolean actual = BitIoTestUtils.wr1v(o -> {
-            o.writeBoolean(expected);
-            return BitInput::readBoolean;
+    void align__() throws IOException {
+        wr2u(o -> {
+            final var bits = current().nextInt(1, 128);
+            final var skip = current().nextBoolean();
+            if (skip) {
+                o.skip(bits);
+            }
+            final var bytes = current().nextInt(1, 128);
+            final var padded = o.align(bytes);
+            return i -> {
+                if (skip) {
+                    i.skip(bits);
+                }
+                final var discarded = i.align(bytes);
+                assertThat(discarded).isEqualTo(padded);
+            };
         });
-        assertThat(actual).isEqualTo(expected);
     }
 }

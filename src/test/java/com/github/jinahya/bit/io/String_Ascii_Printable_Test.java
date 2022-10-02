@@ -20,30 +20,37 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BitIoInt32Test {
+@Slf4j
+class String_Ascii_Printable_Test {
 
-    static IntStream values() {
-        return IntStream.range(0, 16)
-                .map(i -> ThreadLocalRandom.current().nextInt());
+    private static Stream<String> randomValueStream() {
+        return ByteArray_Ascii_Printable_Test.randomBytesStream()
+                .map(b -> new String(b, StandardCharsets.US_ASCII))
+                ;
     }
 
-    @MethodSource({"values"})
+    @MethodSource({"randomValueStream"})
     @ParameterizedTest
-    void wr(final int expected) throws IOException {
-        BitIoTestUtils.wr2v(o -> {
-            o.writeInt(expected);
+    void test(final String expected) throws IOException {
+        wr1u(o -> {
+            final var writer = StringWriter.ascii(true);
+            o.writeObject(writer, expected);
             return i -> {
-                final int actual = i.readInt();
+                final var reader = StringReader.ascii(true);
+                final var actual = i.readObject(reader);
                 assertThat(actual).isEqualTo(expected);
+                return null;
             };
         });
     }

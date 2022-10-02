@@ -27,18 +27,18 @@ import java.nio.ByteBuffer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing factory method defined in {@link BitInput} interface.
+ * A class for testing factory methods defined in {@link BitOutput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitOutput_FromByteBuffer_Test
+ * @see ByteInputAdapter_FromByteBuffer_Test
  */
-class BitInput_FromByteBuffer_Test {
+class ByteOutputAdapter_FromByteBuffer_Test {
 
     @Test
     void __ZeroCapacity() {
         final var byteBuffer = ByteBuffer.allocate(0);
-        final var bitInput = BitInput.from(byteBuffer);
-        assertThat(bitInput)
+        final var bitOutput = ByteOutputAdapter.from(byteBuffer);
+        assertThat(bitOutput)
                 .isNotNull();
     }
 }

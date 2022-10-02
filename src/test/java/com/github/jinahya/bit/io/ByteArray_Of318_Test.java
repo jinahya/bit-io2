@@ -25,16 +25,17 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArray318Test {
+class ByteArray_Of318_Test {
 
     @Test
     void of318__empty() throws IOException {
-        final byte[] expected = new byte[0];
-        final byte[] actual = BitIoTestUtils.wr1v(o -> {
+        final var expected = new byte[0];
+        final var actual = wr1u(o -> {
             ByteArrayWriter.of318().write(o, expected);
             return i -> ByteArrayReader.of318().read(i);
         });
@@ -43,11 +44,11 @@ class ByteArray318Test {
 
     @Test
     void of318__() throws IOException {
-        final byte[] expected = new byte[current().nextInt(16)];
+        final var expected = new byte[current().nextInt(16)];
         for (int i = 0; i < expected.length; i++) {
-            expected[i] = BitIoTestUtils.nextValueForByte(false, Byte.SIZE);
+            expected[i] = BitIoTestUtils.getRandomValueForByte(false, Byte.SIZE);
         }
-        final byte[] actual = BitIoTestUtils.wr1v(o -> {
+        final var actual = wr1u(o -> {
             ByteArrayWriter.of318().write(o, expected);
             return i -> ByteArrayReader.of318().read(i);
         });

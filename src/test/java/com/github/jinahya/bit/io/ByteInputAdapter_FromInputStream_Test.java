@@ -22,23 +22,22 @@ package com.github.jinahya.bit.io;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.OutputStream;
+import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing factory methods defined in {@link BitOutput} interface.
+ * A class for testing factory method defined in {@link BitInput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitInput_FromInputStream_Test
+ * @see ByteOutputAdapter_FromOutputStream_Test
  */
-class BitOutput_FromOutputStream_Test {
+class ByteInputAdapter_FromInputStream_Test {
 
     @Test
-    void __NullOutputStream() {
-        final var outputStream = OutputStream.nullOutputStream();
-        final var bitOutput = BitOutput.from(outputStream);
-        assertThat(bitOutput)
+    void __NullInputStream() {
+        final var bitInput = ByteInputAdapter.from(InputStream.nullInputStream());
+        assertThat(bitInput)
                 .isNotNull();
     }
 }

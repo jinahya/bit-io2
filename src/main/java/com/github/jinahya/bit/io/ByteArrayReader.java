@@ -73,11 +73,11 @@ public class ByteArrayReader
 
             @Override
             byte readElement(final BitInput input) throws IOException {
-                final int e = input.readUnsignedInt(1);
+                final int e = input.readInt(true, 1);
                 if (e == 0b0) {
-                    return (byte) (input.readUnsignedInt(6) + 0x20);
+                    return (byte) (input.readInt(true, 6) + 0x20);
                 }
-                return (byte) (input.readUnsignedInt(5) + 0x60);
+                return (byte) (input.readInt(true, 5) + 0x60);
             }
         }
 
@@ -126,24 +126,24 @@ public class ByteArrayReader
         @Override
         void readElements(final BitInput input, final byte[] value) throws IOException {
             for (int i = 0; i < value.length; i++) {
-                switch (input.readUnsignedInt(2)) {
+                switch (input.readInt(true, 2)) {
                     case 0b00:
-                        value[i] = (byte) input.readUnsignedInt(7);
+                        value[i] = (byte) input.readInt(true, 7);
                         break;
                     case 0b01:
-                        value[i] = (byte) (0b1100_0000 | input.readUnsignedInt(5));
-                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        value[i] = (byte) (0b1100_0000 | input.readInt(true, 5));
+                        value[++i] = (byte) (0b1000_0000 | input.readInt(true, 6));
                         break;
                     case 0b10:
-                        value[i] = (byte) (0b1110_0000 | input.readUnsignedInt(4));
-                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
-                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        value[i] = (byte) (0b1110_0000 | input.readInt(true, 4));
+                        value[++i] = (byte) (0b1000_0000 | input.readInt(true, 6));
+                        value[++i] = (byte) (0b1000_0000 | input.readInt(true, 6));
                         break;
                     default: // 0b11
-                        value[i] = (byte) (0b1111_0000 | input.readUnsignedInt(3));
-                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
-                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
-                        value[++i] = (byte) (0b1000_0000 | input.readUnsignedInt(6));
+                        value[i] = (byte) (0b1111_0000 | input.readInt(true, 3));
+                        value[++i] = (byte) (0b1000_0000 | input.readInt(true, 6));
+                        value[++i] = (byte) (0b1000_0000 | input.readInt(true, 6));
+                        value[++i] = (byte) (0b1000_0000 | input.readInt(true, 6));
                         break;
                 }
             }

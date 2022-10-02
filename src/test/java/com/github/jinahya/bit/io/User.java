@@ -43,7 +43,7 @@ class User {
         @Override
         public User read(final BitInput input) throws IOException {
             final String name = reader.read(input);
-            final int age = input.readUnsignedInt(7);
+            final int age = input.readInt(true, 7);
             return new User(name, age);
         }
 
@@ -56,7 +56,7 @@ class User {
         @Override
         public void write(final BitOutput output, final User value) throws IOException {
             writer.write(output, value.name);
-            output.writeUnsignedInt(7, value.age);
+            output.writeInt(true, 7, value.age);
         }
 
         final BitWriter<String> writer = new StringWriter(ByteArrayWriter.utf8(9), StandardCharsets.UTF_8);

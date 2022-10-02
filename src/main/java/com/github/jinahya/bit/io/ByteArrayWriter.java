@@ -75,12 +75,12 @@ public class ByteArrayWriter
             @Override
             void writeElement(final BitOutput output, final byte value) throws IOException {
                 if (value < 0x60) {
-                    output.writeUnsignedInt(1, 0);
-                    output.writeUnsignedInt(6, value - 0x20);
+                    output.writeInt(true, 1, 0);
+                    output.writeInt(true, 6, value - 0x20);
                     return;
                 }
-                output.writeUnsignedInt(1, 1);
-                output.writeUnsignedInt(5, value - 0x60);
+                output.writeInt(true, 1, 1);
+                output.writeInt(true, 5, value - 0x60);
             }
         }
 
@@ -131,29 +131,29 @@ public class ByteArrayWriter
             for (int i = 0; i < value.length; i++) {
                 final int b = value[i] & 0xFF;
                 if ((b & 0b0111_1111) == b) { // 0xxx_xxxx
-                    output.writeUnsignedInt(2, 0b00);
-                    output.writeUnsignedInt(7, b & 0xFF);
+                    output.writeInt(true, 2, 0b00);
+                    output.writeInt(true, 7, b & 0xFF);
                     continue;
                 }
                 if ((b & 0b1101_1111) == b) { // 110x_xxxx
-                    output.writeUnsignedInt(2, 0b01);
-                    output.writeUnsignedInt(5, b);
-                    output.writeUnsignedInt(6, value[++i] & 0xFF);
+                    output.writeInt(true, 2, 0b01);
+                    output.writeInt(true, 5, b);
+                    output.writeInt(true, 6, value[++i] & 0xFF);
                     continue;
                 }
                 if ((b & 0b1110_1111) == b) { // 1110_xxxx
-                    output.writeUnsignedInt(2, 0b10);
-                    output.writeUnsignedInt(4, b);
-                    output.writeUnsignedInt(6, value[++i] & 0xFF);
-                    output.writeUnsignedInt(6, value[++i] & 0xFF);
+                    output.writeInt(true, 2, 0b10);
+                    output.writeInt(true, 4, b);
+                    output.writeInt(true, 6, value[++i] & 0xFF);
+                    output.writeInt(true, 6, value[++i] & 0xFF);
                     continue;
                 }
                 assert (b & 0b1111_0111) == b;
-                output.writeUnsignedInt(2, 0b11);
-                output.writeUnsignedInt(3, b);
-                output.writeUnsignedInt(6, value[++i] & 0xFF);
-                output.writeUnsignedInt(6, value[++i] & 0xFF);
-                output.writeUnsignedInt(6, value[++i] & 0xFF);
+                output.writeInt(true, 2, 0b11);
+                output.writeInt(true, 3, b);
+                output.writeInt(true, 6, value[++i] & 0xFF);
+                output.writeInt(true, 6, value[++i] & 0xFF);
+                output.writeInt(true, 6, value[++i] & 0xFF);
             }
         }
     }

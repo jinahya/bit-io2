@@ -4,7 +4,7 @@ package com.github.jinahya.bit.io;
  * #%L
  * bit-io2
  * %%
- * Copyright (C) 2020 Jinahya, Inc.
+ * Copyright (C) 2020 - 2022 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,26 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-@Slf4j
-class BitIOIntArrayTest {
+import java.io.DataInput;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * A class for testing factory method defined in {@link BitInput} interface.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ByteOutputAdapter_FromOutputStream_Test
+ */
+class ByteInputAdapter_FromDataInput_Test {
+
+    @Test
+    void __Mock() {
+        final var dataInput = Mockito.mock(DataInput.class);
+        final var bitInput = ByteInputAdapter.from(dataInput);
+        assertThat(bitInput)
+                .isNotNull();
+    }
 }

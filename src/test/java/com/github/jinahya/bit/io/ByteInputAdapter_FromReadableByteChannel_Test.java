@@ -21,24 +21,25 @@ package com.github.jinahya.bit.io;
  */
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing factory methods defined in {@link BitOutput} interface.
+ * A class for testing {@link BitInput#from(ReadableByteChannel)} method.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitInput_FromByteBuffer_Test
+ * @see ByteOutputAdapter_FromWritableByteChannel_Test
  */
-class BitOutput_FromByteBuffer_Test {
+class ByteInputAdapter_FromReadableByteChannel_Test {
 
     @Test
-    void __ZeroCapacity() {
-        final var byteBuffer = ByteBuffer.allocate(0);
-        final var bitOutput = BitOutput.from(byteBuffer);
-        assertThat(bitOutput)
+    void __Mock() {
+        final var byteChannel = Mockito.mock(ReadableByteChannel.class);
+        final var bitInput = ByteInputAdapter.from(byteChannel);
+        assertThat(bitInput)
                 .isNotNull();
     }
 }

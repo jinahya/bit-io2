@@ -20,6 +20,21 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-class BitIoTest {
+import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
+import static java.util.concurrent.ThreadLocalRandom.current;
+
+class BitIo_Skip_Test {
+
+    @Test
+    void skip__() throws IOException {
+        wr2u(o -> {
+            final var bits = current().nextInt(1, 128);
+            o.skip(bits);
+            return i -> i.skip(bits);
+        });
+    }
 }
