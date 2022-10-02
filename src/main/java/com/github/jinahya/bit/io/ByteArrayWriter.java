@@ -75,12 +75,12 @@ public class ByteArrayWriter
             @Override
             void writeElement(final BitOutput output, final byte value) throws IOException {
                 if (value < 0x60) {
-                    output.writeInt(true,1, 0);
-                    output.writeInt(true,6, value - 0x20);
+                    output.writeInt(true, 1, 0);
+                    output.writeInt(true, 6, value - 0x20);
                     return;
                 }
-                output.writeInt(true,1, 1);
-                output.writeInt(true,5, value - 0x60);
+                output.writeInt(true, 1, 1);
+                output.writeInt(true, 5, value - 0x60);
             }
         }
 
@@ -149,11 +149,11 @@ public class ByteArrayWriter
                     continue;
                 }
                 assert (b & 0b1111_0111) == b;
-                output.writeInt(true,2, 0b11);
-                output.writeInt(true,3, b);
-                output.writeInt(true,6, value[++i] & 0xFF);
-                output.writeInt(true,6, value[++i] & 0xFF);
-                output.writeInt(true,6, value[++i] & 0xFF);
+                output.writeInt(true, 2, 0b11);
+                output.writeInt(true, 3, b);
+                output.writeInt(true, 6, value[++i] & 0xFF);
+                output.writeInt(true, 6, value[++i] & 0xFF);
+                output.writeInt(true, 6, value[++i] & 0xFF);
             }
         }
     }
