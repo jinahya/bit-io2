@@ -248,7 +248,7 @@ final class BitIoTestUtils {
             final Function<? super BitOutput, Function<? super byte[], ? extends R>> f1) throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput o = new BitOutputAdapter(new StreamByteOutput(baos));
+        final BitOutput o = new ByteOutputAdapter(new StreamByteOutput(baos));
         final Function<? super byte[], ? extends R> f2 = f1.apply(o);
         final long padded = o.align();
         assert padded >= 0L;
@@ -277,10 +277,10 @@ final class BitIoTestUtils {
                 assert f2 != null : "f2 is null";
                 return b -> {
                     final ByteArrayInputStream bais = new ByteArrayInputStream(b);
-                    final BitInput input = new BitInputAdapter(new StreamByteInput(bais));
+                    final BitInput input = new ByteInputAdapter(new StreamByteInput(bais));
                     final R result = f2.apply(input);
                     try {
-                        final long discarded = input.align();
+                        final long discarded = input.align(1);
                         assert discarded >= 0L;
                         return result;
                     } catch (final IOException ioe) {
@@ -290,16 +290,16 @@ final class BitIoTestUtils {
             });
         }
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput o = new BitOutputAdapter(new StreamByteOutput(baos));
+        final BitOutput o = new ByteOutputAdapter(new StreamByteOutput(baos));
         final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
         final long padded = o.align();
         final byte[] bytes = baos.toByteArray();
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        final BitInput i = new BitInputAdapter(new StreamByteInput(bais));
+        final BitInput i = new ByteInputAdapter(new StreamByteInput(bais));
         try {
             return f2.apply(i);
         } finally {
-            final long discarded = i.align();
+            final long discarded = i.align(1);
             assert discarded == padded;
         }
     }

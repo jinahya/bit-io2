@@ -23,23 +23,23 @@ package com.github.jinahya.bit.io;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.DataInput;
+import java.io.DataOutput;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing factory method defined in {@link BitInput} interface.
+ * A class for testing factory methods defined in {@link BitOutput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitOutput_FromOutputStream_Test
+ * @see ByteInputAdapter_FromDataInput_Test
  */
-class BitInput_FromDataInput_Test {
+class ByteOutputAdapter_FromDataOutput_Test {
 
     @Test
     void __Mock() {
-        final var dataInput = Mockito.mock(DataInput.class);
-        final var bitInput = BitInput.from(dataInput);
-        assertThat(bitInput)
+        final var dataOutput = Mockito.mock(DataOutput.class);
+        final var bitOutput = ByteOutputAdapter.from(dataOutput);
+        assertThat(bitOutput)
                 .isNotNull();
     }
 }

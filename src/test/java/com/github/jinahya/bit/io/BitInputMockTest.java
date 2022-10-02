@@ -28,16 +28,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.nextSizeForByte;
+import static com.github.jinahya.bit.io.BitIoTestUtils.nextSizeForChar;
 import static com.github.jinahya.bit.io.BitIoTestUtils.nextSizeForInt;
 import static com.github.jinahya.bit.io.BitIoTestUtils.nextSizeForLong;
-import static com.github.jinahya.bit.io.BitIoTestUtils.nextSizeForShort;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith({MockitoExtension.class})
-class BitInputDefaultTest {
+class BitInputMockTest {
 
     @Nested
     class ReadBooleanTest {
@@ -52,49 +51,49 @@ class BitInputDefaultTest {
     @Nested
     class ReadByteTest {
 
-        @Test
-        void readByte__() throws IOException {
-            final var unsigned = false;
-            final var size = nextSizeForByte(unsigned);
-            assertThatCode(() -> input.readByte(size))
-                    .doesNotThrowAnyException();
-            verify(input, times(1))
-                    .readByte(unsigned, size);
-        }
+//        @Test
+//        void readByte__() throws IOException {
+//            final var unsigned = false;
+//            final var size = nextSizeForByte(unsigned);
+//            assertThatCode(() -> input.readByte(size))
+//                    .doesNotThrowAnyException();
+//            verify(input, times(1))
+//                    .readByte(unsigned, size);
+//        }
 
-        @Test
-        void readUnsignedByte__() throws IOException {
-            final var unsigned = true;
-            final var size = nextSizeForByte(unsigned);
-            assertThatCode(() -> input.readUnsignedByte(size))
-                    .doesNotThrowAnyException();
-            verify(input, times(1))
-                    .readByte(unsigned, size);
-        }
+//        @Test
+//        void readUnsignedByte__() throws IOException {
+//            final var unsigned = true;
+//            final var size = nextSizeForByte(unsigned);
+//            assertThatCode(() -> input.readUnsignedByte(size))
+//                    .doesNotThrowAnyException();
+//            verify(input, times(1))
+//                    .readByte(unsigned, size);
+//        }
     }
 
     @Nested
     class ReadShortTest {
 
-        @Test
-        void readShort__() throws IOException {
-            final var unsigned = false;
-            final var size = nextSizeForShort(unsigned);
-            assertThatCode(() -> input.readShort(size))
-                    .doesNotThrowAnyException();
-            verify(input, times(1))
-                    .readShort(unsigned, size);
-        }
+//        @Test
+//        void readShort__() throws IOException {
+//            final var unsigned = false;
+//            final var size = nextSizeForShort(unsigned);
+//            assertThatCode(() -> input.readShort(size))
+//                    .doesNotThrowAnyException();
+//            verify(input, times(1))
+//                    .readShort(unsigned, size);
+//        }
 
-        @Test
-        void readUnsignedShort__() throws IOException {
-            final var unsigned = true;
-            final var size = nextSizeForShort(unsigned);
-            assertThatCode(() -> input.readUnsignedShort(size))
-                    .doesNotThrowAnyException();
-            verify(input, times(1))
-                    .readShort(unsigned, size);
-        }
+//        @Test
+//        void readUnsignedShort__() throws IOException {
+//            final var unsigned = true;
+//            final var size = nextSizeForShort(unsigned);
+//            assertThatCode(() -> input.readUnsignedShort(size))
+//                    .doesNotThrowAnyException();
+//            verify(input, times(1))
+//                    .readShort(unsigned, size);
+//        }
     }
 
     @Nested
@@ -104,7 +103,7 @@ class BitInputDefaultTest {
         void readInt__() throws IOException {
             final var unsigned = false;
             final var size = nextSizeForInt(unsigned);
-            assertThatCode(() -> input.readInt(size))
+            assertThatCode(() -> input.readInt(false, size))
                     .doesNotThrowAnyException();
             verify(input, times(1))
                     .readInt(unsigned, size);
@@ -114,7 +113,7 @@ class BitInputDefaultTest {
         void readUnsignedInt__() throws IOException {
             final var unsigned = true;
             final var size = nextSizeForInt(unsigned);
-            assertThatCode(() -> input.readUnsignedInt(size))
+            assertThatCode(() -> input.readInt(true, size))
                     .doesNotThrowAnyException();
             verify(input, times(1))
                     .readInt(unsigned, size);
@@ -128,20 +127,23 @@ class BitInputDefaultTest {
         void readLong__() throws IOException {
             final var unsigned = false;
             final var size = nextSizeForLong(unsigned);
-            assertThatCode(() -> input.readLong(size))
+            assertThatCode(() -> input.readLong(unsigned, size))
                     .doesNotThrowAnyException();
             verify(input, times(1))
                     .readLong(unsigned, size);
         }
+    }
+
+    @Nested
+    class ReadCharTest {
 
         @Test
-        void readUnsignedLong__() throws IOException {
-            final var unsigned = true;
-            final var size = nextSizeForLong(unsigned);
-            assertThatCode(() -> input.readUnsignedLong(size))
+        void readChar__() throws IOException {
+            final var size = nextSizeForChar();
+            assertThatCode(() -> input.readChar(size))
                     .doesNotThrowAnyException();
             verify(input, times(1))
-                    .readLong(unsigned, size);
+                    .readInt(true, size);
         }
     }
 

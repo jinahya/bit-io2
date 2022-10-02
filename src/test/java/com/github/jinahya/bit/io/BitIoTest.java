@@ -65,7 +65,7 @@ class BitIoTest {
                     if (skip) {
                         i.skip(bits);
                     }
-                    final long discarded = i.align();
+                    final long discarded = i.align(1);
                     assertThat(discarded).isEqualTo(padded);
                 };
             });

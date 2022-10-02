@@ -61,7 +61,7 @@ class ByteArrayAsciiTest {
 
     private void run(final byte[] expected, final int lengthSize) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final BitOutput output = new BitOutputAdapter(new StreamByteOutput(baos));
+        final BitOutput output = new ByteOutputAdapter(new StreamByteOutput(baos));
         final BitWriter<byte[]> writer = ByteArrayWriter.ascii(lengthSize, false);
         writer.write(output, expected);
         final long padded = output.align();
@@ -70,10 +70,10 @@ class ByteArrayAsciiTest {
                       (baos.size() / (double) expected.length) * 100.0d);
         }
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        final BitInput input = new BitInputAdapter(new StreamByteInput(bais));
+        final BitInput input = new ByteInputAdapter(new StreamByteInput(bais));
         final BitReader<byte[]> reader = ByteArrayReader.ascii(lengthSize, false);
         final byte[] actual = reader.read(input);
-        final long discarded = input.align();
+        final long discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
         assertThat(discarded).isEqualTo(padded);
     }

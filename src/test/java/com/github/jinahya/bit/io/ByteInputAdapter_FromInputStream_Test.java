@@ -22,7 +22,7 @@ package com.github.jinahya.bit.io;
 
 import org.junit.jupiter.api.Test;
 
-import java.nio.ByteBuffer;
+import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,14 +30,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * A class for testing factory method defined in {@link BitInput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitOutput_FromByteBuffer_Test
+ * @see ByteOutputAdapter_FromOutputStream_Test
  */
-class BitInput_FromByteBuffer_Test {
+class ByteInputAdapter_FromInputStream_Test {
 
     @Test
-    void __ZeroCapacity() {
-        final var byteBuffer = ByteBuffer.allocate(0);
-        final var bitInput = BitInput.from(byteBuffer);
+    void __NullInputStream() {
+        final var bitInput = ByteInputAdapter.from(InputStream.nullInputStream());
         assertThat(bitInput)
                 .isNotNull();
     }

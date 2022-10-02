@@ -20,24 +20,79 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.DataInput;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Objects;
 
 /**
  * An implementation of {@link BitInput} adapts an instance of {@link ByteInput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see BitOutputAdapter
+ * @see ByteOutputAdapter
  */
-public class BitInputAdapter
+public class ByteInputAdapter
         implements BitInput {
+
+    /**
+     * Creates a new instance on top of specified stream.
+     *
+     * @param stream the stream from which bytes are read.
+     * @return a new instance.
+     */
+    static BitInput from(final InputStream stream) {
+        return new ByteInputAdapter(ByteInput.of(stream));
+    }
+
+    /**
+     * Creates a new instance on top of specified input.
+     *
+     * @param input the input from which bytes are read.
+     * @return a new instance.
+     */
+    static BitInput from(final DataInput input) {
+        return new ByteInputAdapter(ByteInput.of(input));
+    }
+
+    /**
+     * Creates a new instance on top of specified file.
+     *
+     * @param file the file from which bytes are read.
+     * @return a new instance.
+     */
+    static BitInput from(final RandomAccessFile file) {
+        return new ByteInputAdapter(ByteInput.of(file));
+    }
+
+    /**
+     * Creates a new instance on top of specified buffer.
+     *
+     * @param buffer the buffer from which bytes are read.
+     * @return a new instance.
+     */
+    static BitInput from(final ByteBuffer buffer) {
+        return new ByteInputAdapter(ByteInput.of(buffer));
+    }
+
+    /**
+     * Creates a new instance on top of specified channel.
+     *
+     * @param channel the channel from which bytes are read.
+     * @return a new instance.
+     */
+    static BitInput from(final ReadableByteChannel channel) {
+        return new ByteInputAdapter(ByteInput.of(channel));
+    }
 
     /**
      * Creates a new instance on top of specified byte input.
      *
      * @param input the byte input.
      */
-    public BitInputAdapter(final ByteInput input) {
+    public ByteInputAdapter(final ByteInput input) {
         super();
         this.input = Objects.requireNonNull(input, "input is null");
     }

@@ -19,20 +19,24 @@ Add this module as a dependency. Check the [central](https://search.maven.org/se
 
 ```java
 OutputStream stream = open();
-BitOutput output = BitOutput.of(stream);
+BitOutput output = BitOutputAdapter.from(stream);
 output.writeBoolean(true);       // 1 bit   1
 output.writeUnsignedInt(3, 1);   // 3 bits  4
 output writeLong(false, 37, 0L); // 37 bits 41        
 int padded = output.align();
 assert padded == 7;
+assert (padded + 41) % Byte.SIZE == 0;
 
 InputStream stream = open();
-BitInput input = BitInput.of(stream);
-boolean v1 = input.readBoolean();    // 1 bit   1
-int v2 = input.readUnsignedInt(3);   // 3 bits  4
-long v3 = input.readLong(false, 37); // 37 bits 41        
+BitInput input = BitInputAdapter.from(stream);
+boolean v1 = input.readBoolean(); // 1 bit   1
+int v2 = input.readInt(true, 3);  // 3 bits  4
+assert v2 = 1;
+long v3 = input.readLong(37);     // 37 bits 41
+assert v3 == 0L;        
 int discarded = input.align();
 assert discarded == 7;
+assert (discarded + 41) % Byte.SIZE == 0;
 ```
 
 See [Specifications](https://github.com/jinahya/bit-io2/wiki/Specifications) and [Recipes](https://github.com/jinahya/bit-io2/wiki/Recipes) for more information.

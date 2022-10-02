@@ -67,7 +67,7 @@ final class BitIoUtils {
     static int readCount(final BitInput input, final int size) throws IOException {
         Objects.requireNonNull(input, "input is null");
         BitIoConstraints.requireValidSizeForUnsignedInt(size);
-        return input.readUnsignedInt(size);
+        return input.readInt(true, size);
     }
 
     /**
@@ -85,7 +85,7 @@ final class BitIoUtils {
         if (value < 0) {
             throw new IllegalArgumentException("value(" + value + ") is negative");
         }
-        output.writeUnsignedInt(size, value);
+        output.writeInt(true, size, value);
         return value >> (Integer.SIZE - size);
     }
 

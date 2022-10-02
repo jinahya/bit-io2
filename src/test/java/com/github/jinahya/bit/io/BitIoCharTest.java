@@ -57,8 +57,8 @@ class BitIoCharTest {
         void wr_MIN_VALUE() throws IOException {
             final char expected = Character.MIN_VALUE;
             final char actual = BitIoTestUtils.wr1v(o -> {
-                o.writeChar16(expected);
-                return BitInput::readChar;
+                o.writeChar(Character.SIZE, expected);
+                return i -> i.readChar(Character.SIZE);
             });
             assertThat(actual).isEqualTo(expected);
         }
@@ -67,8 +67,8 @@ class BitIoCharTest {
         void wr_MAX_VALUE() throws IOException {
             final char expected = Character.MAX_VALUE;
             final char actual = BitIoTestUtils.wr1v(o -> {
-                o.writeChar16(expected);
-                return BitInput::readChar;
+                o.writeChar(Character.SIZE, expected);
+                return i -> i.readChar(Character.SIZE);
             });
             assertThat(actual).isEqualTo(expected);
         }
@@ -77,9 +77,9 @@ class BitIoCharTest {
         void wr_random() {
             BitIoTestUtils.applyNextValueForChar_v(Character.SIZE, e -> {
                 return BitIoTestUtils.wr2v(o -> {
-                    o.writeChar16((char) e.intValue());
+                    o.writeChar(Character.SIZE, (char) e.intValue());
                     return i -> {
-                        final char actual = i.readChar();
+                        final char actual = i.readChar(Character.SIZE);
                         assertThat(actual).isEqualTo((char) e.intValue());
                     };
                 });

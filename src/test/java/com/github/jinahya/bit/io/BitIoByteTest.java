@@ -35,65 +35,65 @@ class BitIoByteTest {
     @Nested
     class SignedTest {
 
-        @Test
-        void wr__MIN_VALUE() throws IOException {
-            final byte expected = Byte.MIN_VALUE;
-            final byte actual = BitIoTestUtils.wr1v(o -> {
-                o.writeByte(Byte.SIZE, expected);
-                return i -> {
-                    return i.readByte(Byte.SIZE);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
+//        @Test
+//        void wr__MIN_VALUE() throws IOException {
+//            final byte expected = Byte.MIN_VALUE;
+//            final byte actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeByte(Byte.SIZE, expected);
+//                return i -> {
+//                    return i.readByte(Byte.SIZE);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
 
-        @Test
-        void wr__NegativeOne() throws IOException {
-            final byte expected = -1;
-            final byte actual = BitIoTestUtils.wr1v(o -> {
-                o.writeByte(1, expected);
-                return i -> {
-                    return i.readByte(1);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
+//        @Test
+//        void wr__NegativeOne() throws IOException {
+//            final byte expected = -1;
+//            final byte actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeByte(1, expected);
+//                return i -> {
+//                    return i.readByte(1);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
 
-        @Test
-        void wr__Zero() throws IOException {
-            final byte expected = 0;
-            final byte actual = BitIoTestUtils.wr1v(o -> {
-                o.writeByte(1, expected);
-                return i -> {
-                    return i.readByte(1);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
+//        @Test
+//        void wr__Zero() throws IOException {
+//            final byte expected = 0;
+//            final byte actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeByte(1, expected);
+//                return i -> {
+//                    return i.readByte(1);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
 
-        @Test
-        void wr__PositiveOne() throws IOException {
-            final byte expected = 1;
-            final byte actual = BitIoTestUtils.wr1v(o -> {
-                o.writeByte(2, expected);
-                return i -> {
-                    return i.readByte(2);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
+//        @Test
+//        void wr__PositiveOne() throws IOException {
+//            final byte expected = 1;
+//            final byte actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeByte(2, expected);
+//                return i -> {
+//                    return i.readByte(2);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
 
-        @Test
-        void wr__MAX_VALUE() throws IOException {
-            final byte expected = Byte.MAX_VALUE;
-            final byte actual = BitIoTestUtils.wr1v(o -> {
-                o.writeByte(Byte.SIZE, expected);
-                return i -> {
-                    return i.readByte(Byte.SIZE);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
+//        @Test
+//        void wr__MAX_VALUE() throws IOException {
+//            final byte expected = Byte.MAX_VALUE;
+//            final byte actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeByte(Byte.SIZE, expected);
+//                return i -> {
+//                    return i.readByte(Byte.SIZE);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
 
         @RepeatedTest(16)
         void wr__random() {
@@ -128,37 +128,37 @@ class BitIoByteTest {
             });
         }
 
-        @RepeatedTest(16)
-        void we_unsigned__random() {
-            BitIoTestUtils.applyNextByte_v(true, s -> e -> {
-                return BitIoTestUtils.wr2v(o -> {
-                    o.writeUnsignedByte(s, e.byteValue());
-                    return i -> {
-                        final byte actual = i.readUnsignedByte(s);
-                        assertThat(actual).isEqualTo(e.byteValue());
-                    };
-                });
-            });
-        }
+//        @RepeatedTest(16)
+//        void we_unsigned__random() {
+//            BitIoTestUtils.applyNextByte_v(true, s -> e -> {
+//                return BitIoTestUtils.wr2v(o -> {
+//                    o.writeUnsignedByte(s, e.byteValue());
+//                    return i -> {
+//                        final byte actual = i.readUnsignedByte(s);
+//                        assertThat(actual).isEqualTo(e.byteValue());
+//                    };
+//                });
+//            });
+//        }
     }
 
     @DisplayName("8")
     @Nested
     class ByteTest {
 
-        @RepeatedTest(16)
-        void byte8_random() {
-            final boolean unsigned = false;
-            final int size = Byte.SIZE;
-            BitIoTestUtils.applyNextValueForByte_v(unsigned, size, e -> {
-                return BitIoTestUtils.wr2v(o -> {
-                    o.writeByte(e.byteValue());
-                    return i -> {
-                        final byte actual = i.readByte();
-                        assertThat(actual).isEqualTo(e.byteValue());
-                    };
-                });
-            });
-        }
+//        @RepeatedTest(16)
+//        void byte8_random() {
+//            final boolean unsigned = false;
+//            final int size = Byte.SIZE;
+//            BitIoTestUtils.applyNextValueForByte_v(unsigned, size, e -> {
+//                return BitIoTestUtils.wr2v(o -> {
+//                    o.writeByte(e.byteValue());
+//                    return i -> {
+//                        final byte actual = i.readByte();
+//                        assertThat(actual).isEqualTo(e.byteValue());
+//                    };
+//                });
+//            });
+//        }
     }
 }

@@ -35,65 +35,65 @@ class BitIoShortTest {
     @Nested
     class SignedTest {
 
-        @Test
-        void wr_MinValue() throws IOException {
-            final short expected = Short.MIN_VALUE;
-            final short actual = BitIoTestUtils.wr1v(o -> {
-                o.writeShort(Short.SIZE, expected);
-                return i -> {
-                    return i.readShort(Short.SIZE);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
-
-        @Test
-        void wr_NegativeOne() throws IOException {
-            final short expected = -1;
-            final short actual = BitIoTestUtils.wr1v(o -> {
-                o.writeShort(1, expected);
-                return i -> {
-                    return i.readShort(1);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
-
-        @Test
-        void wr_Zero() throws IOException {
-            final short expected = 0;
-            final short actual = BitIoTestUtils.wr1v(o -> {
-                o.writeShort(1, expected);
-                return i -> {
-                    return i.readShort(1);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
-
-        @Test
-        void wr_PositiveOne() throws IOException {
-            final short expected = 1;
-            final short actual = BitIoTestUtils.wr1v(o -> {
-                o.writeShort(2, expected);
-                return i -> {
-                    return i.readShort(2);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
-
-        @Test
-        void wr_MaxValue() throws IOException {
-            final short expected = Short.MAX_VALUE;
-            final short actual = BitIoTestUtils.wr1v(o -> {
-                o.writeShort(Short.SIZE, expected);
-                return i -> {
-                    return i.readShort(Short.SIZE);
-                };
-            });
-            assertThat(actual).isEqualTo(expected);
-        }
+//        @Test
+//        void wr_MinValue() throws IOException {
+//            final short expected = Short.MIN_VALUE;
+//            final short actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeShort(Short.SIZE, expected);
+//                return i -> {
+//                    return i.readShort(Short.SIZE);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
+//
+//        @Test
+//        void wr_NegativeOne() throws IOException {
+//            final short expected = -1;
+//            final short actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeShort(1, expected);
+//                return i -> {
+//                    return i.readShort(1);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
+//
+//        @Test
+//        void wr_Zero() throws IOException {
+//            final short expected = 0;
+//            final short actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeShort(1, expected);
+//                return i -> {
+//                    return i.readShort(1);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
+//
+//        @Test
+//        void wr_PositiveOne() throws IOException {
+//            final short expected = 1;
+//            final short actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeShort(2, expected);
+//                return i -> {
+//                    return i.readShort(2);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
+//
+//        @Test
+//        void wr_MaxValue() throws IOException {
+//            final short expected = Short.MAX_VALUE;
+//            final short actual = BitIoTestUtils.wr1v(o -> {
+//                o.writeShort(Short.SIZE, expected);
+//                return i -> {
+//                    return i.readShort(Short.SIZE);
+//                };
+//            });
+//            assertThat(actual).isEqualTo(expected);
+//        }
 
         @RepeatedTest(16)
         void wr_random() {
@@ -128,37 +128,37 @@ class BitIoShortTest {
             });
         }
 
-        @RepeatedTest(16)
-        void unsignedShort__() {
-            BitIoTestUtils.applyNextShort_v(true, s -> e -> {
-                return BitIoTestUtils.wr2v(o -> {
-                    o.writeUnsignedShort(s, e.shortValue());
-                    return i -> {
-                        final short actual = i.readUnsignedShort(s);
-                        assertThat(actual).isEqualTo(e.shortValue());
-                    };
-                });
-            });
-        }
+//        @RepeatedTest(16)
+//        void unsignedShort__() {
+//            BitIoTestUtils.applyNextShort_v(true, s -> e -> {
+//                return BitIoTestUtils.wr2v(o -> {
+//                    o.writeUnsignedShort(s, e.shortValue());
+//                    return i -> {
+//                        final short actual = i.readUnsignedShort(s);
+//                        assertThat(actual).isEqualTo(e.shortValue());
+//                    };
+//                });
+//            });
+//        }
     }
 
     @DisplayName("8")
     @Nested
     class ShortTest {
 
-        @RepeatedTest(16)
-        void wr_random() {
-            final boolean unsigned = false;
-            final int size = Short.SIZE;
-            BitIoTestUtils.applyNextValueForShort_v(unsigned, size, e -> {
-                return BitIoTestUtils.wr2v(o -> {
-                    o.writeShort(e.shortValue());
-                    return i -> {
-                        final short actual = i.readShort();
-                        assertThat(actual).isEqualTo(e.shortValue());
-                    };
-                });
-            });
-        }
+//        @RepeatedTest(16)
+//        void wr_random() {
+//            final boolean unsigned = false;
+//            final int size = Short.SIZE;
+//            BitIoTestUtils.applyNextValueForShort_v(unsigned, size, e -> {
+//                return BitIoTestUtils.wr2v(o -> {
+//                    o.writeShort(e.shortValue());
+//                    return i -> {
+//                        final short actual = i.readShort();
+//                        assertThat(actual).isEqualTo(e.shortValue());
+//                    };
+//                });
+//            });
+//        }
     }
 }
