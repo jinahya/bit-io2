@@ -35,7 +35,7 @@ public abstract class AbstractByteOutput<T>
     /**
      * Creates a new instance on top of specified byte target.
      *
-     * @param target the byte target.
+     * @param target the byte target to which bytes are written.
      */
     protected AbstractByteOutput(final T target) {
         super();

@@ -35,7 +35,7 @@ public abstract class AbstractByteInput<T>
     /**
      * Creates a new instance on top of specified byte source.
      *
-     * @param source the byte source.
+     * @param source the byte source from which bytes are read.
      */
     protected AbstractByteInput(final T source) {
         super();
