@@ -20,12 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.DataOutput;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
 
 /**
  * An interface for writing bytes.
@@ -36,30 +31,10 @@ import java.nio.channels.WritableByteChannel;
 @FunctionalInterface
 public interface ByteOutput {
 
-    static ByteOutput of(final OutputStream stream) {
-        return new StreamByteOutput(stream);
-    }
-
-    static ByteOutput of(final DataOutput output) {
-        return new DataByteOutput(output);
-    }
-
-    static ByteOutput of(final RandomAccessFile file) {
-        return new RandomAccessByteOutput(file);
-    }
-
-    static ByteOutput of(final ByteBuffer buffer) {
-        return new BufferByteOutput(buffer);
-    }
-
-    static ByteOutput of(final WritableByteChannel channel) {
-        return new ChannelByteOutput(channel);
-    }
-
     /**
-     * Writes specified <em>unsigned</em> {@value java.lang.Byte#SIZE}-bit byte value.
+     * Writes specified unsigned {@value java.lang.Byte#SIZE}-bit byte value.
      *
-     * @param value the <em>unsigned</em> {@value java.lang.Byte#SIZE}-bit byte value to write; between {@code 0} and
+     * @param value the unsigned {@value java.lang.Byte#SIZE}-bit byte value to write; between {@code 0} and
      *              {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
      */

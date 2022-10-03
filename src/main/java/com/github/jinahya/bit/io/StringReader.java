@@ -39,10 +39,10 @@ public class StringReader
      * @param printableOnly a flag for printable characters only; {@code true} for printable characters; {@code false}
      *                      otherwise.
      * @return a new instance.
-     * @see ByteArrayReader#ascii31(boolean)
+     * @see ByteArrayReader#compressedAscii31(boolean)
      */
-    public static StringReader ascii(final boolean printableOnly) {
-        final ByteArrayReader delegate = ByteArrayReader.ascii31(printableOnly);
+    public static StringReader compressedAscii(final boolean printableOnly) {
+        final ByteArrayReader delegate = ByteArrayReader.compressedAscii31(printableOnly);
         return new StringReader(delegate, StandardCharsets.US_ASCII);
     }
 
@@ -50,10 +50,10 @@ public class StringReader
      * Creates a new instance for reading {@link StandardCharsets#UTF_8} decoded strings in a compressed-manner.
      *
      * @return a new instance.
-     * @see ByteArrayReader#utf831()
+     * @see ByteArrayReader#compressedUtf831()
      */
-    public static StringReader utf8() {
-        final ByteArrayReader delegate = ByteArrayReader.utf831();
+    public static StringReader compressedUtf8() {
+        final ByteArrayReader delegate = ByteArrayReader.compressedUtf831();
         return new StringReader(delegate, StandardCharsets.UTF_8);
     }
 
@@ -70,7 +70,7 @@ public class StringReader
     }
 
     @Override
-    protected String map(final byte[] value) {
+    protected String filter(final byte[] value) {
         return new String(value, charset);
     }
 

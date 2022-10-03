@@ -213,7 +213,7 @@ final class BitIoTestUtils {
     // ------------------------------------------------------------------------------------------------------------ long
     static int getRandomSizeForLong(final boolean unsigned) {
         final var size = current().nextInt(1, Long.SIZE + (unsigned ? 0 : 1));
-        return BitIoConstraints.requireValidSizeForLong(size);
+        return BitIoConstraints.requireValidSizeForLong(unsigned, size);
     }
 
     static <R> R applyRandomSizeForLong(final boolean unsigned, final IntFunction<? extends R> function) {

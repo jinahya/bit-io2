@@ -48,7 +48,6 @@ public class DataByteInput
      * @throws IOException {@inheritDoc}
      * @implSpec The {@code read()} method of {@code DataByteInput} class invokes {@link DataInput#readUnsignedByte()}
      * method on {@link #source}, and returns the result.
-     * @see DataInput#readUnsignedByte()
      */
     @Override
     public int read() throws IOException {

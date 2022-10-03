@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.RandomStringGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -29,6 +30,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -36,84 +38,58 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArray_Ascii_Printable_Test {
-
-    private static byte[] randomize(final byte[] bytes) {
-        for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = (byte) ThreadLocalRandom.current().nextInt(0x20, 0x7F);
-        }
-        return bytes;
-    }
+class ByteArray_CompressedUtf8_Wr_Test {
 
     static byte[] randomBytes() {
         final int length = ThreadLocalRandom.current().nextInt(1024);
-        return randomize(new byte[length]);
+        return new RandomStringGenerator.Builder().build().generate(length).getBytes(StandardCharsets.UTF_8);
     }
 
     static Stream<byte[]> randomBytesStream() {
         return IntStream.range(0, 16)
-                .mapToObj(i -> randomBytes())
-                ;
+                .mapToObj(i -> randomBytes());
     }
 
     static Stream<Arguments> randomBytesAndLengthSizeStream() {
         return randomBytesStream()
-                .map(b -> Arguments.of(b, BitIoUtils.size(b.length)))
-                ;
+                .map(b -> Arguments.of(b, BitIoUtils.size(b.length)));
     }
 
-    private void run(final byte[] expected, final int lengthSize) throws IOException {
+    @MethodSource({"randomBytesAndLengthSizeStream"})
+    @ParameterizedTest
+    void wr__(final byte[] expected, final int lengthSize) throws IOException {
         final var baos = new ByteArrayOutputStream();
-        final var output = new ByteOutputAdapter(new StreamByteOutput(baos));
-        final var writer = ByteArrayWriter.ascii(lengthSize, true);
+        final var output = ByteOutputAdapter.from(baos);
+        final var writer = ByteArrayWriter.compressedUtf8(lengthSize);
         writer.write(output, expected);
         final var padded = output.align(1);
         {
             final var given = expected.length + Integer.BYTES;
-            log.debug("given: {}, written: {}, ratio: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
+            log.debug("given: {}, written: {}, rate: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
         }
         final var bais = new ByteArrayInputStream(baos.toByteArray());
-        final var input = new ByteInputAdapter(new StreamByteInput(bais));
-        final var reader = ByteArrayReader.ascii(lengthSize, true);
+        final var input = ByteInputAdapter.from(bais);
+        final var reader = ByteArrayReader.compressedUtf8(lengthSize);
         final var actual = reader.read(input);
         final var discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
         assertThat(discarded).isEqualTo(padded);
     }
 
-    @MethodSource({"randomBytesAndLengthSizeStream"})
-    @ParameterizedTest
-    void test(final byte[] randomBytes, final int lengthSize) throws IOException {
-        run(randomBytes, lengthSize);
-    }
-
     @Test
-    void test__empty() throws IOException {
-        run(new byte[0], 1);
-    }
-
-    @Test
-    void test__one() throws IOException {
-        run(randomize(new byte[1]), 1);
-    }
-
-    @Test
-    void test__two() throws IOException {
-        run(randomize(new byte[2]), 2);
-    }
-
-    @Test
-    void test__three() throws IOException {
-        run(randomize(new byte[3]), 2);
-    }
-
-    @Test
-    void test__four() throws IOException {
-        run(randomize(new byte[4]), 3);
-    }
-
-    @Test
-    void test__five() throws IOException {
-        run(randomize(new byte[5]), 3);
+    void wr__nullable() throws IOException {
+        final int lengthSize = Integer.SIZE - 1;
+        final var baos = new ByteArrayOutputStream();
+        final var output = ByteOutputAdapter.from(baos);
+        final var writer = ByteArrayWriter.compressedUtf8(lengthSize).nullable();
+        writer.write(output, null);
+        final var padded = output.align(1);
+        final var bais = new ByteArrayInputStream(baos.toByteArray());
+        final var input = ByteInputAdapter.from(bais);
+        final var reader = ByteArrayReader.compressedUtf8(lengthSize).nullable();
+        final var actual = reader.read(input);
+        final var discarded = input.align(1);
+        assertThat(actual).isNull();
+        assertThat(discarded).isEqualTo(padded);
     }
 }

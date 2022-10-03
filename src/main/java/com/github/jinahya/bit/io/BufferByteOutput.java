@@ -49,7 +49,7 @@ public class BufferByteOutput
      * @apiNote This method may throw an {@link java.nio.BufferOverflowException} when the
      * {@link #target target buffer}'s current position is not smaller than its limit.
      * @implSpec The {@code write(int)} method of {@code BufferByteOutput} class invokes {@link ByteBuffer#put(byte)}
-     * method on the {@link #target} with specified value as a {@code byte} value.
+     * method on the {@link #target} with specified value cast as a {@code byte} value.
      * @see ByteBuffer#put(byte)
      */
     @Override

@@ -33,14 +33,12 @@ import java.io.IOException;
 public interface BitReader<T> {
 
     /**
-     * Returns a reader which can handle {@code null} values.
+     * Returns a new instance handles {@code null} values.
      *
-     * @param reader a reader for reading values.
-     * @param <T>    value type parameter
-     * @return a reader for nullable values.
+     * @return a new instance handles {@code null} valus.
      */
-    static <T> BitReader<T> nullable(final BitReader<T> reader) {
-        return new FilterBitReader.Nullable<>(reader);
+    default BitReader<T> nullable() {
+        return new FilterBitReader.Nullable<>(this);
     }
 
     /**

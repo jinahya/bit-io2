@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * An abstract class for reading an array of primitive values.
@@ -36,11 +35,12 @@ abstract class PrimitiveArrayReader<T>
     /**
      * Creates a new instance with specified number of bits for the {@code length} of the arrays.
      *
-     * @param lengthSize the number of bits for the {@code length} of the arrays.
+     * @param lengthSize the number of bits for the {@code length} of the array; between {@code 1} and {@code 31}, both
+     *                   inclusive.
      */
     PrimitiveArrayReader(final int lengthSize) {
         super();
-        this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
+        this.lengthSize = BitIoConstraints.requireValidSizeForInt(true, lengthSize);
     }
 
     /**
@@ -49,9 +49,9 @@ abstract class PrimitiveArrayReader<T>
      * @param input a bit-input from which the length is read.
      * @return a value of {@code length}.
      * @throws IOException if an I/O error occurs.
+     * @see PrimitiveArrayWriter#writeLength(BitOutput, int)
      */
     int readLength(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
         return BitIoUtils.readCount(input, lengthSize);
     }
 

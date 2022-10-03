@@ -47,7 +47,7 @@ class User {
             return new User(name, age);
         }
 
-        final BitReader<String> reader = new StringReader(ByteArrayReader.utf8(9), StandardCharsets.UTF_8);
+        final BitReader<String> reader = new StringReader(ByteArrayReader.compressedUtf8(9), StandardCharsets.UTF_8);
     }
 
     static class Writer
@@ -59,7 +59,7 @@ class User {
             output.writeInt(true, 7, value.age);
         }
 
-        final BitWriter<String> writer = new StringWriter(ByteArrayWriter.utf8(9), StandardCharsets.UTF_8);
+        final BitWriter<String> writer = new StringWriter(ByteArrayWriter.compressedUtf8(9), StandardCharsets.UTF_8);
     }
 
     static User newRandomInstance() {

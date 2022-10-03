@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Utilities for bit-io.
@@ -65,8 +64,7 @@ final class BitIoUtils {
      * @throws IOException if an I/O error occurs.
      */
     static int readCount(final BitInput input, final int size) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        BitIoConstraints.requireValidSizeForUnsignedInt(size);
+        assert input != null;
         return input.readInt(true, size);
     }
 
@@ -80,13 +78,10 @@ final class BitIoUtils {
      * @throws IOException if an I/O error occurs.
      */
     static int writeCount(final BitOutput output, final int size, final int value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        BitIoConstraints.requireValidSizeForUnsignedInt(size);
-        if (value < 0) {
-            throw new IllegalArgumentException("value(" + value + ") is negative");
-        }
+        assert output != null;
+        assert value >= 0;
         output.writeInt(true, size, value);
-        return value >> (Integer.SIZE - size);
+        return value & (-1 >>> (Integer.SIZE - size));
     }
 
     private BitIoUtils() {

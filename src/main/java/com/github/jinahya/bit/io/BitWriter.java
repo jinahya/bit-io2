@@ -33,15 +33,12 @@ import java.io.IOException;
 public interface BitWriter<T> {
 
     /**
-     * Returns a writer which can handle {@code null} values.
+     * Returns a new instance handles {@code null} values.
      *
-     * @param writer the writer for writing values.
-     * @param <T>    value type parameter
-     * @return a writer for nullable values.
-     * @see BitReader#nullable(BitReader)
+     * @return a new instance handles {@code null} valus.
      */
-    static <T> BitWriter<T> nullable(final BitWriter<T> writer) {
-        return new FilterBitWriter.Nullable<>(writer);
+    default BitWriter<T> nullable() {
+        return new FilterBitWriter.Nullable<>(this);
     }
 
     /**

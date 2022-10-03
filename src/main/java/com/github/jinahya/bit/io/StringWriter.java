@@ -40,8 +40,8 @@ public class StringWriter
      *                      otherwise.
      * @return a new instance. a@see ByteArrayWriter#ascii31(boolean)
      */
-    public static StringWriter ascii(final boolean printableOnly) {
-        final ByteArrayWriter delegate = ByteArrayWriter.ascii31(printableOnly);
+    public static StringWriter compressedAscii(final boolean printableOnly) {
+        final ByteArrayWriter delegate = ByteArrayWriter.compressedAscii31(printableOnly);
         return new StringWriter(delegate, StandardCharsets.US_ASCII);
     }
 
@@ -49,10 +49,10 @@ public class StringWriter
      * Creates a new instance for writing {@link StandardCharsets#UTF_8}-encoded strings in a compressed-manner.
      *
      * @return a new instance.
-     * @see ByteArrayWriter#utf831()
+     * @see ByteArrayWriter#compressedUtf831()
      */
-    public static StringWriter utf8() {
-        final ByteArrayWriter delegate = ByteArrayWriter.utf831();
+    public static StringWriter compressedUtf8() {
+        final ByteArrayWriter delegate = ByteArrayWriter.compressedUtf831();
         return new StringWriter(delegate, StandardCharsets.UTF_8);
     }
 
@@ -61,7 +61,6 @@ public class StringWriter
      *
      * @param delegate a writer for writing encoded bytes.
      * @param charset  a charset for encoding a value.
-     * @see ByteArrayWriter#of318()
      */
     public StringWriter(final ByteArrayWriter delegate, final Charset charset) {
         super(delegate);
@@ -69,7 +68,7 @@ public class StringWriter
     }
 
     @Override
-    protected byte[] map(final String value) {
+    protected byte[] filter(final String value) {
         return value.getBytes(charset);
     }
 

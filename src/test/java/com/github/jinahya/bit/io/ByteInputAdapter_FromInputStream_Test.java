@@ -36,8 +36,8 @@ class ByteInputAdapter_FromInputStream_Test {
 
     @Test
     void __NullInputStream() {
-        final var bitInput = ByteInputAdapter.from(InputStream.nullInputStream());
-        assertThat(bitInput)
+        final var input = ByteInputAdapter.from(InputStream.nullInputStream());
+        assertThat(input)
                 .isNotNull();
     }
 }

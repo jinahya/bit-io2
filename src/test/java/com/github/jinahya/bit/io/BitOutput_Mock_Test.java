@@ -20,6 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,87 +36,100 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForChar;
 import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForInt;
 import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForLong;
 import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForShort;
+import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForByte;
+import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForChar;
+import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForInt;
+import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForLong;
+import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForShort;
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith({MockitoExtension.class})
-class BitInputMockTest {
+class BitOutput_Mock_Test {
 
+    @DisplayName("writeBoolean")
     @Nested
-    class ReadBooleanTest {
+    class WriteBooleanTest {
 
         @Test
         void readBoolean__() {
-            assertThatCode(() -> input.readBoolean())
+            assertThatCode(() -> output.writeBoolean(current().nextBoolean()))
                     .doesNotThrowAnyException();
         }
     }
 
     @Nested
-    class ReadByteTest {
+    class WriteByteTest {
 
         @ValueSource(booleans = {true, false})
-        @ParameterizedTest(name = "[{index}] readByte(unsigned: {0})")
-        void readByte__(final boolean unsigned) throws IOException {
+        @ParameterizedTest(name = "[{index}] writeBoolean(unsigned: {0})")
+        void writeByte__(final boolean unsigned) throws IOException {
             final var size = getRandomSizeForByte(unsigned);
-            final var value = input.readByte(unsigned, size);
-            verify(input, times(1))
-                    .readInt(unsigned, size);
+            final var value = getRandomValueForByte(unsigned, size);
+            assertThatCode(() -> output.writeByte(unsigned, size, value))
+                    .doesNotThrowAnyException();
+            verify(output, times(1))
+                    .writeInt(unsigned, size, value);
         }
     }
 
     @Nested
-    class ReadShortTest {
+    class WriteShortTest {
 
         @ValueSource(booleans = {true, false})
-        @ParameterizedTest(name = "[{index}] readShort(unsigned: {0})")
-        void readShort__(final boolean unsigned) throws IOException {
+        @ParameterizedTest(name = "[{index}] writeShort(unsigned: {0})")
+        void writeShort__(final boolean unsigned) throws IOException {
             final var size = getRandomSizeForShort(unsigned);
-            assertThatCode(() -> input.readShort(unsigned, size))
+            final var value = getRandomValueForShort(unsigned, size);
+            assertThatCode(() -> output.writeShort(unsigned, size, value))
                     .doesNotThrowAnyException();
-            verify(input, times(1))
-                    .readInt(unsigned, size);
+            verify(output, times(1))
+                    .writeInt(unsigned, size, value);
         }
     }
 
     @Nested
-    class ReadIntTest {
+    class WriteIntTest {
 
         @ValueSource(booleans = {true, false})
-        @ParameterizedTest(name = "[{index}] readInt(unsigned: {0})")
-        void readInt__(final boolean unsigned) {
+        @ParameterizedTest(name = "[{index}] writeInt(unsigned: {0})")
+        void writeInt__(final boolean unsigned) throws IOException {
             final var size = getRandomSizeForInt(unsigned);
-            assertThatCode(() -> input.readInt(unsigned, size))
+            final var value = getRandomValueForInt(unsigned, size);
+            assertThatCode(() -> output.writeInt(false, size, value))
                     .doesNotThrowAnyException();
         }
     }
 
     @Nested
-    class ReadLongTest {
+    class WriteLongTest {
 
         @ValueSource(booleans = {true, false})
-        @ParameterizedTest(name = "[{index}] readLong(unsigned: {0})")
-        void readLong__(final boolean unsigned) {
+        @ParameterizedTest(name = "[{index}] writeLong(unsigned: {0})")
+        void writeLong__(final boolean unsigned) throws IOException {
             final var size = getRandomSizeForLong(unsigned);
-            assertThatCode(() -> input.readLong(unsigned, size))
+            final var value = getRandomValueForLong(unsigned, size);
+            assertThatCode(() -> output.writeLong(true, size, value))
                     .doesNotThrowAnyException();
         }
     }
 
     @Nested
-    class ReadCharTest {
+    class WriteCharTest {
 
         @Test
-        void readChar__() throws IOException {
+        void writeChar__() throws IOException {
             final var size = getRandomSizeForChar();
-            assertThatCode(() -> input.readChar(size))
+            final var value = getRandomValueForChar(size);
+            assertThatCode(() -> output.writeChar(size, value))
                     .doesNotThrowAnyException();
-            verify(input, times(1))
-                    .readInt(true, size);
+            verify(output, times(1))
+                    .writeInt(true, size, value);
         }
     }
 
     @Spy
-    private BitInput input;
+    private BitOutput output;
 }

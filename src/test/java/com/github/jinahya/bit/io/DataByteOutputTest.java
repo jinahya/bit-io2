@@ -20,16 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
 import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
-import static com.github.jinahya.bit.io.ByteStreams.black;
-import static java.util.concurrent.ThreadLocalRandom.current;
-import static org.mockito.Mockito.mock;
 
 /**
  * A class for testing {@link DataByteOutputTest} class.
@@ -38,34 +29,12 @@ import static org.mockito.Mockito.mock;
  * @see DataByteInputTest
  */
 class DataByteOutputTest
-        extends ByteOutputAdapterTest<DataByteOutput, DataOutput> {
+        extends AbstractByteOutputTest<DataByteOutput, DataOutput> {
 
     /**
      * Creates a new instance.
      */
     DataByteOutputTest() {
         super(DataByteOutput.class, DataOutput.class);
-    }
-
-    @Nested
-    class FromTest {
-
-        @Test
-        void from__() throws IOException {
-            final var source = mock(DataOutput.class);
-            DataByteOutput output = new DataByteOutput(source);
-        }
-    }
-
-    /**
-     * Tests {@link DataOutput#write(int)} method.
-     *
-     * @throws IOException if an I/O error occurs.
-     * @see DataByteInputTest#testRead()
-     */
-    @Test
-    void testWrite() throws IOException {
-        final DataByteOutput output = new DataByteOutput(new DataOutputStream(black(-1L)));
-        output.write(current().nextInt(0, 256));
     }
 }

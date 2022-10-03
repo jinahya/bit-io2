@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.ThreadLocalRandom;
 
 final class _Black {
@@ -37,13 +37,13 @@ final class _Black {
         }
     }
 
-    static class _ReadableByteChannel
-            implements ReadableByteChannel {
+    static class _WritableByteChannel
+            implements WritableByteChannel {
 
         @Override
-        public int read(final ByteBuffer dst) throws IOException {
-            final var written = ThreadLocalRandom.current().nextInt(dst.remaining() + 1);
-            dst.position(dst.position() + written);
+        public int write(final ByteBuffer src) throws IOException {
+            final var written = ThreadLocalRandom.current().nextInt(src.remaining() + 1);
+            src.position(src.position() + written);
             return written;
         }
 

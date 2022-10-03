@@ -49,8 +49,8 @@ public class BufferByteInput
      * @apiNote This method may throw an {@link java.nio.BufferUnderflowException} when the
      * {@link #source source buffer}'s current position is not smaller than its limit.
      * @implSpec The {@code read()} method of {@code BufferByteInput} class invokes {@link ByteBuffer#get() get()}
-     * method on the {@link #source}, and returns the result as an unsigned {@value java.lang.Byte#SIZE}-bit {@code int}
-     * value.
+     * method on the {@link #source}, and returns the result cast as an unsigned {@value java.lang.Byte#SIZE}-bit
+     * {@code int} value.
      * @see ByteBuffer#get()
      */
     @Override
