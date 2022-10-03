@@ -21,21 +21,21 @@ Add this module as a dependency. Check the [central](https://search.maven.org/se
 OutputStream stream = open();
 BitOutput output = BitOutputAdapter.from(stream);
 output.writeBoolean(true);       // 1 bit   1
-output.writeUnsignedInt(3, 1);   // 3 bits  4
+output.writeInt(true, 3, 1);     // 3 bits  4
 output writeLong(false, 37, 0L); // 37 bits 41        
-int padded = output.align();
-assert padded == 7;
+long padded = output.align(1);
+assert padded == 7L;
 assert (padded + 41) % Byte.SIZE == 0;
 
 InputStream stream = open();
 BitInput input = BitInputAdapter.from(stream);
-boolean v1 = input.readBoolean(); // 1 bit   1
-int v2 = input.readInt(true, 3);  // 3 bits  4
-assert v2 = 1;
-long v3 = input.readLong(37);     // 37 bits 41
+boolean v1 = input.readBoolean();    // 1 bit   1
+int v2 = input.readInt(true, 3);     // 3 bits  4
+assert v2 == 1;
+long v3 = input.readLong(false, 37); // 37 bits 41
 assert v3 == 0L;        
-int discarded = input.align();
-assert discarded == 7;
+long discarded = input.align(1);
+assert discarded == 7L;
 assert (discarded + 41) % Byte.SIZE == 0;
 ```
 
