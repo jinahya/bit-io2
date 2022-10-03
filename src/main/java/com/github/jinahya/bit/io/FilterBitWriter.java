@@ -25,9 +25,9 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * A value writer for filtering values written to other writers.
+ * A value writer for writing filtered values.
  *
- * @param <T> value type parameter
+ * @param <T> original value type parameter
  * @param <U> filtered value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see FilterBitReader
@@ -38,8 +38,8 @@ public abstract class FilterBitWriter<T, U>
     /**
      * Creates a new instance which writes filtered values.
      *
-     * @param delegate a value writer for writing mapped values.
-     * @param mapper   a mapper for mapping values.
+     * @param delegate a value writer for writing filtered values.
+     * @param mapper   a mapper for mapping original values.
      * @param <T>      original value type parameter
      * @param <U>      filtered value type parameter
      * @return a new instance.
@@ -50,7 +50,7 @@ public abstract class FilterBitWriter<T, U>
         Objects.requireNonNull(mapper, "mapper is null");
         return new FilterBitWriter<T, U>(delegate) {
             @Override
-            protected U map(T value) {
+            protected U filter(final T value) {
                 return mapper.apply(value);
             }
         };
@@ -59,7 +59,7 @@ public abstract class FilterBitWriter<T, U>
     static final class Nullable<T>
             extends FilterBitWriter<T, T> {
 
-        Nullable(BitWriter<? super T> delegate) {
+        Nullable(final BitWriter<? super T> delegate) {
             super(delegate);
         }
 
@@ -73,7 +73,7 @@ public abstract class FilterBitWriter<T, U>
         }
 
         @Override
-        protected T map(final T value) {
+        protected T filter(final T value) {
             return value;
         }
     }
@@ -90,10 +90,19 @@ public abstract class FilterBitWriter<T, U>
 
     @Override
     public void write(final BitOutput output, final T value) throws IOException {
-        delegate.write(output, map(value));
+        delegate.write(output, filter(value));
     }
 
-    protected abstract U map(final T value);
+    /**
+     * Filters specified original value for writing to the {@link #delegate}.
+     *
+     * @param value the value to filter.
+     * @return a filter value.
+     */
+    protected abstract U filter(final T value);
 
+    /**
+     * The writer for writing filtered values.
+     */
     protected final BitWriter<? super U> delegate;
 }

@@ -29,7 +29,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Objects;
 
 /**
- * An implementation of {@link BitInput} adapts an instance of {@link ByteInput}.
+ * An implementation of {@link BitInput} reads octets from an instance of {@link ByteInput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ByteOutputAdapter
@@ -44,7 +44,7 @@ public class ByteInputAdapter
      * @return a new instance.
      */
     static BitInput from(final InputStream stream) {
-        return new ByteInputAdapter(ByteInput.of(stream));
+        return new ByteInputAdapter(new StreamByteInput(stream));
     }
 
     /**
@@ -54,7 +54,7 @@ public class ByteInputAdapter
      * @return a new instance.
      */
     static BitInput from(final DataInput input) {
-        return new ByteInputAdapter(ByteInput.of(input));
+        return new ByteInputAdapter(new DataByteInput(input));
     }
 
     /**
@@ -64,7 +64,7 @@ public class ByteInputAdapter
      * @return a new instance.
      */
     static BitInput from(final RandomAccessFile file) {
-        return new ByteInputAdapter(ByteInput.of(file));
+        return new ByteInputAdapter(new RandomAccessByteInput(file));
     }
 
     /**
@@ -74,7 +74,7 @@ public class ByteInputAdapter
      * @return a new instance.
      */
     static BitInput from(final ByteBuffer buffer) {
-        return new ByteInputAdapter(ByteInput.of(buffer));
+        return new ByteInputAdapter(new BufferByteInput(buffer));
     }
 
     /**
@@ -84,7 +84,7 @@ public class ByteInputAdapter
      * @return a new instance.
      */
     static BitInput from(final ReadableByteChannel channel) {
-        return new ByteInputAdapter(ByteInput.of(channel));
+        return new ByteInputAdapter(new ChannelByteInput(channel));
     }
 
     /**
@@ -121,22 +121,24 @@ public class ByteInputAdapter
     }
 
     @Override
-    public long align(int bytes) throws IOException {
+    public long align(final int bytes) throws IOException {
         if (bytes <= 0) {
             throw new IllegalArgumentException("bytes(" + bytes + ") is not positive");
         }
-        long bits = 0L; // number of discarded bits
+        long bits = 0L; // the number of discarded bits
         if (available > 0) {
             bits += available; // must be prior to the below
             readInt(true, available);
         }
+        assert available == 0;
         if (bytes == 1) {
             return bits;
         }
-        for (bytes = bytes - (int) (count % bytes); bytes > 0L; bytes--) {
+        for (int i = (bytes - (int) (this.count % bytes)); i > 0L; i--) {
             readInt(true, Byte.SIZE);
             bits += Byte.SIZE;
         }
+        assert (count % bytes) == 0L;
         return bits;
     }
 
@@ -180,7 +182,7 @@ public class ByteInputAdapter
     private int available = 0;
 
     /**
-     * The number of bytes read from {@link #input} so far.
+     * The number of bytes read, from the {@link #input}, so far.
      */
     private long count;
 }

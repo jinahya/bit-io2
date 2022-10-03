@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import java.nio.channels.ReadableByteChannel;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * A class for testing {@link BitInput#from(ReadableByteChannel)} method.
@@ -37,9 +38,9 @@ class ByteInputAdapter_FromReadableByteChannel_Test {
 
     @Test
     void __Mock() {
-        final var byteChannel = Mockito.mock(ReadableByteChannel.class);
-        final var bitInput = ByteInputAdapter.from(byteChannel);
-        assertThat(bitInput)
+        final var channel = mock(ReadableByteChannel.class);
+        final var input = ByteInputAdapter.from(channel);
+        assertThat(input)
                 .isNotNull();
     }
 }

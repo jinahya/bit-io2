@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -28,29 +29,41 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class String_Ascii_Printable_Test {
+class String_CompressedUtf8_Wr_Test {
 
-    private static Stream<String> randomValueStream() {
-        return ByteArray_Ascii_Printable_Test.randomBytesStream()
-                .map(b -> new String(b, StandardCharsets.US_ASCII))
+    static Stream<String> randomValueStream() {
+        return ByteArray_CompressedUtf8_Wr_Test.randomBytesStream()
+                .map(v -> new String(v, StandardCharsets.UTF_8))
                 ;
     }
 
     @MethodSource({"randomValueStream"})
     @ParameterizedTest
     void test(final String expected) throws IOException {
-        wr1u(o -> {
-            final var writer = StringWriter.ascii(true);
+        wr2u(o -> {
+            final var writer = StringWriter.compressedUtf8();
             o.writeObject(writer, expected);
             return i -> {
-                final var reader = StringReader.ascii(true);
+                final var reader = StringReader.compressedUtf8();
                 final var actual = i.readObject(reader);
                 assertThat(actual).isEqualTo(expected);
-                return null;
+            };
+        });
+    }
+
+    @Test
+    void nullable() throws IOException {
+        wr2u(o -> {
+            final var writer = StringWriter.compressedUtf8().nullable();
+            o.writeObject(writer, null);
+            return i -> {
+                final var reader = StringReader.compressedUtf8().nullable();
+                final var actual = i.readObject(reader);
+                assertThat(actual).isNull();
             };
         });
     }

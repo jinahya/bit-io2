@@ -28,7 +28,7 @@ import java.nio.channels.WritableByteChannel;
 import java.util.Objects;
 
 /**
- * An implementation of {@link BitOutput} adapts an instance of {@link ByteOutput}.
+ * An implementation of {@link BitOutput} writes octets to an instance of {@link ByteOutput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ByteInputAdapter
@@ -43,7 +43,7 @@ public class ByteOutputAdapter
      * @return a new instance.
      */
     static BitOutput from(final OutputStream stream) {
-        return new ByteOutputAdapter(ByteOutput.of(stream));
+        return new ByteOutputAdapter(new StreamByteOutput(stream));
     }
 
     /**
@@ -53,7 +53,7 @@ public class ByteOutputAdapter
      * @return a new instance.
      */
     static BitOutput from(final DataOutput output) {
-        return new ByteOutputAdapter(ByteOutput.of(output));
+        return new ByteOutputAdapter(new DataByteOutput(output));
     }
 
     /**
@@ -63,7 +63,7 @@ public class ByteOutputAdapter
      * @return a new instance.
      */
     static BitOutput from(final ByteBuffer buffer) {
-        return new ByteOutputAdapter(ByteOutput.of(buffer));
+        return new ByteOutputAdapter(new BufferByteOutput(buffer));
     }
 
     /**
@@ -73,7 +73,7 @@ public class ByteOutputAdapter
      * @return a new instance.
      */
     static BitOutput from(final WritableByteChannel channel) {
-        return new ByteOutputAdapter(ByteOutput.of(channel));
+        return new ByteOutputAdapter(new ChannelByteOutput(channel));
     }
 
     /**
@@ -107,22 +107,24 @@ public class ByteOutputAdapter
     }
 
     @Override
-    public long align(int bytes) throws IOException {
+    public long align(final int bytes) throws IOException {
         if (bytes <= 0) {
             throw new IllegalArgumentException("bytes(" + bytes + ") is not positive");
         }
-        long bits = 0L; // number of bits padded
+        long bits = 0L; // the number of padded bits
         if (available < Byte.SIZE) {
-            bits += available; // must be prior to the below
+            bits += available;
             writeInt(true, available, 0x00);
         }
+        assert available == Byte.SIZE;
         if (bytes == 1) {
             return bits;
         }
-        for (bytes = bytes - (int) (count % bytes); bytes > 0; bytes--) {
+        for (int i = (bytes - (int) (this.count % bytes)); i > 0; i--) {
             writeInt(true, Byte.SIZE, 0x00);
             bits += Byte.SIZE;
         }
+        assert (count % bytes) == 0L;
         return bits;
     }
 
@@ -173,7 +175,7 @@ public class ByteOutputAdapter
     private int available = Byte.SIZE;
 
     /**
-     * The number of bytes written to {@link #output} so far.
+     * The number of bytes written, to the {@link #output}, so far.
      */
     private long count;
 }

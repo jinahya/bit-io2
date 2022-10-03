@@ -25,10 +25,10 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * A value reader for filtering values read from other readers.
+ * A value reader for reading filtered values.
  *
- * @param <T> value type parameter
- * @param <U> filtered value type parameter
+ * @param <T> filtered value type parameter
+ * @param <U> original value type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see FilterBitWriter
  */
@@ -38,8 +38,8 @@ public abstract class FilterBitReader<T, U>
     /**
      * Creates a new instance which reads filtered values.
      *
-     * @param delegate a value reader for reading original values.
-     * @param mapper   a mapper for mapping values.
+     * @param delegate a reader for reading original values.
+     * @param mapper   a mapper for filtering values.
      * @param <T>      filtered value type parameter
      * @param <U>      original value type parameter
      * @return a new instance.
@@ -50,7 +50,7 @@ public abstract class FilterBitReader<T, U>
         Objects.requireNonNull(mapper, "mapper is null");
         return new FilterBitReader<T, U>(delegate) {
             @Override
-            protected T map(final U value) {
+            protected T filter(final U value) {
                 return mapper.apply(value);
             }
         };
@@ -59,7 +59,7 @@ public abstract class FilterBitReader<T, U>
     static final class Nullable<T>
             extends FilterBitReader<T, T> {
 
-        Nullable(BitReader<? extends T> delegate) {
+        Nullable(final BitReader<? extends T> delegate) {
             super(delegate);
         }
 
@@ -74,7 +74,7 @@ public abstract class FilterBitReader<T, U>
         }
 
         @Override
-        protected T map(final T value) {
+        protected T filter(final T value) {
             return value;
         }
     }
@@ -91,10 +91,19 @@ public abstract class FilterBitReader<T, U>
 
     @Override
     public T read(final BitInput input) throws IOException {
-        return map(delegate.read(input));
+        return filter(delegate.read(input));
     }
 
-    protected abstract T map(final U value);
+    /**
+     * Maps specified original value read from the {@link #delegate}.
+     *
+     * @param value the value to map.
+     * @return a mapped value.
+     */
+    protected abstract T filter(final U value);
 
+    /**
+     * The reader for reading original values.
+     */
     protected final BitReader<? extends U> delegate;
 }

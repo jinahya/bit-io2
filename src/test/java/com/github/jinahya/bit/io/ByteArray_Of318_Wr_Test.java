@@ -30,7 +30,7 @@ import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArray_Of318_Test {
+class ByteArray_Of318_Wr_Test {
 
     @Test
     void of318__empty() throws IOException {
@@ -53,5 +53,14 @@ class ByteArray_Of318_Test {
             return i -> ByteArrayReader.of318().read(i);
         });
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void of318__nullable() throws IOException {
+        final var actual = wr1u(o -> {
+            ByteArrayWriter.of318().nullable().write(o, null);
+            return i -> ByteArrayReader.of318().nullable().read(i);
+        });
+        assertThat(actual).isNull();
     }
 }

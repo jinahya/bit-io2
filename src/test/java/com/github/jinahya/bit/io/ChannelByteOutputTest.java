@@ -1,13 +1,12 @@
 package com.github.jinahya.bit.io;
 
-class ChannelByteOutputTest extends AbstractByteOutputTest<ChannelByteOutput>{
+import java.nio.channels.WritableByteChannel;
 
-    ChannelByteOutputTest() {
-        super(ChannelByteOutput.class);
-    }
+class ChannelByteOutputTest
+//        extends AbstractByteOutputTest<ChannelByteOutput, WritableByteChannel>
+{
 
-    @Override
-    protected ChannelByteOutput newBlackInstance() {
-        return new ChannelByteOutput(new _Black._WritableByteChannel());
-    }
+//    ChannelByteOutputTest() {
+//        super(ChannelByteOutput.class, WritableByteChannel.class);
+//    }
 }

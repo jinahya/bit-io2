@@ -21,24 +21,25 @@ package com.github.jinahya.bit.io;
  */
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.nio.ByteBuffer;
+import java.io.RandomAccessFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing factory methods defined in {@link BitOutput} interface.
+ * A class for testing factory method defined in {@link BitInput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ByteInputAdapter_FromByteBuffer_Test
+ * @see ByteOutputAdapter_FromOutputStream_Test
  */
-class ByteOutputAdapter_FromByteBuffer_Test {
+class ByteInputAdapter_FromRandomAccessFile_Test {
 
     @Test
-    void __ZeroCapacity() {
-        final var byteBuffer = ByteBuffer.allocate(0);
-        final var bitOutput = ByteOutputAdapter.from(byteBuffer);
-        assertThat(bitOutput)
+    void __Mock() {
+        final var file = Mockito.mock(RandomAccessFile.class);
+        final var input = ByteInputAdapter.from(file);
+        assertThat(input)
                 .isNotNull();
     }
 }
