@@ -32,9 +32,9 @@ import java.io.IOException;
 public interface ByteInput {
 
     /**
-     * Reads an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> byte.
+     * Reads an unsigned {@value java.lang.Byte#SIZE}-bit byte value.
      *
-     * @return an {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> byte; between {@code 0} and {@code 255}, both
+     * @return an unsigned {@value java.lang.Byte#SIZE}-bit byte value; between {@code 0} and {@code 255}, both
      * inclusive.
      * @throws IOException if an I/O error occurs.
      */

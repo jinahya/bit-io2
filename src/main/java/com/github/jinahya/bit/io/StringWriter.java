@@ -20,7 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -39,11 +38,10 @@ public class StringWriter
      *
      * @param printableOnly a flag for printable characters only; {@code true} for printable characters; {@code false}
      *                      otherwise.
-     * @return a new instance.
-     * @see ByteArrayWriter#ascii(int, boolean)
+     * @return a new instance. a@see ByteArrayWriter#ascii31(boolean)
      */
-    public static StringWriter ascii(final boolean printableOnly) {
-        final ByteArrayWriter delegate = ByteArrayWriter.ascii(Integer.SIZE - 1, printableOnly);
+    public static StringWriter compressedAscii(final boolean printableOnly) {
+        final ByteArrayWriter delegate = ByteArrayWriter.compressedAscii31(printableOnly);
         return new StringWriter(delegate, StandardCharsets.US_ASCII);
     }
 
@@ -51,10 +49,10 @@ public class StringWriter
      * Creates a new instance for writing {@link StandardCharsets#UTF_8}-encoded strings in a compressed-manner.
      *
      * @return a new instance.
-     * @see ByteArrayWriter#utf8(int)
+     * @see ByteArrayWriter#compressedUtf831()
      */
-    public static StringWriter utf8() {
-        final ByteArrayWriter delegate = ByteArrayWriter.utf8(Integer.SIZE - 1);
+    public static StringWriter compressedUtf8() {
+        final ByteArrayWriter delegate = ByteArrayWriter.compressedUtf831();
         return new StringWriter(delegate, StandardCharsets.UTF_8);
     }
 
@@ -63,7 +61,6 @@ public class StringWriter
      *
      * @param delegate a writer for writing encoded bytes.
      * @param charset  a charset for encoding a value.
-     * @see ByteArrayWriter#of318()
      */
     public StringWriter(final ByteArrayWriter delegate, final Charset charset) {
         super(delegate);
@@ -71,10 +68,8 @@ public class StringWriter
     }
 
     @Override
-    public void write(final BitOutput output, final String value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        final byte[] bytes = value.getBytes(charset);
-        writer.write(output, bytes);
+    protected byte[] filter(final String value) {
+        return value.getBytes(charset);
     }
 
     private final Charset charset;

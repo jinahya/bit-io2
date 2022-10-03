@@ -37,17 +37,24 @@ import static java.util.concurrent.ThreadLocalRandom.current;
 @Slf4j
 class User {
 
+    private static final int NAME_LENGTH_SIZE = 9;
+
+    private static final boolean AGE_UNSIGNED = true;
+
+    private static final int AGE_SIZE = 7;
+
     static class Reader
             implements BitReader<User> {
 
         @Override
         public User read(final BitInput input) throws IOException {
-            final String name = reader.read(input);
-            final int age = input.readUnsignedInt(7);
+            final String name = nameReader.read(input);
+            final int age = input.readInt(AGE_UNSIGNED, AGE_SIZE);
             return new User(name, age);
         }
 
-        final BitReader<String> reader = new StringReader(ByteArrayReader.utf8(9), StandardCharsets.UTF_8);
+        final BitReader<String> nameReader
+                = new StringReader(ByteArrayReader.compressedUtf8(NAME_LENGTH_SIZE), StandardCharsets.UTF_8);
     }
 
     static class Writer
@@ -55,11 +62,12 @@ class User {
 
         @Override
         public void write(final BitOutput output, final User value) throws IOException {
-            writer.write(output, value.name);
-            output.writeUnsignedInt(7, value.age);
+            nameWriter.write(output, value.name);
+            output.writeInt(AGE_UNSIGNED, AGE_SIZE, value.age);
         }
 
-        final BitWriter<String> writer = new StringWriter(ByteArrayWriter.utf8(9), StandardCharsets.UTF_8);
+        final BitWriter<String> nameWriter
+                = new StringWriter(ByteArrayWriter.compressedUtf8(NAME_LENGTH_SIZE), StandardCharsets.UTF_8);
     }
 
     static User newRandomInstance() {

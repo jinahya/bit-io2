@@ -23,13 +23,13 @@ package com.github.jinahya.bit.io;
 import static java.util.Objects.requireNonNull;
 
 /**
- * An abstract class for testing subclasses of {@link ByteInputAdapter} class.
+ * An abstract class for testing subclasses of {@link AbstractByteInput} class.
  *
  * @param <T> subclass type parameter
  * @param <U> source type parameter
- * @see ByteOutputAdapterTest
+ * @see AbstractByteOutputAdapterTest
  */
-abstract class ByteInputAdapterTest<T extends ByteInputAdapter<U>, U> {
+abstract class ByteInputAdapterTest<T extends AbstractByteInput<U>, U> {
 
     /**
      * Creates a new instance with specified arguments.
@@ -38,7 +38,7 @@ abstract class ByteInputAdapterTest<T extends ByteInputAdapter<U>, U> {
      * @param sourceClass  a class of {@link U} on which {@code adapterClass} is based.
      * @see #adapterClass
      * @see #sourceClass
-     * @see ByteOutputAdapterTest#ByteOutputAdapterTest(Class, Class)
+     * @see AbstractByteOutputAdapterTest#AbstractByteOutputAdapterTest(Class, Class)
      */
     ByteInputAdapterTest(final Class<T> adapterClass, final Class<U> sourceClass) {
         super();

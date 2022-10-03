@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -28,10 +28,9 @@
     </license>
   </licenses>
 
-  <prerequisites>
-    <maven>3.5.4</maven> <!-- just for versions-maven-plugin -->
-  </prerequisites>
-
+  <!--  <prerequisites>-->
+<!--    <maven>3.5.4</maven> &lt;!&ndash; just for versions-maven-plugin &ndash;&gt;-->
+<!--  </prerequisites>-->
   <scm>
     <connection>scm:git:git@github.com:jinahya/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:jinahya/${project.artifactId}.git</developerConnection>
@@ -80,7 +79,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
-      <version>1.9</version>
+      <version>1.10.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -154,6 +153,11 @@
           <version>${version.maven-surefire}</version>
         </plugin>
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.12.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.8</version>
@@ -187,17 +191,54 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
+<!--          <execution>-->
+<!--            <id>enforce</id>-->
+<!--            <goals>-->
+<!--              <goal>enforce</goal>-->
+<!--            </goals>-->
+<!--            <configuration>-->
+<!--              <rules>-->
+<!--                <dependencyConvergence/>-->
+<!--                <requireJavaVersion>-->
+<!--                  <version>[1.8.0,)</version>-->
+<!--                </requireJavaVersion>-->
+<!--                <requireMavenVersion>-->
+<!--                  <version>[3.5.4,)</version>-->
+<!--                </requireMavenVersion>-->
+<!--              </rules>-->
+<!--            </configuration>-->
+<!--          </execution>-->
           <execution>
-            <id>enforce</id>
+            <id>enforce-dependency-convergence</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
                 <dependencyConvergence/>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <id>enforce-require-java-version</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
                 <requireJavaVersion>
                   <version>[1.8.0,)</version>
                 </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <id>enforce-require-maven-version</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
                 <requireMavenVersion>
                   <version>[3.5.4,)</version>
                 </requireMavenVersion>
@@ -242,10 +283,10 @@
         <executions>
           <execution>
             <id>check-signature-java18:1.0</id>
-            <phase>process-classes</phase>
             <goals>
               <goal>check</goal>
             </goals>
+            <phase>process-classes</phase>
             <configuration>
               <signature>
                 <groupId>org.codehaus.mojo.signature</groupId>
@@ -267,13 +308,13 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>tidy-maven-plugin</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
         <executions>
           <execution>
             <id>validate</id>
             <phase>validate</phase>
             <goals>
-              <goal>check</goal>
+<!--              <goal>check</goal>-->
             </goals>
           </execution>
         </executions>
@@ -344,7 +385,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <version>2.11.0</version>
         <reportSets>
           <reportSet>
             <reports>

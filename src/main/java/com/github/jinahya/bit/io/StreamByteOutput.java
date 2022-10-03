@@ -30,7 +30,7 @@ import java.io.OutputStream;
  * @see StreamByteInput
  */
 public class StreamByteOutput
-        extends ByteOutputAdapter<OutputStream> {
+        extends AbstractByteOutput<OutputStream> {
 
     /**
      * Creates a new instance on top of specified output stream.
@@ -46,8 +46,9 @@ public class StreamByteOutput
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code write(OutputStream, int)} method of {@code StreamByteOutput} class invokes
-     * {@link OutputStream#write(int)} method on specified output stream with specified value.
+     * @implSpec The {@code write(int)} method of {@code StreamByteOutput} class invokes {@link OutputStream#write(int)}
+     * method on the {@link #target} with specified value.
+     * @see OutputStream#write(int)
      */
     @Override
     public void write(final int value) throws IOException {

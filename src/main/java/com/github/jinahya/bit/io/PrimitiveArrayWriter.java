@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * An abstract class for writing an array of primitive values.
@@ -40,7 +39,7 @@ abstract class PrimitiveArrayWriter<T>
      */
     PrimitiveArrayWriter(final int lengthSize) {
         super();
-        this.lengthSize = BitIoConstraints.requireValidSizeForUnsignedInt(lengthSize);
+        this.lengthSize = BitIoConstraints.requireValidSizeForInt(true, lengthSize);
     }
 
     /**
@@ -49,10 +48,10 @@ abstract class PrimitiveArrayWriter<T>
      * @param output a bit-output to which the length is written.
      * @param length the value of {@code length} to write.
      * @throws IOException if an I/O error occurs.
+     * @see PrimitiveArrayReader#readLength(BitInput)
      */
-    void writeLength(final BitOutput output, final int length) throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        BitIoUtils.writeCount(output, lengthSize, length);
+    int writeLength(final BitOutput output, final int length) throws IOException {
+        return BitIoUtils.writeCount(output, lengthSize, length);
     }
 
     private final int lengthSize;

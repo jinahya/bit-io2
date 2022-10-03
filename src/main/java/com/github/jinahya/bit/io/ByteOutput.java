@@ -32,9 +32,9 @@ import java.io.IOException;
 public interface ByteOutput {
 
     /**
-     * Writes specified {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> byte.
+     * Writes specified unsigned {@value java.lang.Byte#SIZE}-bit byte value.
      *
-     * @param value the {@value java.lang.Byte#SIZE}-bit <em>unsigned</em> byte to write; between {@code 0} and
+     * @param value the unsigned {@value java.lang.Byte#SIZE}-bit byte value to write; between {@code 0} and
      *              {@code 255}, both inclusive.
      * @throws IOException if an I/O error occurs.
      */

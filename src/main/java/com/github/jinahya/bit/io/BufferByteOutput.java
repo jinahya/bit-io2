@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
  * @see BufferByteInput
  */
 public class BufferByteOutput
-        extends ByteOutputAdapter<ByteBuffer> {
+        extends AbstractByteOutput<ByteBuffer> {
 
     /**
      * Creates a new instance with specified byte buffer.
@@ -46,8 +46,11 @@ public class BufferByteOutput
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implNote The {@code write(ByteBuffer, int)} method of {@code BufferByteOutput} class invokes
-     * {@link ByteBuffer#put(byte)} method on specified byte buffer with specified value as a {@code byte} value.
+     * @apiNote This method may throw an {@link java.nio.BufferOverflowException} when the
+     * {@link #target target buffer}'s current position is not smaller than its limit.
+     * @implSpec The {@code write(int)} method of {@code BufferByteOutput} class invokes {@link ByteBuffer#put(byte)}
+     * method on the {@link #target} with specified value cast as a {@code byte} value.
+     * @see ByteBuffer#put(byte)
      */
     @Override
     public void write(final int value) throws IOException {

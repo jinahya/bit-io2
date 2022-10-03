@@ -20,7 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -40,10 +39,10 @@ public class StringReader
      * @param printableOnly a flag for printable characters only; {@code true} for printable characters; {@code false}
      *                      otherwise.
      * @return a new instance.
-     * @see ByteArrayReader#ascii(int, boolean)
+     * @see ByteArrayReader#compressedAscii31(boolean)
      */
-    public static StringReader ascii(final boolean printableOnly) {
-        final ByteArrayReader delegate = ByteArrayReader.ascii(Integer.SIZE - 1, printableOnly);
+    public static StringReader compressedAscii(final boolean printableOnly) {
+        final ByteArrayReader delegate = ByteArrayReader.compressedAscii31(printableOnly);
         return new StringReader(delegate, StandardCharsets.US_ASCII);
     }
 
@@ -51,10 +50,10 @@ public class StringReader
      * Creates a new instance for reading {@link StandardCharsets#UTF_8} decoded strings in a compressed-manner.
      *
      * @return a new instance.
-     * @see ByteArrayReader#utf8(int)
+     * @see ByteArrayReader#compressedUtf831()
      */
-    public static StringReader utf8() {
-        final ByteArrayReader delegate = ByteArrayReader.utf8(Integer.SIZE - 1);
+    public static StringReader compressedUtf8() {
+        final ByteArrayReader delegate = ByteArrayReader.compressedUtf831();
         return new StringReader(delegate, StandardCharsets.UTF_8);
     }
 
@@ -71,10 +70,8 @@ public class StringReader
     }
 
     @Override
-    public String read(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        final byte[] bytes = reader.read(input);
-        return new String(bytes, charset);
+    protected String filter(final byte[] value) {
+        return new String(value, charset);
     }
 
     private final Charset charset;

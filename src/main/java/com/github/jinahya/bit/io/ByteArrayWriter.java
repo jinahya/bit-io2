@@ -21,28 +21,54 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 
+/**
+ * A value write for writing arrays of bytes.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public class ByteArrayWriter
         extends PrimitiveArrayWriter<byte[]> {
 
     static class Unsigned
             extends ByteArrayWriter {
 
+        private static final boolean UNSIGNED = true;
+
         Unsigned(final int lengthSize, final int elementSize) {
-            super(lengthSize, BitIoConstraints.requireValidSizeForByte(true, elementSize));
+            super(lengthSize, BitIoConstraints.requireValidSizeForByte(UNSIGNED, elementSize));
         }
 
         @Override
         void writeElement(final BitOutput output, final byte value) throws IOException {
-            output.writeUnsignedInt(elementSize, value);
+            output.writeInt(UNSIGNED, elementSize, value);
         }
     }
 
-    static class Ascii
+    /**
+     * Creates a new instance for writing arrays of unsigned bytes.
+     *
+     * @param lengthSize  a number of bits for the length of arrays; between {@code 1} (inclusive) and
+     *                    {@value Integer#SIZE} (exclusive).
+     * @param elementSize a number of bits for each element in the array; between {@code 1} (inclusive) and
+     *                    {@value Byte#SIZE} (exclusive).
+     * @return a new instance.
+     */
+    public static ByteArrayWriter unsigned(final int lengthSize, final int elementSize) {
+        return new Unsigned(lengthSize, elementSize);
+    }
+
+    private static class CompressedAscii
             extends Unsigned {
 
-        static class Printable
-                extends Ascii {
+        /**
+         * .
+         *
+         * @see <a href="https://en.wikipedia.org/wiki/ASCII#Printable_characters">Printable characters</a>
+         */
+        private static class Printable
+                extends CompressedAscii {
 
             Printable(final int lengthSize) {
                 super(lengthSize);
@@ -51,31 +77,55 @@ public class ByteArrayWriter
             @Override
             void writeElement(final BitOutput output, final byte value) throws IOException {
                 if (value < 0x60) {
-                    output.writeUnsignedInt(1, 0);
-                    output.writeUnsignedInt(6, value - 0x20);
+                    output.writeInt(true, 1, 0);
+                    output.writeInt(true, 6, value - 0x20);
                     return;
                 }
-                output.writeUnsignedInt(1, 1);
-                output.writeUnsignedInt(5, value - 0x60);
+                output.writeInt(true, 1, 1);
+                output.writeInt(true, 5, value - 0x60);
             }
         }
 
-        static ByteArrayWriter printable(final int lengthSize) {
-            return new Printable(lengthSize);
-        }
-
-        Ascii(final int lengthSize) {
+        private CompressedAscii(final int lengthSize) {
             super(lengthSize, 7);
         }
     }
 
     /**
+     * Creates a new instance for writing an array of ASCII bytes.
+     *
+     * @param lengthSize    a number of bits for the length of the array; between {@code 1} (inclusive) and
+     *                      {@value Integer#SIZE} (exclusive).
+     * @param printableOnly a flag for printable characters only; {@code true} for printable ascii characters only;
+     *                      {@code false} otherwise.
+     * @return a new instance.
+     */
+    public static ByteArrayWriter compressedAscii(final int lengthSize, final boolean printableOnly) {
+        if (printableOnly) {
+            return new CompressedAscii.Printable(lengthSize);
+        }
+        return new CompressedAscii(lengthSize);
+    }
+
+    /**
+     * Creates a new instance, for writing arrays of ASCII bytes, which writes an unsigned {@code 31}-bit {@code int}
+     * value for the length of arrays.
+     *
+     * @param printableOnly a flag for printable characters only; {@code true} for printable ascii characters only;
+     *                      {@code false} otherwise.
+     * @return a new instance.
+     */
+    public static ByteArrayWriter compressedAscii31(final boolean printableOnly) {
+        return compressedAscii(Integer.SIZE - 1, printableOnly);
+    }
+
+    /**
      * A writer for writing an array of UTF-8 bytes as a compressed manner.
      */
-    static class Utf8
+    private static class CompressedUtf8
             extends ByteArrayWriter {
 
-        Utf8(final int lengthSize) {
+        private CompressedUtf8(final int lengthSize) {
             super(lengthSize, Byte.SIZE);
         }
 
@@ -84,74 +134,59 @@ public class ByteArrayWriter
             for (int i = 0; i < value.length; i++) {
                 final int b = value[i] & 0xFF;
                 if ((b & 0b0111_1111) == b) { // 0xxx_xxxx
-                    output.writeUnsignedInt(2, 0b00);
-                    output.writeUnsignedInt(7, b & 0xFF);
+                    output.writeInt(true, 2, 0b00);
+                    output.writeInt(true, 7, b & 0xFF);
                     continue;
                 }
                 if ((b & 0b1101_1111) == b) { // 110x_xxxx
-                    output.writeUnsignedInt(2, 0b01);
-                    output.writeUnsignedInt(5, b);
-                    output.writeUnsignedInt(6, value[++i] & 0xFF);
+                    output.writeInt(true, 2, 0b01);
+                    output.writeInt(true, 5, b);
+                    output.writeInt(true, 6, value[++i] & 0xFF);
                     continue;
                 }
                 if ((b & 0b1110_1111) == b) { // 1110_xxxx
-                    output.writeUnsignedInt(2, 0b10);
-                    output.writeUnsignedInt(4, b);
-                    output.writeUnsignedInt(6, value[++i] & 0xFF);
-                    output.writeUnsignedInt(6, value[++i] & 0xFF);
+                    output.writeInt(true, 2, 0b10);
+                    output.writeInt(true, 4, b);
+                    output.writeInt(true, 6, value[++i] & 0xFF);
+                    output.writeInt(true, 6, value[++i] & 0xFF);
                     continue;
                 }
                 assert (b & 0b1111_0111) == b;
-                output.writeUnsignedInt(2, 0b11);
-                output.writeUnsignedInt(3, b);
-                output.writeUnsignedInt(6, value[++i] & 0xFF);
-                output.writeUnsignedInt(6, value[++i] & 0xFF);
-                output.writeUnsignedInt(6, value[++i] & 0xFF);
+                output.writeInt(true, 2, 0b11);
+                output.writeInt(true, 3, b);
+                output.writeInt(true, 6, value[++i] & 0xFF);
+                output.writeInt(true, 6, value[++i] & 0xFF);
+                output.writeInt(true, 6, value[++i] & 0xFF);
             }
         }
     }
 
     /**
-     * Creates a new instance for writing an array of unsigned bytes.
-     *
-     * @param lengthSize  a number of bits for the length of the array.
-     * @param elementSize a number of bits for each element.
-     * @return a new instance.
-     */
-    public static ByteArrayWriter unsigned(final int lengthSize, final int elementSize) {
-        return new Unsigned(lengthSize, elementSize);
-    }
-
-    /**
-     * Creates a new instance for writing an array of ASCII bytes.
-     *
-     * @param lengthSize    a number of bits for the length of the array.
-     * @param printableOnly a flag for printable characters only; {@code true} for printable ascii characters only;
-     *                      {@code false} otherwise.
-     * @return a new instance.
-     */
-    public static ByteArrayWriter ascii(final int lengthSize, final boolean printableOnly) {
-        if (printableOnly) {
-            return Ascii.printable(lengthSize);
-        }
-        return new Ascii(lengthSize);
-    }
-
-    /**
      * Creates a new instance for writing an array of UTF-8 bytes.
      *
-     * @param lengthSize a number of bits for the length of the array.
+     * @param lengthSize a number of bits for the length of arrays; between {@code 1} (inclusive) and
+     *                   {@value Integer#SIZE} (exclusive).
      * @return a new instance.
      */
-    public static ByteArrayWriter utf8(final int lengthSize) {
-        return new Utf8(lengthSize);
+    public static ByteArrayWriter compressedUtf8(final int lengthSize) {
+        return new CompressedUtf8(lengthSize);
     }
 
     /**
-     * Returns a new instance which writes a {@code 31}-bit length and writes specified number of bits for each
-     * element.
+     * Creates a new instance, for writing arrays of UTF-8 bytes, which writes an unsigned {@code 31}-bit {@code int}
+     * value for the length of arrays.
      *
-     * @param elementSize the number of bits for each byte.
+     * @return a new instance.
+     */
+    public static ByteArrayWriter compressedUtf831() {
+        return compressedUtf8(Integer.SIZE - 1);
+    }
+
+    /**
+     * Returns a new instance which writes an unsigned {@code 31}-bit {@code int} for the length of each array, and
+     * writes specified bits for each element.
+     *
+     * @param elementSize the number of bits for each byte; between {@code 1} and {@value Byte#SIZE}, both inclusive.
      * @return a new instance.
      */
     static ByteArrayWriter of31(final int elementSize) {
@@ -159,8 +194,8 @@ public class ByteArrayWriter
     }
 
     /**
-     * Returns a new instance which writes a {@code 31}-bit length and writes {@value java.lang.Byte#SIZE} bits for each
-     * element.
+     * Returns a new instance which writes an unsigned {@code 31}-bit int for the array length and writes a signed
+     * {@value java.lang.Byte#SIZE} byte for each element.
      *
      * @return a new instance.
      */
@@ -171,28 +206,34 @@ public class ByteArrayWriter
     /**
      * Creates a new instance.
      *
-     * @param lengthSize  a number of bits for the length of the array.
-     * @param elementSize a number of bits for each element in the array.
+     * @param lengthSize  a number of bits for the length of each array; between {@code 1} (inclusive) and
+     *                    {@value Integer#SIZE} (exclusive).
+     * @param elementSize a number of bits for each element in an array; between {@code 1} and {@value Byte#SIZE}, both
+     *                    inclusive.
      */
-    public ByteArrayWriter(final int lengthSize, final int elementSize) {
+    ByteArrayWriter(final int lengthSize, final int elementSize) {
         super(lengthSize);
-        this.elementSize = BitIoConstraints.requireValidSizeForInt(elementSize);
+        this.elementSize = BitIoConstraints.requireValidSizeForByte(false, elementSize);
     }
 
     @Override
     public void write(final BitOutput output, final byte[] value) throws IOException {
-        writeLength(output, value.length);
+        Objects.requireNonNull(value, "value is null");
+        final int length = writeLength(output, value.length);
+        if (length < value.length) {
+            throw new IllegalArgumentException("value.length(" + value.length + ") > " + length);
+        }
         writeElements(output, value);
     }
 
     void writeElements(final BitOutput output, final byte[] elements) throws IOException {
-        for (final byte element : elements) {
-            writeElement(output, element);
+        for (int i = 0; i < elements.length; i++) {
+            writeElement(output, elements[i]);
         }
     }
 
     void writeElement(final BitOutput output, final byte element) throws IOException {
-        output.writeByte(elementSize, element);
+        output.writeByte(false, elementSize, element); // signed elementSize-bit byte
     }
 
     final int elementSize;
