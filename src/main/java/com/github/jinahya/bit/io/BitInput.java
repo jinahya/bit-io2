@@ -143,6 +143,35 @@ public interface BitInput {
         return Float.intBitsToFloat(readInt(false, Integer.SIZE));
     }
 
+    default float readFloat(final int exponentSize, final int significandPrecisionSize) throws IOException {
+        FloatConstraints.requireValidExponentSize(exponentSize);
+        FloatConstraints.requireValidSignificandPrecisionSize(significandPrecisionSize);
+        int bits = 0;
+        bits |= readInt(true, 1);
+        bits <<= (Integer.SIZE - 1);
+        bits |= FloatReader.readExponentMask(this, exponentSize);
+        bits |= FloatReader.readSignificandPrecisionMask(this, significandPrecisionSize);
+        return Float.intBitsToFloat(bits);
+    }
+
+    default float readFloatOfZero() throws IOException {
+        return Float.intBitsToFloat(
+                readInt(true, 1) << (Integer.SIZE - 1)
+        );
+    }
+
+    default float readFloatOfInfinity() throws IOException {
+        return Float.intBitsToFloat(
+                readInt(true, 1) << (Integer.SIZE - 1) | 0b1111111__00000000_00000000_0000_000
+        );
+    }
+
+//    default float readFloatOfNaN() throws IOException {
+//        return Float.intBitsToFloat(
+//                readInt(true, 1) << (Integer.SIZE - 1) | 0b1111111__00000000_00000000_0000_000
+//        );
+//    }
+
     /**
      * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value.
      *
