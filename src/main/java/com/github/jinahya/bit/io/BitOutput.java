@@ -138,6 +138,27 @@ public interface BitOutput {
         writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
     }
 
+    default void writeFloat(final int exponentSize, final int significandSize, final float value) throws IOException {
+        FloatConstraints.requireValidExponentSize(exponentSize);
+        FloatConstraints.requireValidSignificandSize(significandSize);
+        final int bits = Float.floatToRawIntBits(value);
+        writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
+        FloatWriter.writeExponent(this, exponentSize, bits);
+        FloatWriter.writeSignificand(this, significandSize, bits);
+    }
+
+    default void writeFloatOfZero(final float value) throws IOException {
+        writeInt(true, 1, Float.floatToRawIntBits(value) >> (Integer.SIZE - 1));
+    }
+
+    default void writeFloatOfNaN(final int significandSize, final int significandBits) throws IOException {
+        FloatConstraints.requireValidSignificandSize(significandSize);
+        if (significandBits <= 0) {
+            throw new IllegalArgumentException("significandBits(" + Integer.toBinaryString(significandBits) + " <= 0");
+        }
+        writeInt(true, 1, Float.floatToRawIntBits(value) >> (Integer.SIZE - 1));
+    }
+
     /**
      * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value.
      *
@@ -148,6 +169,15 @@ public interface BitOutput {
      */
     default void writeDouble(final double value) throws IOException {
         writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
+    }
+
+    default void writeDouble(final int exponentSize, final int significandSize, final double value) throws IOException {
+        DoubleConstraints.requireValidExponentSize(exponentSize);
+        DoubleConstraints.requireValidSignificandSize(significandSize);
+        final long bits = Double.doubleToRawLongBits(value);
+        writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
+        DoubleWriter.writeExponent(this, exponentSize, bits);
+        DoubleWriter.writeSignificand(this, significandSize, bits);
     }
 
     /**

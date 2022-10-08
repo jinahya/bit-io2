@@ -3,29 +3,27 @@ package com.github.jinahya.bit.io;
 final class FloatConstraints {
 
     static int requireValidExponentSize(final int exponentSize) {
-        if (exponentSize < FloatConstants.MIN_EXPONENT_SIZE) {
+        if (exponentSize < FloatConstants.SIZE_MIN_EXPONENT) {
             throw new IllegalArgumentException(
-                    "exponentSize(" + exponentSize + ") < " + FloatConstants.MIN_EXPONENT_SIZE);
+                    "exponentSize(" + exponentSize + ") < " + FloatConstants.SIZE_MIN_EXPONENT);
         }
-        if (exponentSize > FloatConstants.MAX_EXPONENT_SIZE) {
+        if (exponentSize > FloatConstants.SIZE_EXPONENT_IEEE754) {
             throw new IllegalArgumentException(
-                    "exponentSize(" + exponentSize + ") > " + FloatConstants.MAX_EXPONENT_SIZE);
+                    "exponentSize(" + exponentSize + ") > " + FloatConstants.SIZE_EXPONENT_IEEE754);
         }
         return exponentSize;
     }
 
-    static int requireValidSignificandPrecisionSize(final int significandPrecisionSize) {
-        if (significandPrecisionSize < FloatConstants.MIN_SIGNIFICAND_PRECISION_SIZE) {
+    static int requireValidSignificandSize(final int significandSize) {
+        if (significandSize < FloatConstants.SIZE_MIN_SIGNIFICAND) {
             throw new IllegalArgumentException(
-                    "significandPrecisionSize(" + significandPrecisionSize + ") < "
-                    + FloatConstants.MIN_SIGNIFICAND_PRECISION_SIZE);
+                    "significandSize(" + significandSize + ") < " + FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
-        if (significandPrecisionSize > FloatConstants.MAX_SIGNIFICAND_PRECISION_SIZE) {
+        if (significandSize > FloatConstants.SIZE_SIGNIFICAND_IEEE754) {
             throw new IllegalArgumentException(
-                    "significandPrecisionSize(" + significandPrecisionSize + ") > "
-                    + FloatConstants.MAX_SIGNIFICAND_PRECISION_SIZE);
+                    "significandSize(" + significandSize + ") > " + FloatConstants.SIZE_SIGNIFICAND_IEEE754);
         }
-        return significandPrecisionSize;
+        return significandSize;
     }
 
     private FloatConstraints() {

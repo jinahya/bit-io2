@@ -1,72 +1,49 @@
 package com.github.jinahya.bit.io;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class FloatReader
         extends FloatBase
         implements BitReader<Float> {
 
-    public static class Zero
+    static float readZero(final BitInput input) throws IOException {
+        return Float.intBitsToFloat(
+                input.readInt(true, 1) << (Integer.SIZE - 1)
+        );
+    }
+
+    public static final class Zero
             extends FloatReader {
 
-        public static final Zero POSITIVE = new Zero(1, 1) {
-            @Override
-            protected int readSignBit(BitInput input) throws IOException {
-                return 0;
-            }
-        };
+        private static final class InstanceHolder {
 
-        public static final Zero NEGATIVE = new Zero(1, 1) {
-            @Override
-            protected int readSignBit(BitInput input) throws IOException {
-                return 1;
-            }
-        };
+            private static final FloatReader INSTANCE = new Zero();
+        }
 
-        protected Zero(int exponentSize, int significandPrecisionSize) {
-            super(exponentSize, significandPrecisionSize);
+        public static FloatReader getInstance() {
+            return InstanceHolder.INSTANCE;
+        }
+
+        private Zero() {
+            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
 
         @Override
-        protected int readSignBit(final BitInput input) throws IOException {
-            return super.readSignBit(input);
-        }
-
-        @Override
-        protected int readExponent(final BitInput input) throws IOException {
-            return 0;
-        }
-
-        @Override
-        protected int readSignificandPrecision(final BitInput input) throws IOException {
-            return 0;
+        public Float read(final BitInput input) throws IOException {
+            return readZero(input);
         }
     }
 
-    static float read(final BitInput input, final int exponentSize, final int significandPrecisionSize)
-            throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        FloatConstraints.requireValidExponentSize(exponentSize);
-        FloatConstraints.requireValidSignificandPrecisionSize(significandPrecisionSize);
-        return .0f;
+    static int readExponent(final BitInput input, final int size) throws IOException {
+        return (input.readInt(false, size) << FloatConstants.SIZE_SIGNIFICAND_IEEE754) & FloatConstants.MASK_EXPONENT;
     }
 
-    static int readExponent(final BitInput input, final int exponentSize) throws IOException {
-        return input.readInt(false, exponentSize)
-               & BitIoUtils.bitMask(FloatConstants.IEEE754_EXPONENT_MASK);
-    }
-
-    static int readExponentMask(final BitInput input, final int exponentSize) throws IOException {
-        return readExponent(input, exponentSize)
-               << FloatConstants.IEEE754_SIGNIFICAND_PRECISION_SIZE;
-    }
-
-    static int readSignificandPrecisionMask(final BitInput input, final int significandPrecisionSize)
-            throws IOException {
-        return input.readInt(true, 1)
-               << (FloatConstants.IEEE754_SIGNIFICAND_PRECISION_SIZE - 1)
-               | input.readInt(true, significandPrecisionSize - 1);
+    static int readSignificand(final BitInput input, int size) throws IOException {
+        int bits = input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND_IEEE754 - 1);
+        if (--size > 0) {
+            bits |= input.readInt(true, size);
+        }
+        return bits;
     }
 
     public FloatReader(final int exponentSize, final int significandPrecisionSize) {
@@ -75,11 +52,9 @@ public class FloatReader
 
     @Override
     public Float read(final BitInput input) throws IOException {
-        int bits = 0;
-        bits |= readSignBit(input);
-        bits <<= Integer.SIZE - 1;
-        bits |= (readExponent(input) & BitIoUtils.bitMask(exponentSize)) << FloatConstants.IEEE754_SIGNIFICAND_PRECISION_SIZE;
-        bits |= (readSignificandPrecision(input) & BitIoUtils.bitMask(FloatConstants.IEEE754_SIGNIFICAND_PRECISION_SIZE));
+        int bits = readSignBit(input) << Integer.SIZE - 1;
+        bits |= readExponent(input, exponentSize);
+        bits |= readSignificand(input, significandSize);
         return Float.intBitsToFloat(bits);
     }
 
@@ -87,11 +62,11 @@ public class FloatReader
         return input.readInt(true, 1);
     }
 
-    protected int readExponent(final BitInput input) throws IOException {
-        return 0;
+    protected int readExponentMask(final BitInput input) throws IOException {
+        return readExponent(input, exponentSize);
     }
 
     protected int readSignificandPrecision(final BitInput input) throws IOException {
-        return 0;
+        return readSignificand(input, significandSize);
     }
 }
