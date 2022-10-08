@@ -82,16 +82,43 @@ class BitIo_Float_Test {
 
     @RepeatedTest(128)
     void floatOfZero__() throws IOException {
-        final var value = Float.intBitsToFloat(ThreadLocalRandom.current().nextInt());
+        final var positive = ThreadLocalRandom.current().nextBoolean();
         final var actual = wr1u(o -> {
-            o.writeFloatOfZero(value);
+            o.writeFloatOfZero(positive);
             return BitInput::readFloatOfZero;
         });
-        final var expected = Float.intBitsToFloat(Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGN_BIT);
-        if (Float.isNaN(expected)) {
-            assertThat(actual).isNaN();
-            return;
+        // https://github.com/assertj/assertj/issues/919
+//        assertThat(actual).isZero();
+        if (positive) {
+            assertThat(Float.floatToRawIntBits(actual))
+                    .isEqualTo(0b0__00000000__00000000_00000000_0000000);
+        } else {
+            assertThat(Float.floatToRawIntBits(actual))
+                    .isEqualTo(0b1__00000000__00000000_00000000_0000000);
         }
-        assertThat(actual).isEqualTo(expected);
+    }
+
+    private static IntStream signMaskStream() {
+        return IntStream.of(
+                0,
+                Integer.MIN_VALUE
+        );
+    }
+
+    @MethodSource({"signMaskStream"})
+    @ParameterizedTest
+    void floatOfInfinity__(final int signMask) throws IOException {
+        final var actual = wr1u(o -> {
+            o.writeFloatOfInfinity(signMask);
+            return BitInput::readFloatOfInfinity;
+        });
+        assertThat(actual).isInfinite(); // 얘는 또 되네???
+        if (signMask >= 0) {
+            assertThat(Float.floatToRawIntBits(actual))
+                    .isEqualTo(0b0__11111111__00000000_00000000_0000000);
+        } else {
+            assertThat(Float.floatToRawIntBits(actual))
+                    .isEqualTo(0b1__11111111__00000000_00000000_0000000);
+        }
     }
 }

@@ -147,16 +147,26 @@ public interface BitOutput {
         FloatWriter.writeSignificand(this, significandSize, bits);
     }
 
-    default void writeFloatOfZero(final float value) throws IOException {
-        writeInt(true, 1, Float.floatToRawIntBits(value) >> (Integer.SIZE - 1));
+    /**
+     * Writes a zoro value whose sign is determined by specified flag.
+     *
+     * @param positive the flag for sign bit; {@code true} for the negative zero, {@code false} for positive zero.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readFloatOfZero()
+     */
+    default void writeFloatOfZero(final boolean positive) throws IOException {
+        writeInt(true, 1, positive ? 0 : 1);
     }
 
-    default void writeFloatOfNaN(final int significandSize, final int significandBits) throws IOException {
-        FloatConstraints.requireValidSignificandSize(significandSize);
-        if (significandBits <= 0) {
-            throw new IllegalArgumentException("significandBits(" + Integer.toBinaryString(significandBits) + " <= 0");
-        }
-        writeInt(true, 1, Float.floatToRawIntBits(value) >> (Integer.SIZE - 1));
+    /**
+     * Writes a infinity value whose sign bit is same to that of specified value.
+     *
+     * @param sign the value whose left most bit is used for the sign bit.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readFloatOfInfinity()
+     */
+    default void writeFloatOfInfinity(final int sign) throws IOException {
+        writeInt(true, 1, sign >> (Integer.SIZE - 1));
     }
 
     /**

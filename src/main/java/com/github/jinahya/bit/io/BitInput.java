@@ -160,7 +160,7 @@ public interface BitInput {
 
     default float readFloatOfInfinity() throws IOException {
         return Float.intBitsToFloat(
-                readInt(true, 1) << (Integer.SIZE - 1) | 0b1111111__00000000_00000000_0000_000
+                (readInt(true, 1) << (Integer.SIZE - 1)) | 0b0_11111111__00000000_00000000_0000_000
         );
     }
 
