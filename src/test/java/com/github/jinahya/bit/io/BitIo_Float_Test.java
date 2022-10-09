@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -123,6 +124,29 @@ class BitIo_Float_Test {
         } else {
             assertThat(actual).isEqualTo(Float.NEGATIVE_INFINITY);
             assertThat(bits).isEqualTo(FloatTestConstants.NEGATIVE_INFINITY_BITS);
+        }
+    }
+
+    @Nested
+    class OfNaNTest {
+
+        private static Stream<Arguments> getSignificandSizeAndValueArgumentsStream() {
+            return IntStream.range(0, 8)
+                    .mapToObj(i -> {
+                        final int size = BitIoRandom.nextSignificandSizeForFloat();
+                        final int bits = BitIoRandom.nextSignificandBitsForFloatNaN(size);
+                        return Arguments.of(size, bits);
+                    });
+        }
+
+        @MethodSource({"getSignificandSizeAndValueArgumentsStream"})
+        @ParameterizedTest(name = "[{index}] size: {0}, bits: {1}")
+        void ofNaN__(final int size, final int bits) throws IOException {
+            final var actual = wr1u(o -> {
+                o.writeFloatOfNaN(size, bits);
+                return i -> i.readFloatOfNaN(size);
+            });
+            assertThat(actual).isNaN();
         }
     }
 }

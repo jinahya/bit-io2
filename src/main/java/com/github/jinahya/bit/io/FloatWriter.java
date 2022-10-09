@@ -159,11 +159,11 @@ public class FloatWriter
         }
     }
 
-    static void writeExponent(final BitOutput output, final int size, final int bits) throws IOException {
+    static void writeExponentBits(final BitOutput output, final int size, final int bits) throws IOException {
         output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_SIGNIFICAND);
     }
 
-    static void writeSignificand(final BitOutput output, int size, final int bits) throws IOException {
+    static void writeSignificandBits(final BitOutput output, int size, final int bits) throws IOException {
         output.writeInt(true, 1, bits >> (FloatConstants.SIZE_SIGNIFICAND - 1));
         if (--size > 0) {
             output.writeInt(true, size, bits);
@@ -187,10 +187,10 @@ public class FloatWriter
     }
 
     protected void writeExponent(final BitOutput output, final int bits) throws IOException {
-        writeExponent(output, exponentSize, bits);
+        writeExponentBits(output, exponentSize, bits);
     }
 
     protected void writeSignificand(final BitOutput output, final int bits) throws IOException {
-        writeSignificand(output, significandSize, bits);
+        writeSignificandBits(output, significandSize, bits);
     }
 }

@@ -2,28 +2,24 @@ package com.github.jinahya.bit.io;
 
 final class FloatConstraints {
 
-    static int requireValidExponentSize(final int exponentSize) {
-        if (exponentSize < FloatConstants.SIZE_MIN_EXPONENT) {
-            throw new IllegalArgumentException(
-                    "exponentSize(" + exponentSize + ") < " + FloatConstants.SIZE_MIN_EXPONENT);
+    static int requireValidExponentSize(final int size) {
+        if (size < FloatConstants.SIZE_MIN_EXPONENT) {
+            throw new IllegalArgumentException("size(" + size + ") < " + FloatConstants.SIZE_MIN_EXPONENT);
         }
-        if (exponentSize > FloatConstants.SIZE_EXPONENT) {
-            throw new IllegalArgumentException(
-                    "exponentSize(" + exponentSize + ") > " + FloatConstants.SIZE_EXPONENT);
+        if (size > FloatConstants.SIZE_EXPONENT) {
+            throw new IllegalArgumentException("size(" + size + ") > " + FloatConstants.SIZE_EXPONENT);
         }
-        return exponentSize;
+        return size;
     }
 
-    static int requireValidSignificandSize(final int significandSize) {
-        if (significandSize < FloatConstants.SIZE_MIN_SIGNIFICAND) {
-            throw new IllegalArgumentException(
-                    "significandSize(" + significandSize + ") < " + FloatConstants.SIZE_MIN_SIGNIFICAND);
+    static int requireValidSignificandSize(final int size) {
+        if (size < FloatConstants.SIZE_MIN_SIGNIFICAND) {
+            throw new IllegalArgumentException("size(" + size + ") < " + FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
-        if (significandSize > FloatConstants.SIZE_SIGNIFICAND) {
-            throw new IllegalArgumentException(
-                    "significandSize(" + significandSize + ") > " + FloatConstants.SIZE_SIGNIFICAND);
+        if (size > FloatConstants.SIZE_SIGNIFICAND) {
+            throw new IllegalArgumentException("size(" + size + ") > " + FloatConstants.SIZE_SIGNIFICAND);
         }
-        return significandSize;
+        return size;
     }
 
     private FloatConstraints() {

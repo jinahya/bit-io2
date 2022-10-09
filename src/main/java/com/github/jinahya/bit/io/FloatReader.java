@@ -106,11 +106,11 @@ public class FloatReader
         }
     }
 
-    static int readExponent(final BitInput input, final int size) throws IOException {
+    static int readExponentBits(final BitInput input, final int size) throws IOException {
         return (input.readInt(false, size) << FloatConstants.SIZE_SIGNIFICAND) & FloatConstants.MASK_EXPONENT;
     }
 
-    static int readSignificand(final BitInput input, int size) throws IOException {
+    static int readSignificandBits(final BitInput input, int size) throws IOException {
         int bits = input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1);
         if (--size > 0) {
             bits |= input.readInt(true, size);
@@ -135,10 +135,10 @@ public class FloatReader
     }
 
     protected int readExponent(final BitInput input) throws IOException {
-        return readExponent(input, exponentSize);
+        return readExponentBits(input, exponentSize);
     }
 
     protected int readSignificand(final BitInput input) throws IOException {
-        return readSignificand(input, significandSize);
+        return readSignificandBits(input, significandSize);
     }
 }
