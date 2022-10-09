@@ -63,7 +63,7 @@ class ByteArray_Unsigned_Wr_Test {
         final var writer = ByteArrayWriter.unsigned(lengthSize, 7);
         writer.write(output, expected);
         final var padded = output.align(1);
-        if (expected.length > 0) {
+        if (false && expected.length > 0) {
             final var given = expected.length + Integer.BYTES;
             log.debug("given: {}, written: {}, rate: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
         }

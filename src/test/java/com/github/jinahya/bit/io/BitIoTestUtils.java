@@ -319,14 +319,14 @@ final class BitIoTestUtils {
         return FloatConstraints.requireValidExponentSize(
                 ThreadLocalRandom.current().nextInt(
                         FloatConstants.SIZE_MIN_EXPONENT,
-                        FloatConstants.SIZE_EXPONENT_IEEE754 + 1
+                        FloatConstants.SIZE_EXPONENT + 1
                 )
         );
     }
 
     static int getRandomExponentBitsForFloat(final int size) {
         return getRandomValueForInt(false, size)
-               << FloatConstants.SIZE_SIGNIFICAND_IEEE754
+               << FloatConstants.SIZE_SIGNIFICAND
                & FloatConstants.MASK_EXPONENT;
     }
 
@@ -334,7 +334,7 @@ final class BitIoTestUtils {
         return FloatConstraints.requireValidSignificandSize(
                 ThreadLocalRandom.current().nextInt(
                         FloatConstants.SIZE_MIN_SIGNIFICAND,
-                        FloatConstants.SIZE_SIGNIFICAND_IEEE754 + 1
+                        FloatConstants.SIZE_SIGNIFICAND + 1
                 )
         );
     }

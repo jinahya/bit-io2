@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,6 +37,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 class BitIo_Float_Test {
+
+    private static IntStream signMaskStream() {
+        return IntStream.of(
+                Integer.MIN_VALUE,
+                -1,
+                0,
+                +1,
+                Integer.MAX_VALUE,
+                ThreadLocalRandom.current().nextInt() >>> 1, // random positive
+                ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE // random negative
+        );
+    }
 
     @ValueSource(booleans = {true, false})
     @ParameterizedTest
@@ -64,15 +75,12 @@ class BitIo_Float_Test {
 
     @MethodSource({"getExponentSizeAndSignificandSizeArgumentsStream"})
     @ParameterizedTest
-    void fixed__(final int exponentSize, final int significandSize) throws IOException {
-        log.debug("exponentSize: {}, significandSize: {}", exponentSize, significandSize);
+    void wr__(final int exponentSize, final int significandSize) throws IOException {
         final var expected = BitIoRandom.nextValueForFloat(exponentSize, significandSize);
-        log.debug("expected: {}", BitIoTestUtils.format(expected));
         final var actual = wr1u(o -> {
             o.writeFloat(exponentSize, significandSize, expected);
             return i -> i.readFloat(exponentSize, significandSize);
         });
-        log.debug("actual  : {}", BitIoTestUtils.format(actual));
         if (Float.isNaN(expected)) {
             assertThat(actual).isNaN();
             return;
@@ -80,45 +88,41 @@ class BitIo_Float_Test {
         assertThat(actual).isEqualTo(expected);
     }
 
-    @RepeatedTest(128)
-    void floatOfZero__() throws IOException {
-        final var positive = ThreadLocalRandom.current().nextBoolean();
-        final var actual = wr1u(o -> {
-            o.writeFloatOfZero(positive);
+    @MethodSource({"signMaskStream"})
+    @ParameterizedTest
+    void ofZero__(final int signMask) throws IOException {
+        // https://github.com/assertj/assertj/issues/919
+        // var 를 사용하면, assertThat(float) 이 아닌, assertThat(Float) 을 사용한다.
+        final /*var*/ float actual = wr1u(o -> {
+            o.writeFloatOfZero(signMask);
             return BitInput::readFloatOfZero;
         });
-        // https://github.com/assertj/assertj/issues/919
-//        assertThat(actual).isZero();
-        if (positive) {
-            assertThat(Float.floatToRawIntBits(actual))
-                    .isEqualTo(0b0__00000000__00000000_00000000_0000000);
+        assertThat(actual).isZero();
+        final var bits = Float.floatToRawIntBits(actual);
+        if (signMask >= 0) {
+            assertThat(actual).isEqualTo(+.0f);
+            assertThat(bits).isEqualTo(FloatTestConstants.POSITIVE_ZERO_BITS);
         } else {
-            assertThat(Float.floatToRawIntBits(actual))
-                    .isEqualTo(0b1__00000000__00000000_00000000_0000000);
+            assertThat(actual).isEqualTo(-.0f);
+            assertThat(bits).isEqualTo(FloatTestConstants.NEGATIVE_ZERO_BITS);
         }
-    }
-
-    private static IntStream signMaskStream() {
-        return IntStream.of(
-                0,
-                Integer.MIN_VALUE
-        );
     }
 
     @MethodSource({"signMaskStream"})
     @ParameterizedTest
-    void floatOfInfinity__(final int signMask) throws IOException {
+    void ofInfinity__(final int signMask) throws IOException {
         final var actual = wr1u(o -> {
             o.writeFloatOfInfinity(signMask);
             return BitInput::readFloatOfInfinity;
         });
-        assertThat(actual).isInfinite(); // 얘는 또 되네???
+        assertThat(actual).isInfinite();
+        final var bits = Float.floatToRawIntBits(actual);
         if (signMask >= 0) {
-            assertThat(Float.floatToRawIntBits(actual))
-                    .isEqualTo(0b0__11111111__00000000_00000000_0000000);
+            assertThat(actual).isEqualTo(Float.POSITIVE_INFINITY);
+            assertThat(bits).isEqualTo(FloatTestConstants.POSITIVE_INFINITY_BITS);
         } else {
-            assertThat(Float.floatToRawIntBits(actual))
-                    .isEqualTo(0b1__11111111__00000000_00000000_0000000);
+            assertThat(actual).isEqualTo(Float.NEGATIVE_INFINITY);
+            assertThat(bits).isEqualTo(FloatTestConstants.NEGATIVE_INFINITY_BITS);
         }
     }
 }

@@ -31,6 +31,5 @@ class MathTest {
     @Test
     void log() {
         final int bits = (int) Math.ceil(Math.log10(Integer.MAX_VALUE) / Math.log10(2));
-        log.debug("bits: {}", bits);
     }
 }

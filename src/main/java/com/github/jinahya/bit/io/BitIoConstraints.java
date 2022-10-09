@@ -20,7 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**

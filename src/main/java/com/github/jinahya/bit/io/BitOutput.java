@@ -127,20 +127,23 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified {@value java.lang.Float#SIZE}-bit {@code float} value.
+     * Writes specified {@code float} value with specified {@code exponent} size and {@code significand} size.
      *
-     * @param value the {@code float} value to write.
+     * @param exponentSize    the number of bit for wring the {@code exponent} part of the {@code value}; between
+     *                        {@code 1} and {@value FloatConstants#SIZE_EXPONENT}, both inclusive.
+     * @param significandSize the number of bit for writing the {@code significand} part of the {@code value}; between
+     *                        {@code 1} and {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+     * @param value           the value to write.
      * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation writes specified value as a {@value java.lang.Integer#SIZE}-bit {@code int}
-     * value converted with {@link Float#floatToRawIntBits(float)} method.
      */
-    default void writeFloat(final float value) throws IOException {
-        writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
-    }
-
     default void writeFloat(final int exponentSize, final int significandSize, final float value) throws IOException {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
+        if (exponentSize == FloatConstants.SIZE_EXPONENT
+            && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
+            writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
+            return;
+        }
         final int bits = Float.floatToRawIntBits(value);
         writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
         FloatWriter.writeExponent(this, exponentSize, bits);
@@ -148,46 +151,85 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a zoro value whose sign is determined by specified flag.
+     * Writes a zoro value whose sign bit is same as the left most bit of specified sign mask. Only the left most bit of
+     * the sing mask is written.
+     * <p>
+     * e.g.
+     * <blockquote><pre>{@code
+     * writeFloatOfZero(+0); // intends to writing 0b0__0000000__00000000_00000000_0000_000
+     * writeFloatOfZero(-1); // intends to writing 0b1__0000000__00000000_00000000_0000_000
+     * }</pre></blockquote>
      *
-     * @param positive the flag for sign bit; {@code true} for the negative zero, {@code false} for positive zero.
+     * @param signMask the sign mask whose left most bit is written.
      * @throws IOException if an I/O error occurs.
      * @see BitInput#readFloatOfZero()
      */
-    default void writeFloatOfZero(final boolean positive) throws IOException {
-        writeInt(true, 1, positive ? 0 : 1);
+    default void writeFloatOfZero(final int signMask) throws IOException {
+        FloatWriter.writeZeroBits(this, signMask);
     }
 
     /**
-     * Writes a infinity value whose sign bit is same to that of specified value.
+     * Writes an infinity value whose sign bit is same as the left most bit of specified sign mask. Only the left most
+     * bit of the sign mask is written.
+     * <p>
+     * e.g.
+     * <blockquote><pre>{@code
+     * writeFloatOfInfinity(+0); // intends to writing 0b0__11111111__00000000_00000000_0000_000
+     * writeFloatOfInfinity(-1); // intends to writing 0b1__11111111__00000000_00000000_0000_000
+     * }</pre></blockquote>
      *
-     * @param sign the value whose left most bit is used for the sign bit.
+     * @param signMask the sign mask value whose left most bit is used for the sign bit.
      * @throws IOException if an I/O error occurs.
      * @see BitInput#readFloatOfInfinity()
      */
-    default void writeFloatOfInfinity(final int sign) throws IOException {
-        writeInt(true, 1, sign >> (Integer.SIZE - 1));
+    default void writeFloatOfInfinity(final int signMask) throws IOException {
+        FloatWriter.writeInfinityBits(this, signMask);
     }
 
     /**
-     * Writes specified {@value java.lang.Double#SIZE}-bit {@code double} value.
+     * Writes specified {@code float} value with specified {@code exponent} size and {@code significand} size.
      *
-     * @param value the {@code double} value to write.
+     * @param exponentSize    the number of bit for wring the {@code exponent} part of the {@code value}; between
+     *                        {@code 1} and {@value DoubleConstants#SIZE_EXPONENT}, both inclusive.
+     * @param significandSize the number of bit for writing the {@code significand} part of the {@code value}; between
+     *                        {@code 1} and {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
+     * @param value           the value to write.
      * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation writes specified value as a {@value java.lang.Long#SIZE}-bit {@code long}
-     * value converted with {@link Double#doubleToRawLongBits(double)} method.
      */
-    default void writeDouble(final double value) throws IOException {
-        writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
-    }
-
     default void writeDouble(final int exponentSize, final int significandSize, final double value) throws IOException {
         DoubleConstraints.requireValidExponentSize(exponentSize);
         DoubleConstraints.requireValidSignificandSize(significandSize);
+        if (exponentSize == DoubleConstants.SIZE_EXPONENT
+            && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
+            writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
+            return;
+        }
         final long bits = Double.doubleToRawLongBits(value);
         writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
         DoubleWriter.writeExponent(this, exponentSize, bits);
         DoubleWriter.writeSignificand(this, significandSize, bits);
+    }
+
+    /**
+     * Writes a zoro value whose sign bit is same as the left most bit of specified value.
+     *
+     * @param signMask the sign mask value whose left most bit is used for the sign bit.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readDoubleOfZero()
+     */
+    default void writeDoubleOfZero(final long signMask) throws IOException {
+        DoubleWriter.writeZeroBits(this, signMask);
+    }
+
+    /**
+     * Writes an infinity value whose sign bit is same as the left most bit of specified value.
+     *
+     * @param signMask the sign mask value whose left most bit is used for the sign bit.
+     * @throws IOException if an I/O error occurs.
+     * @see BitInput#readDoubleOfInfinity()
+     */
+    default void writeDoubleOfInfinity(final long signMask) throws IOException {
+        DoubleWriter.writeInfinityBits(this, signMask);
     }
 
     /**
@@ -206,7 +248,7 @@ public interface BitOutput {
     }
 
     /**
-     * Writes specified number of zero-bits.
+     * Skips by writing specified number of zero-bits.
      *
      * @param bits the number of bit to skip; must be positive.
      * @throws IllegalArgumentException if {@code bits} is not positive.

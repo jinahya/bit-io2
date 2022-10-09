@@ -6,22 +6,37 @@ public class DoubleReader
         extends DoubleBase
         implements BitReader<Double> {
 
-    static double readZero(final BitInput input) throws IOException {
-        return Double.longBitsToDouble(
-                input.readLong(true, 1) << (Long.SIZE - 1)
-        );
+    static long readZeroBits(final BitInput input) throws IOException {
+        return input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
     }
 
     public static final class Zero
             extends DoubleReader {
 
-        private static final class InstanceHolder {
+        private static final class Holder {
 
             private static final DoubleReader INSTANCE = new Zero();
+
+            private static final class Nullable {
+
+                private static final BitReader<Double> INSTANCE = new FilterBitReader.Nullable<>(Holder.INSTANCE);
+
+                private Nullable() {
+                    throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+                }
+            }
+
+            private Holder() {
+                throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+            }
         }
 
-        public static DoubleReader getInstance() {
-            return InstanceHolder.INSTANCE;
+        public static BitReader<Double> getInstance() {
+            return Holder.INSTANCE;
+        }
+
+        public static BitReader<Double> getInstanceNullable() {
+            return Holder.Nullable.INSTANCE;
         }
 
         private Zero() {
@@ -29,32 +44,89 @@ public class DoubleReader
         }
 
         @Override
+        public BitReader<Double> nullable() {
+            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+        }
+
+        @Override
         public Double read(final BitInput input) throws IOException {
-            return readZero(input);
+            return Double.longBitsToDouble(readZeroBits(input));
+        }
+    }
+
+    private static long readInfinityBits(final BitInput input) throws IOException {
+        return readZeroBits(input);
+    }
+
+    static double readInfinity(final BitInput input) throws IOException {
+        return Double.longBitsToDouble(readInfinityBits(input) | DoubleConstants.MASK_EXPONENT);
+    }
+
+    public static final class Infinity
+            extends DoubleReader {
+
+        private static final class Holder {
+
+            private static final DoubleReader INSTANCE = new Infinity();
+
+            private static final class Nullable {
+
+                private static final BitReader<Double> INSTANCE = new FilterBitReader.Nullable<>(Holder.INSTANCE);
+
+                private Nullable() {
+                    throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+                }
+            }
+
+            private Holder() {
+                throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+            }
+        }
+
+        public static BitReader<Double> getInstance() {
+            return Holder.INSTANCE;
+        }
+
+        public static BitReader<Double> getInstanceNullable() {
+            return Holder.Nullable.INSTANCE;
+        }
+
+        private Infinity() {
+            super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
+        }
+
+        @Override
+        public BitReader<Double> nullable() {
+            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+        }
+
+        @Override
+        public Double read(final BitInput input) throws IOException {
+            return readInfinity(input);
         }
     }
 
     static long readExponent(final BitInput input, final int size) throws IOException {
-        return (input.readLong(false, size) << DoubleConstants.SIZE_SIGNIFICAND_IEEE754) & DoubleConstants.MASK_EXPONENT;
+        return (input.readLong(false, size) << DoubleConstants.SIZE_SIGNIFICAND) & DoubleConstants.MASK_EXPONENT;
     }
 
     static long readSignificand(final BitInput input, int size) throws IOException {
-        long bits = input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND_IEEE754 - 1);
+        long bits = input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1);
         if (--size > 0) {
             bits |= input.readLong(true, size);
         }
         return bits;
     }
 
-    public DoubleReader(final int exponentSize, final int significandPrecisionSize) {
-        super(exponentSize, significandPrecisionSize);
+    public DoubleReader(final int exponentSize, final int significandSize) {
+        super(exponentSize, significandSize);
     }
 
     @Override
     public Double read(final BitInput input) throws IOException {
-        long bits = readSignBit(input) << Long.SIZE - 1;
-        bits |= readExponent(input, exponentSize);
-        bits |= readSignificand(input, significandSize);
+        long bits = readSignBit(input) << DoubleConstants.SHIFT_SIGN_BIT;
+        bits |= readExponent(input);
+        bits |= readSignificand(input);
         return Double.longBitsToDouble(bits);
     }
 
@@ -62,11 +134,11 @@ public class DoubleReader
         return input.readLong(true, 1);
     }
 
-    protected long readExponentMask(final BitInput input) throws IOException {
+    protected long readExponent(final BitInput input) throws IOException {
         return readExponent(input, exponentSize);
     }
 
-    protected long readSignificandPrecision(final BitInput input) throws IOException {
+    protected long readSignificand(final BitInput input) throws IOException {
         return readSignificand(input, significandSize);
     }
 }

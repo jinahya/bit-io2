@@ -21,28 +21,157 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class FloatWriter
         extends FloatBase
         implements BitWriter<Float> {
 
-    static void writeZero(final BitOutput output, final float value) throws IOException {
-        output.writeInt(true, 1, Float.floatToRawIntBits(value) >> (Integer.SIZE - 1));
+    static void writeZeroBits(final BitOutput output, final int bits) throws IOException {
+        output.writeInt(true, 1, bits >= 0 ? 0 : 1);
+    }
+
+    /**
+     * A bit writer for writing {@code ±0.0f}.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
+    public static final class Zero
+            extends FloatWriter {
+
+        private static final class Holder {
+
+            private static final BitWriter<Float> INSTANCE = new Zero();
+
+            private static final class Nullable {
+
+                private static final BitWriter<Float> INSTANCE = new FilterBitWriter.Nullable<>(Holder.INSTANCE);
+
+                private Nullable() {
+                    throw new AssertionError("instantiation is not allowed");
+                }
+            }
+
+            private Holder() {
+                throw new AssertionError("instantiation is not allowed");
+            }
+        }
+
+        /**
+         * Returns the instance of this class.
+         *
+         * @return the instance.
+         * @see #getInstanceNullable()
+         */
+        public static BitWriter<Float> getInstance() {
+            return Holder.INSTANCE;
+        }
+
+        /**
+         * Returns the instance handles {@code null} values.
+         *
+         * @return the instance handles {@code null} values.
+         * @see #getInstance()
+         */
+        public static BitWriter<Float> getInstanceNullable() {
+            return Holder.Nullable.INSTANCE;
+        }
+
+        private Zero() {
+            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
+        }
+
+        @Override
+        public BitWriter<Float> nullable() {
+            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+        }
+
+        @Override
+        public void write(final BitOutput output, final Float value) throws IOException {
+            Objects.requireNonNull(value, "value is null");
+            writeZeroBits(output, Float.floatToRawIntBits(value));
+        }
+    }
+
+    static void writeInfinityBits(final BitOutput output, final int bits) throws IOException {
+        writeZeroBits(output, bits);
+    }
+
+    /**
+     * A bit writer for writing {@code ±Infinity}.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
+    public static final class Infinity
+            extends FloatWriter {
+
+        private static final class Holder {
+
+            private static final FloatWriter INSTANCE = new Infinity();
+
+            private static final class Nullable {
+
+                private static final BitWriter<Float> INSTANCE = new FilterBitWriter.Nullable<>(Holder.INSTANCE);
+
+                private Nullable() {
+                    throw new AssertionError("instantiation is not allowed");
+                }
+            }
+
+            private Holder() {
+                throw new AssertionError("instantiation is not allowed");
+            }
+        }
+
+        /**
+         * Returns the instance of this class.
+         *
+         * @return the instance.
+         * @see #getInstanceNullable()
+         */
+        public static FloatWriter getInstance() {
+            return Holder.INSTANCE;
+        }
+
+        /**
+         * Returns the instance handles {@code null} values.
+         *
+         * @return the instance handles {@code null} values.
+         * @see #getInstance()
+         */
+        public static BitWriter<Float> getInstanceNullable() {
+            return Holder.Nullable.INSTANCE;
+        }
+
+        private Infinity() {
+            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
+        }
+
+        @Override
+        public BitWriter<Float> nullable() {
+            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+        }
+
+        @Override
+        public void write(final BitOutput output, final Float value) throws IOException {
+            Objects.requireNonNull(value, "value is null");
+            writeInfinityBits(output, Float.floatToRawIntBits(value));
+        }
     }
 
     static void writeExponent(final BitOutput output, final int size, final int bits) throws IOException {
-        output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_SIGNIFICAND_IEEE754);
+        output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_SIGNIFICAND);
     }
 
     static void writeSignificand(final BitOutput output, int size, final int bits) throws IOException {
-        output.writeInt(true, 1, bits >> (FloatConstants.SIZE_SIGNIFICAND_IEEE754 - 1));
+        output.writeInt(true, 1, bits >> (FloatConstants.SIZE_SIGNIFICAND - 1));
         if (--size > 0) {
             output.writeInt(true, size, bits);
         }
     }
 
-    public FloatWriter(final int exponentSize, final int significandPrecisionSize) {
-        super(exponentSize, significandPrecisionSize);
+    public FloatWriter(final int exponentSize, final int significandSize) {
+        super(exponentSize, significandSize);
     }
 
     @Override

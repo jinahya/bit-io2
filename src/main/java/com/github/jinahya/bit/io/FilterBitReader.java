@@ -64,6 +64,11 @@ public abstract class FilterBitReader<T, U>
         }
 
         @Override
+        public BitReader<T> nullable() {
+            throw new UnsupportedOperationException(BitIoConstants.MESSAGE_UNSUPPORTED_ALREADY_NULLABLE);
+        }
+
+        @Override
         public T read(final BitInput input) throws IOException {
             Objects.requireNonNull(input, "input is null");
             final boolean nonnull = input.readBoolean();

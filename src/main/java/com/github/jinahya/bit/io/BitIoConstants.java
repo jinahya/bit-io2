@@ -58,6 +58,10 @@ final class BitIoConstants {
         Arrays.fill(BIT_MASKS, -1);
     }
 
+    static final String MESSAGE_INSTANTIATION_IS_NOT_ALLOWED = "instantiation is not allowed";
+
+    static final String MESSAGE_UNSUPPORTED_ALREADY_NULLABLE = "unsupported; already nullable";
+
     /**
      * Creates a new instance.
      */
