@@ -135,8 +135,8 @@ public interface BitInput {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
         int bits = readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
-        bits |= FloatReader.readExponent(this, exponentSize);
-        bits |= FloatReader.readSignificand(this, significandSize);
+        bits |= FloatReader.readExponentBits(this, exponentSize);
+        bits |= FloatReader.readSignificandBits(this, significandSize);
         return Float.intBitsToFloat(bits);
     }
 
@@ -160,6 +160,18 @@ public interface BitInput {
      */
     default float readFloatOfInfinity() throws IOException {
         return FloatReader.readInfinity(this);
+    }
+
+    /**
+     * .
+     *
+     * @param size .
+     * @return .
+     * @throws IOException if an I/O error occurs.
+     */
+    default float readFloatOfNaN(final int size) throws IOException {
+        FloatConstraints.requireValidSignificandSize(size);
+        return Float.intBitsToFloat(FloatReader.readSignificandBits(this, size) | FloatConstants.MASK_EXPONENT);
     }
 
     default double readDouble(final int exponentSize, final int significandSize) throws IOException {

@@ -146,8 +146,8 @@ public interface BitOutput {
         }
         final int bits = Float.floatToRawIntBits(value);
         writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
-        FloatWriter.writeExponent(this, exponentSize, bits);
-        FloatWriter.writeSignificand(this, significandSize, bits);
+        FloatWriter.writeExponentBits(this, exponentSize, bits);
+        FloatWriter.writeSignificandBits(this, significandSize, bits);
     }
 
     /**
@@ -184,6 +184,14 @@ public interface BitOutput {
      */
     default void writeFloatOfInfinity(final int signMask) throws IOException {
         FloatWriter.writeInfinityBits(this, signMask);
+    }
+
+    default void writeFloatOfNaN(final int significandSize, final int significandBits) throws IOException {
+        FloatConstraints.requireValidSignificandSize(significandSize);
+        if (significandBits <= 0) {
+            throw new IllegalArgumentException("significandBits(" + significandBits + ") is not positive");
+        }
+        FloatWriter.writeSignificandBits(this, significandSize, significandBits);
     }
 
     /**

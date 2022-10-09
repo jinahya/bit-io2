@@ -339,7 +339,7 @@ final class BitIoRandom {
         );
     }
 
-    static int getSignificandBitsForFloat(int size) {
+    static int nextSignificandBitsForFloat(int size) {
         FloatConstraints.requireValidSignificandSize(size);
         int bits = getRandomValueForInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1);
         if (--size > 0) {
@@ -353,7 +353,7 @@ final class BitIoRandom {
         FloatConstraints.requireValidSignificandSize(significandSize);
         return (getRandomValueForInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
                | getRandomExponentBitsForFloat(exponentSize)
-               | getSignificandBitsForFloat(significandSize);
+               | nextSignificandBitsForFloat(significandSize);
     }
 
     static float nextValueForFloat(final int exponentSize, final int significandSize) {
@@ -370,6 +370,11 @@ final class BitIoRandom {
         return function.apply(exponentSize)
                 .apply(significantSize)
                 .apply(valueBits);
+    }
+
+    static int nextSignificandBitsForFloatNaN(final int size) {
+        FloatConstraints.requireValidSignificandSize(size);
+        return nextSignificandBitsForFloat(size) | 0b01;
     }
 
     // ---------------------------------------------------------------------------------------------------------- double
