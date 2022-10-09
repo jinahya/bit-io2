@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>bit-io2</artifactId>
-  <version>0.2.1-SNAPSHOT</version>
+  <version>0.2.1</version>
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
@@ -35,7 +35,7 @@
     <connection>scm:git:git@github.com:jinahya/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:jinahya/${project.artifactId}.git</developerConnection>
     <url>https://github.com/jinahya/${project.artifactId}</url>
-    <tag>HEAD</tag>
+    <tag>0.2.1</tag>
   </scm>
   <issueManagement>
     <system>GitHub Issues</system>
