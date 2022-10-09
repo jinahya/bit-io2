@@ -68,7 +68,7 @@ class ByteArray_CompressedAscii_Printable_Wr_Test {
         final var writer = ByteArrayWriter.compressedAscii(lengthSize, true);
         writer.write(output, expected);
         final var padded = output.align(1);
-        {
+        if (false) {
             final var given = expected.length + Integer.BYTES;
             log.debug("given: {}, written: {}, ratio: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
         }

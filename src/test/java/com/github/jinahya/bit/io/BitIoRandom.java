@@ -35,7 +35,7 @@ import java.util.function.LongFunction;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 
-final class BitIoTestUtils {
+final class BitIoRandom {
 
     // ------------------------------------------------------------------------------------------------------------ byte
     static int getRandomSizeForByte(final boolean unsigned) {
@@ -315,7 +315,7 @@ final class BitIoTestUtils {
     }
 
     // ----------------------------------------------------------------------------------------------------------- float
-    static int getRandomExponentSizeForFloat() {
+    static int nextExponentSizeForFloat() {
         return FloatConstraints.requireValidExponentSize(
                 ThreadLocalRandom.current().nextInt(
                         FloatConstants.SIZE_MIN_EXPONENT,
@@ -330,7 +330,7 @@ final class BitIoTestUtils {
                & FloatConstants.MASK_EXPONENT;
     }
 
-    static int getRandomSignificandSizeForFloat() {
+    static int nextSignificandSizeForFloat() {
         return FloatConstraints.requireValidSignificandSize(
                 ThreadLocalRandom.current().nextInt(
                         FloatConstants.SIZE_MIN_SIGNIFICAND,
@@ -339,34 +339,92 @@ final class BitIoTestUtils {
         );
     }
 
-    static int getRandomSignificandBitsForFloat(int size) {
+    static int getSignificandBitsForFloat(int size) {
         FloatConstraints.requireValidSignificandSize(size);
-        int bits = getRandomValueForInt(true, 1) << (size - 1);
+        int bits = getRandomValueForInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1);
         if (--size > 0) {
             bits |= getRandomValueForInt(true, size);
         }
         return bits;
     }
 
-    static int getRandomValueBitsForFloat(final int exponentSize, final int significandSize) {
+    static int nextValueBitsForFloat(final int exponentSize, final int significandSize) {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
         return (getRandomValueForInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
                | getRandomExponentBitsForFloat(exponentSize)
-               | getRandomSignificandBitsForFloat(significandSize);
+               | getSignificandBitsForFloat(significandSize);
     }
 
-    static float getRandomValueForFloat(final int exponentSize, final int significandSize) {
+    static float nextValueForFloat(final int exponentSize, final int significandSize) {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
-        return Float.intBitsToFloat(getRandomValueBitsForFloat(exponentSize, significandSize));
+        return Float.intBitsToFloat(nextValueBitsForFloat(exponentSize, significandSize));
     }
 
     static <R> R applyRandomValueBitsForFloat(
             final IntFunction<? extends IntFunction<? extends IntFunction<? extends R>>> function) {
-        final var exponentSize = getRandomExponentSizeForFloat();
-        final var significantSize = getRandomSignificandSizeForFloat();
-        final var valueBits = getRandomValueBitsForFloat(exponentSize, significantSize);
+        final var exponentSize = nextExponentSizeForFloat();
+        final var significantSize = nextSignificandSizeForFloat();
+        final var valueBits = nextValueBitsForFloat(exponentSize, significantSize);
+        return function.apply(exponentSize)
+                .apply(significantSize)
+                .apply(valueBits);
+    }
+
+    // ---------------------------------------------------------------------------------------------------------- double
+    static int nextExponentSizeForDouble() {
+        return DoubleConstraints.requireValidExponentSize(
+                ThreadLocalRandom.current().nextInt(
+                        DoubleConstants.SIZE_MIN_EXPONENT,
+                        DoubleConstants.SIZE_EXPONENT + 1
+                )
+        );
+    }
+
+    static long getRandomExponentBitsForDouble(final int size) {
+        return getRandomValueForLong(false, size)
+               << DoubleConstants.SIZE_SIGNIFICAND
+               & DoubleConstants.MASK_EXPONENT;
+    }
+
+    static int nextSignificandSizeForDouble() {
+        return DoubleConstraints.requireValidSignificandSize(
+                ThreadLocalRandom.current().nextInt(
+                        DoubleConstants.SIZE_MIN_SIGNIFICAND,
+                        DoubleConstants.SIZE_SIGNIFICAND + 1
+                )
+        );
+    }
+
+    static long getSignificandBitsForDouble(int size) {
+        DoubleConstraints.requireValidSignificandSize(size);
+        long bits = getRandomValueForLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1);
+        if (--size > 0) {
+            bits |= getRandomValueForLong(true, size);
+        }
+        return bits;
+    }
+
+    static long nextLongBitsForDouble(final int exponentSize, final int significandSize) {
+        DoubleConstraints.requireValidExponentSize(exponentSize);
+        DoubleConstraints.requireValidSignificandSize(significandSize);
+        return (getRandomValueForLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
+               | getRandomExponentBitsForDouble(exponentSize)
+               | getSignificandBitsForDouble(significandSize);
+    }
+
+    static double nextValueForDouble(final int exponentSize, final int significandSize) {
+        DoubleConstraints.requireValidExponentSize(exponentSize);
+        DoubleConstraints.requireValidSignificandSize(significandSize);
+        return Double.longBitsToDouble(nextLongBitsForDouble(exponentSize, significandSize));
+    }
+
+    static <R> R applyNextLongBitsForDouble(
+            final LongFunction<? extends LongFunction<? extends LongFunction<? extends R>>> function) {
+        final var exponentSize = nextExponentSizeForDouble();
+        final var significantSize = nextSignificandSizeForDouble();
+        final var valueBits = nextLongBitsForDouble(exponentSize, significantSize);
         return function.apply(exponentSize)
                 .apply(significantSize)
                 .apply(valueBits);
@@ -458,17 +516,7 @@ final class BitIoTestUtils {
         });
     }
 
-    static String format(final float value) {
-        final String string = String.format("%32s", Integer.toBinaryString(Float.floatToRawIntBits(value)));
-        return string.substring(0, 1) + ' ' + string.substring(1, 9) + ' ' + string.substring(9);
-    }
-
-    static String format(final double value) {
-        final String string = String.format("%64s", Long.toBinaryString(Double.doubleToRawLongBits(value)));
-        return string.substring(0, 1) + ' ' + string.substring(1, 11) + ' ' + string.substring(11);
-    }
-
-    private BitIoTestUtils() {
+    private BitIoRandom() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

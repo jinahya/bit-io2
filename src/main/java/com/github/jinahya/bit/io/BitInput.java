@@ -131,28 +131,66 @@ public interface BitInput {
         return (char) readInt(true, size);
     }
 
-    /**
-     * Reads a {@value java.lang.Float#SIZE}-bit {@code float} value.
-     *
-     * @return a {@value java.lang.Float#SIZE}-bit {@code float} value
-     * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation reads a {@value java.lang.Integer#SIZE}-bit signed {@code int} value, and
-     * returns the value as a {@code float} value converted using {@link Float#intBitsToFloat(int)} method.
-     */
-    default float readFloat() throws IOException {
-        return Float.intBitsToFloat(readInt(false, Integer.SIZE));
+    default float readFloat(final int exponentSize, final int significandSize) throws IOException {
+        FloatConstraints.requireValidExponentSize(exponentSize);
+        FloatConstraints.requireValidSignificandSize(significandSize);
+        int bits = readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
+        bits |= FloatReader.readExponent(this, exponentSize);
+        bits |= FloatReader.readSignificand(this, significandSize);
+        return Float.intBitsToFloat(bits);
     }
 
     /**
-     * Reads a {@value java.lang.Double#SIZE}-bit {@code double} value.
+     * Reads a zero value of {@code float}.
      *
-     * @return a {@value java.lang.Double#SIZE}-bit {@code double} value
+     * @return a zero value of {@code float} read.
      * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation reads a {@value java.lang.Long#SIZE}-bit signed {@code long} value, and
-     * returns the value as a {@code double} value converted using {@link Double#longBitsToDouble(long)} method.
+     * @see BitOutput#writeFloatOfZero(int)
      */
-    default double readDouble() throws IOException {
-        return Double.longBitsToDouble(readLong(true, Long.SIZE));
+    default float readFloatOfZero() throws IOException {
+        return Float.intBitsToFloat(FloatReader.readZeroBits(this));
+    }
+
+    /**
+     * Reads an infinity value of {@code float}.
+     *
+     * @return a zero value of {@code float} read.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeFloatOfInfinity(int)
+     */
+    default float readFloatOfInfinity() throws IOException {
+        return FloatReader.readInfinity(this);
+    }
+
+    default double readDouble(final int exponentSize, final int significandSize) throws IOException {
+        DoubleConstraints.requireValidExponentSize(exponentSize);
+        DoubleConstraints.requireValidSignificandSize(significandSize);
+        long bits = readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
+        bits |= DoubleReader.readExponent(this, exponentSize);
+        bits |= DoubleReader.readSignificand(this, significandSize);
+        return Double.longBitsToDouble(bits);
+    }
+
+    /**
+     * Reads a zero value of {@code double}.
+     *
+     * @return a zero value of {@code double} read.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeDoubleOfZero(long)
+     */
+    default double readDoubleOfZero() throws IOException {
+        return Double.longBitsToDouble(DoubleReader.readZeroBits(this));
+    }
+
+    /**
+     * Reads an infinity value of {@code double}.
+     *
+     * @return a zero value of {@code double} read.
+     * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeDoubleOfInfinity(long)
+     */
+    default double readDoubleOfInfinity() throws IOException {
+        return DoubleReader.readInfinity(this);
     }
 
     /**
@@ -171,7 +209,7 @@ public interface BitInput {
     }
 
     /**
-     * Reads (and discards) specified number of bits.
+     * Skips by reading (and discarding) specified number of bits.
      *
      * @param bits the number of bits to skip; must be positive.
      * @throws IllegalArgumentException if {@code bits} is not positive.

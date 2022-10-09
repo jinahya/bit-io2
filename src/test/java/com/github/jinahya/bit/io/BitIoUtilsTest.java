@@ -38,7 +38,6 @@ class BitIoUtilsTest {
         void size_One_Zero() {
             final int value = 0;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {}", value, size);
             assertThat(size).isEqualTo(1);
         }
 
@@ -46,7 +45,6 @@ class BitIoUtilsTest {
         void size_Two_NegativeOne() {
             final int value = -1;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {}", value, size);
             assertThat(size).isEqualTo(2);
         }
 
@@ -54,7 +52,6 @@ class BitIoUtilsTest {
         void size_One_PositiveOne() {
             final int value = 1;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {}", value, size);
             assertThat(size).isEqualTo(1);
         }
 
@@ -62,7 +59,6 @@ class BitIoUtilsTest {
         void size_SIZE_MinValue() {
             final int value = Integer.MIN_VALUE;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {} (MIN_VALUE)", value, size);
             assertThat(size).isEqualTo(Integer.SIZE);
         }
 
@@ -70,7 +66,6 @@ class BitIoUtilsTest {
         void size_SIZEm1_MaxValue() {
             final int value = Integer.MAX_VALUE;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {} (MAX_VALUE)", value, size);
             assertThat(size).isEqualTo(Integer.SIZE - 1);
         }
 
@@ -78,7 +73,6 @@ class BitIoUtilsTest {
         void size_LtSIZE_RandomPositive() {
             final int value = ThreadLocalRandom.current().nextInt() & Integer.MAX_VALUE;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {} (random positive)", value, size);
             assertThat(size).isPositive().isLessThan(Integer.SIZE);
         }
 
@@ -86,7 +80,6 @@ class BitIoUtilsTest {
         void size_LeSIZE_RandomNegative() {
             final int value = ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {} (random negative)", value, size);
             assertThat(size).isPositive().isLessThanOrEqualTo(Integer.SIZE);
         }
     }
@@ -98,7 +91,6 @@ class BitIoUtilsTest {
         void size_One_Zero() {
             final long value = 0L;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {}", value, size);
             assertThat(size).isEqualTo(1);
         }
 
@@ -106,7 +98,6 @@ class BitIoUtilsTest {
         void size_Two_NegativeOne() {
             final long value = -1L;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {}", value, size);
             assertThat(size).isEqualTo(2);
         }
 
@@ -114,7 +105,6 @@ class BitIoUtilsTest {
         void size_One_PositiveOne() {
             final long value = 1L;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {}", value, size);
             assertThat(size).isEqualTo(1);
         }
 
@@ -122,7 +112,6 @@ class BitIoUtilsTest {
         void size_SIZE_MinValue() {
             final long value = Long.MIN_VALUE;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {} (MIN_VALUE)", value, size);
             assertThat(size).isEqualTo(Long.SIZE);
         }
 
@@ -130,7 +119,6 @@ class BitIoUtilsTest {
         void size_SIZEm1_MaxValue() {
             final long value = Long.MAX_VALUE;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {} (MAX_VALUE)", value, size);
             assertThat(size).isEqualTo(Long.SIZE - 1);
         }
 
@@ -138,7 +126,6 @@ class BitIoUtilsTest {
         void size_LtSIZE_RandomPositive() {
             final long value = ThreadLocalRandom.current().nextInt() & Long.MAX_VALUE;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {} (random positive)", value, size);
             assertThat(size).isPositive().isLessThan(Long.SIZE);
         }
 
@@ -146,7 +133,6 @@ class BitIoUtilsTest {
         void size_LeSIZE_RandomNegative() {
             final long value = ThreadLocalRandom.current().nextLong() | Long.MIN_VALUE;
             final int size = BitIoUtils.size(value);
-            log.debug("size for {}: {} (random negative)", value, size);
             assertThat(size).isPositive().isLessThanOrEqualTo(Long.SIZE);
         }
     }

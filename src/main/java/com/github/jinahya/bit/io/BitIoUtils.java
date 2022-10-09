@@ -84,6 +84,24 @@ final class BitIoUtils {
         return value & (-1 >>> (Integer.SIZE - size));
     }
 
+    static int bitMask(final int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("negative size: " + size);
+        }
+        if (size > Integer.SIZE) {
+            throw new IllegalArgumentException("size(" + size + ") > " + Integer.SIZE);
+        }
+        if (size == Integer.SIZE) {
+            return -1;
+        }
+        final int result = BitIoConstants.BIT_MASKS[size];
+        if (result != -1) {
+            return result;
+        }
+        BitIoConstants.BIT_MASKS[size] = -1 >>> (Integer.SIZE - size);
+        return bitMask(size);
+    }
+
     private BitIoUtils() {
         throw new AssertionError("instantiation is not allowed");
     }

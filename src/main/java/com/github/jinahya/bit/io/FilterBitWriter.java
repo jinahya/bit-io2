@@ -64,6 +64,11 @@ public abstract class FilterBitWriter<T, U>
         }
 
         @Override
+        public BitWriter<T> nullable() {
+            throw new UnsupportedOperationException(BitIoConstants.MESSAGE_UNSUPPORTED_ALREADY_NULLABLE);
+        }
+
+        @Override
         public void write(final BitOutput output, final T value) throws IOException {
             final boolean nonnull = value != null;
             output.writeBoolean(nonnull);

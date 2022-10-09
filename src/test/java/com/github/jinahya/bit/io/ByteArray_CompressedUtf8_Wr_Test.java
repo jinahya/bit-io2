@@ -63,7 +63,7 @@ class ByteArray_CompressedUtf8_Wr_Test {
         final var writer = ByteArrayWriter.compressedUtf8(lengthSize);
         writer.write(output, expected);
         final var padded = output.align(1);
-        {
+        if (false) {
             final var given = expected.length + Integer.BYTES;
             log.debug("given: {}, written: {}, rate: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
         }

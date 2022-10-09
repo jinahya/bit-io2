@@ -20,6 +20,8 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.util.function.Supplier;
+
 /**
  * Constraints for bit-io.
  *
@@ -27,11 +29,25 @@ package com.github.jinahya.bit.io;
  */
 final class BitIoConstraints {
 
-    private static int requirePositive(final int size) {
-        if (size <= 0) {
-            throw new IllegalArgumentException("non-positive size: " + size);
+    static int requirePositive(final int value, final Supplier<String> messageSupplier) {
+        if (value <= 0) {
+            throw new IllegalArgumentException(messageSupplier == null ? null : messageSupplier.get());
         }
-        return size;
+        return value;
+    }
+
+    static int requirePositive(final int value, final String message) {
+        if (value <= 0) {
+            throw new IllegalArgumentException(message);
+        }
+        return value;
+    }
+
+    static int requirePositive(final int value) {
+        if (value <= 0) {
+            throw new IllegalArgumentException("non-positive value: " + value);
+        }
+        return value;
     }
 
     static int requireValidSizeForByte(final boolean unsigned, final int size) {
