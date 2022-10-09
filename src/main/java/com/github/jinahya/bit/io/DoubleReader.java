@@ -2,6 +2,12 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 
+/**
+ * A reader for reading {@code Double} values.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see DoubleWriter
+ */
 public class DoubleReader
         extends DoubleBase
         implements BitReader<Double> {
@@ -10,6 +16,12 @@ public class DoubleReader
         return input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
     }
 
+    /**
+     * A reader for reading {@code ±.0d}.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleWriter.Zero
+     */
     public static final class Zero
             extends DoubleReader {
 
@@ -62,6 +74,12 @@ public class DoubleReader
         return Double.longBitsToDouble(readInfinityBits(input) | DoubleConstants.MASK_EXPONENT);
     }
 
+    /**
+     * A reader for reading values representing infinities.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleWriter.Infinity
+     */
     public static final class Infinity
             extends DoubleReader {
 

@@ -23,6 +23,12 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * A writer for writing {@code Double} values.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see DoubleReader
+ */
 public class DoubleWriter
         extends DoubleBase
         implements BitWriter<Double> {
@@ -32,9 +38,10 @@ public class DoubleWriter
     }
 
     /**
-     * A bit writer for writing zero values.
+     * A bit writer for writing {@code ±.0d}.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleReader.Zero
      */
     public static final class Zero
             extends DoubleWriter {
@@ -100,6 +107,7 @@ public class DoubleWriter
      * A bit writer for values representing infinities.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleReader.Infinity
      */
     public static final class Infinity
             extends DoubleWriter {
