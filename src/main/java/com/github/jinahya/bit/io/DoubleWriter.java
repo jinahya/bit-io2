@@ -88,6 +88,12 @@ public class DoubleWriter
             super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
         }
 
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
+         *
+         * @return N/A
+         * @see #getInstanceNullable()
+         */
         @Override
         public BitWriter<Double> nullable() {
             throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");
@@ -154,6 +160,12 @@ public class DoubleWriter
             super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
         }
 
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
+         *
+         * @return N/A
+         * @see #getInstanceNullable()
+         */
         @Override
         public BitWriter<Double> nullable() {
             throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");

@@ -55,6 +55,12 @@ public class DoubleReader
             super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
         }
 
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
+         *
+         * @return N/A
+         * @see #getInstanceNullable()
+         */
         @Override
         public BitReader<Double> nullable() {
             throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
@@ -113,6 +119,12 @@ public class DoubleReader
             super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
         }
 
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
+         *
+         * @return N/A
+         * @see #getInstanceNullable()
+         */
         @Override
         public BitReader<Double> nullable() {
             throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");

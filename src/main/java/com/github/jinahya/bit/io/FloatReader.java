@@ -43,6 +43,12 @@ public class FloatReader
             super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
 
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
+         *
+         * @return N/A
+         * @see #getInstanceNullable()
+         */
         @Override
         public BitReader<Float> nullable() {
             throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
@@ -95,6 +101,12 @@ public class FloatReader
             super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
 
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
+         *
+         * @return N/A
+         * @see #getInstanceNullable()
+         */
         @Override
         public BitReader<Float> nullable() {
             throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");

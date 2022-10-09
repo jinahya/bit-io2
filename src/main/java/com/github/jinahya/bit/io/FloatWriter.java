@@ -81,6 +81,12 @@ public class FloatWriter
             super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
 
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
+         *
+         * @return N/A
+         * @see #getInstanceNullable()
+         */
         @Override
         public BitWriter<Float> nullable() {
             throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
@@ -147,6 +153,12 @@ public class FloatWriter
             super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
 
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
+         *
+         * @return N/A
+         * @see #getInstanceNullable()
+         */
         @Override
         public BitWriter<Float> nullable() {
             throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
