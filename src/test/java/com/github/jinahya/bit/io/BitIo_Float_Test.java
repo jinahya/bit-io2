@@ -21,60 +21,28 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.applyRandomSizeAndValueForLongUnchecked;
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 class BitIo_Float_Test {
 
-    private static IntStream signMaskStream() {
-        return IntStream.of(
-                Integer.MIN_VALUE,
-                -1,
-                0,
-                +1,
-                Integer.MAX_VALUE,
-                ThreadLocalRandom.current().nextInt() >>> 1, // random positive
-                ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE // random negative
-        );
+    private static Stream<Arguments> sizes() {
+        return Float_Wr_Test.sizes();
     }
 
-    @ValueSource(booleans = {true, false})
-    @ParameterizedTest
-    void test(final boolean unsigned) {
-        applyRandomSizeAndValueForLongUnchecked(
-                unsigned,
-                s -> v -> wr1u(o -> {
-                    o.writeLong(unsigned, s, v);
-                    return i -> {
-                        final var actual = i.readLong(unsigned, s);
-                        assertThat(actual).isEqualTo(v);
-                        return null;
-                    };
-                })
-        );
+    private static Stream<Arguments> sizesAndValues() {
+        return Float_Wr_Test.sizesAndValues();
     }
 
-    private static Stream<Arguments> getExponentSizeAndSignificandSizeArgumentsStream() {
-        return IntStream.range(0, 16)
-                .mapToObj(i -> Arguments.of(BitIoRandom.nextExponentSizeForFloat(),
-                                            BitIoRandom.nextSignificandSizeForFloat()))
-                ;
-    }
-
-    @MethodSource({"getExponentSizeAndSignificandSizeArgumentsStream"})
+    @MethodSource({"sizes"})
     @ParameterizedTest
     void wr__(final int exponentSize, final int significandSize) throws IOException {
         final var expected = BitIoRandom.nextValueForFloat(exponentSize, significandSize);
@@ -89,64 +57,17 @@ class BitIo_Float_Test {
         assertThat(actual).isEqualTo(expected);
     }
 
-    @MethodSource({"signMaskStream"})
+    @MethodSource({"sizesAndValues"})
     @ParameterizedTest
-    void ofZero__(final int signMask) throws IOException {
-        // https://github.com/assertj/assertj/issues/919
-        // var 를 사용하면, assertThat(float) 이 아닌, assertThat(Float) 을 사용한다.
-        final /*var*/ float actual = wr1u(o -> {
-            o.writeFloatOfZero(signMask);
-            return BitInput::readFloatOfZero;
-        });
-        assertThat(actual).isZero();
-        final var bits = Float.floatToRawIntBits(actual);
-        if (signMask >= 0) {
-            assertThat(actual).isEqualTo(+.0f);
-            assertThat(bits).isEqualTo(FloatTestConstants.POSITIVE_ZERO_BITS);
-        } else {
-            assertThat(actual).isEqualTo(-.0f);
-            assertThat(bits).isEqualTo(FloatTestConstants.NEGATIVE_ZERO_BITS);
-        }
-    }
-
-    @MethodSource({"signMaskStream"})
-    @ParameterizedTest
-    void ofInfinity__(final int signMask) throws IOException {
+    void wr__(final int exponentSize, final int significandSize, final float expected) throws IOException {
         final var actual = wr1u(o -> {
-            o.writeFloatOfInfinity(signMask);
-            return BitInput::readFloatOfInfinity;
+            o.writeFloat(exponentSize, significandSize, expected);
+            return i -> i.readFloat(exponentSize, significandSize);
         });
-        assertThat(actual).isInfinite();
-        final var bits = Float.floatToRawIntBits(actual);
-        if (signMask >= 0) {
-            assertThat(actual).isEqualTo(Float.POSITIVE_INFINITY);
-            assertThat(bits).isEqualTo(FloatTestConstants.POSITIVE_INFINITY_BITS);
-        } else {
-            assertThat(actual).isEqualTo(Float.NEGATIVE_INFINITY);
-            assertThat(bits).isEqualTo(FloatTestConstants.NEGATIVE_INFINITY_BITS);
-        }
-    }
-
-    @Nested
-    class OfNaNTest {
-
-        private static Stream<Arguments> getSignificandSizeAndValueArgumentsStream() {
-            return IntStream.range(0, 8)
-                    .mapToObj(i -> {
-                        final int size = BitIoRandom.nextSignificandSizeForFloat();
-                        final int bits = BitIoRandom.nextSignificandBitsForFloatNaN(size);
-                        return Arguments.of(size, bits);
-                    });
-        }
-
-        @MethodSource({"getSignificandSizeAndValueArgumentsStream"})
-        @ParameterizedTest(name = "[{index}] size: {0}, bits: {1}")
-        void ofNaN__(final int size, final int bits) throws IOException {
-            final var actual = wr1u(o -> {
-                o.writeFloatOfNaN(size, bits);
-                return i -> i.readFloatOfNaN(size);
-            });
+        if (Float.isNaN(expected)) {
             assertThat(actual).isNaN();
+            return;
         }
+        assertThat(actual).isEqualTo(expected);
     }
 }

@@ -26,7 +26,11 @@ final class FloatConstants {
 
     static final int SIZE_MIN_SIGNIFICAND = 2;
 
-//    static final int MASK_SIGNIFICAND = 0b0__00000000__11111111_11111111_1111_111;
+    static final int MASK_SIGNIFICAND = 0b0__00000000__11111111_11111111_1111_111;
+
+    static final int SHIFT_SIGNIFICAND_LEFT_MOST_BIT = SIZE_SIGNIFICAND - 1;
+
+    static final int MASK_SIGNIFICAND_LEFT_MOST_BIT = 0b0__00000000__10000000_00000000_0000_000;
 
     // -----------------------------------------------------------------------------------------------------------------
     static final int SIZE_EXPONENT = 8;
@@ -38,7 +42,7 @@ final class FloatConstants {
 //    static final int SHIFT_EXPONENT = SIZE_SIGNIFICAND;
 
     // -----------------------------------------------------------------------------------------------------------------
-    static final int SHIFT_SIGN_BIT = Integer.SIZE - 1;
+    static final int SHIFT_SIGN_BIT = SIZE_SIGNIFICAND + SIZE_EXPONENT;
 
     private FloatConstants() {
         throw new AssertionError("instantiation is not allowed");

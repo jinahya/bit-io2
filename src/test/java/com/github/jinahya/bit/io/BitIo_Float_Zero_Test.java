@@ -21,8 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -35,7 +33,7 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link FloatWriter.Zero} and {@link FloatReader.Zero}.
+ * A class for testing {@link BitOutput#writeFloatOfZero(float)} method and {@link BitInput#readFloatOfZero()} method.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -54,7 +52,7 @@ class BitIo_Float_Zero_Test {
         );
     }
 
-    private static Stream<Float> valueStream() {
+    static Stream<Float> valueStream() {
         return Stream.concat(
                 bitsStream().mapToObj(Float::intBitsToFloat),
                 Stream.of(
@@ -64,7 +62,7 @@ class BitIo_Float_Zero_Test {
         );
     }
 
-    private static void validate(final Float written, final Float read) {
+    static void validate(final Float written, final Float read) {
         assertThat(read + .0f).isZero();
         assertThat(read.floatValue()).isZero();
         assertThat(read.floatValue()).isGreaterThanOrEqualTo(+.0f); // 이래서 .0f 로 비교하면 안된다!
@@ -86,36 +84,9 @@ class BitIo_Float_Zero_Test {
     @ParameterizedTest
     void rw__(final Float value) throws IOException {
         final var actual = wr1u(o -> {
-            FloatWriter.Zero.getInstance().write(o, value);
-            return i -> FloatReader.Zero.getInstance().read(i);
+            o.writeFloatOfZero(value);
+            return BitInput::readFloatOfZero;
         });
         validate(value, actual);
-    }
-
-    @Nested
-    class NullableTest {
-
-        private static Stream<Float> valueStream_() {
-            return valueStream();
-        }
-
-        @MethodSource({"valueStream_"})
-        @ParameterizedTest
-        void wr__(final Float value) throws IOException {
-            final var actual = wr1u(o -> {
-                FloatWriter.Zero.getInstanceNullable().write(o, value);
-                return i -> FloatReader.Zero.getInstanceNullable().read(i);
-            });
-            validate(value, actual);
-        }
-
-        @Test
-        void wr_Null_Null() throws IOException {
-            final var actual = wr1u(o -> {
-                FloatWriter.Zero.getInstanceNullable().write(o, null);
-                return i -> FloatReader.Zero.getInstanceNullable().read(i);
-            });
-            assertThat(actual).isNull();
-        }
     }
 }

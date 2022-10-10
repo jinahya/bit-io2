@@ -21,8 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -54,7 +52,7 @@ class BitIo_Double_Zero_Test {
         );
     }
 
-    private static Stream<Double> valueStream() {
+    static Stream<Double> valueStream() {
         return Stream.concat(
                 bitsStream().mapToObj(Double::longBitsToDouble),
                 Stream.of(
@@ -86,36 +84,9 @@ class BitIo_Double_Zero_Test {
     @ParameterizedTest
     void doubleOfZero__(final Double value) throws IOException {
         final var actual = wr1u(o -> {
-            DoubleWriter.Zero.getInstance().write(o, value);
-            return i -> DoubleReader.Zero.getInstance().read(i);
+            o.writeDoubleOfZero(value);
+            return BitInput::readDoubleOfZero;
         });
         validate(value, actual);
-    }
-
-    @Nested
-    class NullableTest {
-
-        private static Stream<Double> valueStream_() {
-            return valueStream();
-        }
-
-        @MethodSource({"valueStream_"})
-        @ParameterizedTest
-        void wr__(final Double value) throws IOException {
-            final var actual = wr1u(o -> {
-                DoubleWriter.Zero.getInstanceNullable().write(o, value);
-                return i -> DoubleReader.Zero.getInstanceNullable().read(i);
-            });
-            validate(value, actual);
-        }
-
-        @Test
-        void wr_Null_Null() throws IOException {
-            final var actual = wr1u(o -> {
-                DoubleWriter.Zero.getInstanceNullable().write(o, null);
-                return i -> DoubleReader.Zero.getInstanceNullable().read(i);
-            });
-            assertThat(actual).isNull();
-        }
     }
 }

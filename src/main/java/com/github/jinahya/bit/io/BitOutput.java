@@ -139,8 +139,7 @@ public interface BitOutput {
     default void writeFloat(final int exponentSize, final int significandSize, final float value) throws IOException {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == FloatConstants.SIZE_EXPONENT
-            && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
+        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
             writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
             return;
         }
@@ -151,47 +150,38 @@ public interface BitOutput {
     }
 
     /**
-     * Writes a zoro value whose sign bit is same as the left most bit of specified sign mask. Only the left most bit of
-     * the sing mask is written.
-     * <p>
-     * e.g.
-     * <blockquote><pre>{@code
-     * writeFloatOfZero(+0); // intends to writing 0b0__0000000__00000000_00000000_0000_000
-     * writeFloatOfZero(-1); // intends to writing 0b1__0000000__00000000_00000000_0000_000
-     * }</pre></blockquote>
+     * Writes a {@code float} value represents either {@code -.0f} or {@code +.0f} whose sign bit is equal to that of
+     * specified value.
      *
-     * @param signMask the sign mask whose left most bit is written.
+     * @param value the value whose sign bit is written.
      * @throws IOException if an I/O error occurs.
      * @see BitInput#readFloatOfZero()
      */
-    default void writeFloatOfZero(final int signMask) throws IOException {
-        FloatWriter.writeZeroBits(this, signMask);
+    default void writeFloatOfZero(final float value) throws IOException {
+        FloatWriter.Zero.getInstance().write(this, value);
     }
 
     /**
-     * Writes an infinity value whose sign bit is same as the left most bit of specified sign mask. Only the left most
-     * bit of the sign mask is written.
+     * Writes a {@code float} value represents an infinity whose sign bit is same as the left most bit of specified
+     * value.
      * <p>
      * e.g.
      * <blockquote><pre>{@code
-     * writeFloatOfInfinity(+0); // intends to writing 0b0__11111111__00000000_00000000_0000_000
-     * writeFloatOfInfinity(-1); // intends to writing 0b1__11111111__00000000_00000000_0000_000
+     * writeFloatOfInfinity(+.0f); // intends to write 0b0__11111111__00000000_00000000_0000_000
+     * writeFloatOfInfinity(-.1f); // intends to write 0b1__11111111__00000000_00000000_0000_000
      * }</pre></blockquote>
      *
-     * @param signMask the sign mask value whose left most bit is used for the sign bit.
+     * @param value the value whose sign bit is written.
      * @throws IOException if an I/O error occurs.
      * @see BitInput#readFloatOfInfinity()
      */
-    default void writeFloatOfInfinity(final int signMask) throws IOException {
-        FloatWriter.writeInfinityBits(this, signMask);
+    default void writeFloatOfInfinity(final float value) throws IOException {
+        FloatWriter.Infinity.getInstance().write(this, value);
     }
 
-    default void writeFloatOfNaN(final int significandSize, final int significandBits) throws IOException {
+    default void writeFloatOfNaN(final int significandSize, final float value) throws IOException {
         FloatConstraints.requireValidSignificandSize(significandSize);
-        if (significandBits <= 0) {
-            throw new IllegalArgumentException("significandBits(" + significandBits + ") is not positive");
-        }
-        FloatWriter.writeSignificandBits(this, significandSize, significandBits);
+        FloatWriter.NaN.getInstance(significandSize).write(this, value);
     }
 
     /**
@@ -207,37 +197,36 @@ public interface BitOutput {
     default void writeDouble(final int exponentSize, final int significandSize, final double value) throws IOException {
         DoubleConstraints.requireValidExponentSize(exponentSize);
         DoubleConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == DoubleConstants.SIZE_EXPONENT
-            && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
+        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
             writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
             return;
         }
         final long bits = Double.doubleToRawLongBits(value);
         writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
-        DoubleWriter.writeExponent(this, exponentSize, bits);
-        DoubleWriter.writeSignificand(this, significandSize, bits);
+        DoubleWriter.writeExponentBits(this, exponentSize, bits);
+        DoubleWriter.writeSignificandBits(this, significandSize, bits);
     }
 
     /**
-     * Writes a zoro value whose sign bit is same as the left most bit of specified value.
+     * Writes specified {@code double} value as a zoro.
      *
-     * @param signMask the sign mask value whose left most bit is used for the sign bit.
+     * @param value the value whose left most bit is written.
      * @throws IOException if an I/O error occurs.
      * @see BitInput#readDoubleOfZero()
      */
-    default void writeDoubleOfZero(final long signMask) throws IOException {
-        DoubleWriter.writeZeroBits(this, signMask);
+    default void writeDoubleOfZero(final double value) throws IOException {
+        DoubleWriter.Zero.getInstance().write(this, value);
     }
 
     /**
-     * Writes an infinity value whose sign bit is same as the left most bit of specified value.
+     * Writes specified {@code double} value as an infinity value.
      *
-     * @param signMask the sign mask value whose left most bit is used for the sign bit.
+     * @param value the value whose left most bit is written.
      * @throws IOException if an I/O error occurs.
      * @see BitInput#readDoubleOfInfinity()
      */
-    default void writeDoubleOfInfinity(final long signMask) throws IOException {
-        DoubleWriter.writeInfinityBits(this, signMask);
+    default void writeDoubleOfInfinity(final double value) throws IOException {
+        DoubleWriter.Infinity.getInstance().write(this, value);
     }
 
     /**

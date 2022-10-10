@@ -151,7 +151,7 @@ public class ByteOutputAdapter
             return;
         }
         octet <<= size;
-        octet |= value & BitIoConstants.mask(size);
+        octet |= value & BitIoUtils.bitMaskSingle(size);
         available -= size;
         if (available == 0) {
             assert octet >= 0 && octet < 256;

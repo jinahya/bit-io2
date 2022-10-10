@@ -21,10 +21,15 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -134,6 +139,92 @@ class BitIoUtilsTest {
             final long value = ThreadLocalRandom.current().nextLong() | Long.MIN_VALUE;
             final int size = BitIoUtils.size(value);
             assertThat(size).isPositive().isLessThanOrEqualTo(Long.SIZE);
+        }
+    }
+
+    @Nested
+    class BitMaskSingleTest {
+
+        @DisplayName("bitMaskSingle(1) -> 0x00000001")
+        @Test
+        void bitMaskSingle_0x00000001_1() {
+            assertThat(BitIoUtils.bitMaskSingle(1)).isEqualTo(0x00000001);
+        }
+
+        @DisplayName("bitMaskSingle(2) -> 0x00000003")
+        @Test
+        void bitMaskSingle_0x00000003_2() {
+            assertThat(BitIoUtils.bitMaskSingle(2)).isEqualTo(0x00000003);
+        }
+
+        @DisplayName("bitMaskSingle(31) -> 0x7FFFFFFF")
+        @Test
+        void bitMaskSingle_0x7FFFFFFF_31() {
+            assertThat(BitIoUtils.bitMaskSingle(31)).isEqualTo(Integer.MAX_VALUE);
+        }
+
+        @DisplayName("bitMaskSingle(32) -> 0xFFFFFFFF")
+        @Test
+        void bitMaskSingle_0xFFFFFFFF_32() {
+            assertThat(BitIoUtils.bitMaskSingle(Integer.SIZE)).isEqualTo(-1);
+        }
+
+        private static IntStream sizeStream() {
+            return IntStream.range(1, Integer.SIZE);
+        }
+
+        @MethodSource({"sizeStream"})
+        @ParameterizedTest(name = "[{index}] size: {0}")
+        void bitMaskSingle__(final int size) {
+            assertThat(BitIoUtils.bitMaskSingle(size))
+                    .as("%d-bit mask", size)
+                    .isPositive()
+                    .extracting(v -> v >> size, InstanceOfAssertFactories.INTEGER)
+                    .as("%d-bit mask right-shifted as %d", size)
+                    .isZero();
+        }
+    }
+
+    @Nested
+    class BitMaskDoubleTest {
+
+        @DisplayName("bitMaskDouble(1) -> 0x0000000000000001")
+        @Test
+        void bitMaskDouble_0x0000000000000001_1() {
+            assertThat(BitIoUtils.bitMaskDouble(1)).isEqualTo(0x0000000000000001);
+        }
+
+        @DisplayName("bitMaskDouble(2) -> 0x0000000000000003")
+        @Test
+        void bitMaskDouble_0x0000000000000003_2() {
+            assertThat(BitIoUtils.bitMaskDouble(2)).isEqualTo(0x0000000000000003);
+        }
+
+        @DisplayName("bitMaskDouble(63) -> 0x7FFFFFFFFFFFFFFF")
+        @Test
+        void bitMaskDouble_0x7FFFFFFFFFFFFFFF_63() {
+            assertThat(BitIoUtils.bitMaskDouble(63)).isEqualTo(Long.MAX_VALUE);
+        }
+
+        @DisplayName("bitMaskDouble(64) -> 0xFFFFFFFFFFFFFFFF")
+        @Test
+        void bitMaskDouble_0xFFFFFFFF_64() {
+            assertThat(BitIoUtils.bitMaskDouble(Long.SIZE)).isEqualTo(-1L);
+        }
+
+        private static IntStream sizeStream() {
+            return IntStream.range(1, Long.SIZE);
+        }
+
+        @MethodSource({"sizeStream"})
+        @ParameterizedTest(name = "[{index}] size: {0}")
+        void bitMaskDouble__(final int size) {
+            assertThat(BitIoUtils.bitMaskDouble(size))
+                    .as("%d-bit mask", size)
+                    .isPositive()
+                    .extracting(v -> v >> size, InstanceOfAssertFactories.LONG)
+                    .as("%d-bit mask right-shifted as %d", size)
+                    .isZero();
         }
     }
 }

@@ -26,12 +26,35 @@ public class FloatReader
         extends FloatBase
         implements BitReader<Float> {
 
-    static int readZeroBits(final BitInput input) throws IOException {
-        return input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
+    abstract static class SignBitOnly
+            extends FloatReader {
+
+        private SignBitOnly() {
+            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
+        }
+
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@code getInstanceNullable()}.
+         *
+         * @return N/A
+         */
+        @Override
+        public final BitReader<Float> nullable() {
+            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+        }
+
+        int readBits(final BitInput input) throws IOException {
+            return input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
+        }
+
+        @Override
+        public Float read(final BitInput input) throws IOException {
+            return Float.intBitsToFloat(readBits(input));
+        }
     }
 
     public static final class Zero
-            extends FloatReader {
+            extends SignBitOnly {
 
         private static final class Holder {
 
@@ -60,36 +83,12 @@ public class FloatReader
         }
 
         private Zero() {
-            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
+            super();
         }
-
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
-         *
-         * @return N/A
-         * @see #getInstanceNullable()
-         */
-        @Override
-        public BitReader<Float> nullable() {
-            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
-        }
-
-        @Override
-        public Float read(final BitInput input) throws IOException {
-            return Float.intBitsToFloat(readZeroBits(input));
-        }
-    }
-
-    private static int readInfinityBits(final BitInput input) throws IOException {
-        return readZeroBits(input);
-    }
-
-    static float readInfinity(final BitInput input) throws IOException {
-        return Float.intBitsToFloat(readInfinityBits(input) | FloatConstants.MASK_EXPONENT);
     }
 
     public static final class Infinity
-            extends FloatReader {
+            extends SignBitOnly {
 
         private static final class Holder {
 
@@ -118,59 +117,65 @@ public class FloatReader
         }
 
         private Infinity() {
-            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
-        }
-
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
-         *
-         * @return N/A
-         * @see #getInstanceNullable()
-         */
-        @Override
-        public BitReader<Float> nullable() {
-            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+            super();
         }
 
         @Override
         public Float read(final BitInput input) throws IOException {
-            return readInfinity(input);
+            return Float.intBitsToFloat(readBits(input) | FloatConstants.MASK_EXPONENT);
         }
+    }
+
+    public static class NaN
+            extends FloatReader {
+
+        static NaN getInstance(final int significandSize) {
+            return new NaN(significandSize);
+        }
+
+        public NaN(int significandSize) {
+            super(FloatConstants.SIZE_MIN_EXPONENT, significandSize);
+        }
+
+        @Override
+        public Float read(final BitInput input) throws IOException {
+            final int bits = FloatReader.readSignificandBits(input, significandSize);
+            assert bits >= 0;
+            if (bits == 0) {
+                throw new IOException("significand bits are all zeros");
+            }
+            return Float.intBitsToFloat(bits | FloatConstants.MASK_EXPONENT);
+        }
+    }
+
+    static FloatReader getInstance(final int exponentSize, final int significandSize) {
+        return new FloatReader(exponentSize, significandSize);
     }
 
     static int readExponentBits(final BitInput input, final int size) throws IOException {
         return (input.readInt(false, size) << FloatConstants.SIZE_SIGNIFICAND) & FloatConstants.MASK_EXPONENT;
     }
 
-    static int readSignificandBits(final BitInput input, int size) throws IOException {
-        int bits = input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1);
-        if (--size > 0) {
-            bits |= input.readInt(true, size);
-        }
-        return bits;
+    static int readSignificandBits(final BitInput input, final int size) throws IOException {
+        return input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1)
+               | input.readInt(true, size - 1);
     }
 
+    /**
+     * Creates a new instance with specified exponent size and significand size.
+     *
+     * @param exponentSize    the number of bits for exponent.
+     * @param significandSize the number of bits for significand.
+     */
     public FloatReader(final int exponentSize, final int significandSize) {
         super(exponentSize, significandSize);
     }
 
     @Override
     public Float read(final BitInput input) throws IOException {
-        int bits = readSignBit(input) << FloatConstants.SHIFT_SIGN_BIT;
-        bits |= readExponent(input);
-        bits |= readSignificand(input);
+        int bits = input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
+        bits |= readExponentBits(input, exponentSize);
+        bits |= readSignificandBits(input, significandSize);
         return Float.intBitsToFloat(bits);
-    }
-
-    protected int readSignBit(final BitInput input) throws IOException {
-        return input.readInt(true, 1);
-    }
-
-    protected int readExponent(final BitInput input) throws IOException {
-        return readExponentBits(input, exponentSize);
-    }
-
-    protected int readSignificand(final BitInput input) throws IOException {
-        return readSignificandBits(input, significandSize);
     }
 }

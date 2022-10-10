@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Utilities for bit-io.
@@ -84,22 +85,53 @@ final class BitIoUtils {
         return value & (-1 >>> (Integer.SIZE - size));
     }
 
-    static int bitMask(final int size) {
+    private static final int[] BIT_MASKS = new int[30]; // (size -1) 를 피하기 위해 [0] 은 버린다.
+
+    static {
+        Arrays.fill(BIT_MASKS, 0);
+    }
+
+    static int bitMaskSingle(final int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("negative size: " + size);
+            throw new IllegalArgumentException("non-positive size: " + size);
         }
         if (size > Integer.SIZE) {
             throw new IllegalArgumentException("size(" + size + ") > " + Integer.SIZE);
         }
+        if (size == 1) {
+            return 0x00000001;
+        }
         if (size == Integer.SIZE) {
-            return -1;
+            return 0xFFFFFFFF;
         }
-        final int result = BitIoConstants.BIT_MASKS[size];
-        if (result != -1) {
-            return result;
+        final int index = size - 2; // size = 2 -> index = 0;
+        final int bitMask = BIT_MASKS[index];
+        if (bitMask > 0) {
+            return bitMask;
         }
-        BitIoConstants.BIT_MASKS[size] = -1 >>> (Integer.SIZE - size);
-        return bitMask(size);
+        BIT_MASKS[index] = -1 >>> (Integer.SIZE - size);
+        assert BIT_MASKS[index] > 0;
+        return bitMaskSingle(size);
+    }
+
+    static long bitMaskDouble(final int size) {
+        if (size <= 0) {
+            throw new IllegalArgumentException("non-positive size: " + size);
+        }
+        if (size > Long.SIZE) {
+            throw new IllegalArgumentException("size(" + size + ") > " + Long.SIZE);
+        }
+        if (false && size == 1) {
+            return 0x0000000000000001L;
+        }
+        if (size == Long.SIZE) {
+            return 0xFFFFFFFFFFFFFFFFL;
+        }
+        if (size <= Integer.SIZE) {
+            return bitMaskSingle(size) & 0xFFFFFFFFL;
+        }
+        final int required = size - Integer.SIZE;
+        return (bitMaskDouble(required) << Integer.SIZE) | bitMaskDouble(Integer.SIZE);
     }
 
     private BitIoUtils() {

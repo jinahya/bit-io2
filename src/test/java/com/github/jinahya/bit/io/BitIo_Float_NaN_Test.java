@@ -33,12 +33,13 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link DoubleWriter.Infinity} and {@link DoubleReader.Infinity}.
+ * A class for testing {@link BitOutput#writeFloatOfNaN(int, float)} method and {@link BitInput#readFloatOfNaN(int)}
+ * method.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class BitIo_Double_Infinity_Test {
+class BitIo_Float_NaN_Test {
 
     private static IntStream bitsStream() {
         return IntStream.of(
@@ -52,36 +53,23 @@ class BitIo_Double_Infinity_Test {
         );
     }
 
-    static Stream<Double> valueStream() {
-        return Stream.concat(
-                bitsStream().mapToObj(Double::longBitsToDouble),
-                Stream.of(
-                        Double.NEGATIVE_INFINITY,
-                        Double.POSITIVE_INFINITY
-                )
-        );
-    }
-
-    static void validate(final Double written, final Double read) throws IOException {
-        assertThat(read).isInfinite();
-        final var valueBits = Double.doubleToRawLongBits(written);
-        final var actualBits = Double.doubleToRawLongBits(read);
-        if (valueBits >= 0) {
-            assertThat(read).isEqualTo(Double.POSITIVE_INFINITY);
-            assertThat(actualBits).isEqualTo(DoubleTestConstants.POSITIVE_INFINITY_BITS);
-        } else {
-            assertThat(read).isEqualTo(Double.NEGATIVE_INFINITY);
-            assertThat(actualBits).isEqualTo(DoubleTestConstants.NEGATIVE_INFINITY_BITS);
-        }
+    static Stream<Float> valueStream() {
+        return bitsStream()
+                .mapToObj(Float::intBitsToFloat)
+                .filter(v -> (Float.floatToRawIntBits(v) & FloatConstants.MASK_SIGNIFICAND) > 0);
     }
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
-    void wr__(final Double value) throws IOException {
+    void wr__(final float value) throws IOException {
+        var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
+        bits >>= Integer.numberOfTrailingZeros(bits);
+        final int significandSize = Math.max(Integer.SIZE - Integer.numberOfLeadingZeros(bits),
+                                             FloatConstants.SIZE_MIN_SIGNIFICAND);
         final var actual = wr1u(o -> {
-            o.writeDoubleOfInfinity(value);
-            return BitInput::readDoubleOfInfinity;
+            o.writeFloatOfNaN(significandSize, value);
+            return i -> i.readFloatOfNaN(significandSize);
         });
-        validate(value, actual);
+        assertThat(actual).isNaN();
     }
 }
