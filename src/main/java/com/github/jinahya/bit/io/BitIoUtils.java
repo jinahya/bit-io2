@@ -121,9 +121,6 @@ final class BitIoUtils {
         if (size > Long.SIZE) {
             throw new IllegalArgumentException("size(" + size + ") > " + Long.SIZE);
         }
-        if (false && size == 1) {
-            return 0x0000000000000001L;
-        }
         if (size == Long.SIZE) {
             return 0xFFFFFFFFFFFFFFFFL;
         }
