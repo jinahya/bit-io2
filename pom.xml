@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -29,8 +30,8 @@
   </licenses>
 
   <!--  <prerequisites>-->
-<!--    <maven>3.5.4</maven> &lt;!&ndash; just for versions-maven-plugin &ndash;&gt;-->
-<!--  </prerequisites>-->
+  <!--    <maven>3.5.4</maven> &lt;!&ndash; just for versions-maven-plugin &ndash;&gt;-->
+  <!--  </prerequisites>-->
   <scm>
     <connection>scm:git:git@github.com:jinahya/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:jinahya/${project.artifactId}.git</developerConnection>
@@ -51,6 +52,8 @@
     <maven.compiler.testSource>17</maven.compiler.testSource>
     <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
     <maven.compiler.testRelease>${maven.compiler.testTarget}</maven.compiler.testRelease>
+    <sonar.organization>jinahya-github</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-surefire>3.0.0-M7</version.maven-surefire>
     <version.org.junit.jupiter>5.9.1</version.org.junit.jupiter>
@@ -197,23 +200,23 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
-<!--          <execution>-->
-<!--            <id>enforce</id>-->
-<!--            <goals>-->
-<!--              <goal>enforce</goal>-->
-<!--            </goals>-->
-<!--            <configuration>-->
-<!--              <rules>-->
-<!--                <dependencyConvergence />-->
-<!--                <requireJavaVersion>-->
-<!--                  <version>[1.8.0,)</version>-->
-<!--                </requireJavaVersion>-->
-<!--                <requireMavenVersion>-->
-<!--                  <version>[3.5.4,)</version>-->
-<!--                </requireMavenVersion>-->
-<!--              </rules>-->
-<!--            </configuration>-->
-<!--          </execution>-->
+          <!--          <execution>-->
+          <!--            <id>enforce</id>-->
+          <!--            <goals>-->
+          <!--              <goal>enforce</goal>-->
+          <!--            </goals>-->
+          <!--            <configuration>-->
+          <!--              <rules>-->
+          <!--                <dependencyConvergence />-->
+          <!--                <requireJavaVersion>-->
+          <!--                  <version>[1.8.0,)</version>-->
+          <!--                </requireJavaVersion>-->
+          <!--                <requireMavenVersion>-->
+          <!--                  <version>[3.5.4,)</version>-->
+          <!--                </requireMavenVersion>-->
+          <!--              </rules>-->
+          <!--            </configuration>-->
+          <!--          </execution>-->
           <execution>
             <id>enforce-dependency-convergence</id>
             <goals>
@@ -221,7 +224,7 @@
             </goals>
             <configuration>
               <rules>
-                <dependencyConvergence />
+                <dependencyConvergence/>
               </rules>
             </configuration>
           </execution>
@@ -320,7 +323,7 @@
             <id>validate</id>
             <phase>validate</phase>
             <goals>
-<!--              <goal>check</goal>-->
+              <!--              <goal>check</goal>-->
             </goals>
           </execution>
         </executions>
