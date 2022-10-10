@@ -21,8 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -54,7 +52,7 @@ class BitIo_Float_Infinity_Test {
         );
     }
 
-    private static Stream<Float> valueStream() {
+    static Stream<Float> valueStream() {
         return Stream.concat(
                 bitsStream().mapToObj(Float::intBitsToFloat),
                 Stream.of(
@@ -81,36 +79,9 @@ class BitIo_Float_Infinity_Test {
     @ParameterizedTest
     void wr__(final Float value) throws IOException {
         final var actual = wr1u(o -> {
-            FloatWriter.Infinity.getInstance().write(o, value);
-            return i -> FloatReader.Infinity.getInstance().read(i);
+            o.writeFloatOfInfinity(value);
+            return BitInput::readFloatOfInfinity;
         });
         validate(value, actual);
-    }
-
-    @Nested
-    class NullableTest {
-
-        private static Stream<Float> valueStream_() {
-            return valueStream();
-        }
-
-        @MethodSource({"valueStream_"})
-        @ParameterizedTest
-        void wr__(final Float value) throws IOException {
-            final var actual = wr1u(o -> {
-                FloatWriter.Infinity.getInstanceNullable().write(o, value);
-                return i -> FloatReader.Infinity.getInstanceNullable().read(i);
-            });
-            validate(value, actual);
-        }
-
-        @Test
-        void wr_Null_Null() throws IOException {
-            final var actual = wr1u(o -> {
-                FloatWriter.Infinity.getInstanceNullable().write(o, null);
-                return i -> FloatReader.Infinity.getInstanceNullable().read(i);
-            });
-            assertThat(actual).isNull();
-        }
     }
 }

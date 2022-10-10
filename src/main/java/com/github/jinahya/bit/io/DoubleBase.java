@@ -25,7 +25,7 @@ abstract class DoubleBase {
     DoubleBase(final int exponentSize, final int significandSize) {
         super();
         this.exponentSize = DoubleConstraints.requireValidExponentSize(exponentSize);
-        this.significandSize = DoubleConstraints.requireValidExponentSize(significandSize);
+        this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
     }
 
     final int exponentSize;

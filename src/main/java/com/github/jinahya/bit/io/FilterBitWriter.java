@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * A value writer for writing filtered values.
@@ -35,26 +34,26 @@ import java.util.function.Function;
 public abstract class FilterBitWriter<T, U>
         implements BitWriter<T> {
 
-    /**
-     * Creates a new instance which writes filtered values.
-     *
-     * @param delegate a value writer for writing filtered values.
-     * @param mapper   a mapper for mapping original values.
-     * @param <T>      original value type parameter
-     * @param <U>      filtered value type parameter
-     * @return a new instance.
-     * @see FilterBitReader#mapping(BitReader, Function)
-     */
-    public static <T, U> FilterBitWriter<T, U> mapping(final BitWriter<? super U> delegate,
-                                                       final Function<? super T, ? extends U> mapper) {
-        Objects.requireNonNull(mapper, "mapper is null");
-        return new FilterBitWriter<T, U>(delegate) {
-            @Override
-            protected U filter(final T value) {
-                return mapper.apply(value);
-            }
-        };
-    }
+//    /**
+//     * Creates a new instance which writes filtered values.
+//     *
+//     * @param delegate a value writer for writing filtered values.
+//     * @param mapper   a mapper for mapping original values.
+//     * @param <T>      original value type parameter
+//     * @param <U>      filtered value type parameter
+//     * @return a new instance.
+//     * @see FilterBitReader#mapping(BitReader, Function)
+//     */
+//    public static <T, U> FilterBitWriter<T, U> mapping(final BitWriter<? super U> delegate,
+//                                                       final Function<? super T, ? extends U> mapper) {
+//        Objects.requireNonNull(mapper, "mapper is null");
+//        return new FilterBitWriter<T, U>(delegate) {
+//            @Override
+//            protected U filter(final T value) {
+//                return mapper.apply(value);
+//            }
+//        };
+//    }
 
     static final class Nullable<T>
             extends FilterBitWriter<T, T> {

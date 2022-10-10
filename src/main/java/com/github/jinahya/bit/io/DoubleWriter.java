@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * A writer for writing {@code Double} values.
@@ -33,8 +32,27 @@ public class DoubleWriter
         extends DoubleBase
         implements BitWriter<Double> {
 
-    static void writeZeroBits(final BitOutput output, final long bits) throws IOException {
-        output.writeLong(true, 1, bits >= 0 ? 0L : 1L);
+    abstract static class SignBitOnly
+            extends DoubleWriter {
+
+        private SignBitOnly() {
+            super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
+        }
+
+        /**
+         * Throws an {@code UnsupportedOperationException}.
+         *
+         * @return N/A
+         */
+        @Override
+        public final BitWriter<Double> nullable() {
+            throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");
+        }
+
+        @Override
+        public final void write(final BitOutput output, final Double value) throws IOException {
+            output.writeLong(true, 1, Double.doubleToRawLongBits(value) >> DoubleConstants.SHIFT_SIGN_BIT);
+        }
     }
 
     /**
@@ -44,7 +62,7 @@ public class DoubleWriter
      * @see DoubleReader.Zero
      */
     public static final class Zero
-            extends DoubleWriter {
+            extends SignBitOnly {
 
         private static final class Holder {
 
@@ -85,28 +103,8 @@ public class DoubleWriter
         }
 
         private Zero() {
-            super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
+            super();
         }
-
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
-         *
-         * @return N/A
-         * @see #getInstanceNullable()
-         */
-        @Override
-        public BitWriter<Double> nullable() {
-            throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");
-        }
-
-        @Override
-        public void write(final BitOutput output, final Double value) throws IOException {
-            writeZeroBits(output, Double.doubleToRawLongBits(value));
-        }
-    }
-
-    static void writeInfinityBits(final BitOutput output, final long bits) throws IOException {
-        writeZeroBits(output, bits);
     }
 
     /**
@@ -116,7 +114,7 @@ public class DoubleWriter
      * @see DoubleReader.Infinity
      */
     public static final class Infinity
-            extends DoubleWriter {
+            extends SignBitOnly {
 
         private static final class Holder {
 
@@ -157,32 +155,43 @@ public class DoubleWriter
         }
 
         private Infinity() {
-            super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
+            super();
+        }
+    }
+
+    public static final class NaN
+            extends DoubleWriter {
+
+        static NaN getInstance(final int significandSize) {
+            return new NaN(significandSize);
         }
 
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
-         *
-         * @return N/A
-         * @see #getInstanceNullable()
-         */
-        @Override
-        public BitWriter<Double> nullable() {
-            throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");
+        public NaN(final int significandSize) {
+            super(DoubleConstants.SIZE_MIN_EXPONENT, significandSize);
+            mask = DoubleConstants.MASK_SIGNIFICAND_LEFT_MOST_BIT | BitIoUtils.bitMaskDouble(super.significandSize - 1);
         }
 
         @Override
         public void write(final BitOutput output, final Double value) throws IOException {
-            Objects.requireNonNull(value, "value is null");
-            writeInfinityBits(output, Double.doubleToRawLongBits(value));
+            final long bits = Double.doubleToRawLongBits(value);
+            if ((bits & mask) == 0L) {
+                throw new IllegalArgumentException("significand of the value should be positive");
+            }
+            writeSignificandBits(output, significandSize, bits);
         }
+
+        private final long mask;
     }
 
-    static void writeExponent(final BitOutput output, final int size, final long bits) throws IOException {
+    static DoubleWriter getInstance(final int exponentSize, final int significandSize) {
+        return new DoubleWriter(exponentSize, significandSize);
+    }
+
+    static void writeExponentBits(final BitOutput output, final int size, final long bits) throws IOException {
         output.writeLong(false, size, ((bits << 1) >> 1) >> DoubleConstants.SIZE_SIGNIFICAND);
     }
 
-    static void writeSignificand(final BitOutput output, int size, final long bits) throws IOException {
+    static void writeSignificandBits(final BitOutput output, int size, final long bits) throws IOException {
         output.writeLong(true, 1, bits >> (DoubleConstants.SIZE_SIGNIFICAND - 1));
         if (--size > 0) {
             output.writeLong(true, size, bits);
@@ -206,10 +215,10 @@ public class DoubleWriter
     }
 
     protected void writeExponent(final BitOutput output, final long bits) throws IOException {
-        writeExponent(output, exponentSize, bits);
+        writeExponentBits(output, exponentSize, bits);
     }
 
     protected void writeSignificand(final BitOutput output, final long bits) throws IOException {
-        writeSignificand(output, significandSize, bits);
+        writeSignificandBits(output, significandSize, bits);
     }
 }

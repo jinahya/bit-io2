@@ -20,43 +20,12 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.Arrays;
-
 /**
  * Defines constants for bit-io.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;\
  */
 final class BitIoConstants {
-
-    /**
-     * An array of pre-initialized bit masks.
-     */
-    private static final int[] MASKS = new int[8];
-
-    static {
-        int p = 2;
-        for (int i = 0; i < MASKS.length; i++) {
-            MASKS[i] = p - 1;
-            p <<= 1;
-        }
-    }
-
-    /**
-     * Returns a bit mask for specified number of bits.
-     *
-     * @param size the number of bits to mask.
-     * @return a bit mask.
-     */
-    static int mask(final int size) {
-        return MASKS[size - 1];
-    }
-
-    static final int[] BIT_MASKS = new int[31]; // (size -1) 를 피하기 위해 [0] 은 버린다.
-
-    static {
-        Arrays.fill(BIT_MASKS, -1);
-    }
 
     static final String MESSAGE_INSTANTIATION_IS_NOT_ALLOWED = "instantiation is not allowed";
 

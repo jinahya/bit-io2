@@ -27,8 +27,28 @@ public class FloatWriter
         extends FloatBase
         implements BitWriter<Float> {
 
-    static void writeZeroBits(final BitOutput output, final int bits) throws IOException {
-        output.writeInt(true, 1, bits >= 0 ? 0 : 1);
+    abstract static class SingleBitOnly
+            extends FloatWriter {
+
+        private SingleBitOnly() {
+            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
+        }
+
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@code getInstanceNullable()}.
+         *
+         * @return N/A
+         */
+        @Override
+        public final BitWriter<Float> nullable() {
+            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+        }
+
+        @Override
+        public final void write(final BitOutput output, final Float value) throws IOException {
+            Objects.requireNonNull(value, "value is null");
+            output.writeInt(true, 1, Float.floatToRawIntBits(value) >> FloatConstants.SHIFT_SIGN_BIT);
+        }
     }
 
     /**
@@ -37,7 +57,7 @@ public class FloatWriter
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
     public static final class Zero
-            extends FloatWriter {
+            extends SingleBitOnly {
 
         private static final class Holder {
 
@@ -78,38 +98,17 @@ public class FloatWriter
         }
 
         private Zero() {
-            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
+            super();
         }
-
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
-         *
-         * @return N/A
-         * @see #getInstanceNullable()
-         */
-        @Override
-        public BitWriter<Float> nullable() {
-            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
-        }
-
-        @Override
-        public void write(final BitOutput output, final Float value) throws IOException {
-            Objects.requireNonNull(value, "value is null");
-            writeZeroBits(output, Float.floatToRawIntBits(value));
-        }
-    }
-
-    static void writeInfinityBits(final BitOutput output, final int bits) throws IOException {
-        writeZeroBits(output, bits);
     }
 
     /**
-     * A bit writer for writing {@code ±Infinity}.
+     * A bit writer for writing {@code ±INFINITY}.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
     public static final class Infinity
-            extends FloatWriter {
+            extends SingleBitOnly {
 
         private static final class Holder {
 
@@ -150,38 +149,53 @@ public class FloatWriter
         }
 
         private Infinity() {
-            super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
+            super();
+        }
+    }
+
+    public static final class NaN
+            extends FloatWriter {
+
+        static NaN getInstance(final int significandSize) {
+            return new NaN(significandSize);
         }
 
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
-         *
-         * @return N/A
-         * @see #getInstanceNullable()
-         */
-        @Override
-        public BitWriter<Float> nullable() {
-            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+        public NaN(final int significandSize) {
+            super(FloatConstants.SIZE_MIN_EXPONENT, significandSize);
+            mask = FloatConstants.MASK_SIGNIFICAND_LEFT_MOST_BIT | BitIoUtils.bitMaskSingle(super.significandSize - 1);
         }
 
         @Override
         public void write(final BitOutput output, final Float value) throws IOException {
-            Objects.requireNonNull(value, "value is null");
-            writeInfinityBits(output, Float.floatToRawIntBits(value));
+            final int bits = Float.floatToRawIntBits(value);
+            if ((bits & mask) == 0) {
+                throw new IllegalArgumentException("significand of the value should be positive");
+            }
+            writeSignificandBits(output, significandSize, bits);
         }
+
+        private final int mask;
+    }
+
+    static FloatWriter getInstance(final int exponentSize, final int significandSize) {
+        return new FloatWriter(exponentSize, significandSize);
     }
 
     static void writeExponentBits(final BitOutput output, final int size, final int bits) throws IOException {
         output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_SIGNIFICAND);
     }
 
-    static void writeSignificandBits(final BitOutput output, int size, final int bits) throws IOException {
-        output.writeInt(true, 1, bits >> (FloatConstants.SIZE_SIGNIFICAND - 1));
-        if (--size > 0) {
-            output.writeInt(true, size, bits);
-        }
+    static void writeSignificandBits(final BitOutput output, final int size, final int bits) throws IOException {
+        output.writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT);
+        output.writeInt(true, size - 1, bits);
     }
 
+    /**
+     * Creates a new instance with specified exponent size and significand size.
+     *
+     * @param exponentSize    the number of bits for exponent.
+     * @param significandSize the number of bits for significand.
+     */
     public FloatWriter(final int exponentSize, final int significandSize) {
         super(exponentSize, significandSize);
     }
@@ -189,20 +203,8 @@ public class FloatWriter
     @Override
     public void write(final BitOutput output, final Float value) throws IOException {
         final int bits = Float.floatToRawIntBits(value);
-        writeSignBit(output, bits);
-        writeExponent(output, bits);
-        writeSignificand(output, bits);
-    }
-
-    protected void writeSignBit(final BitOutput output, final int bits) throws IOException {
         output.writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
-    }
-
-    protected void writeExponent(final BitOutput output, final int bits) throws IOException {
         writeExponentBits(output, exponentSize, bits);
-    }
-
-    protected void writeSignificand(final BitOutput output, final int bits) throws IOException {
         writeSignificandBits(output, significandSize, bits);
     }
 }

@@ -166,7 +166,7 @@ public class ByteInputAdapter
             return (unsigned8(available) << required) | unsigned8(required);
         }
         available -= size;
-        return (octet >> available) & BitIoConstants.mask(size);
+        return (octet >> available) & BitIoUtils.bitMaskSingle(size);
     }
 
     private final ByteInput input;

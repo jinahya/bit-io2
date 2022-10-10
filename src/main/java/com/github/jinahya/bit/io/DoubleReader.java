@@ -32,8 +32,31 @@ public class DoubleReader
         extends DoubleBase
         implements BitReader<Double> {
 
-    static long readZeroBits(final BitInput input) throws IOException {
-        return input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
+    abstract static class SignBitOnly
+            extends DoubleReader {
+
+        private SignBitOnly() {
+            super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
+        }
+
+        /**
+         * Throws an {@code UnsupportedOperationException}. Use {@code getInstanceNullable()}.
+         *
+         * @return N/A
+         */
+        @Override
+        public final BitReader<Double> nullable() {
+            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+        }
+
+        long readBits(final BitInput input) throws IOException {
+            return input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
+        }
+
+        @Override
+        public Double read(final BitInput input) throws IOException {
+            return Double.longBitsToDouble(readBits(input));
+        }
     }
 
     /**
@@ -43,7 +66,7 @@ public class DoubleReader
      * @see DoubleWriter.Zero
      */
     public static final class Zero
-            extends DoubleReader {
+            extends SignBitOnly {
 
         private static final class Holder {
 
@@ -72,32 +95,8 @@ public class DoubleReader
         }
 
         private Zero() {
-            super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
+            super();
         }
-
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
-         *
-         * @return N/A
-         * @see #getInstanceNullable()
-         */
-        @Override
-        public BitReader<Double> nullable() {
-            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
-        }
-
-        @Override
-        public Double read(final BitInput input) throws IOException {
-            return Double.longBitsToDouble(readZeroBits(input));
-        }
-    }
-
-    private static long readInfinityBits(final BitInput input) throws IOException {
-        return readZeroBits(input);
-    }
-
-    static double readInfinity(final BitInput input) throws IOException {
-        return Double.longBitsToDouble(readInfinityBits(input) | DoubleConstants.MASK_EXPONENT);
     }
 
     /**
@@ -107,7 +106,7 @@ public class DoubleReader
      * @see DoubleWriter.Infinity
      */
     public static final class Infinity
-            extends DoubleReader {
+            extends SignBitOnly {
 
         private static final class Holder {
 
@@ -136,31 +135,46 @@ public class DoubleReader
         }
 
         private Infinity() {
-            super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
-        }
-
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@link #getInstanceNullable()}.
-         *
-         * @return N/A
-         * @see #getInstanceNullable()
-         */
-        @Override
-        public BitReader<Double> nullable() {
-            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+            super();
         }
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            return readInfinity(input);
+            return Double.longBitsToDouble(readBits(input) | DoubleConstants.MASK_EXPONENT);
         }
     }
 
-    static long readExponent(final BitInput input, final int size) throws IOException {
+    public static class NaN
+            extends DoubleReader {
+
+        static NaN getInstance(final int significandSize) {
+            return new NaN(significandSize);
+        }
+
+        public NaN(final int significandSize) {
+            super(DoubleConstants.SIZE_MIN_EXPONENT, significandSize);
+        }
+
+        @Override
+        public Double read(final BitInput input) throws IOException {
+            final long bits = DoubleReader.readSignificandBits(input, significandSize);
+            assert bits >= 0L;
+            if (bits == 0L) {
+                throw new IOException("significand bits are all zeros");
+            }
+            return Double.longBitsToDouble(bits | DoubleConstants.MASK_EXPONENT);
+        }
+    }
+
+    static DoubleReader getInstance(final int exponentSize, final int significandSize) {
+        return new DoubleReader(exponentSize, significandSize);
+    }
+
+    static long readExponentBits(final BitInput input, final int size) throws IOException {
         return (input.readLong(false, size) << DoubleConstants.SIZE_SIGNIFICAND) & DoubleConstants.MASK_EXPONENT;
     }
 
-    static long readSignificand(final BitInput input, int size) throws IOException {
+    static long readSignificandBits(final BitInput input, int size) throws IOException {
         long bits = input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1);
         if (--size > 0) {
             bits |= input.readLong(true, size);
@@ -185,10 +199,10 @@ public class DoubleReader
     }
 
     protected long readExponent(final BitInput input) throws IOException {
-        return readExponent(input, exponentSize);
+        return readExponentBits(input, exponentSize);
     }
 
     protected long readSignificand(final BitInput input) throws IOException {
-        return readSignificand(input, significandSize);
+        return readSignificandBits(input, significandSize);
     }
 }
