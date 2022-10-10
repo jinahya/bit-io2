@@ -127,8 +127,7 @@ final class BitIoUtils {
         if (size <= Integer.SIZE) {
             return bitMaskSingle(size) & 0xFFFFFFFFL;
         }
-        final int required = size - Integer.SIZE;
-        return (bitMaskDouble(required) << Integer.SIZE) | bitMaskDouble(Integer.SIZE);
+        return (bitMaskDouble(size - Integer.SIZE) << Integer.SIZE) | bitMaskDouble(Integer.SIZE);
     }
 
     private BitIoUtils() {
