@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -33,12 +35,12 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link BitOutput#writeFloatOfZero(float)} method and {@link BitInput#readFloatOfZero()} method.
+ * A class for testing {@link FloatWriter.CompressedZero} and {@link FloatReader.CompressedZero}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class BitIo_Float_Zero_Test {
+class Float_CompressedZero_Wr_Test {
 
     private static IntStream bitsStream() {
         return IntStream.of(
@@ -69,14 +71,14 @@ class BitIo_Float_Zero_Test {
         assertThat(read.floatValue()).isLessThanOrEqualTo(+.0f);
         assertThat(read.floatValue()).isGreaterThanOrEqualTo(-.0f);
         assertThat(read.floatValue()).isLessThanOrEqualTo(-.0f);
-        final var valueBits = Float.floatToRawIntBits(written);
-        final var actualBits = Float.floatToRawIntBits(read);
-        if (valueBits >= 0) {
+        final var writtenBits = Float.floatToRawIntBits(written);
+        final var readBits = Float.floatToRawIntBits(read);
+        if (writtenBits >= 0) {
             assertThat(read).isEqualTo(+.0f);
-            assertThat(actualBits).isEqualTo(FloatTestConstants.POSITIVE_ZERO_BITS);
+            assertThat(readBits).isEqualTo(FloatTestConstants.POSITIVE_ZERO_BITS);
         } else {
             assertThat(read).isEqualTo(-.0f);
-            assertThat(actualBits).isEqualTo(FloatTestConstants.NEGATIVE_ZERO_BITS);
+            assertThat(readBits).isEqualTo(FloatTestConstants.NEGATIVE_ZERO_BITS);
         }
     }
 
@@ -84,9 +86,36 @@ class BitIo_Float_Zero_Test {
     @ParameterizedTest
     void rw__(final Float value) throws IOException {
         final var actual = wr1u(o -> {
-            o.writeFloatOfZero(value);
-            return BitInput::readFloatOfZero;
+            FloatWriter.CompressedZero.getInstance().write(o, value);
+            return i -> FloatReader.CompressedZero.getInstance().read(i);
         });
         validate(value, actual);
+    }
+
+    @Nested
+    class NullableTest {
+
+        private static Stream<Float> valueStream_() {
+            return valueStream();
+        }
+
+        @MethodSource({"valueStream_"})
+        @ParameterizedTest
+        void wr__(final Float value) throws IOException {
+            final var actual = wr1u(o -> {
+                FloatWriter.CompressedZero.getInstanceNullable().write(o, value);
+                return i -> FloatReader.CompressedZero.getInstanceNullable().read(i);
+            });
+            validate(value, actual);
+        }
+
+        @Test
+        void wr_Null_Null() throws IOException {
+            final var actual = wr1u(o -> {
+                FloatWriter.CompressedZero.getInstanceNullable().write(o, null);
+                return i -> FloatReader.CompressedZero.getInstanceNullable().read(i);
+            });
+            assertThat(actual).isNull();
+        }
     }
 }

@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * A reader for reading {@code Double} values.
@@ -46,7 +48,7 @@ public class DoubleReader
          */
         @Override
         public final BitReader<Double> nullable() {
-            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+            throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");
         }
 
         long readBits(final BitInput input) throws IOException {
@@ -63,14 +65,14 @@ public class DoubleReader
      * A reader for reading {@code ±.0d}.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
-     * @see DoubleWriter.Zero
+     * @see DoubleWriter.CompressedZero
      */
-    public static final class Zero
+    public static final class CompressedZero
             extends SignBitOnly {
 
         private static final class Holder {
 
-            private static final DoubleReader INSTANCE = new Zero();
+            private static final DoubleReader INSTANCE = new CompressedZero();
 
             private static final class Nullable {
 
@@ -86,15 +88,25 @@ public class DoubleReader
             }
         }
 
+        /**
+         * Returns the instance of this class which is singleton.
+         *
+         * @return the instance.
+         */
         public static BitReader<Double> getInstance() {
             return Holder.INSTANCE;
         }
 
+        /**
+         * Returns the instance handles {@code null} values.
+         *
+         * @return the instance handles {@code null} values.
+         */
         public static BitReader<Double> getInstanceNullable() {
             return Holder.Nullable.INSTANCE;
         }
 
-        private Zero() {
+        private CompressedZero() {
             super();
         }
     }
@@ -103,14 +115,14 @@ public class DoubleReader
      * A reader for reading values representing infinities.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
-     * @see DoubleWriter.Infinity
+     * @see DoubleWriter.CompressedInfinity
      */
-    public static final class Infinity
+    public static final class CompressedInfinity
             extends SignBitOnly {
 
         private static final class Holder {
 
-            private static final DoubleReader INSTANCE = new Infinity();
+            private static final DoubleReader INSTANCE = new CompressedInfinity();
 
             private static final class Nullable {
 
@@ -126,15 +138,25 @@ public class DoubleReader
             }
         }
 
+        /**
+         * Returns the instance of this class which is singletone.
+         *
+         * @return the instance.
+         */
         public static BitReader<Double> getInstance() {
             return Holder.INSTANCE;
         }
 
+        /**
+         * Returns the instance handles {@code null} values.
+         *
+         * @return the instance handles {@code null} values.
+         */
         public static BitReader<Double> getInstanceNullable() {
             return Holder.Nullable.INSTANCE;
         }
 
-        private Infinity() {
+        private CompressedInfinity() {
             super();
         }
 
@@ -144,37 +166,43 @@ public class DoubleReader
         }
     }
 
-    public static class NaN
+    public static class CompressedNaN
             extends DoubleReader {
 
-        static NaN getInstance(final int significandSize) {
-            return new NaN(significandSize);
+        private static final Map<DoubleKey, CompressedNaN> CACHED_INSTANCES = new WeakHashMap<>();
+
+        static CompressedNaN getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    DoubleKey.withSignificandSizeOnly(significandSize),
+                    k -> new CompressedNaN(k.significandSize)
+            );
         }
 
-        public NaN(final int significandSize) {
+        /**
+         * Returns the instance for specified significand size.
+         *
+         * @param significandSize the number of bits for the significand part.
+         */
+        public CompressedNaN(final int significandSize) {
             super(DoubleConstants.SIZE_MIN_EXPONENT, significandSize);
         }
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            final long bits = DoubleReader.readSignificandBits(input, significandSize);
-            assert bits >= 0L;
-            if (bits == 0L) {
+            final long significandBits = readSignificandBits(input, significandSize);
+            assert significandBits >= 0L;
+            if (significandBits == 0L) {
                 throw new IOException("significand bits are all zeros");
             }
-            return Double.longBitsToDouble(bits | DoubleConstants.MASK_EXPONENT);
+            return Double.longBitsToDouble(significandBits | DoubleConstants.MASK_EXPONENT);
         }
     }
 
-    static DoubleReader getInstance(final int exponentSize, final int significandSize) {
-        return new DoubleReader(exponentSize, significandSize);
-    }
-
-    static long readExponentBits(final BitInput input, final int size) throws IOException {
+    private static long readExponentBits(final BitInput input, final int size) throws IOException {
         return (input.readLong(false, size) << DoubleConstants.SIZE_SIGNIFICAND) & DoubleConstants.MASK_EXPONENT;
     }
 
-    static long readSignificandBits(final BitInput input, int size) throws IOException {
+    private static long readSignificandBits(final BitInput input, int size) throws IOException {
         long bits = input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1);
         if (--size > 0) {
             bits |= input.readLong(true, size);
@@ -182,27 +210,39 @@ public class DoubleReader
         return bits;
     }
 
+    static double read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
+        DoubleConstraints.requireValidExponentSize(exponentSize);
+        DoubleConstraints.requireValidSignificandSize(significandSize);
+        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
+            return Double.longBitsToDouble(input.readLong(false, Long.SIZE));
+        }
+        long bits = input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
+        bits |= readExponentBits(input, exponentSize);
+        bits |= readSignificandBits(input, significandSize);
+        return Double.longBitsToDouble(bits);
+    }
+
+    private static final Map<DoubleKey, DoubleReader> CACHED_INSTANCES = new WeakHashMap<>();
+
+    static DoubleReader getCachedInstance(final int exponentSize, final int significandSize) {
+        return CACHED_INSTANCES.computeIfAbsent(
+                new DoubleKey(exponentSize, significandSize),
+                k -> new DoubleReader(k.exponentSize, k.significandSize)
+        );
+    }
+
+    /**
+     * Creates a new instance specified sizes of the exponent part and significand part, respectively.
+     *
+     * @param exponentSize    the number of bits for the exponent part.
+     * @param significandSize the number of bits for the significand part.
+     */
     public DoubleReader(final int exponentSize, final int significandSize) {
         super(exponentSize, significandSize);
     }
 
     @Override
     public Double read(final BitInput input) throws IOException {
-        long bits = readSignBit(input) << DoubleConstants.SHIFT_SIGN_BIT;
-        bits |= readExponent(input);
-        bits |= readSignificand(input);
-        return Double.longBitsToDouble(bits);
-    }
-
-    protected long readSignBit(final BitInput input) throws IOException {
-        return input.readLong(true, 1);
-    }
-
-    protected long readExponent(final BitInput input) throws IOException {
-        return readExponentBits(input, exponentSize);
-    }
-
-    protected long readSignificand(final BitInput input) throws IOException {
-        return readSignificandBits(input, significandSize);
+        return read(input, exponentSize, significandSize);
     }
 }

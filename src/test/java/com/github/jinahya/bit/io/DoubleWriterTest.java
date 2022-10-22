@@ -4,7 +4,7 @@ package com.github.jinahya.bit.io;
  * #%L
  * bit-io2
  * %%
- * Copyright (C) 2020 - 2022 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,25 +20,18 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
-
-import java.nio.channels.ReadableByteChannel;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * A class for testing {@link BitInputFactory#from(ReadableByteChannel)} method.
+ * A class for testing {@link DoubleWriter} class.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-class ByteInputAdapter_FromReadableByteChannel_Test {
+@Slf4j
+class DoubleWriterTest
+        extends BitWriterTest<DoubleWriter, Double> {
 
-    @Test
-    void __Mock() {
-        final var channel = mock(ReadableByteChannel.class);
-        final var input = BitInputFactory.from(channel);
-        assertThat(input)
-                .isNotNull();
+    DoubleWriterTest() {
+        super(DoubleWriter.class, Double.class);
     }
 }

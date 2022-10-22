@@ -21,12 +21,19 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.WeakHashMap;
 
+/**
+ * A reader for reading {@code float} values.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public class FloatReader
         extends FloatBase
         implements BitReader<Float> {
 
-    abstract static class SignBitOnly
+    private static final class SignBitOnly
             extends FloatReader {
 
         private SignBitOnly() {
@@ -40,7 +47,7 @@ public class FloatReader
          */
         @Override
         public final BitReader<Float> nullable() {
-            throw new UnsupportedOperationException("unsupported; see getInstanceNullable()");
+            throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");
         }
 
         int readBits(final BitInput input) throws IOException {
@@ -53,119 +60,222 @@ public class FloatReader
         }
     }
 
-    public static final class Zero
-            extends SignBitOnly {
+    /**
+     * A reader for reading either {@code +.0f} or {@code -.0f} in a compressed manner.
+     *
+     * @implSpec The implementation read only {@code 1} bit for the <em>sign bit</em> and returns either
+     * <code>0b<strong>0</strong>__00000000__00000000_00000000_0000_000<sub>2</sub></code> or
+     * <code>0b<strong>1</strong>__00000000__00000000_00000000_0000_000<sub>2</sub></code>.
+     */
+    public static final class CompressedZero
+            implements BitReader<Float> {
 
         private static final class Holder {
 
-            private static final FloatReader INSTANCE = new Zero();
+            private static final BitReader<Float> INSTANCE = new CompressedZero();
 
             private static final class Nullable {
 
                 private static final BitReader<Float> INSTANCE = new FilterBitReader.Nullable<>(Holder.INSTANCE);
 
                 private Nullable() {
-                    throw new AssertionError("instantiation is not allowed");
+                    throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
                 }
             }
 
             private Holder() {
-                throw new AssertionError("instantiation is not allowed");
+                throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
             }
         }
 
+        /**
+         * Returns the instance.
+         *
+         * @return the instance.
+         */
         public static BitReader<Float> getInstance() {
             return Holder.INSTANCE;
         }
 
+        /**
+         * Returns the instance handles {@code null} values.
+         *
+         * @return the instance handles {@code null} values.
+         */
         public static BitReader<Float> getInstanceNullable() {
             return Holder.Nullable.INSTANCE;
         }
 
-        private Zero() {
-            super();
-        }
-    }
-
-    public static final class Infinity
-            extends SignBitOnly {
-
-        private static final class Holder {
-
-            private static final FloatReader INSTANCE = new Infinity();
-
-            private static final class Nullable {
-
-                private static final BitReader<Float> INSTANCE = new FilterBitReader.Nullable<>(Holder.INSTANCE);
-
-                private Nullable() {
-                    throw new AssertionError("instantiation is not allowed");
-                }
-            }
-
-            private Holder() {
-                throw new AssertionError("instantiation is not allowed");
-            }
-        }
-
-        public static BitReader<Float> getInstance() {
-            return Holder.INSTANCE;
-        }
-
-        public static BitReader<Float> getInstanceNullable() {
-            return Holder.Nullable.INSTANCE;
-        }
-
-        private Infinity() {
+        private CompressedZero() {
             super();
         }
 
         @Override
-        public Float read(final BitInput input) throws IOException {
-            return Float.intBitsToFloat(readBits(input) | FloatConstants.MASK_EXPONENT);
-        }
-    }
-
-    public static class NaN
-            extends FloatReader {
-
-        static NaN getInstance(final int significandSize) {
-            return new NaN(significandSize);
-        }
-
-        public NaN(int significandSize) {
-            super(FloatConstants.SIZE_MIN_EXPONENT, significandSize);
+        public BitReader<Float> nullable() {
+            return delegate.nullable();
         }
 
         @Override
         public Float read(final BitInput input) throws IOException {
-            final int bits = FloatReader.readSignificandBits(input, significandSize);
-            assert bits >= 0;
-            if (bits == 0) {
-                throw new IOException("significand bits are all zeros");
-            }
-            return Float.intBitsToFloat(bits | FloatConstants.MASK_EXPONENT);
+            return delegate.read(input);
         }
-    }
 
-    static FloatReader getInstance(final int exponentSize, final int significandSize) {
-        return new FloatReader(exponentSize, significandSize);
-    }
-
-    static int readExponentBits(final BitInput input, final int size) throws IOException {
-        return (input.readInt(false, size) << FloatConstants.SIZE_SIGNIFICAND) & FloatConstants.MASK_EXPONENT;
-    }
-
-    static int readSignificandBits(final BitInput input, final int size) throws IOException {
-        return input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1)
-               | input.readInt(true, size - 1);
+        private final BitReader<Float> delegate = new SignBitOnly();
     }
 
     /**
-     * Creates a new instance with specified exponent size and significand size.
+     * A reader for reading either {@link Float#NEGATIVE_INFINITY} or {@link Float#POSITIVE_INFINITY} in a compresses
+     * manner.
      *
-     * @param exponentSize    the number of bits for exponent.
-     * @param significandSize the number of bits for significand.
+     * @implSpec This reader reads {@code 1} bit for the <em>sign bit</em>, and returns either
+     * <code>0b<strong>0</strong>__11111111__00000000_00000000_0000_000<sub>2</sub></code> or
+     * <code>0b<strong>1</strong>__11111111__00000000_00000000_0000_000<sub>2</sub></code>.
+     */
+    public static final class CompressedInfinity
+            implements BitReader<Float> {
+
+        private static final class Holder {
+
+            private static final BitReader<Float> INSTANCE = new CompressedInfinity();
+
+            private static final class Nullable {
+
+                private static final BitReader<Float> INSTANCE = new FilterBitReader.Nullable<>(Holder.INSTANCE);
+
+                private Nullable() {
+                    throw new AssertionError("instantiation is not allowed");
+                }
+            }
+
+            private Holder() {
+                throw new AssertionError("instantiation is not allowed");
+            }
+        }
+
+        /**
+         * Returns the instance.
+         *
+         * @return the instance.
+         */
+        public static BitReader<Float> getInstance() {
+            return Holder.INSTANCE;
+        }
+
+        /**
+         * Returns the instance handles {@code null} values.
+         *
+         * @return the instance handles {@code null} values.
+         */
+        public static BitReader<Float> getInstanceNullable() {
+            return Holder.Nullable.INSTANCE;
+        }
+
+        private CompressedInfinity() {
+            super();
+        }
+
+        @Override
+        public BitReader<Float> nullable() {
+            return delegate.nullable();
+        }
+
+        @Override
+        public Float read(final BitInput input) throws IOException {
+            return Float.intBitsToFloat(delegate.readBits(input) | FloatConstants.MASK_EXPONENT);
+        }
+
+        private final SignBitOnly delegate = new SignBitOnly();
+    }
+
+    /**
+     * A reader for reading {@code NaN} values in a compressed manner.
+     */
+    public static class CompressedNaN
+            implements BitReader<Float> {
+
+        private static final Map<FloatKey, CompressedNaN> CACHED_INSTANCES = new WeakHashMap<>();
+
+        static CompressedNaN getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    FloatKey.withSignificandSizeOnly(significandSize),
+                    k -> new CompressedNaN(k.significandSize)
+            );
+        }
+
+        /**
+         * Creates a new instance with specified number bits for the {@code significand} part.
+         *
+         * @param significandSize a number of bits for the significand part; between
+         *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
+        public CompressedNaN(int significandSize) {
+            super();
+            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
+        }
+
+        @Override
+        public Float read(final BitInput input) throws IOException {
+            final int significandBits = readSignificandBits(input, significandSize);
+            if (significandBits == 0) {
+                throw new IOException("significand bits are all zeros");
+            }
+            return Float.intBitsToFloat(significandBits | FloatConstants.MASK_EXPONENT);
+        }
+
+        private final int significandSize;
+    }
+
+    private static int readExponentBits(final BitInput input, final int size) throws IOException {
+        return (input.readInt(false, size) << FloatConstants.SIZE_SIGNIFICAND) & FloatConstants.MASK_EXPONENT;
+    }
+
+    private static int readSignificandBits(final BitInput input, final int size) throws IOException {
+        return (input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1))
+               | input.readInt(true, size - 1);
+    }
+
+    static float read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
+        FloatConstraints.requireValidExponentSize(exponentSize);
+        FloatConstraints.requireValidSignificandSize(significandSize);
+        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
+            return Float.intBitsToFloat(input.readInt(false, Integer.SIZE));
+        }
+        int bits = input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
+        bits |= readExponentBits(input, exponentSize);
+        bits |= readSignificandBits(input, significandSize);
+        return Float.intBitsToFloat(bits);
+    }
+
+    private static final Map<FloatKey, FloatReader> CACHED_INSTANCE = new WeakHashMap<>();
+
+    /**
+     * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
+     *
+     * @param exponentSize    the number of bits for the exponent part; between
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
+     *                        inclusive.
+     * @param significandSize the number of bits for the significand part; between
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
+     *                        both inclusive.
+     * @return a cached instance.
+     */
+    static FloatReader getCachedInstance(final int exponentSize, final int significandSize) {
+        return CACHED_INSTANCE.computeIfAbsent(
+                new FloatKey(exponentSize, significandSize),
+                k -> new FloatReader(k.exponentSize, k.significandSize)
+        );
+    }
+
+    /**
+     * Creates a new instance with specified sizes of the exponent part and the significand part.
+     *
+     * @param exponentSize    the number of bits for the exponent part; between
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
+     *                        inclusive.
+     * @param significandSize the number of bits for the significand part; between
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
+     *                        both inclusive.
      */
     public FloatReader(final int exponentSize, final int significandSize) {
         super(exponentSize, significandSize);
@@ -173,9 +283,6 @@ public class FloatReader
 
     @Override
     public Float read(final BitInput input) throws IOException {
-        int bits = input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
-        bits |= readExponentBits(input, exponentSize);
-        bits |= readSignificandBits(input, significandSize);
-        return Float.intBitsToFloat(bits);
+        return read(input, exponentSize, significandSize);
     }
 }

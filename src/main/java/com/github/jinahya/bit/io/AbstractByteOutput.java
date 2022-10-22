@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * An abstract byte output which writes bytes to a byte target of specific type.
+ * An abstract byte output for writing bytes to byte targets of specific type.
  *
  * @param <T> byte target type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -36,6 +36,7 @@ public abstract class AbstractByteOutput<T>
      * Creates a new instance on top of specified byte target.
      *
      * @param target the byte target to which bytes are written.
+     * @see #target
      */
     protected AbstractByteOutput(final T target) {
         super();

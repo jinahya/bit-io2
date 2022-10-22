@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.DefaultArgumentsAccessor;
@@ -35,8 +36,7 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link BitOutput#writeDoubleOfZero(double)} method and {@link BitInput#readDoubleOfZero()}
- * method.
+ * A class for testing {@link DoubleWriter} and {@link DoubleReader}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -61,12 +61,13 @@ class Double_Wr_Test {
                 });
     }
 
+    @DisplayName("write(nonnull) -> read()expected")
     @MethodSource({"sizesAndValues"})
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] exponentSize: {0}, significandSize: {1}, value: {2}")
     void rw__(final int exponentSize, final int significandSize, final Double value) throws IOException {
         final var actual = wr1u(o -> {
-            DoubleWriter.getInstance(exponentSize, significandSize).write(o, value);
-            return i -> DoubleReader.getInstance(exponentSize, significandSize).read(i);
+            new DoubleWriter(exponentSize, significandSize).write(o, value);
+            return i -> new DoubleReader(exponentSize, significandSize).read(i);
         });
         if (value.isNaN()) {
             assertThat(actual).isNaN();
@@ -75,8 +76,34 @@ class Double_Wr_Test {
         assertThat(actual).isEqualTo(value);
     }
 
+    @DisplayName("nullable().write(nonnull) -> nullable().read()expected")
+    @MethodSource({"sizesAndValues"})
+    @ParameterizedTest(name = "[{index}] exponentSize: {0}, significandSize: {1}, value: {2}")
+    void wr_Nullable(final int exponentSize, final int significandSize, final Double value) throws IOException {
+        final var actual = wr1u(o -> {
+            new DoubleWriter(exponentSize, significandSize).nullable().write(o, value);
+            return i -> new DoubleReader(exponentSize, significandSize).nullable().read(i);
+        });
+        if (value.isNaN()) {
+            assertThat(actual).isNaN();
+            return;
+        }
+        assertThat(actual).isEqualTo(value);
+    }
+
+    @DisplayName("nullable().write(nonnull) -> nullable().read()expected")
+    @MethodSource({"sizes"})
+    @ParameterizedTest(name = "[{index}] exponentSize: {0}, significandSize: {1}, value: {2}")
+    void wr_Null_Nullable(final int exponentSize, final int significandSize) throws IOException {
+        final var actual = wr1u(o -> {
+            new DoubleWriter(exponentSize, significandSize).nullable().write(o, null);
+            return i -> new DoubleReader(exponentSize, significandSize).nullable().read(i);
+        });
+        assertThat(actual).isNull();
+    }
+
     @Nested
-    class NullableTest {
+    class CachedInstanceTest {
 
         private static Stream<Arguments> sizes_() {
             return sizes();
@@ -86,12 +113,13 @@ class Double_Wr_Test {
             return sizesAndValues();
         }
 
+        @DisplayName("write(nonnull) -> read()expected")
         @MethodSource({"sizesAndValues_"})
         @ParameterizedTest
         void wr__(final int exponentSize, final int significandSize, final Double value) throws IOException {
             final var actual = wr1u(o -> {
-                DoubleWriter.getInstance(exponentSize, significandSize).nullable().write(o, value);
-                return i -> DoubleReader.getInstance(exponentSize, significandSize).nullable().read(i);
+                DoubleWriter.getCachedInstance(exponentSize, significandSize).write(o, value);
+                return i -> DoubleReader.getCachedInstance(exponentSize, significandSize).read(i);
             });
             if (value.isNaN()) {
                 assertThat(actual).isNaN();
@@ -100,12 +128,25 @@ class Double_Wr_Test {
             assertThat(actual).isEqualTo(value);
         }
 
+        @DisplayName("nullable().write(nonnull) -> nullable().read()expected")
+        @MethodSource({"sizesAndValues_"})
+        @ParameterizedTest
+        void wr_NonNull_Nullable(final int exponentSize, final int significandSize, final Double value)
+                throws IOException {
+            final var actual = wr1u(o -> {
+                DoubleWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, value);
+                return i -> DoubleReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
+            });
+            assertThat(actual).isEqualTo(value);
+        }
+
+        @DisplayName("nullable().write(null) -> nullable().read()null")
         @MethodSource({"sizes_"})
         @ParameterizedTest
-        void wr_Null_Null(final int exponentSize, final int significandSize) throws IOException {
+        void wr_Null_Nullable(final int exponentSize, final int significandSize) throws IOException {
             final var actual = wr1u(o -> {
-                DoubleWriter.getInstance(exponentSize, significandSize).nullable().write(o, null);
-                return i -> DoubleReader.getInstance(exponentSize, significandSize).nullable().read(i);
+                DoubleWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, null);
+                return i -> DoubleReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
             });
             assertThat(actual).isNull();
         }

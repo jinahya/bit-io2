@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -33,12 +35,12 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link FloatWriter.Infinity} and {@link FloatReader.Infinity}.
+ * A class for testing {@link FloatWriter.CompressedInfinity} and {@link FloatReader.CompressedInfinity}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class BitIo_Float_Infinity_Test {
+class Float_CompressedInfinity_Wr_Test {
 
     private static IntStream bitsStream() {
         return IntStream.of(
@@ -79,9 +81,36 @@ class BitIo_Float_Infinity_Test {
     @ParameterizedTest
     void wr__(final Float value) throws IOException {
         final var actual = wr1u(o -> {
-            o.writeFloatOfInfinity(value);
-            return BitInput::readFloatOfInfinity;
+            FloatWriter.CompressedInfinity.getInstance().write(o, value);
+            return i -> FloatReader.CompressedInfinity.getInstance().read(i);
         });
         validate(value, actual);
+    }
+
+    @Nested
+    class NullableTest {
+
+        private static Stream<Float> valueStream_() {
+            return valueStream();
+        }
+
+        @MethodSource({"valueStream_"})
+        @ParameterizedTest
+        void wr__(final Float value) throws IOException {
+            final var actual = wr1u(o -> {
+                FloatWriter.CompressedInfinity.getInstanceNullable().write(o, value);
+                return i -> FloatReader.CompressedInfinity.getInstanceNullable().read(i);
+            });
+            validate(value, actual);
+        }
+
+        @Test
+        void wr_Null_Null() throws IOException {
+            final var actual = wr1u(o -> {
+                FloatWriter.CompressedInfinity.getInstanceNullable().write(o, null);
+                return i -> FloatReader.CompressedInfinity.getInstanceNullable().read(i);
+            });
+            assertThat(actual).isNull();
+        }
     }
 }

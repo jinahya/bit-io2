@@ -20,12 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.DataInput;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.ReadableByteChannel;
 import java.util.Objects;
 
 /**
@@ -36,56 +31,6 @@ import java.util.Objects;
  */
 public class ByteInputAdapter
         implements BitInput {
-
-    /**
-     * Creates a new instance on top of specified stream.
-     *
-     * @param stream the stream from which bytes are read.
-     * @return a new instance.
-     */
-    static BitInput from(final InputStream stream) {
-        return new ByteInputAdapter(new StreamByteInput(stream));
-    }
-
-    /**
-     * Creates a new instance on top of specified input.
-     *
-     * @param input the input from which bytes are read.
-     * @return a new instance.
-     */
-    static BitInput from(final DataInput input) {
-        return new ByteInputAdapter(new DataByteInput(input));
-    }
-
-    /**
-     * Creates a new instance on top of specified file.
-     *
-     * @param file the file from which bytes are read.
-     * @return a new instance.
-     */
-    static BitInput from(final RandomAccessFile file) {
-        return new ByteInputAdapter(new RandomAccessByteInput(file));
-    }
-
-    /**
-     * Creates a new instance on top of specified buffer.
-     *
-     * @param buffer the buffer from which bytes are read.
-     * @return a new instance.
-     */
-    static BitInput from(final ByteBuffer buffer) {
-        return new ByteInputAdapter(new BufferByteInput(buffer));
-    }
-
-    /**
-     * Creates a new instance on top of specified channel.
-     *
-     * @param channel the channel from which bytes are read.
-     * @return a new instance.
-     */
-    static BitInput from(final ReadableByteChannel channel) {
-        return new ByteInputAdapter(new ChannelByteInput(channel));
-    }
 
     /**
      * Creates a new instance on top of specified byte input.
