@@ -319,22 +319,22 @@ final class BitIoTestUtils {
         return FloatConstraints.requireValidExponentSize(
                 ThreadLocalRandom.current().nextInt(
                         FloatConstants.SIZE_MIN_EXPONENT,
-                        FloatConstants.SIZE_EXPONENT + 1
+                        FloatConstants.SIZE_MAX_EXPONENT + 1
                 )
         );
     }
 
     static int getRandomExponentBitsForFloat(final int size) {
         return getRandomValueForInt(false, size)
-               << FloatConstants.SIZE_SIGNIFICAND
-               & FloatConstants.MASK_EXPONENT;
+               << FloatConstants.SIZE_MAX_SIGNIFICAND
+               & FloatConstants.MASK_EXPONENT_BITS;
     }
 
     static int getRandomSignificandSizeForFloat() {
         return FloatConstraints.requireValidSignificandSize(
                 ThreadLocalRandom.current().nextInt(
                         FloatConstants.SIZE_MIN_SIGNIFICAND,
-                        FloatConstants.SIZE_SIGNIFICAND + 1
+                        FloatConstants.SIZE_MAX_SIGNIFICAND + 1
                 )
         );
     }

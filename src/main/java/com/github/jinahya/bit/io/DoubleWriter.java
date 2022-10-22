@@ -183,7 +183,7 @@ public class DoubleWriter
          *
          * @param significandSize the number of bits for the significand part; between
          *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
-         *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
+         *                        {@value DoubleConstants#SIZE_MAX_SIGNIFICAND}, both inclusive.
          */
         public CompressedNaN(final int significandSize) {
             super(DoubleConstants.SIZE_MIN_EXPONENT, significandSize);
@@ -203,11 +203,11 @@ public class DoubleWriter
     }
 
     private static void writeExponentBits(final BitOutput output, final int size, final long bits) throws IOException {
-        output.writeLong(false, size, ((bits << 1) >> 1) >> DoubleConstants.SIZE_SIGNIFICAND);
+        output.writeLong(false, size, ((bits << 1) >> 1) >> DoubleConstants.SIZE_MAX_SIGNIFICAND);
     }
 
     private static void writeSignificandBits(final BitOutput output, int size, final long bits) throws IOException {
-        output.writeLong(true, 1, bits >> (DoubleConstants.SIZE_SIGNIFICAND - 1));
+        output.writeLong(true, 1, bits >> (DoubleConstants.SIZE_MAX_SIGNIFICAND - 1));
         if (--size > 0) {
             output.writeLong(true, size, bits);
         }
@@ -217,7 +217,7 @@ public class DoubleWriter
             throws IOException {
         DoubleConstraints.requireValidExponentSize(exponentSize);
         DoubleConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
+        if (exponentSize == DoubleConstants.SIZE_MAX_EXPONENT && significandSize == DoubleConstants.SIZE_MAX_SIGNIFICAND) {
             output.writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
             return;
         }
@@ -240,9 +240,9 @@ public class DoubleWriter
      * Creates a new instance with specified size of the exponent part and the significand part, respectively.
      *
      * @param exponentSize    the number of bits for the export part; between {@value DoubleConstants#SIZE_MIN_EXPONENT}
-     *                        and {@value DoubleConstants#SIZE_EXPONENT}, both inclusive.
+     *                        and {@value DoubleConstants#SIZE_MAX_EXPONENT}, both inclusive.
      * @param significandSize the number of bits for the significand part; between
-     *                        {@value DoubleConstants#SIZE_SIGNIFICAND} and {@value DoubleConstants#SIZE_SIGNIFICAND},
+     *                        {@value DoubleConstants#SIZE_MAX_SIGNIFICAND} and {@value DoubleConstants#SIZE_MAX_SIGNIFICAND},
      *                        both inclusive.
      */
     public DoubleWriter(final int exponentSize, final int significandSize) {

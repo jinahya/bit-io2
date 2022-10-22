@@ -42,8 +42,8 @@ class FloatUtilsTest {
         final List<Reference<?>> referenceList = Collections.synchronizedList(new ArrayList<>());
         final List<Thread> threads = IntStream.range(0, 128)
                 .<Runnable>mapToObj(i -> () -> {
-                    for (int es = FloatConstants.SIZE_MIN_EXPONENT; es <= FloatConstants.SIZE_EXPONENT; es++) {
-                        for (int ss = FloatConstants.SIZE_MIN_SIGNIFICAND; ss <= FloatConstants.SIZE_SIGNIFICAND; ss++) {
+                    for (int es = FloatConstants.SIZE_MIN_EXPONENT; es <= FloatConstants.SIZE_MAX_EXPONENT; es++) {
+                        for (int ss = FloatConstants.SIZE_MIN_SIGNIFICAND; ss <= FloatConstants.SIZE_MAX_SIGNIFICAND; ss++) {
                             FloatUtils.getFloatReader(
                                     FloatConstraints.requireValidExponentSize(es),
                                     FloatConstraints.requireValidSignificandSize(ss),
@@ -105,8 +105,8 @@ class FloatUtilsTest {
         final List<Reference<?>> referenceList = Collections.synchronizedList(new ArrayList<>());
         final List<Thread> threads = IntStream.range(0, 128)
                 .<Runnable>mapToObj(i -> () -> {
-                    for (int es = FloatConstants.SIZE_MIN_EXPONENT; es <= FloatConstants.SIZE_EXPONENT; es++) {
-                        for (int ss = FloatConstants.SIZE_MIN_SIGNIFICAND; ss <= FloatConstants.SIZE_SIGNIFICAND; ss++) {
+                    for (int es = FloatConstants.SIZE_MIN_EXPONENT; es <= FloatConstants.SIZE_MAX_EXPONENT; es++) {
+                        for (int ss = FloatConstants.SIZE_MIN_SIGNIFICAND; ss <= FloatConstants.SIZE_MAX_SIGNIFICAND; ss++) {
                             FloatUtils.getFloatWriter(
                                     FloatConstraints.requireValidExponentSize(es),
                                     FloatConstraints.requireValidSignificandSize(ss),

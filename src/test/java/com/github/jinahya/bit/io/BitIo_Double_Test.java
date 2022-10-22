@@ -40,7 +40,7 @@ class BitIo_Double_Test {
                 IntStream.range(0, 16)
                         .mapToObj(i -> Arguments.of(BitIoRandom.nextExponentSizeForDouble(),
                                                     BitIoRandom.nextSignificandSizeForDouble())),
-                Stream.of(Arguments.of(DoubleConstants.SIZE_EXPONENT, DoubleConstants.SIZE_SIGNIFICAND)
+                Stream.of(Arguments.of(DoubleConstants.SIZE_MAX_EXPONENT, DoubleConstants.SIZE_MAX_SIGNIFICAND)
                 ));
     }
 

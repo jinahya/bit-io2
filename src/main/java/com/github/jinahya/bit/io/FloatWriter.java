@@ -226,7 +226,7 @@ public class FloatWriter
     }
 
     private static void writeExponentBits(final BitOutput output, final int size, final int bits) throws IOException {
-        output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_SIGNIFICAND);
+        output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_MAX_SIGNIFICAND);
     }
 
     private static void writeSignificandBits(final BitOutput output, final int size, final int bits) throws IOException {
@@ -237,7 +237,7 @@ public class FloatWriter
     static void write(final BitOutput output, final int exponentSize, final int significandSize, final float value) throws IOException {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
+        if (exponentSize == FloatConstants.SIZE_MAX_EXPONENT && significandSize == FloatConstants.SIZE_MAX_SIGNIFICAND) {
             output.writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
             return;
         }
@@ -253,10 +253,10 @@ public class FloatWriter
      * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
      *
      * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_MAX_EXPONENT}, both
      *                        inclusive.
      * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_MAX_SIGNIFICAND},
      *                        both inclusive.
      * @return a cached instance.
      */
@@ -271,10 +271,10 @@ public class FloatWriter
      * Creates a new instance with specified exponent size and significand size.
      *
      * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_MAX_EXPONENT}, both
      *                        inclusive.
      * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_MAX_SIGNIFICAND},
      *                        both inclusive.
      */
     public FloatWriter(final int exponentSize, final int significandSize) {

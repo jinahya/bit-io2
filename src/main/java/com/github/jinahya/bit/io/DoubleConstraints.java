@@ -20,6 +20,12 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+/**
+ * Constraints for {@code double} values.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see FloatConstraints
+ */
 final class DoubleConstraints {
 
     static int requireValidExponentSize(final int exponentSize) {
@@ -27,9 +33,9 @@ final class DoubleConstraints {
             throw new IllegalArgumentException(
                     "exponentSize(" + exponentSize + ") < " + DoubleConstants.SIZE_MIN_EXPONENT);
         }
-        if (exponentSize > DoubleConstants.SIZE_EXPONENT) {
+        if (exponentSize > DoubleConstants.SIZE_MAX_EXPONENT) {
             throw new IllegalArgumentException(
-                    "exponentSize(" + exponentSize + ") > " + DoubleConstants.SIZE_EXPONENT);
+                    "exponentSize(" + exponentSize + ") > " + DoubleConstants.SIZE_MAX_EXPONENT);
         }
         return exponentSize;
     }
@@ -39,9 +45,9 @@ final class DoubleConstraints {
             throw new IllegalArgumentException(
                     "significandSize(" + significandSize + ") < " + DoubleConstants.SIZE_MIN_SIGNIFICAND);
         }
-        if (significandSize > DoubleConstants.SIZE_SIGNIFICAND) {
+        if (significandSize > DoubleConstants.SIZE_MAX_SIGNIFICAND) {
             throw new IllegalArgumentException(
-                    "significandSize(" + significandSize + ") > " + DoubleConstants.SIZE_SIGNIFICAND);
+                    "significandSize(" + significandSize + ") > " + DoubleConstants.SIZE_MAX_SIGNIFICAND);
         }
         return significandSize;
     }

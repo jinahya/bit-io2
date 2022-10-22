@@ -162,7 +162,7 @@ public class DoubleReader
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            return Double.longBitsToDouble(readBits(input) | DoubleConstants.MASK_EXPONENT);
+            return Double.longBitsToDouble(readBits(input) | DoubleConstants.MASK_EXPONENT_BITS);
         }
     }
 
@@ -194,16 +194,16 @@ public class DoubleReader
             if (significandBits == 0L) {
                 throw new IOException("significand bits are all zeros");
             }
-            return Double.longBitsToDouble(significandBits | DoubleConstants.MASK_EXPONENT);
+            return Double.longBitsToDouble(significandBits | DoubleConstants.MASK_EXPONENT_BITS);
         }
     }
 
     private static long readExponentBits(final BitInput input, final int size) throws IOException {
-        return (input.readLong(false, size) << DoubleConstants.SIZE_SIGNIFICAND) & DoubleConstants.MASK_EXPONENT;
+        return (input.readLong(false, size) << DoubleConstants.SIZE_MAX_SIGNIFICAND) & DoubleConstants.MASK_EXPONENT_BITS;
     }
 
     private static long readSignificandBits(final BitInput input, int size) throws IOException {
-        long bits = input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1);
+        long bits = input.readLong(true, 1) << (DoubleConstants.SIZE_MAX_SIGNIFICAND - 1);
         if (--size > 0) {
             bits |= input.readLong(true, size);
         }
@@ -213,7 +213,7 @@ public class DoubleReader
     static double read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
         DoubleConstraints.requireValidExponentSize(exponentSize);
         DoubleConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
+        if (exponentSize == DoubleConstants.SIZE_MAX_EXPONENT && significandSize == DoubleConstants.SIZE_MAX_SIGNIFICAND) {
             return Double.longBitsToDouble(input.readLong(false, Long.SIZE));
         }
         long bits = input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
