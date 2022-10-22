@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -39,6 +38,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 class Float_Wr_CachedInstance_Test {
+
+    static Stream<Arguments> sizes() {
+        return Float_Wr_Test.sizes();
+    }
 
     static Stream<Arguments> sizesAndValues() {
         return Float_Wr_Test.sizesAndValues();
@@ -58,39 +61,27 @@ class Float_Wr_CachedInstance_Test {
         assertThat(actual).isEqualTo(value);
     }
 
-    @Nested
-    class NullableTest {
-
-        private static Stream<Arguments> sizes_() {
-            return Float_Wr_Test.sizes();
+    @MethodSource({"sizesAndValues"})
+    @ParameterizedTest
+    void wr__(final int exponentSize, final int significandSize, final Float value) throws IOException {
+        final var actual = wr1u(o -> {
+            FloatWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, value);
+            return i -> FloatReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
+        });
+        if (value.isNaN()) {
+            assertThat(actual).isNaN();
+            return;
         }
+        assertThat(actual).isEqualTo(value);
+    }
 
-        private static Stream<Arguments> sizesAndValues_() {
-            return sizesAndValues();
-        }
-
-        @MethodSource({"sizesAndValues_"})
-        @ParameterizedTest
-        void wr__(final int exponentSize, final int significandSize, final Float value) throws IOException {
-            final var actual = wr1u(o -> {
-                FloatWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, value);
-                return i -> FloatReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
-            });
-            if (value.isNaN()) {
-                assertThat(actual).isNaN();
-                return;
-            }
-            assertThat(actual).isEqualTo(value);
-        }
-
-        @MethodSource({"sizes_"})
-        @ParameterizedTest
-        void wr_Null_Null(final int exponentSize, final int significandSize) throws IOException {
-            final var actual = wr1u(o -> {
-                FloatWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, null);
-                return i -> FloatReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
-            });
-            assertThat(actual).isNull();
-        }
+    @MethodSource({"sizes"})
+    @ParameterizedTest
+    void wr_Null_Null(final int exponentSize, final int significandSize) throws IOException {
+        final var actual = wr1u(o -> {
+            FloatWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, null);
+            return i -> FloatReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
+        });
+        assertThat(actual).isNull();
     }
 }

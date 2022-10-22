@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -42,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Float_CompressedZero_Wr_Test {
 
-    private static IntStream bitsStream() {
+    static IntStream bitsStream() {
         return IntStream.of(
                 Integer.MIN_VALUE,
                 -1,
@@ -92,30 +91,22 @@ class Float_CompressedZero_Wr_Test {
         validate(value, actual);
     }
 
-    @Nested
-    class NullableTest {
+    @MethodSource({"valueStream"})
+    @ParameterizedTest
+    void wr__getInstanceNullable(final Float value) throws IOException {
+        final var actual = wr1u(o -> {
+            FloatWriter.CompressedZero.getInstanceNullable().write(o, value);
+            return i -> FloatReader.CompressedZero.getInstanceNullable().read(i);
+        });
+        validate(value, actual);
+    }
 
-        private static Stream<Float> valueStream_() {
-            return valueStream();
-        }
-
-        @MethodSource({"valueStream_"})
-        @ParameterizedTest
-        void wr__(final Float value) throws IOException {
-            final var actual = wr1u(o -> {
-                FloatWriter.CompressedZero.getInstanceNullable().write(o, value);
-                return i -> FloatReader.CompressedZero.getInstanceNullable().read(i);
-            });
-            validate(value, actual);
-        }
-
-        @Test
-        void wr_Null_Null() throws IOException {
-            final var actual = wr1u(o -> {
-                FloatWriter.CompressedZero.getInstanceNullable().write(o, null);
-                return i -> FloatReader.CompressedZero.getInstanceNullable().read(i);
-            });
-            assertThat(actual).isNull();
-        }
+    @Test
+    void wr_Null_getInstanceNullable() throws IOException {
+        final var actual = wr1u(o -> {
+            FloatWriter.CompressedZero.getInstanceNullable().write(o, null);
+            return i -> FloatReader.CompressedZero.getInstanceNullable().read(i);
+        });
+        assertThat(actual).isNull();
     }
 }

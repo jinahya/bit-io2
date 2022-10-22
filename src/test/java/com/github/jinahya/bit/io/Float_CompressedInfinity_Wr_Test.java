@@ -27,7 +27,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -43,28 +42,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Float_CompressedInfinity_Wr_Test {
 
     private static IntStream bitsStream() {
-        return IntStream.of(
-                Integer.MIN_VALUE,
-                -1,
-                0,
-                +1,
-                Integer.MAX_VALUE,
-                ThreadLocalRandom.current().nextInt() >>> 1, // random positive
-                ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE // random negative
-        );
+        return Float_CompressedZero_Wr_Test.bitsStream();
     }
 
     static Stream<Float> valueStream() {
-        return Stream.concat(
-                bitsStream().mapToObj(Float::intBitsToFloat),
-                Stream.of(
-                        Float.NEGATIVE_INFINITY,
-                        Float.POSITIVE_INFINITY
-                )
-        );
+        return Float_CompressedZero_Wr_Test.valueStream();
     }
 
-    static void validate(final Float written, final Float read) throws IOException {
+    static void validate(final Float written, final Float read) {
         assertThat(read).isInfinite();
         final var valueBits = Float.floatToRawIntBits(written);
         final var actualBits = Float.floatToRawIntBits(read);
