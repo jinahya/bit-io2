@@ -21,17 +21,28 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * A class for testing {@link FloatReader} class.
+ * A class for testing {@link DoubleWriter.CompressedZero#getInstanceNullable()}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class FloatReaderTest
-        extends BitReaderTest<FloatReader, Float> {
+class DoubleWriter_CompressedZeroNullable_Test
+        extends BitWriterTest<DoubleWriter.CompressedZero, Double> {
 
-    FloatReaderTest() {
-        super(FloatReader.class, Float.class);
+    DoubleWriter_CompressedZeroNullable_Test() {
+        super(DoubleWriter.CompressedZero.class, Double.class);
+    }
+
+    @Test
+    void nullable_UnsupportedOperationException_() {
+        final var instance = DoubleWriter.CompressedZero.getInstanceNullable();
+        assertThatThrownBy(instance::nullable)
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage(BitIoConstants.MESSAGE_UNSUPPORTED_ALREADY_NULLABLE);
     }
 }

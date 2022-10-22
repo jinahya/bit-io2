@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -33,12 +35,12 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link DoubleWriter.Infinity} and {@link DoubleReader.Infinity}.
+ * A class for testing {@link DoubleWriter.CompressedInfinity} and {@link DoubleReader.CompressedInfinity}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class BitIo_Double_Infinity_Test {
+class Double_CompressedInfinity_Wr_Test {
 
     private static IntStream bitsStream() {
         return IntStream.of(
@@ -79,9 +81,36 @@ class BitIo_Double_Infinity_Test {
     @ParameterizedTest
     void wr__(final Double value) throws IOException {
         final var actual = wr1u(o -> {
-            o.writeDoubleOfInfinity(value);
-            return BitInput::readDoubleOfInfinity;
+            DoubleWriter.CompressedInfinity.getInstance().write(o, value);
+            return i -> DoubleReader.CompressedInfinity.getInstance().read(i);
         });
         validate(value, actual);
+    }
+
+    @Nested
+    class NullableTest {
+
+        private static Stream<Double> valueStream_() {
+            return valueStream();
+        }
+
+        @MethodSource({"valueStream_"})
+        @ParameterizedTest
+        void wr__(final Double value) throws IOException {
+            final var actual = wr1u(o -> {
+                DoubleWriter.CompressedInfinity.getInstanceNullable().write(o, value);
+                return i -> DoubleReader.CompressedInfinity.getInstanceNullable().read(i);
+            });
+            validate(value, actual);
+        }
+
+        @Test
+        void wr_Null_Null() throws IOException {
+            final var actual = wr1u(o -> {
+                DoubleWriter.CompressedInfinity.getInstanceNullable().write(o, null);
+                return i -> DoubleReader.CompressedInfinity.getInstanceNullable().read(i);
+            });
+            assertThat(actual).isNull();
+        }
     }
 }

@@ -59,7 +59,7 @@ class ByteArray_Unsigned_Wr_Test {
 
     private void run(final byte[] expected, final int lengthSize) throws IOException {
         final var baos = new ByteArrayOutputStream();
-        final var output = ByteOutputAdapter.from(baos);
+        final var output = BitOutputFactory.from(baos);
         final var writer = ByteArrayWriter.unsigned(lengthSize, 7);
         writer.write(output, expected);
         final var padded = output.align(1);
@@ -68,7 +68,7 @@ class ByteArray_Unsigned_Wr_Test {
             log.debug("given: {}, written: {}, rate: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
         }
         final var bais = new ByteArrayInputStream(baos.toByteArray());
-        final var input = ByteInputAdapter.from(bais);
+        final var input = BitInputFactory.from(bais);
         final var reader = ByteArrayReader.unsigned(lengthSize, 7);
         final var actual = reader.read(input);
         final var discarded = input.align(1);
@@ -116,12 +116,12 @@ class ByteArray_Unsigned_Wr_Test {
     void nullable__() throws IOException {
         final var lengthSize = 31;
         final var baos = new ByteArrayOutputStream();
-        final var output = ByteOutputAdapter.from(baos);
+        final var output = BitOutputFactory.from(baos);
         final var writer = ByteArrayWriter.unsigned(lengthSize, 7).nullable();
         writer.write(output, null);
         final var padded = output.align(1);
         final var bais = new ByteArrayInputStream(baos.toByteArray());
-        final var input = ByteInputAdapter.from(bais);
+        final var input = BitInputFactory.from(bais);
         final var reader = ByteArrayReader.unsigned(lengthSize, 7).nullable();
         final var actual = reader.read(input);
         final var discarded = input.align(1);

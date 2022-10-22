@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * An interface for writing values of an arbitrary number of bits.
+ * An interface for writing values of arbitrary number of bits.
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitInput
@@ -139,49 +139,7 @@ public interface BitOutput {
     default void writeFloat(final int exponentSize, final int significandSize, final float value) throws IOException {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
-            writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
-            return;
-        }
-        final int bits = Float.floatToRawIntBits(value);
-        writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
-        FloatWriter.writeExponentBits(this, exponentSize, bits);
-        FloatWriter.writeSignificandBits(this, significandSize, bits);
-    }
-
-    /**
-     * Writes a {@code float} value represents either {@code -.0f} or {@code +.0f} whose sign bit is equal to that of
-     * specified value.
-     *
-     * @param value the value whose sign bit is written.
-     * @throws IOException if an I/O error occurs.
-     * @see BitInput#readFloatOfZero()
-     */
-    default void writeFloatOfZero(final float value) throws IOException {
-        FloatWriter.Zero.getInstance().write(this, value);
-    }
-
-    /**
-     * Writes a {@code float} value represents an infinity whose sign bit is same as the left most bit of specified
-     * value.
-     * <p>
-     * e.g.
-     * <blockquote><pre>{@code
-     * writeFloatOfInfinity(+.0f); // intends to write 0b0__11111111__00000000_00000000_0000_000
-     * writeFloatOfInfinity(-.1f); // intends to write 0b1__11111111__00000000_00000000_0000_000
-     * }</pre></blockquote>
-     *
-     * @param value the value whose sign bit is written.
-     * @throws IOException if an I/O error occurs.
-     * @see BitInput#readFloatOfInfinity()
-     */
-    default void writeFloatOfInfinity(final float value) throws IOException {
-        FloatWriter.Infinity.getInstance().write(this, value);
-    }
-
-    default void writeFloatOfNaN(final int significandSize, final float value) throws IOException {
-        FloatConstraints.requireValidSignificandSize(significandSize);
-        FloatWriter.NaN.getInstance(significandSize).write(this, value);
+        FloatWriter.write(this, exponentSize, significandSize, value);
     }
 
     /**
@@ -197,36 +155,7 @@ public interface BitOutput {
     default void writeDouble(final int exponentSize, final int significandSize, final double value) throws IOException {
         DoubleConstraints.requireValidExponentSize(exponentSize);
         DoubleConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
-            writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
-            return;
-        }
-        final long bits = Double.doubleToRawLongBits(value);
-        writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
-        DoubleWriter.writeExponentBits(this, exponentSize, bits);
-        DoubleWriter.writeSignificandBits(this, significandSize, bits);
-    }
-
-    /**
-     * Writes specified {@code double} value as a zoro.
-     *
-     * @param value the value whose left most bit is written.
-     * @throws IOException if an I/O error occurs.
-     * @see BitInput#readDoubleOfZero()
-     */
-    default void writeDoubleOfZero(final double value) throws IOException {
-        DoubleWriter.Zero.getInstance().write(this, value);
-    }
-
-    /**
-     * Writes specified {@code double} value as an infinity value.
-     *
-     * @param value the value whose left most bit is written.
-     * @throws IOException if an I/O error occurs.
-     * @see BitInput#readDoubleOfInfinity()
-     */
-    default void writeDoubleOfInfinity(final double value) throws IOException {
-        DoubleWriter.Infinity.getInstance().write(this, value);
+        DoubleWriter.write(this, exponentSize, significandSize, value);
     }
 
     /**

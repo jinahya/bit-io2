@@ -27,31 +27,49 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link BitOutput#writeFloatOfZero(float)} method and {@link BitInput#readFloatOfZero()} method.
+ * A class for testing {@link FloatWriter.CompressedInfinity} and {@link FloatReader.CompressedInfinity}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Float_Zero_Wr_Test {
+class Float_CompressedInfinity_Wr_Test {
 
-    private static Stream<Float> valueStream() {
-        return BitIo_Float_Zero_Test.valueStream();
+    private static IntStream bitsStream() {
+        return Float_CompressedZero_Wr_Test.bitsStream();
+    }
+
+    static Stream<Float> valueStream() {
+        return Float_CompressedZero_Wr_Test.valueStream();
+    }
+
+    static void validate(final Float written, final Float read) {
+        assertThat(read).isInfinite();
+        final var valueBits = Float.floatToRawIntBits(written);
+        final var actualBits = Float.floatToRawIntBits(read);
+        if (valueBits >= 0) { // read.floatValue() >= .0f 는 -.0f 와 +.0f 를 구분하지 못한다.
+            assertThat(read).isEqualTo(Float.POSITIVE_INFINITY);
+            assertThat(actualBits).isEqualTo(FloatTestConstants.POSITIVE_INFINITY_BITS);
+        } else {
+            assertThat(read).isEqualTo(Float.NEGATIVE_INFINITY);
+            assertThat(actualBits).isEqualTo(FloatTestConstants.NEGATIVE_INFINITY_BITS);
+        }
     }
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
-    void rw__(final Float value) throws IOException {
+    void wr__(final Float value) throws IOException {
         final var actual = wr1u(o -> {
-            FloatWriter.Zero.getInstance().write(o, value);
-            return i -> FloatReader.Zero.getInstance().read(i);
+            FloatWriter.CompressedInfinity.getInstance().write(o, value);
+            return i -> FloatReader.CompressedInfinity.getInstance().read(i);
         });
-        BitIo_Float_Zero_Test.validate(value, actual);
+        validate(value, actual);
     }
 
     @Nested
@@ -65,17 +83,17 @@ class Float_Zero_Wr_Test {
         @ParameterizedTest
         void wr__(final Float value) throws IOException {
             final var actual = wr1u(o -> {
-                FloatWriter.Zero.getInstanceNullable().write(o, value);
-                return i -> FloatReader.Zero.getInstanceNullable().read(i);
+                FloatWriter.CompressedInfinity.getInstanceNullable().write(o, value);
+                return i -> FloatReader.CompressedInfinity.getInstanceNullable().read(i);
             });
-            BitIo_Float_Zero_Test.validate(value, actual);
+            validate(value, actual);
         }
 
         @Test
         void wr_Null_Null() throws IOException {
             final var actual = wr1u(o -> {
-                FloatWriter.Zero.getInstanceNullable().write(o, null);
-                return i -> FloatReader.Zero.getInstanceNullable().read(i);
+                FloatWriter.CompressedInfinity.getInstanceNullable().write(o, null);
+                return i -> FloatReader.CompressedInfinity.getInstanceNullable().read(i);
             });
             assertThat(actual).isNull();
         }

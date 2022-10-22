@@ -46,7 +46,7 @@ class ByteOutputAdapter_From_Test {
         @Test
         void __NullOutputStream() {
             final var outputStream = OutputStream.nullOutputStream();
-            final var bitOutput = ByteOutputAdapter.from(outputStream);
+            final var bitOutput = BitOutputFactory.from(outputStream);
             assertThat(bitOutput)
                     .isNotNull();
         }
@@ -58,7 +58,7 @@ class ByteOutputAdapter_From_Test {
         @Test
         void __ZeroCapacity() {
             final var dataOutput = Mockito.mock(DataOutput.class);
-            final var bitOutput = ByteOutputAdapter.from(dataOutput);
+            final var bitOutput = BitOutputFactory.from(dataOutput);
             assertThat(bitOutput)
                     .isNotNull();
         }
@@ -70,7 +70,7 @@ class ByteOutputAdapter_From_Test {
         @Test
         void __ZeroCapacity() {
             final var randomAccessFile = Mockito.mock(RandomAccessFile.class);
-            final var bitOutput = ByteOutputAdapter.from(randomAccessFile);
+            final var bitOutput = BitOutputFactory.from(randomAccessFile);
             assertThat(bitOutput)
                     .isNotNull();
         }
@@ -82,7 +82,7 @@ class ByteOutputAdapter_From_Test {
         @Test
         void __ZeroCapacity() {
             final var byteBuffer = ByteBuffer.allocate(0);
-            final var bitOutput = ByteOutputAdapter.from(byteBuffer);
+            final var bitOutput = BitOutputFactory.from(byteBuffer);
             assertThat(bitOutput)
                     .isNotNull();
         }
@@ -94,7 +94,7 @@ class ByteOutputAdapter_From_Test {
         @Test
         void __Mock() {
             final var writableByteChannel = Mockito.mock(WritableByteChannel.class);
-            final var bitOutput = ByteOutputAdapter.from(writableByteChannel);
+            final var bitOutput = BitOutputFactory.from(writableByteChannel);
             assertThat(bitOutput)
                     .isNotNull();
         }

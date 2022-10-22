@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -33,12 +35,12 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link DoubleWriter.Zero} and {@link DoubleReader.Zero}.
+ * A class for testing {@link DoubleWriter.CompressedZero} and {@link DoubleReader.CompressedZero}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class BitIo_Double_Zero_Test {
+class Double_CompressedZero_Wr_Test {
 
     private static LongStream bitsStream() {
         return LongStream.of(
@@ -82,11 +84,38 @@ class BitIo_Double_Zero_Test {
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
-    void doubleOfZero__(final Double value) throws IOException {
+    void rw__(final Double value) throws IOException {
         final var actual = wr1u(o -> {
-            o.writeDoubleOfZero(value);
-            return BitInput::readDoubleOfZero;
+            DoubleWriter.CompressedZero.getInstance().write(o, value);
+            return i -> DoubleReader.CompressedZero.getInstance().read(i);
         });
         validate(value, actual);
+    }
+
+    @Nested
+    class NullableTest {
+
+        private static Stream<Double> valueStream_() {
+            return valueStream();
+        }
+
+        @MethodSource({"valueStream_"})
+        @ParameterizedTest
+        void wr__(final Double value) throws IOException {
+            final var actual = wr1u(o -> {
+                DoubleWriter.CompressedZero.getInstanceNullable().write(o, value);
+                return i -> DoubleReader.CompressedZero.getInstanceNullable().read(i);
+            });
+            validate(value, actual);
+        }
+
+        @Test
+        void wr_Null_Null() throws IOException {
+            final var actual = wr1u(o -> {
+                DoubleWriter.CompressedZero.getInstanceNullable().write(o, null);
+                return i -> DoubleReader.CompressedZero.getInstanceNullable().read(i);
+            });
+            assertThat(actual).isNull();
+        }
     }
 }

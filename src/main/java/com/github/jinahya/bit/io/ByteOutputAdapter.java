@@ -20,11 +20,7 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.DataOutput;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
 import java.util.Objects;
 
 /**
@@ -35,46 +31,6 @@ import java.util.Objects;
  */
 public class ByteOutputAdapter
         implements BitOutput {
-
-    /**
-     * Creates a new instance on top of specified stream.
-     *
-     * @param stream the stream to which bytes are written.
-     * @return a new instance.
-     */
-    static BitOutput from(final OutputStream stream) {
-        return new ByteOutputAdapter(new StreamByteOutput(stream));
-    }
-
-    /**
-     * Creates a new instance on top of specified output.
-     *
-     * @param output the output to which bytes are written.
-     * @return a new instance.
-     */
-    static BitOutput from(final DataOutput output) {
-        return new ByteOutputAdapter(new DataByteOutput(output));
-    }
-
-    /**
-     * Creates a new instance on top of specified buffer.
-     *
-     * @param buffer the buffer to which bytes are written.
-     * @return a new instance.
-     */
-    static BitOutput from(final ByteBuffer buffer) {
-        return new ByteOutputAdapter(new BufferByteOutput(buffer));
-    }
-
-    /**
-     * Creates a new instance on top of specified channel.
-     *
-     * @param channel the channel to which bytes are written.
-     * @return a new instance.
-     */
-    static BitOutput from(final WritableByteChannel channel) {
-        return new ByteOutputAdapter(new ChannelByteOutput(channel));
-    }
 
     /**
      * Creates a new instance on top of specified byte output.

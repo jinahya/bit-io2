@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * An interface for reading values of an arbitrary number of bits.
+ * An interface for reading values of arbitrary number of bits.
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  * @see BitOutput
@@ -49,7 +49,7 @@ public interface BitInput {
      * @param unsigned a flag for indicating an unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} -
      *                 ({@code unsigned ? 1 : 0})), both inclusive.
-     * @return a {@code byte} value of specified bit {@code size}.
+     * @return a {@code byte} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
      * @implSpec The default implementation invokes {@link #readInt(boolean, int)} method with given arguments, and
      * returns the result as a {@code byte} value.
@@ -92,7 +92,7 @@ public interface BitInput {
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Long#SIZE} -
      *                 ({@code unsigned ? 1: 0})), both inclusive.
-     * @return a {@code long} value of specified number of bits.
+     * @return a {@code long} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
      */
     default long readLong(final boolean unsigned, int size) throws IOException {
@@ -121,10 +121,10 @@ public interface BitInput {
      * Reads a {@code char} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Character#SIZE}, both inclusive.
-     * @return a {@code char} value read.
+     * @return a {@code char} value of specified {@code size}.
      * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation invokes {@link #readInt(boolean, int)} method with given {@code size}, and
-     * returns the result as a {@code char}.
+     * @implSpec The default implementation invokes {@link #readInt(boolean, int)} method with {@code true} and given
+     * {@code size}, and returns the result as a {@code char}.
      */
     default char readChar(final int size) throws IOException {
         BitIoConstraints.requireValidSizeForChar(size);
@@ -143,58 +143,7 @@ public interface BitInput {
      * @throws IOException if a I/O error occurs.
      */
     default float readFloat(final int exponentSize, final int significandSize) throws IOException {
-        FloatConstraints.requireValidExponentSize(exponentSize);
-        FloatConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
-            return Float.intBitsToFloat(readInt(false, Integer.SIZE));
-        }
-        int bits = readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
-        bits |= FloatReader.readExponentBits(this, exponentSize);
-        bits |= FloatReader.readSignificandBits(this, significandSize);
-        return Float.intBitsToFloat(bits);
-    }
-
-    /**
-     * Reads a {@code float} value represents either {@code +.0f} or {@code -.0f}.
-     *
-     * @return the value represents zero.
-     * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation reads one bit for the <em>sign bit</em>, and returns either
-     * <code>0b<strong>0</strong>__00000000__00000000_00000000_0000_000<sub>2</sub></code> or
-     * <code>0b<strong>1</strong>__00000000__00000000_00000000_0000_000<sub>2</sub></code>.
-     * @see BitOutput#writeFloatOfZero(float)
-     */
-    default float readFloatOfZero() throws IOException {
-        return FloatReader.Zero.getInstance().read(this);
-    }
-
-    /**
-     * Reads a {@code float} value represents either {@link Float#POSITIVE_INFINITY} or
-     * {@link Float#NEGATIVE_INFINITY}.
-     *
-     * @return the value holding the infinity of type {@code float}.
-     * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation reads one bit for the <em>sign bit</em>, and returns either
-     * <code>0b<strong>0</strong>__11111111__00000000_00000000_0000_000<sub>2</sub></code> or
-     * <code>0b<strong>1</strong>__11111111__00000000_00000000_0000_000<sub>2</sub></code>.
-     * @see BitOutput#writeFloatOfInfinity(float)
-     */
-    default float readFloatOfInfinity() throws IOException {
-        return FloatReader.Infinity.getInstance().read(this);
-    }
-
-    /**
-     * Reads a {@code NaN} value of {@code float}.
-     *
-     * @param significandSize a number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
-     *                        both inclusive.
-     * @return the {@code NaN} value read.
-     * @throws IOException if an I/O error occurs.
-     */
-    default float readFloatOfNaN(final int significandSize) throws IOException {
-        FloatConstraints.requireValidSignificandSize(significandSize);
-        return FloatReader.NaN.getInstance(significandSize).read(this);
+        return FloatReader.read(this, exponentSize, significandSize);
     }
 
     /**
@@ -209,62 +158,7 @@ public interface BitInput {
      * @throws IOException if a I/O error occurs.
      */
     default double readDouble(final int exponentSize, final int significandSize) throws IOException {
-        DoubleConstraints.requireValidExponentSize(exponentSize);
-        DoubleConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
-            return Double.longBitsToDouble(readLong(false, Long.SIZE));
-        }
-        long bits = readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
-        bits |= DoubleReader.readExponentBits(this, exponentSize);
-        bits |= DoubleReader.readSignificandBits(this, significandSize);
-        return Double.longBitsToDouble(bits);
-    }
-
-    /**
-     * Reads a {@code double} value represents either {@code +.0d} or {@code -.0d}.
-     *
-     * @return the value represents zero.
-     * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation reads one bit for the <em>sign bit</em>, and returns either
-     * <code>0b<strong>0</strong>__00000000_000__00000000_00000000_00000000_00000000_00000000_00000000_000<sub>2</sub></code>
-     * or
-     * <code>0b<strong>1</strong>__00000000_000__00000000_00000000_00000000_00000000_00000000_00000000_000<sub>2</sub></code>.
-     * @see BitOutput#writeDoubleOfZero(double)
-     */
-    default double readDoubleOfZero() throws IOException {
-        return DoubleReader.Zero.getInstance().read(this);
-    }
-
-    /**
-     * Reads a {@code double} value represents either {@link Double#POSITIVE_INFINITY} or
-     * {@link Double#NEGATIVE_INFINITY}.
-     *
-     * @return the value holding the infinity of type {@code double}.
-     * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation reads one bit for the <em>sign bit</em>, and returns either
-     * <code>0b<strong>0</strong>__11111111_111__00000000_00000000_00000000_00000000_00000000_00000000_000<sub>2</sub></code>
-     * or
-     * <code>0b<strong>1</strong>__11111111_111__00000000_00000000_00000000_00000000_00000000_00000000_000<sub>2</sub></code>.
-     * @see BitOutput#writeDoubleOfInfinity(double)
-     */
-    default double readDoubleOfInfinity() throws IOException {
-        return DoubleReader.Infinity.getInstance().read(this);
-    }
-
-    /**
-     * Reads a {@code NaN} value of {@code double}.
-     *
-     * @param significandSize a number of bits for the significand part; between
-     *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
-     *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
-     * @return the {@code NaN} value read.
-     * @throws IOException if an I/O error occurs.
-     */
-    default double readDoubleOfNaN(final int significandSize) throws IOException {
-        DoubleConstraints.requireValidSignificandSize(significandSize);
-        return Double.longBitsToDouble(
-                DoubleReader.readSignificandBits(this, significandSize) | DoubleConstants.MASK_EXPONENT
-        );
+        return DoubleReader.read(this, exponentSize, significandSize);
     }
 
     /**

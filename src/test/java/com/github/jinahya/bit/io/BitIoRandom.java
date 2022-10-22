@@ -440,7 +440,7 @@ final class BitIoRandom {
             throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
         final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        final BitOutput output = ByteOutputAdapter.from(stream);
+        final BitOutput output = BitOutputFactory.from(stream);
         final Function<? super byte[], ? extends R> f2 = f1.apply(output);
         final long padded = output.align(1);
         assert padded >= 0L;
@@ -466,7 +466,7 @@ final class BitIoRandom {
             final Function<? super BitInput, ? extends R> f2 = f1.apply(o);
             assert f2 != null : "f2 is null";
             return a -> {
-                final BitInput input = ByteInputAdapter.from(new ByteArrayInputStream(a));
+                final BitInput input = BitInputFactory.from(new ByteArrayInputStream(a));
                 final R result = f2.apply(input);
                 try {
                     final long discarded = input.align(1);

@@ -21,9 +21,11 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
- * A writer for writing {@code Double} values.
+ * A writer for writing {@code double} values.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see DoubleReader
@@ -40,7 +42,7 @@ public class DoubleWriter
         }
 
         /**
-         * Throws an {@code UnsupportedOperationException}.
+         * Throws an {@code UnsupportedOperationException}. Use {@code getInstanceNullable()}.
          *
          * @return N/A
          */
@@ -59,31 +61,31 @@ public class DoubleWriter
      * A bit writer for writing {@code ±.0d}.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
-     * @see DoubleReader.Zero
+     * @see DoubleReader.CompressedZero
      */
-    public static final class Zero
+    public static final class CompressedZero
             extends SignBitOnly {
 
         private static final class Holder {
 
-            private static final BitWriter<Double> INSTANCE = new Zero();
+            private static final BitWriter<Double> INSTANCE = new CompressedZero();
 
             private static final class Nullable {
 
                 private static final BitWriter<Double> INSTANCE = new FilterBitWriter.Nullable<>(Holder.INSTANCE);
 
                 private Nullable() {
-                    throw new AssertionError("instantiation is not allowed");
+                    throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
                 }
             }
 
             private Holder() {
-                throw new AssertionError("instantiation is not allowed");
+                throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
             }
         }
 
         /**
-         * Returns the instance of this class.
+         * Returns the instance of this class which is singleton.
          *
          * @return the instance.
          * @see #getInstanceNullable()
@@ -102,7 +104,7 @@ public class DoubleWriter
             return Holder.Nullable.INSTANCE;
         }
 
-        private Zero() {
+        private CompressedZero() {
             super();
         }
     }
@@ -111,31 +113,31 @@ public class DoubleWriter
      * A bit writer for values representing infinities.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
-     * @see DoubleReader.Infinity
+     * @see DoubleReader.CompressedInfinity
      */
-    public static final class Infinity
+    public static final class CompressedInfinity
             extends SignBitOnly {
 
         private static final class Holder {
 
-            private static final Infinity INSTANCE = new Infinity();
+            private static final CompressedInfinity INSTANCE = new CompressedInfinity();
 
             private static final class Nullable {
 
                 private static final BitWriter<Double> INSTANCE = new FilterBitWriter.Nullable<>(Holder.INSTANCE);
 
                 private Nullable() {
-                    throw new AssertionError("instantiation is not allowed");
+                    throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
                 }
             }
 
             private Holder() {
-                throw new AssertionError("instantiation is not allowed");
+                throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
             }
         }
 
         /**
-         * Returns the instance of this class.
+         * Returns the instance of this class which is singleton.
          *
          * @return the instance.
          * @see #getInstanceNullable()
@@ -154,19 +156,36 @@ public class DoubleWriter
             return Holder.Nullable.INSTANCE;
         }
 
-        private Infinity() {
+        private CompressedInfinity() {
             super();
         }
     }
 
-    public static final class NaN
+    /**
+     * A class for writing {@code NaN} values in a compressed manner.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
+    public static final class CompressedNaN
             extends DoubleWriter {
 
-        static NaN getInstance(final int significandSize) {
-            return new NaN(significandSize);
+        private static final Map<DoubleKey, CompressedNaN> CACHED_INSTANCES = new WeakHashMap<>();
+
+        static CompressedNaN getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    DoubleKey.withSignificandSizeOnly(significandSize),
+                    k -> new CompressedNaN(k.significandSize)
+            );
         }
 
-        public NaN(final int significandSize) {
+        /**
+         * Creates a new instance with specified size of the significand part.
+         *
+         * @param significandSize the number of bits for the significand part; between
+         *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
+        public CompressedNaN(final int significandSize) {
             super(DoubleConstants.SIZE_MIN_EXPONENT, significandSize);
             mask = DoubleConstants.MASK_SIGNIFICAND_LEFT_MOST_BIT | BitIoUtils.bitMaskDouble(super.significandSize - 1);
         }
@@ -183,42 +202,55 @@ public class DoubleWriter
         private final long mask;
     }
 
-    static DoubleWriter getInstance(final int exponentSize, final int significandSize) {
-        return new DoubleWriter(exponentSize, significandSize);
-    }
-
-    static void writeExponentBits(final BitOutput output, final int size, final long bits) throws IOException {
+    private static void writeExponentBits(final BitOutput output, final int size, final long bits) throws IOException {
         output.writeLong(false, size, ((bits << 1) >> 1) >> DoubleConstants.SIZE_SIGNIFICAND);
     }
 
-    static void writeSignificandBits(final BitOutput output, int size, final long bits) throws IOException {
+    private static void writeSignificandBits(final BitOutput output, int size, final long bits) throws IOException {
         output.writeLong(true, 1, bits >> (DoubleConstants.SIZE_SIGNIFICAND - 1));
         if (--size > 0) {
             output.writeLong(true, size, bits);
         }
     }
 
+    static void write(final BitOutput output, final int exponentSize, final int significandSize, final double value)
+            throws IOException {
+        DoubleConstraints.requireValidExponentSize(exponentSize);
+        DoubleConstraints.requireValidSignificandSize(significandSize);
+        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
+            output.writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
+            return;
+        }
+        final long bits = Double.doubleToRawLongBits(value);
+        output.writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
+        writeExponentBits(output, exponentSize, bits);
+        writeSignificandBits(output, significandSize, bits);
+    }
+
+    private static final Map<DoubleKey, DoubleWriter> CACHED_INSTANCES = new WeakHashMap<>();
+
+    static DoubleWriter getCachedInstance(final int exponentSize, final int significandSize) {
+        return CACHED_INSTANCES.computeIfAbsent(
+                new DoubleKey(exponentSize, significandSize),
+                k -> new DoubleWriter(k.exponentSize, k.significandSize)
+        );
+    }
+
+    /**
+     * Creates a new instance with specified size of the exponent part and the significand part, respectively.
+     *
+     * @param exponentSize    the number of bits for the export part; between {@value DoubleConstants#SIZE_MIN_EXPONENT}
+     *                        and {@value DoubleConstants#SIZE_EXPONENT}, both inclusive.
+     * @param significandSize the number of bits for the significand part; between
+     *                        {@value DoubleConstants#SIZE_SIGNIFICAND} and {@value DoubleConstants#SIZE_SIGNIFICAND},
+     *                        both inclusive.
+     */
     public DoubleWriter(final int exponentSize, final int significandSize) {
         super(exponentSize, significandSize);
     }
 
     @Override
     public void write(final BitOutput output, final Double value) throws IOException {
-        final long bits = Double.doubleToRawLongBits(value);
-        writeSignBit(output, bits);
-        writeExponent(output, bits);
-        writeSignificand(output, bits);
-    }
-
-    protected void writeSignBit(final BitOutput output, final long bits) throws IOException {
-        output.writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
-    }
-
-    protected void writeExponent(final BitOutput output, final long bits) throws IOException {
-        writeExponentBits(output, exponentSize, bits);
-    }
-
-    protected void writeSignificand(final BitOutput output, final long bits) throws IOException {
-        writeSignificandBits(output, significandSize, bits);
+        write(output, exponentSize, significandSize, value);
     }
 }

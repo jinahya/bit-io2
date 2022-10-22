@@ -4,7 +4,7 @@ package com.github.jinahya.bit.io;
  * #%L
  * bit-io2
  * %%
- * Copyright (C) 2020 - 2022 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,25 +20,29 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import lombok.extern.slf4j.Slf4j;
 
-import java.nio.channels.ReadableByteChannel;
+import java.io.IOException;
+import java.util.function.Supplier;
 
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 /**
- * A class for testing {@link BitInputFactory#from(ReadableByteChannel)} method.
+ * A class for testing nullable instances.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-class ByteInputAdapter_FromReadableByteChannel_Test {
+@Slf4j
+class Nullable_Wr_Test {
 
-    @Test
-    void __Mock() {
-        final var channel = mock(ReadableByteChannel.class);
-        final var input = BitInputFactory.from(channel);
-        assertThat(input)
-                .isNotNull();
+    static <T> void test(final Supplier<? extends BitWriter<T>> writerSupplier,
+                         final Supplier<? extends BitReader<T>> readerSupplier)
+            throws IOException {
+        final var actual = wr1u(o -> {
+            writerSupplier.get().nullable().write(o, null);
+            return i -> readerSupplier.get().nullable().read(i);
+        });
+        assertThat(actual).isNull();
     }
 }

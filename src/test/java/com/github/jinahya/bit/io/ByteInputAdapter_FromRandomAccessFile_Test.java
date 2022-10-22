@@ -31,14 +31,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  * A class for testing factory method defined in {@link BitInput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ByteOutputAdapter_FromOutputStream_Test
  */
 class ByteInputAdapter_FromRandomAccessFile_Test {
 
     @Test
     void __Mock() {
         final var file = Mockito.mock(RandomAccessFile.class);
-        final var input = ByteInputAdapter.from(file);
+        final var input = BitInputFactory.from(file);
         assertThat(input)
                 .isNotNull();
     }

@@ -30,13 +30,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * A class for testing factory method defined in {@link BitInput} interface.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ByteOutputAdapter_FromOutputStream_Test
  */
 class ByteInputAdapter_FromInputStream_Test {
 
     @Test
     void __NullInputStream() {
-        final var input = ByteInputAdapter.from(InputStream.nullInputStream());
+        final var input = BitInputFactory.from(InputStream.nullInputStream());
         assertThat(input)
                 .isNotNull();
     }

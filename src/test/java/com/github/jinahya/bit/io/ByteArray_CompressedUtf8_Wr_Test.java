@@ -59,7 +59,7 @@ class ByteArray_CompressedUtf8_Wr_Test {
     @ParameterizedTest
     void wr__(final byte[] expected, final int lengthSize) throws IOException {
         final var baos = new ByteArrayOutputStream();
-        final var output = ByteOutputAdapter.from(baos);
+        final var output = BitOutputFactory.from(baos);
         final var writer = ByteArrayWriter.compressedUtf8(lengthSize);
         writer.write(output, expected);
         final var padded = output.align(1);
@@ -68,7 +68,7 @@ class ByteArray_CompressedUtf8_Wr_Test {
             log.debug("given: {}, written: {}, rate: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
         }
         final var bais = new ByteArrayInputStream(baos.toByteArray());
-        final var input = ByteInputAdapter.from(bais);
+        final var input = BitInputFactory.from(bais);
         final var reader = ByteArrayReader.compressedUtf8(lengthSize);
         final var actual = reader.read(input);
         final var discarded = input.align(1);
@@ -80,12 +80,12 @@ class ByteArray_CompressedUtf8_Wr_Test {
     void wr__nullable() throws IOException {
         final int lengthSize = Integer.SIZE - 1;
         final var baos = new ByteArrayOutputStream();
-        final var output = ByteOutputAdapter.from(baos);
+        final var output = BitOutputFactory.from(baos);
         final var writer = ByteArrayWriter.compressedUtf8(lengthSize).nullable();
         writer.write(output, null);
         final var padded = output.align(1);
         final var bais = new ByteArrayInputStream(baos.toByteArray());
-        final var input = ByteInputAdapter.from(bais);
+        final var input = BitInputFactory.from(bais);
         final var reader = ByteArrayReader.compressedUtf8(lengthSize).nullable();
         final var actual = reader.read(input);
         final var discarded = input.align(1);

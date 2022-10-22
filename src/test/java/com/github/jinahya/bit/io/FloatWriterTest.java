@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * A class for testing {@link FloatWriter.Zero} and {@link FloatReader.Zero}.
+ * A class for testing {@link FloatWriter.CompressedZero} and {@link FloatReader.CompressedZero}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
@@ -39,7 +39,7 @@ class FloatWriterTest {
 
         @Test
         void nullable_UnsupportedOperationException__() {
-            assertThatThrownBy(() -> FloatWriter.Zero.getInstance().nullable())
+            assertThatThrownBy(() -> FloatWriter.CompressedZero.getInstance().nullable())
                     .isInstanceOf(UnsupportedOperationException.class)
             ;
         }
@@ -50,7 +50,7 @@ class FloatWriterTest {
 
         @Test
         void nullable_UnsupportedOperationException__() {
-            assertThatThrownBy(() -> FloatWriter.Zero.getInstanceNullable().nullable())
+            assertThatThrownBy(() -> FloatWriter.CompressedZero.getInstanceNullable().nullable())
                     .isInstanceOf(UnsupportedOperationException.class)
                     .hasMessage(BitIoConstants.MESSAGE_UNSUPPORTED_ALREADY_NULLABLE)
             ;

@@ -31,13 +31,13 @@ import java.util.Objects;
  */
 abstract class BitReaderTest<T extends BitReader<U>, U> {
 
-    protected BitReaderTest(final Class<T> readerClass, final Class<U> valueClass) {
+    BitReaderTest(final Class<T> readerClass, final Class<U> valueClass) {
         super();
         this.readerClass = Objects.requireNonNull(readerClass, "readerClass is null");
         this.valueClass = Objects.requireNonNull(valueClass, "valueClass is null");
     }
 
-    protected final Class<T> readerClass;
+    final Class<T> readerClass;
 
-    protected final Class<U> valueClass;
+    final Class<U> valueClass;
 }
