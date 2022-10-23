@@ -24,38 +24,40 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 
 @Slf4j
 class BitIo_Double_Test {
 
-    private static Stream<Arguments> sizes() {
-        return Stream.concat(
-                IntStream.range(0, 16)
-                        .mapToObj(i -> Arguments.of(BitIoRandom.nextExponentSizeForDouble(),
-                                                    BitIoRandom.nextSignificandSizeForDouble())),
-                Stream.of(Arguments.of(DoubleConstants.SIZE_MAX_EXPONENT, DoubleConstants.SIZE_MAX_SIGNIFICAND)
-                ));
+    private static Stream<Arguments> sizesArgumentsStream() {
+        return DoubleTestParameters.sizesArgumentsStream();
     }
 
-    @MethodSource({"sizes"})
+    @MethodSource({"sizesArgumentsStream"})
     @ParameterizedTest
     void wr__(final int exponentSize, final int significandSize) throws IOException {
-        final var expected = BitIoRandom.nextValueForDouble(exponentSize, significandSize);
-        final var actual = wr1u(o -> {
-            o.writeDouble(exponentSize, significandSize, expected);
-            return i -> i.readDouble(exponentSize, significandSize);
-        });
-        if (Double.isNaN(expected)) {
-            assertThat(actual).isNaN();
-            return;
+        try (MockedStatic<DoubleConstraints> doubleConstraints
+                     = Mockito.mockStatic(DoubleConstraints.class, Mockito.CALLS_REAL_METHODS)) {
+            final var expected = BitIoRandom.nextValueForDouble(exponentSize, significandSize);
+            final var actual = wr1u(o -> {
+                o.writeDouble(exponentSize, significandSize, expected);
+                return i -> i.readDouble(exponentSize, significandSize);
+            });
+            if (Double.isNaN(expected)) {
+                assertThat(actual).isNaN();
+                return;
+            }
+            assertThat(actual).isEqualTo(expected);
+            doubleConstraints.verify(() -> DoubleConstraints.requireValidExponentSize(exponentSize), times(2));
+            doubleConstraints.verify(() -> DoubleConstraints.requireValidSignificandSize(significandSize), times(2));
         }
-        assertThat(actual).isEqualTo(expected);
     }
 }

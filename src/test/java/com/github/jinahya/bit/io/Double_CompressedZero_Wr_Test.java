@@ -49,7 +49,7 @@ class Double_CompressedZero_Wr_Test {
                 0,
                 +1,
                 Long.MAX_VALUE,
-                ThreadLocalRandom.current().nextLong() >>> 1, // random positive
+                ThreadLocalRandom.current().nextLong() & Long.MAX_VALUE, // random positive
                 ThreadLocalRandom.current().nextLong() | Long.MIN_VALUE // random negative
         );
     }

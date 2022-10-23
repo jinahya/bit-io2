@@ -22,13 +22,26 @@ package com.github.jinahya.bit.io;
 
 import java.util.Objects;
 
-final class DoubleKey {
+class DoubleKey {
 
-    static DoubleKey withSignificandSizeOnly(final int significandSize) {
-        return new DoubleKey(DoubleConstants.SIZE_MIN_EXPONENT, significandSize);
+    static DoubleKey copyOf(final DoubleKey source) {
+        return new DoubleKey(source.exponentSize, source.significandSize);
     }
 
-    DoubleKey(final int exponentSize, final int significandSize) {
+    static DoubleKey of(final int exponentSize, final int significandSize) {
+        return new DoubleKey(exponentSize, significandSize);
+    }
+
+    static DoubleKey withSignificandSizeOnly(final int significandSize) {
+        return new DoubleKey(DoubleConstants.SIZE_MIN_EXPONENT, significandSize) {
+            @Override
+            int getExponentSize() {
+                throw new IllegalStateException("significand size only");
+            }
+        };
+    }
+
+    private DoubleKey(final int exponentSize, final int significandSize) {
         super();
         this.exponentSize = DoubleConstraints.requireValidExponentSize(exponentSize);
         this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
@@ -51,7 +64,15 @@ final class DoubleKey {
         return Objects.hash(exponentSize, significandSize);
     }
 
-    final int exponentSize;
+    int getExponentSize() {
+        return exponentSize;
+    }
 
-    final int significandSize;
+    int getSignificandSize() {
+        return significandSize;
+    }
+
+    private final int exponentSize;
+
+    private final int significandSize;
 }

@@ -59,13 +59,13 @@ class Float_CompressedNaN_Wr_Test {
                         bitsStream().mapToObj(Float::intBitsToFloat),
                         Stream.of(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY)
                 )
-                .filter(v -> (Float.floatToRawIntBits(v) & FloatConstants.MASK_SIGNIFICAND_BITS) > 0);
+                .filter(v -> (Float.floatToRawIntBits(v) & FloatConstants.MASK_SIGNIFICAND) > 0);
     }
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__Uncompressed(final Float value) throws IOException {
-        final int significand = FloatConstants.SIZE_MAX_SIGNIFICAND;
+        final int significand = FloatConstants.SIZE_SIGNIFICAND;
         final var actual = wr1u(o -> {
             new FloatWriter.CompressedNaN(significand).write(o, value);
             return i -> new FloatReader.CompressedNaN(significand).read(i);
@@ -76,7 +76,7 @@ class Float_CompressedNaN_Wr_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr2__Compressed(final Float value) throws IOException {
-        var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND_BITS;
+        var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
         bits >>= Integer.numberOfTrailingZeros(bits);
         final int significandSize = Math.max(Integer.SIZE - Integer.numberOfLeadingZeros(bits),
                                              FloatConstants.SIZE_MIN_SIGNIFICAND);
@@ -90,7 +90,7 @@ class Float_CompressedNaN_Wr_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__UncompressedCached(final Float value) throws IOException {
-        final int significand = FloatConstants.SIZE_MAX_SIGNIFICAND;
+        final int significand = FloatConstants.SIZE_SIGNIFICAND;
         final var actual = wr1u(o -> {
             FloatWriter.CompressedNaN.getCachedInstance(significand).write(o, value);
             return i -> FloatReader.CompressedNaN.getCachedInstance(significand).read(i);
@@ -101,7 +101,7 @@ class Float_CompressedNaN_Wr_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr2__CompressedCached(final Float value) throws IOException {
-        var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND_BITS;
+        var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
         bits >>= Integer.numberOfTrailingZeros(bits);
         final int significandSize = Math.max(Integer.SIZE - Integer.numberOfLeadingZeros(bits),
                                              FloatConstants.SIZE_MIN_SIGNIFICAND);
@@ -122,7 +122,7 @@ class Float_CompressedNaN_Wr_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr__Uncompressed(final Float value) throws IOException {
-            final int significand = FloatConstants.SIZE_MAX_SIGNIFICAND;
+            final int significand = FloatConstants.SIZE_SIGNIFICAND;
             final var actual = wr1u(o -> {
                 new FloatWriter.CompressedNaN(significand).write(o, value);
                 return i -> new FloatReader.CompressedNaN(significand).read(i);
@@ -133,7 +133,7 @@ class Float_CompressedNaN_Wr_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr2__Compressed(final Float value) throws IOException {
-            var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND_BITS;
+            var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
             bits >>= Integer.numberOfTrailingZeros(bits);
             final int significandSize = Math.max(Integer.SIZE - Integer.numberOfLeadingZeros(bits),
                                                  FloatConstants.SIZE_MIN_SIGNIFICAND);
@@ -146,7 +146,7 @@ class Float_CompressedNaN_Wr_Test {
 
         @Test
         void wr_Null_Null() throws IOException {
-            final int significand = FloatConstants.SIZE_MAX_SIGNIFICAND;
+            final int significand = FloatConstants.SIZE_SIGNIFICAND;
             final var actual = wr1u(o -> {
                 new FloatWriter.CompressedNaN(significand).nullable().write(o, null);
                 return i -> new FloatReader.CompressedNaN(significand).nullable().read(i);
@@ -157,7 +157,7 @@ class Float_CompressedNaN_Wr_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr__UncompressedCached(final Float value) throws IOException {
-            final int significand = FloatConstants.SIZE_MAX_SIGNIFICAND;
+            final int significand = FloatConstants.SIZE_SIGNIFICAND;
             final var actual = wr1u(o -> {
                 FloatWriter.CompressedNaN.getCachedInstance(significand).write(o, value);
                 return i -> FloatReader.CompressedNaN.getCachedInstance(significand).read(i);
@@ -168,7 +168,7 @@ class Float_CompressedNaN_Wr_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr2__CompressedCached(final Float value) throws IOException {
-            var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND_BITS;
+            var bits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
             bits >>= Integer.numberOfTrailingZeros(bits);
             final int significandSize = Math.max(Integer.SIZE - Integer.numberOfLeadingZeros(bits),
                                                  FloatConstants.SIZE_MIN_SIGNIFICAND);
@@ -181,7 +181,7 @@ class Float_CompressedNaN_Wr_Test {
 
         @Test
         void wr_Null_NullCached() throws IOException {
-            final int significand = FloatConstants.SIZE_MAX_SIGNIFICAND;
+            final int significand = FloatConstants.SIZE_SIGNIFICAND;
             final var actual = wr1u(o -> {
                 FloatWriter.CompressedNaN.getCachedInstance(significand).nullable().write(o, null);
                 return i -> FloatReader.CompressedNaN.getCachedInstance(significand).nullable().read(i);

@@ -21,10 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * A class for testing {@link FloatWriter.CompressedZero} and {@link FloatReader.CompressedZero}.
@@ -34,26 +30,4 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Slf4j
 class FloatWriterTest {
 
-    @Nested
-    class ZeroTest {
-
-        @Test
-        void nullable_UnsupportedOperationException__() {
-            assertThatThrownBy(() -> FloatWriter.CompressedZero.getInstance().nullable())
-                    .isInstanceOf(UnsupportedOperationException.class)
-            ;
-        }
-    }
-
-    @Nested
-    class ZeroNullableTest {
-
-        @Test
-        void nullable_UnsupportedOperationException__() {
-            assertThatThrownBy(() -> FloatWriter.CompressedZero.getInstanceNullable().nullable())
-                    .isInstanceOf(UnsupportedOperationException.class)
-                    .hasMessage(BitIoConstants.MESSAGE_UNSUPPORTED_ALREADY_NULLABLE)
-            ;
-        }
-    }
 }

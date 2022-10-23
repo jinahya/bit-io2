@@ -23,16 +23,17 @@ package com.github.jinahya.bit.io;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.aggregator.DefaultArgumentsAccessor;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 
 /**
  * A class for testing {@link DoubleWriter} and {@link DoubleReader}.
@@ -42,41 +43,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class Double_Wr_Test {
 
-    static Stream<Arguments> sizes() {
-        return IntStream.range(0, 16)
-                .mapToObj(i -> Arguments.of(BitIoRandom.nextExponentSizeForDouble(),
-                                            BitIoRandom.nextSignificandSizeForDouble()))
-                ;
+    static Stream<Arguments> sizesArgumentsStream() {
+        return DoubleTestParameters.sizesArgumentsStream();
     }
 
-    static Stream<Arguments> sizesAndValues() {
-        return sizes()
-                .map(a -> {
-                    final var daa = new DefaultArgumentsAccessor(a.get());
-                    final var exponentSize = daa.getInteger(0);
-                    final var significandSize = daa.getInteger(1);
-                    final var value = BitIoRandom.nextValueForDouble(exponentSize, significandSize);
-                    return Arguments.of(exponentSize, significandSize, value);
-                });
+    static Stream<Arguments> sizesAndValuesArgumentsStream() {
+        return DoubleTestParameters.sizesAndValuesArgumentsStream();
     }
 
     @DisplayName("write(nonnull) -> read()expected")
-    @MethodSource({"sizesAndValues"})
+    @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest(name = "[{index}] exponentSize: {0}, significandSize: {1}, value: {2}")
     void rw__(final int exponentSize, final int significandSize, final Double value) throws IOException {
-        final var actual = wr1u(o -> {
-            new DoubleWriter(exponentSize, significandSize).write(o, value);
-            return i -> new DoubleReader(exponentSize, significandSize).read(i);
-        });
-        if (value.isNaN()) {
-            assertThat(actual).isNaN();
-            return;
+        try (MockedStatic<DoubleConstraints> doubleConstraints
+                     = Mockito.mockStatic(DoubleConstraints.class, Mockito.CALLS_REAL_METHODS)) {
+            final var actual = wr1u(o -> {
+                new DoubleWriter(exponentSize, significandSize).write(o, value);
+                return i -> new DoubleReader(exponentSize, significandSize).read(i);
+            });
+            if (value.isNaN()) {
+                assertThat(actual).isNaN();
+                return;
+            }
+            assertThat(actual).isEqualTo(value);
+            doubleConstraints.verify(() -> DoubleConstraints.requireValidExponentSize(exponentSize), times(2));
+            doubleConstraints.verify(() -> DoubleConstraints.requireValidSignificandSize(significandSize), times(2));
         }
-        assertThat(actual).isEqualTo(value);
     }
 
     @DisplayName("nullable().write(nonnull) -> nullable().read()expected")
-    @MethodSource({"sizesAndValues"})
+    @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest(name = "[{index}] exponentSize: {0}, significandSize: {1}, value: {2}")
     void wr_Nullable(final int exponentSize, final int significandSize, final Double value) throws IOException {
         final var actual = wr1u(o -> {
@@ -91,7 +87,7 @@ class Double_Wr_Test {
     }
 
     @DisplayName("nullable().write(nonnull) -> nullable().read()expected")
-    @MethodSource({"sizes"})
+    @MethodSource({"sizesArgumentsStream"})
     @ParameterizedTest(name = "[{index}] exponentSize: {0}, significandSize: {1}, value: {2}")
     void wr_Null_Nullable(final int exponentSize, final int significandSize) throws IOException {
         final var actual = wr1u(o -> {

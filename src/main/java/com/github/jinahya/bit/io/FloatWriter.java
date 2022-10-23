@@ -22,7 +22,6 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 import java.util.WeakHashMap;
 
 /**
@@ -41,23 +40,16 @@ public class FloatWriter
             super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
 
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@code getInstanceNullable()}.
-         *
-         * @return N/A
-         */
-        @Override
-        public final BitWriter<Float> nullable() {
-            throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");
+        private void writeBits(final BitOutput output, final int bits) throws IOException {
+            output.writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
         }
 
-        private void writeBits(final BitOutput output, final Float value) throws IOException {
-            output.writeInt(true, 1, Float.floatToRawIntBits(value) >> FloatConstants.SHIFT_SIGN_BIT);
+        private void writeBits(final BitOutput output, final float value) throws IOException {
+            writeBits(output, Float.floatToRawIntBits(value));
         }
 
         @Override
-        public final void write(final BitOutput output, final Float value) throws IOException {
-            Objects.requireNonNull(value, "value is null");
+        public void write(final BitOutput output, final Float value) throws IOException {
             writeBits(output, value);
         }
     }
@@ -114,11 +106,11 @@ public class FloatWriter
 
         @Override
         public BitWriter<Float> nullable() {
-            return delegate.nullable();
+            return getInstanceNullable();
         }
 
         @Override
-        public void write(BitOutput output, Float value) throws IOException {
+        public void write(final BitOutput output, final Float value) throws IOException {
             delegate.write(output, value);
         }
 
@@ -126,7 +118,7 @@ public class FloatWriter
     }
 
     /**
-     * A bit writer for writing {@code ±INFINITY}.
+     * A bit writer for writing either {@link Float#NEGATIVE_INFINITY} or {@link Float#POSITIVE_INFINITY}.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
@@ -177,11 +169,11 @@ public class FloatWriter
 
         @Override
         public BitWriter<Float> nullable() {
-            return delegate.nullable();
+            return getInstanceNullable();
         }
 
         @Override
-        public void write(BitOutput output, Float value) throws IOException {
+        public void write(final BitOutput output, final Float value) throws IOException {
             delegate.write(output, value);
         }
 
@@ -193,15 +185,22 @@ public class FloatWriter
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
-    public static final class CompressedNaN
+    public static class CompressedNaN
             implements BitWriter<Float> {
 
-        private static final Map<FloatKey, CompressedNaN> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<FloatKey, BitWriter<Float>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        static CompressedNaN getCachedInstance(final int significandSize) {
+        private static final Map<FloatKey, BitWriter<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitWriter<Float> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
                     FloatKey.withSignificandSizeOnly(significandSize),
-                    k -> new CompressedNaN(k.significandSize)
+                    k -> new CompressedNaN(k.getSignificandSize()) {
+                        @Override
+                        public BitWriter<Float> nullable() {
+                            return CACHED_INSTANCE_NULLABLE.computeIfAbsent(FloatKey.copyOf(k), k2 -> super.nullable());
+                        }
+                    }
             );
         }
 
@@ -213,11 +212,12 @@ public class FloatWriter
 
         @Override
         public void write(final BitOutput output, final Float value) throws IOException {
-            final int significandBits = Float.floatToRawIntBits(value);
-            if ((significandBits & mask) == 0) {
+            final int significandBits = Float.floatToRawIntBits(value) & mask;
+            if (significandBits == 0) {
                 throw new IllegalArgumentException("significand bits are all zeros");
             }
-            writeSignificandBits(output, significandSize, significandBits);
+            output.writeInt(true, 1, significandBits >> FloatConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT);
+            output.writeInt(true, significandSize - 1, significandBits);
         }
 
         private final int significandSize;
@@ -225,8 +225,59 @@ public class FloatWriter
         private final int mask;
     }
 
+    /**
+     * A writer for writing {@code subnormal} values in a compressed manner.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
+    public static class CompressedSubnormal
+            implements BitWriter<Float> {
+
+        private static final Map<FloatKey, BitWriter<Float>> CACHED_INSTANCES = new WeakHashMap<>();
+
+        private static final Map<FloatKey, BitWriter<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitWriter<Float> getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    FloatKey.withSignificandSizeOnly(significandSize),
+                    k -> new CompressedSubnormal(k.getSignificandSize()) {
+                        @Override
+                        public BitWriter<Float> nullable() {
+                            return CACHED_INSTANCE_NULLABLE.computeIfAbsent(FloatKey.copyOf(k), k2 -> super.nullable());
+                        }
+                    }
+            );
+        }
+
+        public CompressedSubnormal(final int significandSize) {
+            super();
+            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
+            this.shift = FloatConstants.SIZE_SIGNIFICAND - this.significandSize;
+            mask = BitIoUtils.bitMaskSingle(this.significandSize);
+        }
+
+        @Override
+        public void write(final BitOutput output, final Float value) throws IOException {
+            final int bits = Float.floatToRawIntBits(value);
+            signBitWriter.writeBits(output, bits);
+            final int significandBits = (bits >> shift) & mask;
+            if (significandBits == 0) {
+                throw new IllegalArgumentException("significand bits are all zeros");
+            }
+            output.writeInt(true, significandSize, significandBits);
+        }
+
+        private final SignBitOnly signBitWriter = new SignBitOnly();
+
+        private final int significandSize;
+
+        private final int shift;
+
+        private final int mask;
+    }
+
     private static void writeExponentBits(final BitOutput output, final int size, final int bits) throws IOException {
-        output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_MAX_SIGNIFICAND);
+        output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_SIGNIFICAND);
     }
 
     private static void writeSignificandBits(final BitOutput output, final int size, final int bits) throws IOException {
@@ -235,9 +286,7 @@ public class FloatWriter
     }
 
     static void write(final BitOutput output, final int exponentSize, final int significandSize, final float value) throws IOException {
-        FloatConstraints.requireValidExponentSize(exponentSize);
-        FloatConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == FloatConstants.SIZE_MAX_EXPONENT && significandSize == FloatConstants.SIZE_MAX_SIGNIFICAND) {
+        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
             output.writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
             return;
         }
@@ -247,23 +296,30 @@ public class FloatWriter
         writeSignificandBits(output, significandSize, bits);
     }
 
-    private static final Map<FloatKey, FloatWriter> CACHED_INSTANCE = new WeakHashMap<>();
+    private static final Map<FloatKey, BitWriter<Float>> CACHED_INSTANCE = new WeakHashMap<>();
+
+    private static final Map<FloatKey, BitWriter<Float>> CACHED_INSTANCE_NULLABLE = new WeakHashMap<>();
 
     /**
      * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
      *
      * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_MAX_EXPONENT}, both
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
      *                        inclusive.
      * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_MAX_SIGNIFICAND},
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
      *                        both inclusive.
      * @return a cached instance.
      */
-    static FloatWriter getCachedInstance(final int exponentSize, final int significandSize) {
+    static BitWriter<Float> getCachedInstance(final int exponentSize, final int significandSize) {
         return CACHED_INSTANCE.computeIfAbsent(
-                new FloatKey(exponentSize, significandSize),
-                k -> new FloatWriter(k.exponentSize, k.significandSize)
+                FloatKey.of(exponentSize, significandSize),
+                k -> new FloatWriter(k.getExponentSize(), k.getSignificandSize()) {
+                    @Override
+                    public BitWriter<Float> nullable() {
+                        return CACHED_INSTANCE_NULLABLE.computeIfAbsent(FloatKey.copyOf(k), k2 -> super.nullable());
+                    }
+                }
         );
     }
 
@@ -271,10 +327,10 @@ public class FloatWriter
      * Creates a new instance with specified exponent size and significand size.
      *
      * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_MAX_EXPONENT}, both
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
      *                        inclusive.
      * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_MAX_SIGNIFICAND},
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
      *                        both inclusive.
      */
     public FloatWriter(final int exponentSize, final int significandSize) {

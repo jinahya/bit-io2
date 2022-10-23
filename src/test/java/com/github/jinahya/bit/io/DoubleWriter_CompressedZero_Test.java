@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A class for testing {@link DoubleWriter.CompressedZero#getInstance()}.
@@ -41,8 +41,6 @@ class DoubleWriter_CompressedZero_Test
     @Test
     void nullable_UnsupportedOperationException_() {
         final var instance = DoubleWriter.CompressedZero.getInstance();
-        assertThatThrownBy(instance::nullable)
-                .isInstanceOf(UnsupportedOperationException.class)
-        ;
+        assertThat(instance).isNotNull();
     }
 }

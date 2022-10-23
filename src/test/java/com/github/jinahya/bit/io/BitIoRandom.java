@@ -319,46 +319,42 @@ final class BitIoRandom {
         return FloatConstraints.requireValidExponentSize(
                 ThreadLocalRandom.current().nextInt(
                         FloatConstants.SIZE_MIN_EXPONENT,
-                        FloatConstants.SIZE_MAX_EXPONENT + 1
+                        FloatConstants.SIZE_EXPONENT + 1
                 )
         );
     }
 
-    static int getRandomExponentBitsForFloat(final int size) {
-        return getRandomValueForInt(false, size)
-               << FloatConstants.SIZE_MAX_SIGNIFICAND
-               & FloatConstants.MASK_EXPONENT_BITS;
+    static int getRandomExponentBitsForFloat(final int exponentSize) {
+        FloatConstraints.requireValidExponentSize(exponentSize);
+        return (getRandomValueForInt(false, exponentSize) << FloatConstants.SIZE_SIGNIFICAND)
+               & FloatConstants.MASK_EXPONENT;
     }
 
     static int nextSignificandSizeForFloat() {
         return FloatConstraints.requireValidSignificandSize(
                 ThreadLocalRandom.current().nextInt(
                         FloatConstants.SIZE_MIN_SIGNIFICAND,
-                        FloatConstants.SIZE_MAX_SIGNIFICAND + 1
+                        FloatConstants.SIZE_SIGNIFICAND + 1
                 )
         );
     }
 
-    static int nextSignificandBitsForFloat(int size) {
-        FloatConstraints.requireValidSignificandSize(size);
-        int bits = getRandomValueForInt(true, 1) << (FloatConstants.SIZE_MAX_SIGNIFICAND - 1);
-        if (--size > 0) {
-            bits |= getRandomValueForInt(true, size);
+    static int nextSignificandBitsForFloat(int significandSize) {
+        FloatConstraints.requireValidSignificandSize(significandSize);
+        int bits = getRandomValueForInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1);
+        if (--significandSize > 0) {
+            bits |= getRandomValueForInt(true, significandSize);
         }
         return bits;
     }
 
     static int nextValueBitsForFloat(final int exponentSize, final int significandSize) {
-        FloatConstraints.requireValidExponentSize(exponentSize);
-        FloatConstraints.requireValidSignificandSize(significandSize);
         return (getRandomValueForInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
                | getRandomExponentBitsForFloat(exponentSize)
                | nextSignificandBitsForFloat(significandSize);
     }
 
     static float nextValueForFloat(final int exponentSize, final int significandSize) {
-        FloatConstraints.requireValidExponentSize(exponentSize);
-        FloatConstraints.requireValidSignificandSize(significandSize);
         return Float.intBitsToFloat(nextValueBitsForFloat(exponentSize, significandSize));
     }
 
@@ -382,46 +378,43 @@ final class BitIoRandom {
         return DoubleConstraints.requireValidExponentSize(
                 ThreadLocalRandom.current().nextInt(
                         DoubleConstants.SIZE_MIN_EXPONENT,
-                        DoubleConstants.SIZE_MAX_EXPONENT + 1
+                        DoubleConstants.SIZE_EXPONENT + 1
                 )
         );
     }
 
-    static long getRandomExponentBitsForDouble(final int size) {
-        return getRandomValueForLong(false, size)
-               << DoubleConstants.SIZE_MAX_SIGNIFICAND
-               & DoubleConstants.MASK_EXPONENT_BITS;
+    static long getRandomExponentBitsForDouble(final int exponentSize) {
+        DoubleConstraints.requireValidExponentSize(exponentSize);
+        return getRandomValueForLong(false, exponentSize)
+               << DoubleConstants.SIZE_SIGNIFICAND
+               & DoubleConstants.MASK_EXPONENT;
     }
 
     static int nextSignificandSizeForDouble() {
         return DoubleConstraints.requireValidSignificandSize(
                 ThreadLocalRandom.current().nextInt(
                         DoubleConstants.SIZE_MIN_SIGNIFICAND,
-                        DoubleConstants.SIZE_MAX_SIGNIFICAND + 1
+                        DoubleConstants.SIZE_SIGNIFICAND + 1
                 )
         );
     }
 
-    static long getSignificandBitsForDouble(int size) {
-        DoubleConstraints.requireValidSignificandSize(size);
-        long bits = getRandomValueForLong(true, 1) << (DoubleConstants.SIZE_MAX_SIGNIFICAND - 1);
-        if (--size > 0) {
-            bits |= getRandomValueForLong(true, size);
+    static long getSignificandBitsForDouble(int significandSize) {
+        DoubleConstraints.requireValidSignificandSize(significandSize);
+        long bits = getRandomValueForLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1);
+        if (--significandSize > 0) {
+            bits |= getRandomValueForLong(true, significandSize);
         }
         return bits;
     }
 
     static long nextLongBitsForDouble(final int exponentSize, final int significandSize) {
-        DoubleConstraints.requireValidExponentSize(exponentSize);
-        DoubleConstraints.requireValidSignificandSize(significandSize);
         return (getRandomValueForLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
                | getRandomExponentBitsForDouble(exponentSize)
                | getSignificandBitsForDouble(significandSize);
     }
 
     static double nextValueForDouble(final int exponentSize, final int significandSize) {
-        DoubleConstraints.requireValidExponentSize(exponentSize);
-        DoubleConstraints.requireValidSignificandSize(significandSize);
         return Double.longBitsToDouble(nextLongBitsForDouble(exponentSize, significandSize));
     }
 

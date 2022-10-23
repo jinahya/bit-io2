@@ -21,28 +21,31 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link FloatWriter.CompressedZero#getInstance()}.
+ * A class for testing {@link FloatWriter#getCachedInstance(int, int)} method.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class FloatWriter_CompressedZero_Test
-        extends BitWriterTest<FloatWriter.CompressedZero, Float> {
+class FloatWriter_CashedInstance_Test {
 
-    FloatWriter_CompressedZero_Test() {
-        super(FloatWriter.CompressedZero.class, Float.class);
+    private static Stream<Arguments> allSizesAndArgumentsStream() {
+        return FloatTestParameters.allSizesArgumentsStream();
     }
 
-    @Test
-    void nullable_UnsupportedOperationException_() {
-        final var instance = FloatWriter.CompressedZero.getInstance();
-//        assertThatThrownBy(instance::nullable)
-//                .isInstanceOf(UnsupportedOperationException.class);
-        assertThat(instance).isNotNull();
+    @MethodSource({"allSizesAndArgumentsStream"})
+    @ParameterizedTest
+    void test__(final int exponentSize, final int significandSize) {
+        final BitWriter<Float> instance = FloatWriter.getCachedInstance(exponentSize, significandSize);
+        assertThat(instance.nullable())
+                .isSameAs(FloatWriter.getCachedInstance(exponentSize, significandSize).nullable());
     }
 }
