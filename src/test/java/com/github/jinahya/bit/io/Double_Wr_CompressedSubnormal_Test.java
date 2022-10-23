@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Double_CompressedSubnormal_Wr_Test {
+class Double_Wr_CompressedSubnormal_Test {
 
     private static Stream<Double> valueStream() {
         return DoubleTestParameters.valueStream()
