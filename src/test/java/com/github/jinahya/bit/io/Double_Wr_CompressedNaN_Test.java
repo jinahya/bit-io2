@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Double_CompressedNaN_Wr_Test {
+class Double_Wr_CompressedNaN_Test {
 
     private static LongStream bitsStream() {
         return DoubleTestParameters.bitsStream();
