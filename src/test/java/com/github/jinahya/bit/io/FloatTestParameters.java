@@ -36,6 +36,13 @@ import java.util.stream.Stream;
 @Slf4j
 final class FloatTestParameters {
 
+    static Stream<Arguments> allSizesArgumentsStream() {
+        return IntStream.rangeClosed(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_EXPONENT)
+                .mapToObj(es -> IntStream.range(FloatConstants.SIZE_MIN_SIGNIFICAND, FloatConstants.SIZE_SIGNIFICAND)
+                        .mapToObj(ss -> Arguments.of(es, ss)))
+                .flatMap(s -> s);
+    }
+
     static Stream<Arguments> sizesArgumentsStream() {
         return Stream.concat(
                 IntStream.range(0, 16)

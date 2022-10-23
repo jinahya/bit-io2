@@ -24,6 +24,10 @@ import java.util.Objects;
 
 class FloatKey {
 
+    static FloatKey copyOf(final FloatKey source) {
+        return new FloatKey(source.exponentSize, source.significandSize);
+    }
+
     static FloatKey of(final int exponentSize, final int significandSize) {
         return new FloatKey(exponentSize, significandSize);
     }

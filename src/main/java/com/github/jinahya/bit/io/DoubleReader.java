@@ -178,12 +178,22 @@ public class DoubleReader
     public static class CompressedNaN
             implements BitReader<Double> {
 
-        private static final Map<DoubleKey, CompressedNaN> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        static CompressedNaN getCachedInstance(final int significandSize) {
+        private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitReader<Double> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
                     DoubleKey.withSignificandSizeOnly(significandSize),
-                    k -> new CompressedNaN(k.getSignificandSize())
+                    k -> new CompressedNaN(k.getSignificandSize()) {
+                        @Override
+                        public BitReader<Double> nullable() {
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    DoubleKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
+                        }
+                    }
             );
         }
 
@@ -213,12 +223,22 @@ public class DoubleReader
     public static class CompressedSubnormal
             implements BitReader<Double> {
 
-        private static final Map<DoubleKey, CompressedSubnormal> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        static CompressedSubnormal getCachedInstance(final int significandSize) {
+        private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitReader<Double> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
                     DoubleKey.withSignificandSizeOnly(significandSize),
-                    k -> new CompressedSubnormal(k.getSignificandSize())
+                    k -> new CompressedSubnormal(k.getSignificandSize()) {
+                        @Override
+                        public BitReader<Double> nullable() {
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    DoubleKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
+                        }
+                    }
             );
         }
 
@@ -269,12 +289,19 @@ public class DoubleReader
         return Double.longBitsToDouble(bits);
     }
 
-    private static final Map<DoubleKey, DoubleReader> CACHED_INSTANCES = new WeakHashMap<>();
+    private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-    static DoubleReader getCachedInstance(final int exponentSize, final int significandSize) {
+    private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+    static BitReader<Double> getCachedInstance(final int exponentSize, final int significandSize) {
         return CACHED_INSTANCES.computeIfAbsent(
                 DoubleKey.of(exponentSize, significandSize),
-                k -> new DoubleReader(k.getExponentSize(), k.getSignificandSize())
+                k -> new DoubleReader(k.getExponentSize(), k.getSignificandSize()) {
+                    @Override
+                    public BitReader<Double> nullable() {
+                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(DoubleKey.copyOf(k), k2 -> super.nullable());
+                    }
+                }
         );
     }
 

@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 final class DoubleTestConstraints {
 
-    static void assertSignBitsAreSame(final double value1, final double value2) {
+    static void assertSameSignBit(final double value1, final double value2) {
         assertThat(Double.doubleToRawLongBits(value1) >> DoubleConstants.SHIFT_SIGN_BIT)
                 .isEqualTo(Double.doubleToRawLongBits(value2) >> DoubleConstants.SHIFT_SIGN_BIT);
     }

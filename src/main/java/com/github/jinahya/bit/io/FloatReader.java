@@ -183,12 +183,22 @@ public class FloatReader
     public static class CompressedNaN
             implements BitReader<Float> {
 
-        private static final Map<FloatKey, CompressedNaN> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<FloatKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        static CompressedNaN getCachedInstance(final int significandSize) {
+        private static final Map<FloatKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitReader<Float> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
                     FloatKey.withSignificandSizeOnly(significandSize),
-                    k -> new CompressedNaN(k.getSignificandSize())
+                    k -> new CompressedNaN(k.getSignificandSize()) {
+                        @Override
+                        public BitReader<Float> nullable() {
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    FloatKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
+                        }
+                    }
             );
         }
 
@@ -224,12 +234,22 @@ public class FloatReader
     public static class CompressedSubnormal
             implements BitReader<Float> {
 
-        private static final Map<FloatKey, CompressedSubnormal> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<FloatKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        static CompressedSubnormal getCachedInstance(final int significandSize) {
+        private static final Map<FloatKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitReader<Float> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
                     FloatKey.withSignificandSizeOnly(significandSize),
-                    k -> new CompressedSubnormal(k.getSignificandSize())
+                    k -> new CompressedSubnormal(k.getSignificandSize()) {
+                        @Override
+                        public BitReader<Float> nullable() {
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    FloatKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
+                        }
+                    }
             );
         }
 
@@ -282,7 +302,9 @@ public class FloatReader
         return Float.intBitsToFloat(bits);
     }
 
-    private static final Map<FloatKey, FloatReader> CACHED_INSTANCE = new WeakHashMap<>();
+    private static final Map<FloatKey, BitReader<Float>> CACHED_INSTANCE = new WeakHashMap<>();
+
+    private static final Map<FloatKey, BitReader<Float>> CACHED_INSTANCE_NULLABLE = new WeakHashMap<>();
 
     /**
      * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
@@ -295,10 +317,15 @@ public class FloatReader
      *                        both inclusive.
      * @return a cached instance.
      */
-    static FloatReader getCachedInstance(final int exponentSize, final int significandSize) {
+    static BitReader<Float> getCachedInstance(final int exponentSize, final int significandSize) {
         return CACHED_INSTANCE.computeIfAbsent(
                 FloatKey.of(exponentSize, significandSize),
-                k -> new FloatReader(k.getExponentSize(), k.getSignificandSize())
+                k -> new FloatReader(k.getExponentSize(), k.getSignificandSize()) {
+                    @Override
+                    public BitReader<Float> nullable() {
+                        return CACHED_INSTANCE_NULLABLE.computeIfAbsent(FloatKey.copyOf(k), k2 -> super.nullable());
+                    }
+                }
         );
     }
 

@@ -47,7 +47,7 @@ class Double_CompressedSubnormal_Wr_Test {
     }
 
     static void verify(final Double written, final Double read) {
-        DoubleTestConstraints.assertSignBitsAreSame(written, read);
+        DoubleTestConstraints.assertSameSignBit(written, read);
         DoubleTestConstraints.requireSubnormal(read);
     }
 

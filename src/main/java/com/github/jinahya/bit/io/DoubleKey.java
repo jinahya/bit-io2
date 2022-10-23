@@ -24,6 +24,10 @@ import java.util.Objects;
 
 class DoubleKey {
 
+    static DoubleKey copyOf(final DoubleKey source) {
+        return new DoubleKey(source.exponentSize, source.significandSize);
+    }
+
     static DoubleKey of(final int exponentSize, final int significandSize) {
         return new DoubleKey(exponentSize, significandSize);
     }
@@ -31,7 +35,7 @@ class DoubleKey {
     static DoubleKey withSignificandSizeOnly(final int significandSize) {
         return new DoubleKey(DoubleConstants.SIZE_MIN_EXPONENT, significandSize) {
             @Override
-            public int getExponentSize() {
+            int getExponentSize() {
                 throw new IllegalStateException("significand size only");
             }
         };
@@ -60,11 +64,11 @@ class DoubleKey {
         return Objects.hash(exponentSize, significandSize);
     }
 
-    public int getExponentSize() {
+    int getExponentSize() {
         return exponentSize;
     }
 
-    public int getSignificandSize() {
+    int getSignificandSize() {
         return significandSize;
     }
 

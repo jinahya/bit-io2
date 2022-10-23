@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -32,7 +33,7 @@ import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.atMost;
 
 /**
  * A class for testing {@link FloatWriter} and {@link FloatReader}.
@@ -42,7 +43,7 @@ import static org.mockito.Mockito.times;
 @Slf4j
 class Float_Wr_Test {
 
-    static Stream<Arguments> sizes() {
+    static Stream<Arguments> sizesArgumentsStream() {
         return FloatTestParameters.sizesArgumentsStream();
     }
 
@@ -50,9 +51,10 @@ class Float_Wr_Test {
         return FloatTestParameters.sizesAndValuesArgumentsStream();
     }
 
+    @DisplayName("nullable().write(value) -> nullable().read()value")
     @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest
-    void rw__(final int exponentSize, final int significandSize, final Float value) throws IOException {
+    void wr__(final int exponentSize, final int significandSize, final Float value) throws IOException {
         try (MockedStatic<FloatConstraints> floatConstraints
                      = Mockito.mockStatic(FloatConstraints.class, Mockito.CALLS_REAL_METHODS)) {
             final var actual = wr1u(o -> {
@@ -64,32 +66,70 @@ class Float_Wr_Test {
                 return;
             }
             assertThat(actual).isEqualTo(value);
-            floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(exponentSize), times(2));
-            floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(significandSize), times(2));
+            floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(exponentSize), atMost(2));
+            floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(significandSize), atMost(2));
+        }
+        try (MockedStatic<FloatConstraints> floatConstraints
+                     = Mockito.mockStatic(FloatConstraints.class, Mockito.CALLS_REAL_METHODS)) {
+            final var actual = wr1u(o -> {
+                FloatWriter.getCachedInstance(exponentSize, significandSize).write(o, value);
+                return i -> FloatReader.getCachedInstance(exponentSize, significandSize).read(i);
+            });
+            if (value.isNaN()) {
+                assertThat(actual).isNaN();
+                return;
+            }
+            assertThat(actual).isEqualTo(value);
+            floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(exponentSize), atMost(4));
+            floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(significandSize), atMost(4));
         }
     }
 
+    @DisplayName("nullable().write(value) -> nullable().read()value")
     @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest
-    void wr__(final int exponentSize, final int significandSize, final Float value) throws IOException {
-        final var actual = wr1u(o -> {
-            new FloatWriter(exponentSize, significandSize).nullable().write(o, value);
-            return i -> new FloatReader(exponentSize, significandSize).nullable().read(i);
-        });
-        if (value.isNaN()) {
-            assertThat(actual).isNaN();
-            return;
+    void wr__Nullable(final int exponentSize, final int significandSize, final Float value) throws IOException {
+        {
+            final var actual = wr1u(o -> {
+                new FloatWriter(exponentSize, significandSize).nullable().write(o, value);
+                return i -> new FloatReader(exponentSize, significandSize).nullable().read(i);
+            });
+            if (value.isNaN()) {
+                assertThat(actual).isNaN();
+                return;
+            }
+            assertThat(actual).isEqualTo(value);
         }
-        assertThat(actual).isEqualTo(value);
+        {
+            final var actual = wr1u(o -> {
+                FloatWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, value);
+                return i -> FloatReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
+            });
+            if (value.isNaN()) {
+                assertThat(actual).isNaN();
+                return;
+            }
+            assertThat(actual).isEqualTo(value);
+        }
     }
 
-    @MethodSource({"sizes"})
+    @DisplayName("nullable().write(null) -> nullable().read()null")
+    @MethodSource({"sizesArgumentsStream"})
     @ParameterizedTest
-    void wr_Null_Null(final int exponentSize, final int significandSize) throws IOException {
-        final var actual = wr1u(o -> {
-            new FloatWriter(exponentSize, significandSize).nullable().write(o, null);
-            return i -> new FloatReader(exponentSize, significandSize).nullable().read(i);
-        });
-        assertThat(actual).isNull();
+    void wr_Null_Nullable(final int exponentSize, final int significandSize) throws IOException {
+        {
+            final var actual = wr1u(o -> {
+                new FloatWriter(exponentSize, significandSize).nullable().write(o, null);
+                return i -> new FloatReader(exponentSize, significandSize).nullable().read(i);
+            });
+            assertThat(actual).isNull();
+        }
+        {
+            final var actual = wr1u(o -> {
+                FloatWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, null);
+                return i -> FloatReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
+            });
+            assertThat(actual).isNull();
+        }
     }
 }

@@ -72,7 +72,7 @@ class Float_CompressedSubnormal_Wr_Test {
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
-    void wr2__Compressed(final Float value) throws IOException {
+    void wr__Compressed(final Float value) throws IOException {
         final var significandBits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
         final int significandSize = Math.max(
                 FloatConstants.SIZE_SIGNIFICAND - Integer.numberOfTrailingZeros(significandBits),
@@ -124,7 +124,7 @@ class Float_CompressedSubnormal_Wr_Test {
 
         @MethodSource({"valueStream_"})
         @ParameterizedTest
-        void wr2__Compressed(final Float value) throws IOException {
+        void wr__Compressed(final Float value) throws IOException {
             final var significandBits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
             final int significandSize = Math.max(
                     FloatConstants.SIZE_SIGNIFICAND - Integer.numberOfTrailingZeros(significandBits),
