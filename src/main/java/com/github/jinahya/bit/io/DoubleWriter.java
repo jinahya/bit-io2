@@ -186,18 +186,18 @@ public class DoubleWriter
     public static class CompressedNaN
             implements BitWriter<Double> {
 
-        private static final Map<DoubleKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        private static final Map<DoubleKey, BitWriter<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+        private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
 
         static BitWriter<Double> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
-                    DoubleKey.withSignificandSizeOnly(significandSize),
+                    DoubleCacheKey.of(significandSize),
                     k -> new CompressedNaN(k.getSignificandSize()) {
                         @Override
                         public BitWriter<Double> nullable() {
                             return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    DoubleKey.copyOf(k),
+                                    DoubleCacheKey.copyOf(k),
                                     k2 -> super.nullable()
                             );
                         }
@@ -215,12 +215,14 @@ public class DoubleWriter
         public CompressedNaN(final int significandSize) {
             super();
             this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
-            mask = DoubleConstants.MASK_SIGNIFICAND_LEFT_MOST_BIT | BitIoUtils.bitMaskDouble(this.significandSize - 1);
+            if (this.significandSize < 2) {
+                throw new IllegalArgumentException("significandSize(" + significandSize + ") < 2");
+            }
         }
 
         @Override
         public void write(final BitOutput output, final Double value) throws IOException {
-            final long significandBits = Double.doubleToRawLongBits(value) & mask;
+            final long significandBits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND;
             if (significandBits == 0) {
                 throw new IllegalArgumentException("significand bits are all zeros");
             }
@@ -229,8 +231,6 @@ public class DoubleWriter
         }
 
         private final int significandSize;
-
-        private final long mask;
     }
 
     /**
@@ -241,18 +241,18 @@ public class DoubleWriter
     public static class CompressedSubnormal
             implements BitWriter<Double> {
 
-        private static final Map<DoubleKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        private static final Map<DoubleKey, BitWriter<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+        private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
 
         static BitWriter<Double> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
-                    DoubleKey.withSignificandSizeOnly(significandSize),
+                    DoubleCacheKey.of(significandSize),
                     k -> new CompressedSubnormal(k.getSignificandSize()) {
                         @Override
                         public BitWriter<Double> nullable() {
                             return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    DoubleKey.copyOf(k),
+                                    DoubleCacheKey.copyOf(k),
                                     k2 -> super.nullable()
                             );
                         }
@@ -304,21 +304,22 @@ public class DoubleWriter
         }
         final long bits = Double.doubleToRawLongBits(value);
         output.writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
-        writeExponentBits(output, exponentSize, bits);
-        writeSignificandBits(output, significandSize, bits);
+        output.writeLong(true, exponentSize,
+                         (bits & DoubleConstants.MASK_EXPONENT) >> DoubleConstants.SIZE_SIGNIFICAND);
+        output.writeLong(true, significandSize, bits >> (DoubleConstants.SIZE_SIGNIFICAND - significandSize));
     }
 
-    private static final Map<DoubleKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
+    private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-    private static final Map<DoubleKey, BitWriter<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+    private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
 
     static BitWriter<Double> getCachedInstance(final int exponentSize, final int significandSize) {
         return CACHED_INSTANCES.computeIfAbsent(
-                DoubleKey.of(exponentSize, significandSize),
+                DoubleCacheKey.of(exponentSize, significandSize),
                 k -> new DoubleWriter(k.getExponentSize(), k.getSignificandSize()) {
                     @Override
                     public BitWriter<Double> nullable() {
-                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(DoubleKey.copyOf(k), k2 -> super.nullable());
+                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(DoubleCacheKey.copyOf(k), k2 -> super.nullable());
                     }
                 }
         );

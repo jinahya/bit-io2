@@ -20,11 +20,17 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+/**
+ * Constants for {@code double} values.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see FloatConstants
+ */
 final class DoubleConstants {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    static final int SIZE_MIN_SIGNIFICAND = 2;
+    static final int SIZE_MIN_SIGNIFICAND = 1;
 
     static final int SIZE_SIGNIFICAND = 52;
 

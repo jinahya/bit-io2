@@ -178,18 +178,18 @@ public class DoubleReader
     public static class CompressedNaN
             implements BitReader<Double> {
 
-        private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
 
         static BitReader<Double> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
-                    DoubleKey.withSignificandSizeOnly(significandSize),
+                    DoubleCacheKey.of(significandSize),
                     k -> new CompressedNaN(k.getSignificandSize()) {
                         @Override
                         public BitReader<Double> nullable() {
                             return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    DoubleKey.copyOf(k),
+                                    DoubleCacheKey.copyOf(k),
                                     k2 -> super.nullable()
                             );
                         }
@@ -209,8 +209,10 @@ public class DoubleReader
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            final long significandBits = (input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1))
-                                         | input.readLong(true, significandSize - 1);
+            long significandBits = input.readLong(true, 1) << DoubleConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT;
+            if (significandSize > 1) {
+                significandBits |= input.readLong(true, significandSize - 1);
+            }
             if (significandBits == 0) {
                 throw new IOException("significand bits are all zeros");
             }
@@ -223,18 +225,18 @@ public class DoubleReader
     public static class CompressedSubnormal
             implements BitReader<Double> {
 
-        private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
+        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-        private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
 
         static BitReader<Double> getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
-                    DoubleKey.withSignificandSizeOnly(significandSize),
+                    DoubleCacheKey.of(significandSize),
                     k -> new CompressedSubnormal(k.getSignificandSize()) {
                         @Override
                         public BitReader<Double> nullable() {
                             return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    DoubleKey.copyOf(k),
+                                    DoubleCacheKey.copyOf(k),
                                     k2 -> super.nullable()
                             );
                         }
@@ -270,36 +272,28 @@ public class DoubleReader
         private final int shift;
     }
 
-    private static long readExponentBits(final BitInput input, final int size) throws IOException {
-        return (input.readLong(false, size) << DoubleConstants.SIZE_SIGNIFICAND) & DoubleConstants.MASK_EXPONENT;
-    }
-
-    private static long readSignificandBits(final BitInput input, final int size) throws IOException {
-        return input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1)
-               | input.readLong(true, size - 1);
-    }
-
     static double read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
         if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
             return Double.longBitsToDouble(input.readLong(false, Long.SIZE));
         }
-        long bits = input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
-        bits |= readExponentBits(input, exponentSize);
-        bits |= readSignificandBits(input, significandSize);
-        return Double.longBitsToDouble(bits);
+        return Double.longBitsToDouble(
+                (input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
+                | (input.readLong(true, exponentSize) << DoubleConstants.SIZE_SIGNIFICAND)
+                | (input.readLong(true, significandSize) << (DoubleConstants.SIZE_SIGNIFICAND - significandSize))
+        );
     }
 
-    private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
+    private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
 
-    private static final Map<DoubleKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+    private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
 
     static BitReader<Double> getCachedInstance(final int exponentSize, final int significandSize) {
         return CACHED_INSTANCES.computeIfAbsent(
-                DoubleKey.of(exponentSize, significandSize),
+                DoubleCacheKey.of(exponentSize, significandSize),
                 k -> new DoubleReader(k.getExponentSize(), k.getSignificandSize()) {
                     @Override
                     public BitReader<Double> nullable() {
-                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(DoubleKey.copyOf(k), k2 -> super.nullable());
+                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(DoubleCacheKey.copyOf(k), k2 -> super.nullable());
                     }
                 }
         );

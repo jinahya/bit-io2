@@ -31,10 +31,7 @@ final class BitIoConstants {
 
     static final String MESSAGE_UNSUPPORTED_ALREADY_NULLABLE = "unsupported; already nullable";
 
-    /**
-     * Creates a new instance.
-     */
     private BitIoConstants() {
-        throw new AssertionError("initialization is not allowed");
+        throw new AssertionError(MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

@@ -22,18 +22,18 @@ package com.github.jinahya.bit.io;
 
 import java.util.Objects;
 
-class FloatKey {
+class DoubleCacheKey {
 
-    static FloatKey copyOf(final FloatKey source) {
-        return new FloatKey(source.exponentSize, source.significandSize);
+    static DoubleCacheKey copyOf(final DoubleCacheKey source) {
+        return new DoubleCacheKey(source.exponentSize, source.significandSize);
     }
 
-    static FloatKey of(final int exponentSize, final int significandSize) {
-        return new FloatKey(exponentSize, significandSize);
+    static DoubleCacheKey of(final int exponentSize, final int significandSize) {
+        return new DoubleCacheKey(exponentSize, significandSize);
     }
 
-    static FloatKey withSignificandSizeOnly(final int significandSize) {
-        return new FloatKey(FloatConstants.SIZE_MIN_EXPONENT, significandSize) {
+    static DoubleCacheKey of(final int significandSize) {
+        return new DoubleCacheKey(DoubleConstants.SIZE_MIN_EXPONENT, significandSize) {
             @Override
             int getExponentSize() {
                 throw new IllegalStateException("significand size only");
@@ -41,10 +41,10 @@ class FloatKey {
         };
     }
 
-    private FloatKey(final int exponentSize, final int significandSize) {
+    private DoubleCacheKey(final int exponentSize, final int significandSize) {
         super();
-        this.exponentSize = FloatConstraints.requireValidExponentSize(exponentSize);
-        this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
+        this.exponentSize = DoubleConstraints.requireValidExponentSize(exponentSize);
+        this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
     }
 
     @Override
@@ -55,7 +55,7 @@ class FloatKey {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        final FloatKey that = (FloatKey) obj;
+        final DoubleCacheKey that = (DoubleCacheKey) obj;
         return exponentSize == that.exponentSize && significandSize == that.significandSize;
     }
 
