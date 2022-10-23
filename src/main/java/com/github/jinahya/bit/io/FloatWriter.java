@@ -198,7 +198,10 @@ public class FloatWriter
                     k -> new CompressedNaN(k.getSignificandSize()) {
                         @Override
                         public BitWriter<Float> nullable() {
-                            return CACHED_INSTANCE_NULLABLE.computeIfAbsent(FloatCacheKey.copyOf(k), k2 -> super.nullable());
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    FloatCacheKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
                         }
                     }
             );
@@ -207,22 +210,21 @@ public class FloatWriter
         public CompressedNaN(final int significandSize) {
             super();
             this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
-            mask = FloatConstants.MASK_SIGNIFICAND_LEFT_MOST_BIT | BitIoUtils.bitMaskSingle(this.significandSize - 1);
         }
 
         @Override
         public void write(final BitOutput output, final Float value) throws IOException {
-            final int significandBits = Float.floatToRawIntBits(value) & mask;
+            final int significandBits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
             if (significandBits == 0) {
                 throw new IllegalArgumentException("significand bits are all zeros");
             }
             output.writeInt(true, 1, significandBits >> FloatConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT);
-            output.writeInt(true, significandSize - 1, significandBits);
+            if (significandSize > 1) {
+                output.writeInt(true, significandSize - 1, significandBits);
+            }
         }
 
         private final int significandSize;
-
-        private final int mask;
     }
 
     /**
@@ -285,7 +287,7 @@ public class FloatWriter
         final int bits = Float.floatToRawIntBits(value);
         output.writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
         output.writeInt(true, exponentSize, (bits & FloatConstants.MASK_EXPONENT) >> FloatConstants.SIZE_SIGNIFICAND);
-        output.writeInt(true, significandSize, bits);
+        output.writeInt(true, significandSize, bits >> (FloatConstants.SIZE_SIGNIFICAND - significandSize));
     }
 
     private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCE = new WeakHashMap<>();

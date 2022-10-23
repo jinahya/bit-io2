@@ -209,8 +209,10 @@ public class DoubleReader
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            final long significandBits = (input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1))
-                                         | input.readLong(true, significandSize - 1);
+            long significandBits = input.readLong(true, 1) << DoubleConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT;
+            if (significandSize > 1) {
+                significandBits |= input.readLong(true, significandSize - 1);
+            }
             if (significandBits == 0) {
                 throw new IOException("significand bits are all zeros");
             }
@@ -277,7 +279,7 @@ public class DoubleReader
         return Double.longBitsToDouble(
                 (input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
                 | (input.readLong(true, exponentSize) << DoubleConstants.SIZE_SIGNIFICAND)
-                | input.readLong(true, significandSize)
+                | (input.readLong(true, significandSize) << (DoubleConstants.SIZE_SIGNIFICAND - significandSize))
         );
     }
 

@@ -212,13 +212,17 @@ public class FloatReader
         public CompressedNaN(int significandSize) {
             super();
             this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
+//            if (this.significandSize < 2) {
+//                throw new IllegalArgumentException("significandSize(" + significandSize + ") < 2");
+//            }
         }
 
         @Override
         public Float read(final BitInput input) throws IOException {
-//            final int significandBits = readSignificandBits(input, significandSize);
-            final int significandBits = (input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1))
-                                        | input.readInt(true, significandSize - 1);
+            int significandBits = input.readInt(true, 1) << FloatConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT;
+            if (significandSize > 1) {
+                significandBits |= input.readInt(true, significandSize - 1);
+            }
             if (significandBits == 0) {
                 throw new IOException("significand bits are all zeros");
             }
@@ -290,13 +294,13 @@ public class FloatReader
         return Float.intBitsToFloat(
                 (input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
                 | (input.readInt(true, exponentSize) << FloatConstants.SIZE_SIGNIFICAND)
-                | input.readInt(true, significandSize)
+                | (input.readInt(true, significandSize) << (FloatConstants.SIZE_SIGNIFICAND - significandSize))
         );
     }
 
-    private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCE = new WeakHashMap<>();
+    private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
 
-    private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCE_NULLABLE = new WeakHashMap<>();
+    private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
 
     /**
      * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
@@ -310,12 +314,12 @@ public class FloatReader
      * @return a cached instance.
      */
     static BitReader<Float> getCachedInstance(final int exponentSize, final int significandSize) {
-        return CACHED_INSTANCE.computeIfAbsent(
+        return CACHED_INSTANCES.computeIfAbsent(
                 FloatCacheKey.of(exponentSize, significandSize),
                 k -> new FloatReader(k.getExponentSize(), k.getSignificandSize()) {
                     @Override
                     public BitReader<Float> nullable() {
-                        return CACHED_INSTANCE_NULLABLE.computeIfAbsent(FloatCacheKey.copyOf(k), k2 -> super.nullable());
+                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(FloatCacheKey.copyOf(k), k2 -> super.nullable());
                     }
                 }
         );

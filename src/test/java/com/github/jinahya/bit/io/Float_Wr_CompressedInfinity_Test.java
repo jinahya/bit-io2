@@ -39,14 +39,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class Float_CompressedInfinity_Wr_Test {
+class Float_Wr_CompressedInfinity_Test {
 
     private static IntStream bitsStream() {
-        return Float_CompressedZero_Wr_Test.bitsStream();
+        return Float_Wr_CompressedZero_Test.bitsStream();
     }
 
     static Stream<Float> valueStream() {
-        return Float_CompressedZero_Wr_Test.valueStream();
+        return Float_Wr_CompressedZero_Test.valueStream();
     }
 
     static void validate(final Float written, final Float read) {

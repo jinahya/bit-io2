@@ -340,7 +340,7 @@ final class BitIoRandom {
 
     static int nextSignificandBitsForFloat(final int significandSize) {
         FloatConstraints.requireValidSignificandSize(significandSize);
-        return nextValueForInt(true, significandSize);
+        return nextValueForInt(true, significandSize) << (FloatConstants.SIZE_SIGNIFICAND - significandSize);
     }
 
     static int nextBitsForFloat(final int exponentSize, final int significandSize) {
@@ -394,7 +394,7 @@ final class BitIoRandom {
 
     static long getSignificandBitsForDouble(final int significandSize) {
         DoubleConstraints.requireValidSignificandSize(significandSize);
-        return nextValueForLong(true, significandSize);
+        return nextValueForLong(true, significandSize) << (DoubleConstants.SIZE_SIGNIFICAND - significandSize);
     }
 
     static long nextBitsForDouble(final int exponentSize, final int significandSize) {

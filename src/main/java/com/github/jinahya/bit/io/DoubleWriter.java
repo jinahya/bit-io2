@@ -215,12 +215,14 @@ public class DoubleWriter
         public CompressedNaN(final int significandSize) {
             super();
             this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
-            mask = DoubleConstants.MASK_SIGNIFICAND_LEFT_MOST_BIT | BitIoUtils.bitMaskDouble(this.significandSize - 1);
+            if (this.significandSize < 2) {
+                throw new IllegalArgumentException("significandSize(" + significandSize + ") < 2");
+            }
         }
 
         @Override
         public void write(final BitOutput output, final Double value) throws IOException {
-            final long significandBits = Double.doubleToRawLongBits(value) & mask;
+            final long significandBits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND;
             if (significandBits == 0) {
                 throw new IllegalArgumentException("significand bits are all zeros");
             }
@@ -229,8 +231,6 @@ public class DoubleWriter
         }
 
         private final int significandSize;
-
-        private final long mask;
     }
 
     /**
@@ -306,7 +306,7 @@ public class DoubleWriter
         output.writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
         output.writeLong(true, exponentSize,
                          (bits & DoubleConstants.MASK_EXPONENT) >> DoubleConstants.SIZE_SIGNIFICAND);
-        output.writeLong(true, significandSize, bits);
+        output.writeLong(true, significandSize, bits >> (DoubleConstants.SIZE_SIGNIFICAND - significandSize));
     }
 
     private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
