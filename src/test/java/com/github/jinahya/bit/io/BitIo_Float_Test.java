@@ -24,40 +24,48 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 
 @Slf4j
 class BitIo_Float_Test {
 
-    private static Stream<Arguments> sizes() {
-        return Float_Wr_Test.sizes();
+    private static Stream<Arguments> sizesArgumentsStream() {
+        return FloatTestParameters.sizesArgumentsStream();
     }
 
-    private static Stream<Arguments> sizesAndValues() {
-        return Float_Wr_Test.sizesAndValues();
+    private static Stream<Arguments> sizesAndValuesArgumentsStream() {
+        return FloatTestParameters.sizesAndValuesArgumentsStream();
     }
 
-    @MethodSource({"sizes"})
+    @MethodSource({"sizesArgumentsStream"})
     @ParameterizedTest
     void wr__(final int exponentSize, final int significandSize) throws IOException {
-        final var expected = BitIoRandom.nextValueForFloat(exponentSize, significandSize);
-        final var actual = wr1u(o -> {
-            o.writeFloat(exponentSize, significandSize, expected);
-            return i -> i.readFloat(exponentSize, significandSize);
-        });
-        if (Float.isNaN(expected)) {
-            assertThat(actual).isNaN();
-            return;
+        try (MockedStatic<FloatConstraints> floatConstraints
+                     = Mockito.mockStatic(FloatConstraints.class, Mockito.CALLS_REAL_METHODS)) {
+            final var expected = BitIoRandom.nextValueForFloat(exponentSize, significandSize);
+            final var actual = wr1u(o -> {
+                o.writeFloat(exponentSize, significandSize, expected);
+                return i -> i.readFloat(exponentSize, significandSize);
+            });
+            if (Float.isNaN(expected)) {
+                assertThat(actual).isNaN();
+                return;
+            }
+            assertThat(actual).isEqualTo(expected);
+            floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(exponentSize), times(2));
+            floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(significandSize), times(2));
         }
-        assertThat(actual).isEqualTo(expected);
     }
 
-    @MethodSource({"sizesAndValues"})
+    @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest
     void wr__(final int exponentSize, final int significandSize, final float expected) throws IOException {
         final var actual = wr1u(o -> {

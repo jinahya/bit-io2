@@ -59,13 +59,13 @@ class Double_CompressedNaN_Wr_Test {
                         bitsStream().mapToObj(Double::longBitsToDouble),
                         Stream.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
                 )
-                .filter(v -> (Double.doubleToRawLongBits(v) & DoubleConstants.MASK_SIGNIFICAND_BITS) > 0);
+                .filter(v -> (Double.doubleToRawLongBits(v) & DoubleConstants.MASK_SIGNIFICAND) > 0);
     }
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__Full(final Double value) throws IOException {
-        final int significandSize = DoubleConstants.SIZE_MAX_SIGNIFICAND;
+        final int significandSize = DoubleConstants.SIZE_SIGNIFICAND;
         final var actual = wr1u(o -> {
             new DoubleWriter.CompressedNaN(significandSize).write(o, value);
             return i -> new DoubleReader.CompressedNaN(significandSize).read(i);
@@ -76,7 +76,7 @@ class Double_CompressedNaN_Wr_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__FullNullable(final Double value) throws IOException {
-        final int significandSize = DoubleConstants.SIZE_MAX_SIGNIFICAND;
+        final int significandSize = DoubleConstants.SIZE_SIGNIFICAND;
         final var actual = wr1u(o -> {
             new DoubleWriter.CompressedNaN(significandSize).nullable().write(o, value);
             return i -> new DoubleReader.CompressedNaN(significandSize).nullable().read(i);
@@ -87,7 +87,7 @@ class Double_CompressedNaN_Wr_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr2__Compressed(final Double value) throws IOException {
-        var bits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND_BITS;
+        var bits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND;
         bits >>= Long.numberOfTrailingZeros(bits);
         final var significandSize = Math.max(Long.SIZE - Long.numberOfLeadingZeros(bits),
                                              DoubleConstants.SIZE_MIN_SIGNIFICAND);
@@ -101,7 +101,7 @@ class Double_CompressedNaN_Wr_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr2__CompressedNullable(final Double value) throws IOException {
-        var bits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND_BITS;
+        var bits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND;
         bits >>= Long.numberOfTrailingZeros(bits);
         final var significandSize = Math.max(Long.SIZE - Long.numberOfLeadingZeros(bits),
                                              DoubleConstants.SIZE_MIN_SIGNIFICAND);
@@ -122,7 +122,7 @@ class Double_CompressedNaN_Wr_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr__Full(final Double value) throws IOException {
-            final int significand = DoubleConstants.SIZE_MAX_SIGNIFICAND;
+            final int significand = DoubleConstants.SIZE_SIGNIFICAND;
             final var actual = wr1u(o -> {
                 DoubleWriter.CompressedNaN.getCachedInstance(significand).write(o, value);
                 return i -> DoubleReader.CompressedNaN.getCachedInstance(significand).read(i);
@@ -133,7 +133,7 @@ class Double_CompressedNaN_Wr_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr__FullNullable(final Double value) throws IOException {
-            final int significand = DoubleConstants.SIZE_MAX_SIGNIFICAND;
+            final int significand = DoubleConstants.SIZE_SIGNIFICAND;
             final var actual = wr1u(o -> {
                 DoubleWriter.CompressedNaN.getCachedInstance(significand).nullable().write(o, value);
                 return i -> DoubleReader.CompressedNaN.getCachedInstance(significand).nullable().read(i);
@@ -144,7 +144,7 @@ class Double_CompressedNaN_Wr_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr2__Compressed(final Double value) throws IOException {
-            var bits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND_BITS;
+            var bits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND;
             bits >>= Long.numberOfTrailingZeros(bits);
             final int significandSize = Math.max(Long.SIZE - Long.numberOfLeadingZeros(bits),
                                                  DoubleConstants.SIZE_MIN_SIGNIFICAND);
@@ -158,7 +158,7 @@ class Double_CompressedNaN_Wr_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr2__CompressedNullable(final Double value) throws IOException {
-            var bits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND_BITS;
+            var bits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND;
             bits >>= Long.numberOfTrailingZeros(bits);
             final var significandSize = Math.max(Long.SIZE - Long.numberOfLeadingZeros(bits),
                                                  DoubleConstants.SIZE_MIN_SIGNIFICAND);
@@ -171,7 +171,7 @@ class Double_CompressedNaN_Wr_Test {
 
         @Test
         void wr_Null_Null() throws IOException {
-            final int significand = DoubleConstants.SIZE_MAX_SIGNIFICAND;
+            final int significand = DoubleConstants.SIZE_SIGNIFICAND;
             final var actual = wr1u(o -> {
                 DoubleWriter.CompressedNaN.getCachedInstance(significand).nullable().write(o, null);
                 return i -> DoubleReader.CompressedNaN.getCachedInstance(significand).nullable().read(i);

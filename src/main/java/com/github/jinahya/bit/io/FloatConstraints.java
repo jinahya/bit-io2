@@ -33,8 +33,8 @@ final class FloatConstraints {
             throw new IllegalArgumentException(
                     "exponentSize(" + exponentSize + ") < " + FloatConstants.SIZE_MIN_EXPONENT);
         }
-        if (exponentSize > FloatConstants.SIZE_MAX_EXPONENT) {
-            throw new IllegalArgumentException("exponentSize(" + exponentSize + ") > " + FloatConstants.SIZE_MAX_EXPONENT);
+        if (exponentSize > FloatConstants.SIZE_EXPONENT) {
+            throw new IllegalArgumentException("exponentSize(" + exponentSize + ") > " + FloatConstants.SIZE_EXPONENT);
         }
         return exponentSize;
     }
@@ -44,9 +44,9 @@ final class FloatConstraints {
             throw new IllegalArgumentException(
                     "significandSize(" + significandSize + ") < " + FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
-        if (significandSize > FloatConstants.SIZE_MAX_SIGNIFICAND) {
+        if (significandSize > FloatConstants.SIZE_SIGNIFICAND) {
             throw new IllegalArgumentException(
-                    "significandSize(" + significandSize + ") > " + FloatConstants.SIZE_MAX_SIGNIFICAND);
+                    "significandSize(" + significandSize + ") > " + FloatConstants.SIZE_SIGNIFICAND);
         }
         return significandSize;
     }

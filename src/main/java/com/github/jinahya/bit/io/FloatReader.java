@@ -40,16 +40,6 @@ public class FloatReader
             super(FloatConstants.SIZE_MIN_EXPONENT, FloatConstants.SIZE_MIN_SIGNIFICAND);
         }
 
-        /**
-         * Throws an {@code UnsupportedOperationException}. Use {@code getInstanceNullable()}.
-         *
-         * @return N/A
-         */
-        @Override
-        public final BitReader<Float> nullable() {
-            throw new UnsupportedOperationException("unsupported; use getInstanceNullable()");
-        }
-
         int readBits(final BitInput input) throws IOException {
             return input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
         }
@@ -112,7 +102,7 @@ public class FloatReader
 
         @Override
         public BitReader<Float> nullable() {
-            return delegate.nullable();
+            return getInstanceNullable();
         }
 
         @Override
@@ -176,12 +166,12 @@ public class FloatReader
 
         @Override
         public BitReader<Float> nullable() {
-            return delegate.nullable();
+            return getInstanceNullable();
         }
 
         @Override
         public Float read(final BitInput input) throws IOException {
-            return Float.intBitsToFloat(delegate.readBits(input) | FloatConstants.MASK_EXPONENT_BITS);
+            return Float.intBitsToFloat(delegate.readBits(input) | FloatConstants.MASK_EXPONENT);
         }
 
         private final SignBitOnly delegate = new SignBitOnly();
@@ -198,7 +188,7 @@ public class FloatReader
         static CompressedNaN getCachedInstance(final int significandSize) {
             return CACHED_INSTANCES.computeIfAbsent(
                     FloatKey.withSignificandSizeOnly(significandSize),
-                    k -> new CompressedNaN(k.significandSize)
+                    k -> new CompressedNaN(k.getSignificandSize())
             );
         }
 
@@ -207,7 +197,7 @@ public class FloatReader
          *
          * @param significandSize a number of bits for the significand part; between
          *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
-         *                        {@value FloatConstants#SIZE_MAX_SIGNIFICAND}, both inclusive.
+         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
          */
         public CompressedNaN(int significandSize) {
             super();
@@ -216,29 +206,74 @@ public class FloatReader
 
         @Override
         public Float read(final BitInput input) throws IOException {
-            final int significandBits = readSignificandBits(input, significandSize);
+//            final int significandBits = readSignificandBits(input, significandSize);
+            final int significandBits = (input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1))
+                                        | input.readInt(true, significandSize - 1);
             if (significandBits == 0) {
                 throw new IOException("significand bits are all zeros");
             }
-            return Float.intBitsToFloat(significandBits | FloatConstants.MASK_EXPONENT_BITS);
+            return Float.intBitsToFloat(significandBits | FloatConstants.MASK_EXPONENT);
         }
 
         private final int significandSize;
     }
 
+    /**
+     * A reader for reading {@code subnormal} values in a compressed manner.
+     */
+    public static class CompressedSubnormal
+            implements BitReader<Float> {
+
+        private static final Map<FloatKey, CompressedSubnormal> CACHED_INSTANCES = new WeakHashMap<>();
+
+        static CompressedSubnormal getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    FloatKey.withSignificandSizeOnly(significandSize),
+                    k -> new CompressedSubnormal(k.getSignificandSize())
+            );
+        }
+
+        /**
+         * Creates a new instance with specified number bits for the {@code significand} part.
+         *
+         * @param significandSize a number of bits for the significand part; between
+         *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
+        public CompressedSubnormal(int significandSize) {
+            super();
+            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
+            shift = FloatConstants.SIZE_SIGNIFICAND - this.significandSize;
+        }
+
+        @Override
+        public Float read(final BitInput input) throws IOException {
+            final int signBits = signBitReader.readBits(input);
+            final int significandBits = input.readInt(true, significandSize) << shift;
+            if (significandBits == 0) {
+                throw new IOException("significand bits are all zeros");
+            }
+            return Float.intBitsToFloat(signBits | significandBits);
+        }
+
+        private final SignBitOnly signBitReader = new SignBitOnly();
+
+        private final int significandSize;
+
+        private final int shift;
+    }
+
     private static int readExponentBits(final BitInput input, final int size) throws IOException {
-        return (input.readInt(false, size) << FloatConstants.SIZE_MAX_SIGNIFICAND) & FloatConstants.MASK_EXPONENT_BITS;
+        return (input.readInt(false, size) << FloatConstants.SIZE_SIGNIFICAND) & FloatConstants.MASK_EXPONENT;
     }
 
     private static int readSignificandBits(final BitInput input, final int size) throws IOException {
-        return (input.readInt(true, 1) << (FloatConstants.SIZE_MAX_SIGNIFICAND - 1))
+        return (input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1))
                | input.readInt(true, size - 1);
     }
 
     static float read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
-        FloatConstraints.requireValidExponentSize(exponentSize);
-        FloatConstraints.requireValidSignificandSize(significandSize);
-        if (exponentSize == FloatConstants.SIZE_MAX_EXPONENT && significandSize == FloatConstants.SIZE_MAX_SIGNIFICAND) {
+        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
             return Float.intBitsToFloat(input.readInt(false, Integer.SIZE));
         }
         int bits = input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
@@ -253,17 +288,17 @@ public class FloatReader
      * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
      *
      * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_MAX_EXPONENT}, both
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
      *                        inclusive.
      * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_MAX_SIGNIFICAND},
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
      *                        both inclusive.
      * @return a cached instance.
      */
     static FloatReader getCachedInstance(final int exponentSize, final int significandSize) {
         return CACHED_INSTANCE.computeIfAbsent(
-                new FloatKey(exponentSize, significandSize),
-                k -> new FloatReader(k.exponentSize, k.significandSize)
+                FloatKey.of(exponentSize, significandSize),
+                k -> new FloatReader(k.getExponentSize(), k.getSignificandSize())
         );
     }
 
@@ -271,10 +306,10 @@ public class FloatReader
      * Creates a new instance with specified sizes of the exponent part and the significand part.
      *
      * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_MAX_EXPONENT}, both
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
      *                        inclusive.
      * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_MAX_SIGNIFICAND},
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
      *                        both inclusive.
      */
     public FloatReader(final int exponentSize, final int significandSize) {

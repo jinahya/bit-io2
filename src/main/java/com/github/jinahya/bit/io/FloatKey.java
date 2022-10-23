@@ -22,13 +22,22 @@ package com.github.jinahya.bit.io;
 
 import java.util.Objects;
 
-final class FloatKey {
+class FloatKey {
 
-    static FloatKey withSignificandSizeOnly(final int significandSize) {
-        return new FloatKey(FloatConstants.SIZE_MIN_EXPONENT, significandSize);
+    static FloatKey of(final int exponentSize, final int significandSize) {
+        return new FloatKey(exponentSize, significandSize);
     }
 
-    FloatKey(final int exponentSize, final int significandSize) {
+    static FloatKey withSignificandSizeOnly(final int significandSize) {
+        return new FloatKey(FloatConstants.SIZE_MIN_EXPONENT, significandSize) {
+            @Override
+            int getExponentSize() {
+                throw new IllegalStateException("significand size only");
+            }
+        };
+    }
+
+    private FloatKey(final int exponentSize, final int significandSize) {
         super();
         this.exponentSize = FloatConstraints.requireValidExponentSize(exponentSize);
         this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
@@ -51,7 +60,15 @@ final class FloatKey {
         return Objects.hash(exponentSize, significandSize);
     }
 
-    final int exponentSize;
+    int getExponentSize() {
+        return exponentSize;
+    }
 
-    final int significandSize;
+    int getSignificandSize() {
+        return significandSize;
+    }
+
+    private final int exponentSize;
+
+    private final int significandSize;
 }

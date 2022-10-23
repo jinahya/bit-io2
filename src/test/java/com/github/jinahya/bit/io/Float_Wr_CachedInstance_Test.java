@@ -44,7 +44,7 @@ class Float_Wr_CachedInstance_Test {
     }
 
     static Stream<Arguments> sizesAndValues() {
-        return Float_Wr_Test.sizesAndValues();
+        return Float_Wr_Test.sizesAndValuesArgumentsStream();
     }
 
     @MethodSource({"sizesAndValues"})

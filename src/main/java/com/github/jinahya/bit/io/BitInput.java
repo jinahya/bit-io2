@@ -135,9 +135,9 @@ public interface BitInput {
      * Reads a {@code float} value.
      *
      * @param exponentSize    a number of bits for the exponent part; between {@value FloatConstants#SIZE_MIN_EXPONENT}
-     *                        and {@value FloatConstants#SIZE_MAX_EXPONENT}, both inclusive.
+     *                        and {@value FloatConstants#SIZE_EXPONENT}, both inclusive.
      * @param significandSize a number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_MAX_SIGNIFICAND},
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
      *                        both inclusive.
      * @return the {@code float} value read.
      * @throws IOException if a I/O error occurs.
@@ -150,10 +150,10 @@ public interface BitInput {
      * Reads a {@code double} value.
      *
      * @param exponentSize    a number of bits for the exponent part; between {@value DoubleConstants#SIZE_MIN_EXPONENT}
-     *                        and {@value DoubleConstants#SIZE_MAX_EXPONENT}, both inclusive.
+     *                        and {@value DoubleConstants#SIZE_EXPONENT}, both inclusive.
      * @param significandSize a number of bits for the significand part; between
      *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
-     *                        {@value DoubleConstants#SIZE_MAX_SIGNIFICAND}, both inclusive.
+     *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
      * @return the {@code double} value read.
      * @throws IOException if a I/O error occurs.
      */

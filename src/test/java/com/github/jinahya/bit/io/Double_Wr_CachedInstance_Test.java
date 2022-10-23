@@ -41,11 +41,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Double_Wr_CachedInstance_Test {
 
     private static Stream<Arguments> sizes() {
-        return Double_Wr_Test.sizes();
+        return Double_Wr_Test.sizesArgumentsStream();
     }
 
     private static Stream<Arguments> sizesAndValues() {
-        return Double_Wr_Test.sizesAndValues();
+        return Double_Wr_Test.sizesAndValuesArgumentsStream();
     }
 
     @DisplayName("write(nonnull) -> read()expected")
