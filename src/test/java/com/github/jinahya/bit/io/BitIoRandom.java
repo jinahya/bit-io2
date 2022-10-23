@@ -38,17 +38,17 @@ import static java.util.concurrent.ThreadLocalRandom.current;
 final class BitIoRandom {
 
     // ------------------------------------------------------------------------------------------------------------ byte
-    static int getRandomSizeForByte(final boolean unsigned) {
+    static int nextSizeForByte(final boolean unsigned) {
         final var size = current().nextInt(1, Byte.SIZE + (unsigned ? 0 : 1));
         return BitIoConstraints.requireValidSizeForByte(unsigned, size);
     }
 
     static <R> R applyRandomSizeForByte(final boolean unsigned, final IntFunction<? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomSizeForByte(unsigned));
+        return function.apply(nextSizeForByte(unsigned));
     }
 
-    static byte getRandomValueForByte(final boolean unsigned, final int size) {
+    static byte nextValueForByte(final boolean unsigned, final int size) {
         BitIoConstraints.requireValidSizeForByte(unsigned, size);
         final byte value;
         if (unsigned) {
@@ -68,7 +68,7 @@ final class BitIoRandom {
                                          final IntFunction<? extends R> function) {
         BitIoConstraints.requireValidSizeForByte(unsigned, size);
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomValueForByte(unsigned, size));
+        return function.apply(nextValueForByte(unsigned, size));
     }
 
     static <R> R applyRandomValueForByteUnchecked(final boolean unsigned, final int size,
@@ -98,17 +98,17 @@ final class BitIoRandom {
     }
 
     // ----------------------------------------------------------------------------------------------------------- short
-    static int getRandomSizeForShort(final boolean unsigned) {
+    static int nextSizeForShort(final boolean unsigned) {
         final int size = current().nextInt(1, Short.SIZE + (unsigned ? 0 : 1));
         return BitIoConstraints.requireValidSizeForShort(unsigned, size);
     }
 
     static <R> R applyRandomSizeForShort(final boolean unsigned, final IntFunction<? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomSizeForShort(unsigned));
+        return function.apply(nextSizeForShort(unsigned));
     }
 
-    static short getRandomValueForShort(final boolean unsigned, final int size) {
+    static short nextValueForShort(final boolean unsigned, final int size) {
         BitIoConstraints.requireValidSizeForShort(unsigned, size);
         final short value;
         if (unsigned) {
@@ -126,7 +126,7 @@ final class BitIoRandom {
     static <R> R applyRandomValueForShort(final boolean unsigned, final int size,
                                           final IntFunction<? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomValueForShort(unsigned, size));
+        return function.apply(nextValueForShort(unsigned, size));
     }
 
     static <R> R applyRandomValueForShortUnchecked(final boolean unsigned, final int size,
@@ -156,17 +156,17 @@ final class BitIoRandom {
     }
 
     // ------------------------------------------------------------------------------------------------------------- int
-    static int getRandomSizeForInt(final boolean unsigned) {
+    static int nextSizeForInt(final boolean unsigned) {
         final var size = current().nextInt(1, Integer.SIZE + (unsigned ? 0 : 1));
         return BitIoConstraints.requireValidSizeForInt(unsigned, size);
     }
 
-    static <R> R applyRandomSizeForInt(final boolean unsigned, final IntFunction<? extends R> function) {
+    static <R> R nextSizeForInt(final boolean unsigned, final IntFunction<? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomSizeForInt(unsigned));
+        return function.apply(nextSizeForInt(unsigned));
     }
 
-    static int getRandomValueForInt(final boolean unsigned, final int size) {
+    static int nextValueForInt(final boolean unsigned, final int size) {
         BitIoConstraints.requireValidSizeForInt(unsigned, size);
         final int value;
         if (unsigned) {
@@ -185,7 +185,7 @@ final class BitIoRandom {
                                         final IntFunction<? extends R> function) {
         BitIoConstraints.requireValidSizeForInt(unsigned, size);
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomValueForInt(unsigned, size));
+        return function.apply(nextValueForInt(unsigned, size));
     }
 
     static <R> R applyRandomValueForIntUnchecked(final boolean unsigned, final int size,
@@ -196,7 +196,7 @@ final class BitIoRandom {
     static <R> R applyRandomSizeAndValueForInt(final boolean unsigned,
                                                final IntFunction<? extends IntFunction<? extends R>> function) {
         Objects.requireNonNull(function, "function is null");
-        return applyRandomSizeForInt(
+        return nextSizeForInt(
                 unsigned,
                 s -> applyRandomValueForInt(unsigned, s, v -> function.apply(s).apply(v))
         );
@@ -212,17 +212,17 @@ final class BitIoRandom {
     }
 
     // ------------------------------------------------------------------------------------------------------------ long
-    static int getRandomSizeForLong(final boolean unsigned) {
+    static int nextSizeForLong(final boolean unsigned) {
         final var size = current().nextInt(1, Long.SIZE + (unsigned ? 0 : 1));
         return BitIoConstraints.requireValidSizeForLong(unsigned, size);
     }
 
     static <R> R applyRandomSizeForLong(final boolean unsigned, final IntFunction<? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomSizeForLong(unsigned));
+        return function.apply(nextSizeForLong(unsigned));
     }
 
-    static long getRandomValueForLong(final boolean unsigned, final int size) {
+    static long nextValueForLong(final boolean unsigned, final int size) {
         BitIoConstraints.requireValidSizeForLong(unsigned, size);
         final long value;
         if (unsigned) {
@@ -241,7 +241,7 @@ final class BitIoRandom {
     static <R> R applyRandomValueForLong(final boolean unsigned, final int size,
                                          final LongFunction<? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomValueForLong(unsigned, size));
+        return function.apply(nextValueForLong(unsigned, size));
     }
 
     static <R> R applyRandomValueForLongUnchecked(final boolean unsigned, final int size,
@@ -273,17 +273,17 @@ final class BitIoRandom {
     }
 
     // ------------------------------------------------------------------------------------------------------------ char
-    static int getRandomSizeForChar() {
+    static int nextSizeForChar() {
         final int size = current().nextInt(1, Character.SIZE + 1);
         return BitIoConstraints.requireValidSizeForChar(size);
     }
 
     static <R> R applyRandomSizeForChar(final IntFunction<? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomSizeForChar());
+        return function.apply(nextSizeForChar());
     }
 
-    static char getRandomValueForChar(final int size) {
+    static char nextValueForChar(final int size) {
         BitIoConstraints.requireValidSizeForChar(size);
         final char value = (char) (current().nextInt() >>> (Integer.SIZE - size));
         assert value >> size == 0;
@@ -292,7 +292,7 @@ final class BitIoRandom {
 
     static <R> R applyRandomValueForChar(final int size, final IntFunction<? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getRandomValueForChar(size));
+        return function.apply(nextValueForChar(size));
     }
 
     static <R> R applyRandomValueForCharUnchecked(final int size,
@@ -324,10 +324,9 @@ final class BitIoRandom {
         );
     }
 
-    static int getRandomExponentBitsForFloat(final int exponentSize) {
+    static int nextExponentBitsForFloat(final int exponentSize) {
         FloatConstraints.requireValidExponentSize(exponentSize);
-        return (getRandomValueForInt(false, exponentSize) << FloatConstants.SIZE_SIGNIFICAND)
-               & FloatConstants.MASK_EXPONENT;
+        return nextValueForInt(true, exponentSize) << FloatConstants.SIZE_SIGNIFICAND;
     }
 
     static int nextSignificandSizeForFloat() {
@@ -339,30 +338,26 @@ final class BitIoRandom {
         );
     }
 
-    static int nextSignificandBitsForFloat(int significandSize) {
+    static int nextSignificandBitsForFloat(final int significandSize) {
         FloatConstraints.requireValidSignificandSize(significandSize);
-        int bits = getRandomValueForInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1);
-        if (--significandSize > 0) {
-            bits |= getRandomValueForInt(true, significandSize);
-        }
-        return bits;
+        return nextValueForInt(true, significandSize);
     }
 
-    static int nextValueBitsForFloat(final int exponentSize, final int significandSize) {
-        return (getRandomValueForInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
-               | getRandomExponentBitsForFloat(exponentSize)
+    static int nextBitsForFloat(final int exponentSize, final int significandSize) {
+        return (nextValueForInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
+               | nextExponentBitsForFloat(exponentSize)
                | nextSignificandBitsForFloat(significandSize);
     }
 
     static float nextValueForFloat(final int exponentSize, final int significandSize) {
-        return Float.intBitsToFloat(nextValueBitsForFloat(exponentSize, significandSize));
+        return Float.intBitsToFloat(nextBitsForFloat(exponentSize, significandSize));
     }
 
     static <R> R applyRandomValueBitsForFloat(
             final IntFunction<? extends IntFunction<? extends IntFunction<? extends R>>> function) {
         final var exponentSize = nextExponentSizeForFloat();
         final var significantSize = nextSignificandSizeForFloat();
-        final var valueBits = nextValueBitsForFloat(exponentSize, significantSize);
+        final var valueBits = nextBitsForFloat(exponentSize, significantSize);
         return function.apply(exponentSize)
                 .apply(significantSize)
                 .apply(valueBits);
@@ -383,11 +378,9 @@ final class BitIoRandom {
         );
     }
 
-    static long getRandomExponentBitsForDouble(final int exponentSize) {
+    static long nextExponentBitsForDouble(final int exponentSize) {
         DoubleConstraints.requireValidExponentSize(exponentSize);
-        return getRandomValueForLong(false, exponentSize)
-               << DoubleConstants.SIZE_SIGNIFICAND
-               & DoubleConstants.MASK_EXPONENT;
+        return nextValueForLong(true, exponentSize) << DoubleConstants.SIZE_SIGNIFICAND;
     }
 
     static int nextSignificandSizeForDouble() {
@@ -399,30 +392,26 @@ final class BitIoRandom {
         );
     }
 
-    static long getSignificandBitsForDouble(int significandSize) {
+    static long getSignificandBitsForDouble(final int significandSize) {
         DoubleConstraints.requireValidSignificandSize(significandSize);
-        long bits = getRandomValueForLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1);
-        if (--significandSize > 0) {
-            bits |= getRandomValueForLong(true, significandSize);
-        }
-        return bits;
+        return nextValueForLong(true, significandSize);
     }
 
-    static long nextLongBitsForDouble(final int exponentSize, final int significandSize) {
-        return (getRandomValueForLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
-               | getRandomExponentBitsForDouble(exponentSize)
+    static long nextBitsForDouble(final int exponentSize, final int significandSize) {
+        return (nextValueForLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
+               | nextExponentBitsForDouble(exponentSize)
                | getSignificandBitsForDouble(significandSize);
     }
 
     static double nextValueForDouble(final int exponentSize, final int significandSize) {
-        return Double.longBitsToDouble(nextLongBitsForDouble(exponentSize, significandSize));
+        return Double.longBitsToDouble(nextBitsForDouble(exponentSize, significandSize));
     }
 
     static <R> R applyNextLongBitsForDouble(
             final LongFunction<? extends LongFunction<? extends LongFunction<? extends R>>> function) {
         final var exponentSize = nextExponentSizeForDouble();
         final var significantSize = nextSignificandSizeForDouble();
-        final var valueBits = nextLongBitsForDouble(exponentSize, significantSize);
+        final var valueBits = nextBitsForDouble(exponentSize, significantSize);
         return function.apply(exponentSize)
                 .apply(significantSize)
                 .apply(valueBits);

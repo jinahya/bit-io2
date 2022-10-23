@@ -270,23 +270,15 @@ public class DoubleReader
         private final int shift;
     }
 
-    private static long readExponentBits(final BitInput input, final int size) throws IOException {
-        return (input.readLong(false, size) << DoubleConstants.SIZE_SIGNIFICAND) & DoubleConstants.MASK_EXPONENT;
-    }
-
-    private static long readSignificandBits(final BitInput input, final int size) throws IOException {
-        return input.readLong(true, 1) << (DoubleConstants.SIZE_SIGNIFICAND - 1)
-               | input.readLong(true, size - 1);
-    }
-
     static double read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
         if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
             return Double.longBitsToDouble(input.readLong(false, Long.SIZE));
         }
-        long bits = input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
-        bits |= readExponentBits(input, exponentSize);
-        bits |= readSignificandBits(input, significandSize);
-        return Double.longBitsToDouble(bits);
+        return Double.longBitsToDouble(
+                (input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
+                | (input.readLong(true, exponentSize) << DoubleConstants.SIZE_SIGNIFICAND)
+                | input.readLong(true, significandSize)
+        );
     }
 
     private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();

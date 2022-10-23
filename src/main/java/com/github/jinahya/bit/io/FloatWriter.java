@@ -276,24 +276,16 @@ public class FloatWriter
         private final int mask;
     }
 
-    private static void writeExponentBits(final BitOutput output, final int size, final int bits) throws IOException {
-        output.writeInt(false, size, ((bits << 1) >> 1) >> FloatConstants.SIZE_SIGNIFICAND);
-    }
-
-    private static void writeSignificandBits(final BitOutput output, final int size, final int bits) throws IOException {
-        output.writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT);
-        output.writeInt(true, size - 1, bits);
-    }
-
-    static void write(final BitOutput output, final int exponentSize, final int significandSize, final float value) throws IOException {
+    static void write(final BitOutput output, final int exponentSize, final int significandSize, final float value)
+            throws IOException {
         if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
             output.writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
             return;
         }
         final int bits = Float.floatToRawIntBits(value);
         output.writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
-        writeExponentBits(output, exponentSize, bits);
-        writeSignificandBits(output, significandSize, bits);
+        output.writeInt(true, exponentSize, (bits & FloatConstants.MASK_EXPONENT) >> FloatConstants.SIZE_SIGNIFICAND);
+        output.writeInt(true, significandSize, bits);
     }
 
     private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCE = new WeakHashMap<>();

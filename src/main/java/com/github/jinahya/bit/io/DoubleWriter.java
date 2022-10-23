@@ -304,8 +304,9 @@ public class DoubleWriter
         }
         final long bits = Double.doubleToRawLongBits(value);
         output.writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
-        writeExponentBits(output, exponentSize, bits);
-        writeSignificandBits(output, significandSize, bits);
+        output.writeLong(true, exponentSize,
+                         (bits & DoubleConstants.MASK_EXPONENT) >> DoubleConstants.SIZE_SIGNIFICAND);
+        output.writeLong(true, significandSize, bits);
     }
 
     private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();

@@ -283,23 +283,15 @@ public class FloatReader
         private final int shift;
     }
 
-    private static int readExponentBits(final BitInput input, final int size) throws IOException {
-        return (input.readInt(false, size) << FloatConstants.SIZE_SIGNIFICAND) & FloatConstants.MASK_EXPONENT;
-    }
-
-    private static int readSignificandBits(final BitInput input, final int size) throws IOException {
-        return (input.readInt(true, 1) << (FloatConstants.SIZE_SIGNIFICAND - 1))
-               | input.readInt(true, size - 1);
-    }
-
     static float read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
         if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
             return Float.intBitsToFloat(input.readInt(false, Integer.SIZE));
         }
-        int bits = input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT;
-        bits |= readExponentBits(input, exponentSize);
-        bits |= readSignificandBits(input, significandSize);
-        return Float.intBitsToFloat(bits);
+        return Float.intBitsToFloat(
+                (input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
+                | (input.readInt(true, exponentSize) << FloatConstants.SIZE_SIGNIFICAND)
+                | input.readInt(true, significandSize)
+        );
     }
 
     private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCE = new WeakHashMap<>();

@@ -51,7 +51,7 @@ class Float_Wr_Test {
         return FloatTestParameters.sizesAndValuesArgumentsStream();
     }
 
-    @DisplayName("nullable().write(value) -> nullable().read()value")
+    @DisplayName("write(value) -> read()value")
     @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest
     void wr__(final int exponentSize, final int significandSize, final Float value) throws IOException {
