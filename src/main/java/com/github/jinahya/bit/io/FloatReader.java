@@ -177,6 +177,82 @@ public class FloatReader
         private final SignBitOnly delegate = new SignBitOnly();
     }
 
+    private static final class SignificandOnly
+            implements BitReader<Float> {
+
+        private SignificandOnly(int significandSize) {
+            super();
+            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
+            shift = FloatConstants.SIZE_SIGNIFICAND - this.significandSize;
+        }
+
+        private int readBits(final BitInput input) throws IOException {
+            final int significandBits = input.readInt(true, significandSize) << shift;
+            if (significandBits == 0) {
+                throw new IOException("significand bits are all zeros");
+            }
+            return significandBits;
+        }
+
+        @Override
+        public Float read(final BitInput input) throws IOException {
+            return Float.intBitsToFloat(readBits(input));
+        }
+
+        private final int significandSize;
+
+        private final int shift;
+    }
+
+    /**
+     * A reader for reading {@code subnormal} values in a compressed manner.
+     */
+    public static class CompressedSubnormal
+            implements BitReader<Float> {
+
+        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
+
+        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitReader<Float> getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    FloatCacheKey.of(significandSize),
+                    k -> new CompressedSubnormal(k.getSignificandSize()) {
+                        @Override
+                        public BitReader<Float> nullable() {
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    FloatCacheKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
+                        }
+                    }
+            );
+        }
+
+        /**
+         * Creates a new instance with specified number bits for the {@code significand} part.
+         *
+         * @param significandSize a number of bits for the significand part; between
+         *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
+        public CompressedSubnormal(final int significandSize) {
+            super();
+            significandOnly = new SignificandOnly(significandSize);
+        }
+
+        @Override
+        public Float read(final BitInput input) throws IOException {
+            final int signBitOnlyBits = signBitOnly.readBits(input);
+            final int significandBits = significandOnly.readBits(input);
+            return Float.intBitsToFloat(signBitOnlyBits | significandBits);
+        }
+
+        private final SignBitOnly signBitOnly = new SignBitOnly();
+
+        private final SignificandOnly significandOnly;
+    }
+
     /**
      * A reader for reading {@code NaN} values in a compressed manner.
      */
@@ -230,61 +306,6 @@ public class FloatReader
         }
 
         private final int significandSize;
-    }
-
-    /**
-     * A reader for reading {@code subnormal} values in a compressed manner.
-     */
-    public static class CompressedSubnormal
-            implements BitReader<Float> {
-
-        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
-
-        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-
-        static BitReader<Float> getCachedInstance(final int significandSize) {
-            return CACHED_INSTANCES.computeIfAbsent(
-                    FloatCacheKey.of(significandSize),
-                    k -> new CompressedSubnormal(k.getSignificandSize()) {
-                        @Override
-                        public BitReader<Float> nullable() {
-                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    FloatCacheKey.copyOf(k),
-                                    k2 -> super.nullable()
-                            );
-                        }
-                    }
-            );
-        }
-
-        /**
-         * Creates a new instance with specified number bits for the {@code significand} part.
-         *
-         * @param significandSize a number of bits for the significand part; between
-         *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
-         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
-         */
-        public CompressedSubnormal(int significandSize) {
-            super();
-            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
-            shift = FloatConstants.SIZE_SIGNIFICAND - this.significandSize;
-        }
-
-        @Override
-        public Float read(final BitInput input) throws IOException {
-            final int signBits = signBitReader.readBits(input);
-            final int significandBits = input.readInt(true, significandSize) << shift;
-            if (significandBits == 0) {
-                throw new IOException("significand bits are all zeros");
-            }
-            return Float.intBitsToFloat(signBits | significandBits);
-        }
-
-        private final SignBitOnly signBitReader = new SignBitOnly();
-
-        private final int significandSize;
-
-        private final int shift;
     }
 
     static float read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {

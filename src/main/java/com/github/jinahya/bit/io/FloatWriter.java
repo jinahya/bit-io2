@@ -180,6 +180,81 @@ public class FloatWriter
         private final BitWriter<Float> delegate = new SignBitOnly();
     }
 
+    private static final class SignificandOnly
+            implements BitWriter<Float> {
+
+        private SignificandOnly(final int significandSize) {
+            super();
+            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
+            this.shift = FloatConstants.SIZE_SIGNIFICAND - this.significandSize;
+            mask = BitIoUtils.bitMaskSingle(this.significandSize);
+        }
+
+        private void writeBits(final BitOutput output, final int bits) throws IOException {
+            final int significandBits = (bits >> shift) & mask;
+            if (significandBits == 0) {
+                throw new IllegalArgumentException("significand bits are all zeros");
+            }
+            output.writeInt(true, significandSize, significandBits);
+        }
+
+        @Override
+        public void write(final BitOutput output, final Float value) throws IOException {
+            final int bits = Float.floatToRawIntBits(value);
+            writeBits(output, bits);
+        }
+
+        private final int significandSize;
+
+        private final int shift;
+
+        private final int mask;
+    }
+
+    /**
+     * A writer for writing {@code subnormal} values in a compressed manner.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
+    public static class CompressedSubnormal
+            implements BitWriter<Float> {
+
+        private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCES = new WeakHashMap<>();
+
+        private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitWriter<Float> getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    FloatCacheKey.of(significandSize),
+                    k -> new CompressedSubnormal(k.getSignificandSize()) {
+                        @Override
+                        public BitWriter<Float> nullable() {
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    FloatCacheKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
+                        }
+                    }
+            );
+        }
+
+        public CompressedSubnormal(final int significandSize) {
+            super();
+            significandOnly = new SignificandOnly(significandSize);
+        }
+
+        @Override
+        public void write(final BitOutput output, final Float value) throws IOException {
+            final int bits = Float.floatToRawIntBits(value);
+            signBitOnly.writeBits(output, bits);
+            significandOnly.writeBits(output, bits);
+        }
+
+        private final SignBitOnly signBitOnly = new SignBitOnly();
+
+        private final SignificandOnly significandOnly;
+    }
+
     /**
      * A writer for writing {@code NaN} values in a compressed manner.
      *
@@ -225,57 +300,6 @@ public class FloatWriter
         }
 
         private final int significandSize;
-    }
-
-    /**
-     * A writer for writing {@code subnormal} values in a compressed manner.
-     *
-     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
-     */
-    public static class CompressedSubnormal
-            implements BitWriter<Float> {
-
-        private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCES = new WeakHashMap<>();
-
-        private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-
-        static BitWriter<Float> getCachedInstance(final int significandSize) {
-            return CACHED_INSTANCES.computeIfAbsent(
-                    FloatCacheKey.of(significandSize),
-                    k -> new CompressedSubnormal(k.getSignificandSize()) {
-                        @Override
-                        public BitWriter<Float> nullable() {
-                            return CACHED_INSTANCE_NULLABLE.computeIfAbsent(FloatCacheKey.copyOf(k), k2 -> super.nullable());
-                        }
-                    }
-            );
-        }
-
-        public CompressedSubnormal(final int significandSize) {
-            super();
-            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
-            this.shift = FloatConstants.SIZE_SIGNIFICAND - this.significandSize;
-            mask = BitIoUtils.bitMaskSingle(this.significandSize);
-        }
-
-        @Override
-        public void write(final BitOutput output, final Float value) throws IOException {
-            final int bits = Float.floatToRawIntBits(value);
-            signBitWriter.writeBits(output, bits);
-            final int significandBits = (bits >> shift) & mask;
-            if (significandBits == 0) {
-                throw new IllegalArgumentException("significand bits are all zeros");
-            }
-            output.writeInt(true, significandSize, significandBits);
-        }
-
-        private final SignBitOnly signBitWriter = new SignBitOnly();
-
-        private final int significandSize;
-
-        private final int shift;
-
-        private final int mask;
     }
 
     static void write(final BitOutput output, final int exponentSize, final int significandSize, final float value)
