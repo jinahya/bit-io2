@@ -50,7 +50,7 @@ public class DoubleWriter
         }
 
         @Override
-        public final void write(final BitOutput output, final Double value) throws IOException {
+        public void write(final BitOutput output, final Double value) throws IOException {
             writeBits(output, value);
         }
     }

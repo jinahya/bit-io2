@@ -72,7 +72,6 @@ class DataByteInputTest
      * Asserts {@link DataByteInput#read()} method returns a valid octet.
      *
      * @throws IOException if an I/O error occurs.
-     * @see DataByteOutputTest#testWrite()
      */
     @Test
     void testRead() throws IOException {

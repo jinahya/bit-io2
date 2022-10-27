@@ -141,7 +141,7 @@ public class DoubleReader
         }
 
         /**
-         * Returns the instance of this class which is singletone.
+         * Returns the instance of this class which is singleton.
          *
          * @return the instance.
          */
