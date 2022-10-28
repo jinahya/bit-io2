@@ -243,6 +243,11 @@ public class FloatWriter
             significandOnly = new SignificandOnly(significandSize);
         }
 
+        private void writeBits(final BitOutput output, final int bits) throws IOException {
+            signBitOnly.writeBits(output, bits);
+            significandOnly.writeBits(output, bits);
+        }
+
         @Override
         public void write(final BitOutput output, final Float value) throws IOException {
             final int bits = Float.floatToRawIntBits(value);
@@ -284,22 +289,52 @@ public class FloatWriter
 
         public CompressedNaN(final int significandSize) {
             super();
-            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
+            compressedSubnormal = new CompressedSubnormal(significandSize);
         }
 
         @Override
         public void write(final BitOutput output, final Float value) throws IOException {
-            final int significandBits = Float.floatToRawIntBits(value) & FloatConstants.MASK_SIGNIFICAND;
-            if (significandBits == 0) {
-                throw new IllegalArgumentException("significand bits are all zeros");
+            if (significandOnly) {
+                compressedSubnormal.significandOnly.write(output, value);
+                return;
             }
-            output.writeInt(true, 1, significandBits >> FloatConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT);
-            if (significandSize > 1) {
-                output.writeInt(true, significandSize - 1, significandBits);
-            }
+            compressedSubnormal.write(output, value);
         }
 
-        private final int significandSize;
+        /**
+         * Returns current value of {@code significandOnly} property.
+         *
+         * @return current value of {@code significandOnly} property.
+         * @apiNote initial value of the property is {@code false}.
+         */
+        public boolean isSignificandOnly() {
+            return significandOnly;
+        }
+
+        /**
+         * Replaces current value of {@code significandOnly} property with specified value.
+         *
+         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for not reading the
+         *                        sign bit; {@code false} for reading the sign bit.
+         */
+        public void setSignificandOnly(final boolean significandOnly) {
+            this.significandOnly = significandOnly;
+        }
+
+        /**
+         * Invokes the {@link #setSignificandOnly(boolean)} method with specified argument and returns this object.
+         *
+         * @param significandOnly the value for the {@code significand} argument.
+         * @return this object.
+         */
+        public CompressedNaN significandOnly(final boolean significandOnly) {
+            setSignificandOnly(significandOnly);
+            return this;
+        }
+
+        private final CompressedSubnormal compressedSubnormal;
+
+        private boolean significandOnly;
     }
 
     static void write(final BitOutput output, final int exponentSize, final int significandSize, final float value)

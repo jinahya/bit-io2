@@ -175,51 +175,36 @@ public class DoubleReader
         private final SignBitOnly delegate = new SignBitOnly();
     }
 
-    public static class CompressedNaN
+    private static final class SignificandOnly
             implements BitReader<Double> {
-
-        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
-
-        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-
-        static BitReader<Double> getCachedInstance(final int significandSize) {
-            return CACHED_INSTANCES.computeIfAbsent(
-                    DoubleCacheKey.of(significandSize),
-                    k -> new CompressedNaN(k.getSignificandSize()) {
-                        @Override
-                        public BitReader<Double> nullable() {
-                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    DoubleCacheKey.copyOf(k),
-                                    k2 -> super.nullable()
-                            );
-                        }
-                    }
-            );
-        }
 
         /**
          * Returns the instance for specified significand size.
          *
          * @param significandSize the number of bits for the significand part.
          */
-        public CompressedNaN(final int significandSize) {
+        private SignificandOnly(final int significandSize) {
             super();
             this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
+            shift = DoubleConstants.SIZE_SIGNIFICAND - this.significandSize;
+        }
+
+        private long readBits(final BitInput input) throws IOException {
+            final long significandBits = input.readLong(true, significandSize) << shift;
+            if (significandBits == 0) {
+                throw new IOException("significand bits are all zeros");
+            }
+            return significandBits;
         }
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            long significandBits = input.readLong(true, 1) << DoubleConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT;
-            if (significandSize > 1) {
-                significandBits |= input.readLong(true, significandSize - 1);
-            }
-            if (significandBits == 0) {
-                throw new IOException("significand bits are all zeros");
-            }
-            return Double.longBitsToDouble(significandBits | DoubleConstants.MASK_EXPONENT);
+            throw new UnsupportedOperationException("shouldn't be used");
         }
 
         private final int significandSize;
+
+        private final int shift;
     }
 
     public static class CompressedSubnormal
@@ -251,25 +236,101 @@ public class DoubleReader
          */
         public CompressedSubnormal(final int significandSize) {
             super();
-            this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
-            shift = DoubleConstants.SIZE_SIGNIFICAND - this.significandSize;
+            significandOnly = new SignificandOnly(significandSize);
+        }
+
+        private long readBits(final BitInput input) throws IOException {
+            final long signBits = signBitReader.readBits(input);
+            final long significandBits = significandOnly.readBits(input);
+            return signBits | significandBits;
         }
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            final long signBits = signBitReader.readBits(input);
-            final long significandBits = input.readLong(true, significandSize) << shift;
-            if (significandBits == 0) {
-                throw new IOException("significand bits are all zeros");
-            }
-            return Double.longBitsToDouble(signBits | significandBits);
+            final long bits = readBits(input);
+            return Double.longBitsToDouble(bits);
         }
 
         private final SignBitOnly signBitReader = new SignBitOnly();
 
-        private final int significandSize;
+        private final SignificandOnly significandOnly;
+    }
 
-        private final int shift;
+    public static class CompressedNaN
+            implements BitReader<Double> {
+
+        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
+
+        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitReader<Double> getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    DoubleCacheKey.of(significandSize),
+                    k -> new CompressedNaN(k.getSignificandSize()) {
+                        @Override
+                        public BitReader<Double> nullable() {
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    DoubleCacheKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
+                        }
+                    }
+            );
+        }
+
+        /**
+         * Returns the instance for specified significand size.
+         *
+         * @param significandSize the number of bits for the significand part.
+         */
+        public CompressedNaN(final int significandSize) {
+            super();
+            compressedSubnormal = new CompressedSubnormal(significandSize);
+        }
+
+        @Override
+        public Double read(final BitInput input) throws IOException {
+            if (significandOnly) {
+                return Double.longBitsToDouble(
+                        compressedSubnormal.significandOnly.readBits(input) | DoubleConstants.MASK_EXPONENT);
+            }
+            return Double.longBitsToDouble(compressedSubnormal.readBits(input) | DoubleConstants.MASK_EXPONENT);
+        }
+
+        /**
+         * Returns current value of {@code significandOnly} property.
+         *
+         * @return current value of {@code significandOnly} property.
+         * @apiNote initial value of the property is {@code false}.
+         */
+        public boolean isSignificandOnly() {
+            return significandOnly;
+        }
+
+        /**
+         * Replaces current value of {@code significandOnly} property with specified value.
+         *
+         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for not reading the
+         *                        sign bit; {@code false} for reading the sign bit.
+         */
+        public void setSignificandOnly(final boolean significandOnly) {
+            this.significandOnly = significandOnly;
+        }
+
+        /**
+         * Invokes {@link #setSignificandOnly(boolean)} method with specified arguments and returns this object.
+         *
+         * @param readSignBit the argument to passed to the {@link #setSignificandOnly(boolean)} method.
+         * @return this object.
+         */
+        public CompressedNaN significandOnly(final boolean readSignBit) {
+            setSignificandOnly(readSignBit);
+            return this;
+        }
+
+        final CompressedSubnormal compressedSubnormal;
+
+        private boolean significandOnly;
     }
 
     static double read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {

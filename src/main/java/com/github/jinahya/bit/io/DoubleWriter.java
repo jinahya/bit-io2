@@ -178,8 +178,82 @@ public class DoubleWriter
         private final BitWriter<Double> delegate = new SignBitOnly();
     }
 
+    private static class SignificandOnly
+            implements BitWriter<Double> {
+
+        private SignificandOnly(final int significandSize) {
+            super();
+            this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
+            this.shift = DoubleConstants.SIZE_SIGNIFICAND - this.significandSize;
+            mask = BitIoUtils.bitMaskDouble(this.significandSize);
+        }
+
+        private void writeBits(final BitOutput output, final long bits) throws IOException {
+            final long significandBits = (bits >> shift) & mask;
+            if (significandBits == 0) {
+                throw new IllegalArgumentException("significand bits are all zeros");
+            }
+            output.writeLong(true, significandSize, significandBits);
+        }
+
+        @Override
+        public void write(final BitOutput output, final Double value) throws IOException {
+            throw new UnsupportedOperationException("shouldn't be used");
+        }
+
+        private final int significandSize;
+
+        private final int shift;
+
+        private final long mask;
+    }
+
     /**
-     * A class for writing {@code NaN} values in a compressed manner.
+     * A writer for writing {@code subnormal} values in a compressed manner.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
+    public static class CompressedSubnormal
+            implements BitWriter<Double> {
+
+        private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
+
+        private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+
+        static BitWriter<Double> getCachedInstance(final int significandSize) {
+            return CACHED_INSTANCES.computeIfAbsent(
+                    DoubleCacheKey.of(significandSize),
+                    k -> new CompressedSubnormal(k.getSignificandSize()) {
+                        @Override
+                        public BitWriter<Double> nullable() {
+                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+                                    DoubleCacheKey.copyOf(k),
+                                    k2 -> super.nullable()
+                            );
+                        }
+                    }
+            );
+        }
+
+        public CompressedSubnormal(final int significandSize) {
+            super();
+            this.significandOnly = new SignificandOnly(significandSize);
+        }
+
+        @Override
+        public void write(final BitOutput output, final Double value) throws IOException {
+            final long bits = Double.doubleToRawLongBits(value);
+            signBitOnly.writeBits(output, bits);
+            significandOnly.writeBits(output, bits);
+        }
+
+        private final SignBitOnly signBitOnly = new SignBitOnly();
+
+        private final SignificandOnly significandOnly;
+    }
+
+    /**
+     * A class for writing {@code NaN}s in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
@@ -214,77 +288,52 @@ public class DoubleWriter
          */
         public CompressedNaN(final int significandSize) {
             super();
-            this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
-            if (this.significandSize < 2) {
-                throw new IllegalArgumentException("significandSize(" + significandSize + ") < 2");
-            }
+            compressedSubnormal = new CompressedSubnormal(significandSize);
         }
 
         @Override
         public void write(final BitOutput output, final Double value) throws IOException {
-            final long significandBits = Double.doubleToRawLongBits(value) & DoubleConstants.MASK_SIGNIFICAND;
-            if (significandBits == 0) {
-                throw new IllegalArgumentException("significand bits are all zeros");
+            if (significandOnly) {
+                compressedSubnormal.significandOnly.write(output, value);
+                return;
             }
-            output.writeLong(true, 1, significandBits >> DoubleConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT);
-            output.writeLong(true, significandSize - 1, significandBits);
+            compressedSubnormal.write(output, value);
         }
 
-        private final int significandSize;
-    }
-
-    /**
-     * A writer for writing {@code subnormal} values in a compressed manner.
-     *
-     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
-     */
-    public static class CompressedSubnormal
-            implements BitWriter<Double> {
-
-        private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES = new WeakHashMap<>();
-
-        private static final Map<DoubleCacheKey, BitWriter<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-
-        static BitWriter<Double> getCachedInstance(final int significandSize) {
-            return CACHED_INSTANCES.computeIfAbsent(
-                    DoubleCacheKey.of(significandSize),
-                    k -> new CompressedSubnormal(k.getSignificandSize()) {
-                        @Override
-                        public BitWriter<Double> nullable() {
-                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    DoubleCacheKey.copyOf(k),
-                                    k2 -> super.nullable()
-                            );
-                        }
-                    }
-            );
+        /**
+         * Returns current value of {@code significandOnly} property.
+         *
+         * @return current value of {@code significandOnly} property.
+         * @apiNote initial value of the property is {@code false}.
+         */
+        public boolean isSignificandOnly() {
+            return significandOnly;
         }
 
-        public CompressedSubnormal(final int significandSize) {
-            super();
-            this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
-            this.shift = DoubleConstants.SIZE_SIGNIFICAND - this.significandSize;
-            mask = BitIoUtils.bitMaskDouble(this.significandSize);
+        /**
+         * Replaces current value of {@code significandOnly} property with specified value.
+         *
+         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for not reading the
+         *                        sign bit; {@code false} for reading the sign bit.
+         */
+        public void setSignificandOnly(final boolean significandOnly) {
+            this.significandOnly = significandOnly;
         }
 
-        @Override
-        public void write(final BitOutput output, final Double value) throws IOException {
-            final long bits = Double.doubleToRawLongBits(value);
-            signBitWriter.writeBits(output, bits);
-            final long significandBits = (bits >> shift) & mask;
-            if (significandBits == 0) {
-                throw new IllegalArgumentException("significand bits are all zeros");
-            }
-            output.writeLong(true, significandSize, significandBits);
+        /**
+         * Invokes the {@link #setSignificandOnly(boolean)} method with specified argument and returns this object.
+         *
+         * @param significandOnly the value for the {@code significand} argument.
+         * @return this object.
+         */
+        public CompressedNaN significandOnly(final boolean significandOnly) {
+            setSignificandOnly(significandOnly);
+            return this;
         }
 
-        private final SignBitOnly signBitWriter = new SignBitOnly();
+        final CompressedSubnormal compressedSubnormal;
 
-        private final int significandSize;
-
-        private final int shift;
-
-        private final long mask;
+        private boolean significandOnly;
     }
 
     private static void writeExponentBits(final BitOutput output, final int size, final long bits) throws IOException {
