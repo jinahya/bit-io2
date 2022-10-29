@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -28,26 +29,26 @@ import java.util.Objects;
  *
  * @param <T> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ArrayReader
+ * @see ListReader
  */
-class ArrayWriter<T>
-        implements BitWriter<T[]> {
+class ListWriter<T>
+        implements BitWriter<List<T>> {
 
     /**
      * Creates a new instance for reading array of specified element type using specified element writer.
      *
      * @param elementWriter the writer for reading each element.
      */
-    public ArrayWriter(final BitWriter<? super T> elementWriter) {
+    public ListWriter(final BitWriter<? super T> elementWriter) {
         super();
         this.elementWriter = Objects.requireNonNull(elementWriter, "elementWriter is null");
     }
 
     @Override
-    public void write(final BitOutput output, final T[] value) throws IOException {
+    public void write(final BitOutput output, final List<T> value) throws IOException {
         Objects.requireNonNull(output, "output is null");
         Objects.requireNonNull(value, "value is null");
-        BitIoUtils.writeCountCompressed(output, value.length);
+        BitIoUtils.writeCountCompressed(output, value.size());
         for (final T element : value) {
             elementWriter.write(output, element);
         }

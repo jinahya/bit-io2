@@ -105,8 +105,13 @@ final class BitIoUtils {
         assert count >= 0;
         if (count <= 65536) { // 21 bits in maximum; 1 + 4 + 16
             output.writeBoolean(true); // compressed
-            final int size = Integer.max((int) Math.ceil(Math.log(count) / Math.log(2)), 1);
+            final int size = Integer.SIZE - Integer.numberOfLeadingZeros(count);
             assert size <= Short.SIZE; // [1..16]
+            if (size == 0) {
+                output.writeBoolean(true); // zero
+                return;
+            }
+            output.writeBoolean(false); // non-zero
             output.writeInt(true, SIZE_SIZE_COUNT_COMPRESSED, size - 1); // 4 bits for [0..15]
             output.writeInt(true, size, count); // 16 bits in maximum
             return;
@@ -117,6 +122,9 @@ final class BitIoUtils {
 
     static int readCountCompressed(final BitInput input) throws IOException {
         if (input.readBoolean()) { // compressed
+            if (input.readBoolean()) {
+                return 0;
+            }
             final int size = input.readInt(true, SIZE_SIZE_COUNT_COMPRESSED) + 1; // [0..15] + 1 -> [1..16]
             assert size > 0;
             assert size <= 16;

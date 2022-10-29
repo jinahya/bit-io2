@@ -33,7 +33,7 @@ import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class String_CompressedAscii_Printable_Wr_Test {
+class String_Wr_CompressedAscii_PrintableOnly_Test {
 
     private static Stream<String> randomValueStream() {
         return ByteArray_Wr_CompressedAscii_Printable_Test.randomBytesStream()

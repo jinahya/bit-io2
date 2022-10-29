@@ -1,14 +1,9 @@
 package com.github.jinahya.bit.io;
 
-class _DoubleStringArrayReader
-        extends ArrayReader<String[]> {
+class _StringArrayReader
+        extends _ArrayReader<String> {
 
-    public _DoubleStringArrayReader() {
-        super(
-                i -> {
-                    return new String[0];
-                },
-                String[].class
-        );
+    _StringArrayReader() {
+        super(i -> "", String.class);
     }
 }

@@ -28,9 +28,9 @@ import java.util.Objects;
  *
  * @param <T> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ArrayReader
+ * @see _ArrayReader
  */
-class ArrayWriter<T>
+class _ArrayWriter<T>
         implements BitWriter<T[]> {
 
     /**
@@ -38,7 +38,7 @@ class ArrayWriter<T>
      *
      * @param elementWriter the writer for reading each element.
      */
-    public ArrayWriter(final BitWriter<? super T> elementWriter) {
+    public _ArrayWriter(final BitWriter<? super T> elementWriter) {
         super();
         this.elementWriter = Objects.requireNonNull(elementWriter, "elementWriter is null");
     }

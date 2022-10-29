@@ -45,7 +45,7 @@ final class BitIoConstraints {
 
     static int requirePositive(final int value) {
         if (value <= 0) {
-            throw new IllegalArgumentException("non-positive value: " + value);
+            throw new IllegalArgumentException("not positive: " + value);
         }
         return value;
     }

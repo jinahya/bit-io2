@@ -1,9 +1,10 @@
 package com.github.jinahya.bit.io;
 
-class _StringArrayReader
-        extends ArrayReader<String> {
+class _StringArrayWriter
+        extends _ArrayWriter<String> {
 
-    _StringArrayReader() {
-        super(i -> "", String.class);
+    _StringArrayWriter() {
+        super((o, v) -> {
+        });
     }
 }

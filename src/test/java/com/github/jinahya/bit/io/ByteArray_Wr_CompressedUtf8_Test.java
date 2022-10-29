@@ -24,8 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.RandomStringGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,10 +38,10 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ByteArray_CompressedUtf8_Wr_Test {
+class ByteArray_Wr_CompressedUtf8_Test {
 
     static byte[] randomBytes() {
-        final int length = ThreadLocalRandom.current().nextInt(1024);
+        final int length = ThreadLocalRandom.current().nextInt(131072);
         return new RandomStringGenerator.Builder().build().generate(length).getBytes(StandardCharsets.UTF_8);
     }
 
@@ -50,23 +50,12 @@ class ByteArray_CompressedUtf8_Wr_Test {
                 .mapToObj(i -> randomBytes());
     }
 
-    static Stream<Arguments> randomBytesAndLengthSizeStream() {
-        return randomBytesStream()
-                .map(b -> Arguments.of(b, BitIoUtils.size(b.length)));
-    }
-
-    @MethodSource({"randomBytesAndLengthSizeStream"})
-    @ParameterizedTest
-    void wr__(final byte[] expected, final int lengthSize) throws IOException {
+    private void run(final byte[] expected) throws IOException {
         final var baos = new ByteArrayOutputStream();
         final var output = BitOutputFactory.from(baos);
         final var writer = ByteArrayWriter.compressedUtf8();
         writer.write(output, expected);
         final var padded = output.align(1);
-        if (false) {
-            final var given = expected.length + Integer.BYTES;
-            log.debug("given: {}, written: {}, rate: {}", given, baos.size(), (baos.size() / (double) given) * 100.0d);
-        }
         final var bais = new ByteArrayInputStream(baos.toByteArray());
         final var input = BitInputFactory.from(bais);
         final var reader = ByteArrayReader.compressedUtf8();
@@ -74,11 +63,29 @@ class ByteArray_CompressedUtf8_Wr_Test {
         final var discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
         assertThat(discarded).isEqualTo(padded);
+        if (true) {
+            final var given = expected.length + Integer.BYTES;
+            final var written = baos.size();
+            final double ratio = (written / (double) given) * 100.0d;
+            log.debug("given: {}, written: {}, ratio: {}", given, written, ratio);
+        }
+    }
+
+    @MethodSource({"randomBytesStream"})
+    @ParameterizedTest
+    void __random(final byte[] expected) throws IOException {
+        run(expected);
+    }
+
+    @ValueSource(ints = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 128, 256, 512, 1024})
+    @ParameterizedTest
+    void __zeros(final int length) throws IOException {
+        final byte[] expected = new byte[length];
+        run(expected);
     }
 
     @Test
-    void wr__nullable() throws IOException {
-        final int lengthSize = Integer.SIZE - 1;
+    void __nullable() throws IOException {
         final var baos = new ByteArrayOutputStream();
         final var output = BitOutputFactory.from(baos);
         final var writer = ByteArrayWriter.compressedUtf8().nullable();

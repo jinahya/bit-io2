@@ -54,7 +54,7 @@ class User {
         }
 
         final BitReader<String> nameReader
-                = new StringReader(ByteArrayReader.compressedUtf8(NAME_LENGTH_SIZE), StandardCharsets.UTF_8);
+                = new StringReader(ByteArrayReader.compressedUtf8(), StandardCharsets.UTF_8);
     }
 
     static class Writer
@@ -67,7 +67,7 @@ class User {
         }
 
         final BitWriter<String> nameWriter
-                = new StringWriter(ByteArrayWriter.compressedUtf8(NAME_LENGTH_SIZE), StandardCharsets.UTF_8);
+                = new StringWriter(ByteArrayWriter.compressedUtf8(), StandardCharsets.UTF_8);
     }
 
     static User newRandomInstance() {

@@ -21,61 +21,43 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.function.IntFunction;
 
 /**
- * A reader for reading arrays of bytes.
+ * A reader for reading lists of specific element type.
  *
  * @param <T> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ArrayWriter
+ * @see ListWriter
  */
-class ArrayReader<T>
-        implements BitReader<T[]> {
+class ListReader<T>
+        implements BitReader<List<T>> {
 
     /**
-     * Creates a new instance for reading array of specified element type using specified element reader.
+     * Creates a new instance for reading lists of specified element type.
      *
      * @param elementReader the reader for reading each element.
-     * @param arrayCreator  a function for creating an array of {@code T}.
      */
-    public ArrayReader(final BitReader<? extends T> elementReader, final IntFunction<? extends T[]> arrayCreator) {
+    public ListReader(final BitReader<? extends T> elementReader) {
         super();
         this.elementReader = Objects.requireNonNull(elementReader, "elementReader is null");
-        this.arrayCreator = Objects.requireNonNull(arrayCreator, "arrayCreator is null");
-    }
-
-    /**
-     * Creates a new instance for reading array of specified element type using specified element reader.
-     *
-     * @param elementReader the reader for reading each element.
-     * @param elementClass  the type of elements in arrays.
-     */
-    @SuppressWarnings({"unchecked"})
-    public ArrayReader(final BitReader<? extends T> elementReader, final Class<T> elementClass) {
-        this(elementReader, l -> (T[]) Array.newInstance(elementClass, l));
     }
 
     @Override
-    public T[] read(final BitInput input) throws IOException {
+    public List<T> read(final BitInput input) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        final int length = BitIoUtils.readCountCompressed(input);
-        final T[] value = arrayCreator.apply(length);
-        for (int i = 0; i < value.length; i++) {
-            value[i] = elementReader.read(input);
+        final int count = BitIoUtils.readCountCompressed(input);
+        final List<T> value = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            value.add(elementReader.read(input));
         }
         return value;
     }
 
     /**
-     * The reader for reading array elements.
+     * The reader for reading each element.
      */
     private final BitReader<? extends T> elementReader;
-
-    /**
-     * A function for creating an array of given length.
-     */
-    private final IntFunction<? extends T[]> arrayCreator;
 }

@@ -28,6 +28,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
@@ -233,29 +234,20 @@ class BitIoUtilsTest {
     @Nested
     class CompressedCountTest {
 
-        @DisplayName("writeCompressedCount(0) -> readCompressedCount()0")
-        @Test
-        void test_Zero_Zero() throws IOException {
+        @DisplayName("writeCompressedCount(expeccted) -> readCompressedCount()expected")
+        @ValueSource(ints = {0, 2, 3, 4, 5, 6, 7, 8, 9})
+        @ParameterizedTest
+        void _Expected_(final int expected) throws IOException {
             final int actual = BitIoTestUtils.wr1u(o -> {
-                BitIoUtils.writeCountCompressed(o, 0);
+                BitIoUtils.writeCountCompressed(o, expected);
                 return BitIoUtils::readCountCompressed;
             });
-            assertThat(actual).isZero();
-        }
-
-        @DisplayName("writeCompressedCount(1) -> readCompressedCount()1")
-        @Test
-        void test_One_One() throws IOException {
-            final int actual = BitIoTestUtils.wr1u(o -> {
-                BitIoUtils.writeCountCompressed(o, 1);
-                return BitIoUtils::readCountCompressed;
-            });
-            assertThat(actual).isOne();
+            assertThat(actual).isEqualTo(expected);
         }
 
         @DisplayName("writeCompressedCount(MAX_VALUE) -> readCompressedCount()MAX_VALUE")
         @Test
-        void test_MAX_MAX() throws IOException {
+        void _MAX_MAX() throws IOException {
             final int actual = BitIoTestUtils.wr1u(o -> {
                 BitIoUtils.writeCountCompressed(o, Integer.MAX_VALUE);
                 return BitIoUtils::readCountCompressed;

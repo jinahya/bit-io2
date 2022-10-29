@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * A value reader for reading string values.
+ * A value reader for reading {@code String} values.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see StringWriter
@@ -39,10 +39,10 @@ public class StringReader
      * @param printableOnly a flag for printable characters only; {@code true} for printable characters; {@code false}
      *                      otherwise.
      * @return a new instance.
-     * @see ByteArrayReader#compressedAscii31(boolean)
+     * @see ByteArrayReader#compressedAscii(boolean)
      */
     public static StringReader compressedAscii(final boolean printableOnly) {
-        final ByteArrayReader delegate = ByteArrayReader.compressedAscii31(printableOnly);
+        final ByteArrayReader delegate = ByteArrayReader.compressedAscii(printableOnly);
         return new StringReader(delegate, StandardCharsets.US_ASCII);
     }
 
@@ -50,10 +50,10 @@ public class StringReader
      * Creates a new instance for reading {@link StandardCharsets#UTF_8} decoded strings in a compressed-manner.
      *
      * @return a new instance.
-     * @see ByteArrayReader#compressedUtf831()
+     * @see ByteArrayReader#compressedUtf8()
      */
     public static StringReader compressedUtf8() {
-        final ByteArrayReader delegate = ByteArrayReader.compressedUtf831();
+        final ByteArrayReader delegate = ByteArrayReader.compressedUtf8();
         return new StringReader(delegate, StandardCharsets.UTF_8);
     }
 
@@ -62,7 +62,6 @@ public class StringReader
      *
      * @param delegate a reader for reading encoded bytes.
      * @param charset  a charset for decoding a value.
-     * @see ByteArrayReader#of318()
      */
     public StringReader(final ByteArrayReader delegate, final Charset charset) {
         super(delegate);

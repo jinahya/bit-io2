@@ -30,9 +30,9 @@ import java.util.function.IntFunction;
  *
  * @param <T> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ArrayWriter
+ * @see _ArrayWriter
  */
-class ArrayReader<T>
+class _ArrayReader<T>
         implements BitReader<T[]> {
 
     /**
@@ -41,7 +41,7 @@ class ArrayReader<T>
      * @param elementReader the reader for reading each element.
      * @param arrayCreator  a function for creating an array of {@code T}.
      */
-    public ArrayReader(final BitReader<? extends T> elementReader, final IntFunction<? extends T[]> arrayCreator) {
+    public _ArrayReader(final BitReader<? extends T> elementReader, final IntFunction<? extends T[]> arrayCreator) {
         super();
         this.elementReader = Objects.requireNonNull(elementReader, "elementReader is null");
         this.arrayCreator = Objects.requireNonNull(arrayCreator, "arrayCreator is null");
@@ -54,7 +54,7 @@ class ArrayReader<T>
      * @param elementClass  the type of elements in arrays.
      */
     @SuppressWarnings({"unchecked"})
-    public ArrayReader(final BitReader<? extends T> elementReader, final Class<T> elementClass) {
+    public _ArrayReader(final BitReader<? extends T> elementReader, final Class<T> elementClass) {
         this(elementReader, l -> (T[]) Array.newInstance(elementClass, l));
     }
 
