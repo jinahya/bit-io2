@@ -85,6 +85,49 @@ final class BitIoUtils {
         return value & (-1 >>> (Integer.SIZE - size));
     }
 
+    private static final int SIZE_COUNT = 31;
+
+    static void writeCount(final BitOutput output, final int count) throws IOException {
+        assert output != null;
+        assert count >= 0;
+        output.writeInt(true, SIZE_COUNT, count);
+    }
+
+    static int readCount(final BitInput input) throws IOException {
+        assert input != null;
+        return input.readInt(true, SIZE_COUNT);
+    }
+
+    private static final int SIZE_SIZE_COUNT_COMPRESSED = 4;
+
+    static void writeCountCompressed(final BitOutput output, final int count) throws IOException {
+        assert output != null;
+        assert count >= 0;
+        if (count <= 65536) { // 21 bits in maximum; 1 + 4 + 16
+            output.writeBoolean(true); // compressed
+            final int size = Integer.max((int) Math.ceil(Math.log(count) / Math.log(2)), 1);
+            assert size <= Short.SIZE; // [1..16]
+            output.writeInt(true, SIZE_SIZE_COUNT_COMPRESSED, size - 1); // 4 bits for [0..15]
+            output.writeInt(true, size, count); // 16 bits in maximum
+            return;
+        }
+        output.writeBoolean(false); // uncompressed
+        writeCount(output, count);
+    }
+
+    static int readCountCompressed(final BitInput input) throws IOException {
+        if (input.readBoolean()) { // compressed
+            final int size = input.readInt(true, SIZE_SIZE_COUNT_COMPRESSED) + 1; // [0..15] + 1 -> [1..16]
+            assert size > 0;
+            assert size <= 16;
+            final int count = input.readInt(true, size);
+            assert count >= 0;
+            assert count <= 65536;
+            return count;
+        }
+        return readCount(input);
+    }
+
     private static final int[] BIT_MASKS = new int[30]; // (size -1) 를 피하기 위해 [0] 은 버린다.
 
     static {
