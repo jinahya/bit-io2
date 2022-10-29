@@ -65,7 +65,7 @@ class ByteArray_CompressedAscii_Printable_Wr_Test {
     private void run(final byte[] expected, final int lengthSize) throws IOException {
         final var baos = new ByteArrayOutputStream();
         final var output = new ByteOutputAdapter(new StreamByteOutput(baos));
-        final var writer = ByteArrayWriter.compressedAscii(lengthSize, true);
+        final var writer = ByteArrayWriter.compressedAscii(true);
         writer.write(output, expected);
         final var padded = output.align(1);
         if (false) {
@@ -74,7 +74,7 @@ class ByteArray_CompressedAscii_Printable_Wr_Test {
         }
         final var bais = new ByteArrayInputStream(baos.toByteArray());
         final var input = new ByteInputAdapter(new StreamByteInput(bais));
-        final var reader = ByteArrayReader.compressedAscii(lengthSize, true);
+        final var reader = ByteArrayReader.compressedAscii(true);
         final var actual = reader.read(input);
         final var discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
@@ -123,12 +123,12 @@ class ByteArray_CompressedAscii_Printable_Wr_Test {
         final var printableOnly = true;
         final var baos = new ByteArrayOutputStream();
         final var output = new ByteOutputAdapter(new StreamByteOutput(baos));
-        final var writer = ByteArrayWriter.compressedAscii(lengthSize, printableOnly).nullable();
+        final var writer = ByteArrayWriter.compressedAscii(printableOnly).nullable();
         writer.write(output, null);
         final var padded = output.align(1);
         final var bais = new ByteArrayInputStream(baos.toByteArray());
         final var input = new ByteInputAdapter(new StreamByteInput(bais));
-        final var reader = ByteArrayReader.compressedAscii(lengthSize, printableOnly).nullable();
+        final var reader = ByteArrayReader.compressedAscii(printableOnly).nullable();
         final var actual = reader.read(input);
         final var discarded = input.align(1);
         assertThat(actual).isNull();

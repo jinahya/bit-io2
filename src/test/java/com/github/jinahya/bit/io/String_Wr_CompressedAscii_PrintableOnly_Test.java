@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class String_CompressedAscii_Printable_Wr_Test {
 
     private static Stream<String> randomValueStream() {
-        return ByteArray_CompressedAscii_Printable_Wr_Test.randomBytesStream()
+        return ByteArray_Wr_CompressedAscii_Printable_Test.randomBytesStream()
                 .map(b -> new String(b, StandardCharsets.US_ASCII))
                 ;
     }

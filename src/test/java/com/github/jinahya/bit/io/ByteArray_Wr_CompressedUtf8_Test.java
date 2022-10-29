@@ -60,7 +60,7 @@ class ByteArray_CompressedUtf8_Wr_Test {
     void wr__(final byte[] expected, final int lengthSize) throws IOException {
         final var baos = new ByteArrayOutputStream();
         final var output = BitOutputFactory.from(baos);
-        final var writer = ByteArrayWriter.compressedUtf8(lengthSize);
+        final var writer = ByteArrayWriter.compressedUtf8();
         writer.write(output, expected);
         final var padded = output.align(1);
         if (false) {
@@ -69,7 +69,7 @@ class ByteArray_CompressedUtf8_Wr_Test {
         }
         final var bais = new ByteArrayInputStream(baos.toByteArray());
         final var input = BitInputFactory.from(bais);
-        final var reader = ByteArrayReader.compressedUtf8(lengthSize);
+        final var reader = ByteArrayReader.compressedUtf8();
         final var actual = reader.read(input);
         final var discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
@@ -81,12 +81,12 @@ class ByteArray_CompressedUtf8_Wr_Test {
         final int lengthSize = Integer.SIZE - 1;
         final var baos = new ByteArrayOutputStream();
         final var output = BitOutputFactory.from(baos);
-        final var writer = ByteArrayWriter.compressedUtf8(lengthSize).nullable();
+        final var writer = ByteArrayWriter.compressedUtf8().nullable();
         writer.write(output, null);
         final var padded = output.align(1);
         final var bais = new ByteArrayInputStream(baos.toByteArray());
         final var input = BitInputFactory.from(bais);
-        final var reader = ByteArrayReader.compressedUtf8(lengthSize).nullable();
+        final var reader = ByteArrayReader.compressedUtf8().nullable();
         final var actual = reader.read(input);
         final var discarded = input.align(1);
         assertThat(actual).isNull();
