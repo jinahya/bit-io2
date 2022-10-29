@@ -35,7 +35,7 @@ import java.util.function.LongFunction;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 
-final class BitIoTestUtils {
+public final class BitIoTestUtils {
 
     // ------------------------------------------------------------------------------------------------------------ byte
     static int getRandomSizeForByte(final boolean unsigned) {
@@ -416,7 +416,7 @@ final class BitIoTestUtils {
         });
     }
 
-    static <R> R wr1u(
+    public static <R> R wr1u(
             final CheckedFunction1<? super BitOutput, ? extends CheckedFunction1<? super BitInput, ? extends R>> f1)
             throws IOException {
         return wr1(o -> f1.unchecked().apply(o).unchecked());

@@ -29,14 +29,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class String_CompressedAscii_Printable_Wr_Test {
+class String_Wr_CompressedAscii_Test {
 
-    private static Stream<String> randomValueStream() {
-        return ByteArray_CompressedAscii_Printable_Wr_Test.randomBytesStream()
+    static Stream<String> randomValueStream() {
+        return ByteArray_Wr_CompressedAscii_Test.randomBytesStream()
                 .map(b -> new String(b, StandardCharsets.US_ASCII))
                 ;
     }
@@ -44,28 +44,28 @@ class String_CompressedAscii_Printable_Wr_Test {
     @MethodSource({"randomValueStream"})
     @ParameterizedTest
     void test(final String expected) throws IOException {
-        wr1u(o -> {
-            final var writer = StringWriter.compressedAscii(true);
+        final var printable = false;
+        wr2u(o -> {
+            final var writer = StringWriter.compressedAscii(printable);
             o.writeObject(writer, expected);
             return i -> {
-                final var reader = StringReader.compressedAscii(true);
+                final var reader = StringReader.compressedAscii(printable);
                 final var actual = i.readObject(reader);
                 assertThat(actual).isEqualTo(expected);
-                return null;
             };
         });
     }
 
     @Test
     void nullable() throws IOException {
-        wr1u(o -> {
-            final var writer = StringWriter.compressedAscii(true).nullable();
+        final var printable = false;
+        wr2u(o -> {
+            final var writer = StringWriter.compressedAscii(printable).nullable();
             o.writeObject(writer, null);
             return i -> {
-                final var reader = StringReader.compressedAscii(true).nullable();
+                final var reader = StringReader.compressedAscii(printable).nullable();
                 final var actual = i.readObject(reader);
                 assertThat(actual).isNull();
-                return null;
             };
         });
     }

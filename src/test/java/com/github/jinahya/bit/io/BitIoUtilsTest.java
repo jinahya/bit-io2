@@ -24,10 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
@@ -225,6 +228,53 @@ class BitIoUtilsTest {
                     .extracting(v -> v >> size, InstanceOfAssertFactories.LONG)
                     .as("%d-bit mask right-shifted as %d", size)
                     .isZero();
+        }
+    }
+
+    @Nested
+    class CompressedCountTest {
+
+        @DisplayName("writeCompressedCount(expected) -> readCompressedCount()expected")
+        @ValueSource(ints = {0, 2, 3, 4, 5, 6, 7, 8, 9})
+        @ParameterizedTest
+        void _Written_(final int expected) throws IOException {
+            final int actual = BitIoTestUtils.wr1u(o -> {
+                BitIoUtils.writeCountCompressed(o, expected);
+                return BitIoUtils::readCountCompressed;
+            });
+            assertThat(actual).isEqualTo(expected);
+        }
+
+        @DisplayName("writeCompressedCount(MAX_VALUE) -> readCompressedCount()MAX_VALUE")
+        @Test
+        void _MAX_MAX() throws IOException {
+            final int actual = BitIoTestUtils.wr1u(o -> {
+                BitIoUtils.writeCountCompressed(o, Integer.MAX_VALUE);
+                return BitIoUtils::readCountCompressed;
+            });
+            assertThat(actual).isEqualTo(Integer.MAX_VALUE);
+        }
+
+        @DisplayName("writeCompressedCount(6854) -> readCompressedCount()6854")
+        @Test
+        void _6854() throws IOException {
+            final int expected = 6854;
+            final int actual = BitIoTestUtils.wr1u(o -> {
+                BitIoUtils.writeCountCompressed(o, expected);
+                return BitIoUtils::readCountCompressed;
+            });
+            assertThat(actual).isEqualTo(expected);
+        }
+
+        @DisplayName("writeCompressedCount(random) -> readCompressedCount()expected")
+        @RepeatedTest(8192)
+        void test_Written_Random() throws IOException {
+            final int expected = ThreadLocalRandom.current().nextInt() & Integer.MAX_VALUE;
+            final int actual = BitIoTestUtils.wr1u(o -> {
+                BitIoUtils.writeCountCompressed(o, expected);
+                return BitIoUtils::readCountCompressed;
+            });
+            assertThat(actual).isEqualTo(expected);
         }
     }
 }

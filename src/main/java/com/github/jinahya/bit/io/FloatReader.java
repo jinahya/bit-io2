@@ -241,6 +241,12 @@ public class FloatReader
             significandOnly = new SignificandOnly(significandSize);
         }
 
+        private int readBits(final BitInput input) throws IOException {
+            final int signBitOnlyBits = signBitOnly.readBits(input);
+            final int significandBits = significandOnly.readBits(input);
+            return signBitOnlyBits | significandBits;
+        }
+
         @Override
         public Float read(final BitInput input) throws IOException {
             final int signBitOnlyBits = signBitOnly.readBits(input);
@@ -287,25 +293,52 @@ public class FloatReader
          */
         public CompressedNaN(int significandSize) {
             super();
-            this.significandSize = FloatConstraints.requireValidSignificandSize(significandSize);
-//            if (this.significandSize < 2) {
-//                throw new IllegalArgumentException("significandSize(" + significandSize + ") < 2");
-//            }
+            compressedSubnormal = new CompressedSubnormal(significandSize);
         }
 
         @Override
         public Float read(final BitInput input) throws IOException {
-            int significandBits = input.readInt(true, 1) << FloatConstants.SHIFT_SIGNIFICAND_LEFT_MOST_BIT;
-            if (significandSize > 1) {
-                significandBits |= input.readInt(true, significandSize - 1);
+            if (significandOnly) {
+                return Float.intBitsToFloat(
+                        compressedSubnormal.significandOnly.readBits(input) | FloatConstants.MASK_EXPONENT);
             }
-            if (significandBits == 0) {
-                throw new IOException("significand bits are all zeros");
-            }
-            return Float.intBitsToFloat(significandBits | FloatConstants.MASK_EXPONENT);
+            return Float.intBitsToFloat(compressedSubnormal.readBits(input) | FloatConstants.MASK_EXPONENT);
         }
 
-        private final int significandSize;
+        /**
+         * Returns current value of {@code significandOnly} property.
+         *
+         * @return current value of {@code significandOnly} property.
+         * @apiNote initial value of the property is {@code false}.
+         */
+        public boolean isSignificandOnly() {
+            return significandOnly;
+        }
+
+        /**
+         * Replaces current value of {@code significandOnly} property with specified value.
+         *
+         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for not reading the
+         *                        sign bit; {@code false} for reading the sign bit.
+         */
+        public void setSignificandOnly(final boolean significandOnly) {
+            this.significandOnly = significandOnly;
+        }
+
+        /**
+         * Invokes {@link #setSignificandOnly(boolean)} method with specified arguments and returns this object.
+         *
+         * @param readSignBit the argument to passed to the {@link #setSignificandOnly(boolean)} method.
+         * @return this object.
+         */
+        public CompressedNaN significandOnly(final boolean readSignBit) {
+            setSignificandOnly(readSignBit);
+            return this;
+        }
+
+        private final CompressedSubnormal compressedSubnormal;
+
+        private boolean significandOnly;
     }
 
     static float read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {

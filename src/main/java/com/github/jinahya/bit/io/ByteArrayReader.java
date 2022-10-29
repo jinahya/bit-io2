@@ -26,17 +26,18 @@ import java.io.IOException;
  * A reader for reading arrays of bytes.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ByteArrayWriter
  */
 public class ByteArrayReader
-        extends PrimitiveArrayReader<byte[]> {
+        implements BitReader<byte[]> {
 
-    static class Unsigned
+    private static class Unsigned
             extends ByteArrayReader {
 
         private static final boolean UNSIGNED = true;
 
-        Unsigned(final int lengthSize, final int elementSize) {
-            super(lengthSize, BitIoConstraints.requireValidSizeForByte(UNSIGNED, elementSize));
+        private Unsigned(final int elementSize) {
+            super(BitIoConstraints.requireValidSizeForByte(UNSIGNED, elementSize));
         }
 
         @Override
@@ -48,14 +49,12 @@ public class ByteArrayReader
     /**
      * Creates a new instance for reading an array of unsigned bytes.
      *
-     * @param lengthSize  a number of bits for the length of the array; between {@code 1} (inclusive) and
-     *                    {@value Integer#SIZE} (exclusive).
      * @param elementSize a number of bits for each element in the array; between {@code 1} (inclusive) and
      *                    {@value Byte#SIZE} (exclusive).
      * @return a new instance.
      */
-    public static ByteArrayReader unsigned(final int lengthSize, final int elementSize) {
-        return new Unsigned(lengthSize, elementSize);
+    public static ByteArrayReader unsigned(final int elementSize) {
+        return new Unsigned(elementSize);
     }
 
     private static class CompressedAscii
@@ -66,54 +65,44 @@ public class ByteArrayReader
          *
          * @see <a href="https://en.wikipedia.org/wiki/ASCII#Printable_characters">Printable characters</a>
          */
-        private static class Printable
+        private static class PrintableOnly
                 extends CompressedAscii {
 
-            Printable(final int lengthSize) {
-                super(lengthSize);
+            private PrintableOnly() {
+                super();
             }
 
             @Override
             byte readElement(final BitInput input) throws IOException {
-                final int e = input.readInt(true, 1);
-                if (e == 0b0) {
+                if (input.readBoolean()) {
                     return (byte) (input.readInt(true, 6) + 0x20);
                 }
                 return (byte) (input.readInt(true, 5) + 0x60);
             }
         }
 
-        private CompressedAscii(final int lengthSize) {
-            super(lengthSize, 7);
+        private CompressedAscii() {
+            super(7);
+        }
+
+        @Override
+        byte readElement(final BitInput input) throws IOException {
+            return input.readByte(true, elementSize);
         }
     }
 
     /**
      * Creates a new instance for reading arrays of ASCII bytes.
      *
-     * @param lengthSize    a number of bits for the length of arrays; between {@code 1} (inclusive) and
-     *                      {@value Integer#SIZE} (exclusive).
      * @param printableOnly a flag for printable characters only; {@code true} for printable characters only;
      *                      {@code false} otherwise.
      * @return a new instance.
      */
-    public static ByteArrayReader compressedAscii(final int lengthSize, final boolean printableOnly) {
+    public static ByteArrayReader compressedAscii(final boolean printableOnly) {
         if (printableOnly) {
-            return new CompressedAscii.Printable(lengthSize);
+            return new CompressedAscii.PrintableOnly();
         }
-        return new CompressedAscii(lengthSize);
-    }
-
-    /**
-     * Creates a new instance, for reading arrays of ASCII bytes, which reads an unsigned {@code 31}-bit int value for
-     * the length of arrays.
-     *
-     * @param printableOnly a flag for printable characters only; {@code true} for printable characters only;
-     *                      {@code false} otherwise.
-     * @return a new instance.
-     */
-    public static ByteArrayReader compressedAscii31(final boolean printableOnly) {
-        return compressedAscii(Integer.SIZE - 1, printableOnly);
+        return new CompressedAscii();
     }
 
     /**
@@ -122,8 +111,8 @@ public class ByteArrayReader
     private static class CompressedUtf8
             extends ByteArrayReader {
 
-        private CompressedUtf8(final int lengthSize) {
-            super(lengthSize, Byte.SIZE);
+        private CompressedUtf8() {
+            super(Byte.SIZE);
         }
 
         @Override
@@ -154,62 +143,29 @@ public class ByteArrayReader
     }
 
     /**
-     * Creates a new instance for reading an array of UTF-8 bytes in a compressed-manner.
-     *
-     * @param lengthSize a number of bits for the length of an array.
-     * @return a new instance.
-     */
-    public static ByteArrayReader compressedUtf8(final int lengthSize) {
-        return new CompressedUtf8(lengthSize);
-    }
-
-    /**
-     * Creates a new instance, for reading an array of UTF-8 bytes in a compressed-manner, which reads an unsigned
-     * {@code 31}-bit {@code int} value for length of the array.
+     * Creates a new instance writes UTF-8 byte arrays in a compressed manner.
      *
      * @return a new instance.
+     * @see ByteArrayWriter#compressedUtf8()
      */
-    public static ByteArrayReader compressedUtf831() {
-        return compressedUtf8(Integer.SIZE - 1);
-    }
-
-    /**
-     * Returns a new instance which reads an unsigned {@code 31}-bit {@code int} value for the length of arrays, and
-     * reads specified number of bits for each element.
-     *
-     * @param elementSize the number of bits for each byte.
-     * @return a new instance.
-     */
-    public static ByteArrayReader of31(final int elementSize) {
-        return new ByteArrayReader(Integer.SIZE - 1, elementSize);
-    }
-
-    /**
-     * Returns a new instance which reads an unsigned {@code 31}-bit {@code int} value for the length of arrays, and
-     * reads {@value java.lang.Byte#SIZE} byte for each element.
-     *
-     * @return a new instance.
-     */
-    public static ByteArrayReader of318() {
-        return of31(Byte.SIZE);
+    public static ByteArrayReader compressedUtf8() {
+        return new CompressedUtf8();
     }
 
     /**
      * Creates a new instance.
      *
-     * @param lengthSize  a number of bits for the length of the array; between {@code 1} (inclusive) and
-     *                    {@value Integer#SIZE} (inclusive).
      * @param elementSize a number of bits for each element in the array; between {@code 1} and {@value Byte#SIZE}, both
      *                    inclusive.
      */
-    ByteArrayReader(final int lengthSize, final int elementSize) {
-        super(lengthSize);
+    ByteArrayReader(final int elementSize) {
+        super();
         this.elementSize = BitIoConstraints.requireValidSizeForByte(false, elementSize);
     }
 
     @Override
     public byte[] read(final BitInput input) throws IOException {
-        final int length = readLength(input);
+        final int length = BitIoUtils.readCountCompressed(input);
         final byte[] value = new byte[length];
         readElements(input, value);
         return value;

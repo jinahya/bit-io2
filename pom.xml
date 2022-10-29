@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.github.jinahya</groupId>
     <artifactId>jinahya-parent</artifactId>
-    <version>0.8.8</version>
+    <version>0.8.9</version>
   </parent>
 
   <artifactId>bit-io2</artifactId>
@@ -29,9 +29,6 @@
     </license>
   </licenses>
 
-  <!--  <prerequisites>-->
-  <!--    <maven>3.5.4</maven> &lt;!&ndash; just for versions-maven-plugin &ndash;&gt;-->
-  <!--  </prerequisites>-->
   <scm>
     <connection>scm:git:git@github.com:jinahya/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:jinahya/${project.artifactId}.git</developerConnection>
@@ -44,11 +41,9 @@
   </issueManagement>
 
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-    <!--    <maven.compiler.release>${maven.compiler.target}</maven.compiler.release>-->
-    <maven.compiler.release>8</maven.compiler.release>
-    <!--    <maven.compiler.testSource>${maven.compiler.source}</maven.compiler.testSource>-->
+    <maven.compiler.release>${maven.compiler.target}</maven.compiler.release>
     <maven.compiler.testSource>17</maven.compiler.testSource>
     <maven.compiler.testTarget>${maven.compiler.testSource}</maven.compiler.testTarget>
     <maven.compiler.testRelease>${maven.compiler.testTarget}</maven.compiler.testRelease>
@@ -57,14 +52,14 @@
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-surefire>3.0.0-M7</version.maven-surefire>
     <version.org.junit.jupiter>5.9.1</version.org.junit.jupiter>
-    <version.org.mockito>4.8.0</version.org.mockito>
+    <version.org.mockito>4.8.1</version.org.mockito>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.4.1</version>
+      <version>1.4.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -83,6 +78,12 @@
       <groupId>io.vavr</groupId>
       <artifactId>vavr</artifactId>
       <version>1.0.0-alpha-4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.0.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -176,7 +177,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.12.0</version>
+          <version>2.13.0</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -189,7 +190,6 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <!--        <version>4.2.1</version>-->
         <version>5.1.4</version>
         <executions>
           <execution>
@@ -212,54 +212,17 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
-          <!--          <execution>-->
-          <!--            <id>enforce</id>-->
-          <!--            <goals>-->
-          <!--              <goal>enforce</goal>-->
-          <!--            </goals>-->
-          <!--            <configuration>-->
-          <!--              <rules>-->
-          <!--                <dependencyConvergence />-->
-          <!--                <requireJavaVersion>-->
-          <!--                  <version>[1.8.0,)</version>-->
-          <!--                </requireJavaVersion>-->
-          <!--                <requireMavenVersion>-->
-          <!--                  <version>[3.5.4,)</version>-->
-          <!--                </requireMavenVersion>-->
-          <!--              </rules>-->
-          <!--            </configuration>-->
-          <!--          </execution>-->
           <execution>
-            <id>enforce-dependency-convergence</id>
+            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
                 <dependencyConvergence/>
-              </rules>
-            </configuration>
-          </execution>
-          <execution>
-            <id>enforce-require-java-version</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
                 <requireJavaVersion>
-                  <version>[1.8.0,)</version>
+                  <version>[17.0.0,)</version>
                 </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-          <execution>
-            <id>enforce-require-maven-version</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
                 <requireMavenVersion>
                   <version>[3.5.4,)</version>
                 </requireMavenVersion>

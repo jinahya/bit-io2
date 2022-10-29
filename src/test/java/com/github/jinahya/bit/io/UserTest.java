@@ -32,9 +32,9 @@ class UserTest {
     void wr__single() throws IOException {
         BitIoTestUtils.wr1u(o -> {
             final User expected = User.newRandomInstance();
-            new User.Writer().write(o, expected);
+            new UserWriter().write(o, expected);
             return i -> {
-                final User actual = new User.Reader().read(i);
+                final User actual = new UserReader().read(i);
                 assertThat(actual).isEqualTo(expected);
                 return null;
             };

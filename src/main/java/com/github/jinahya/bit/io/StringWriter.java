@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * A class for writing string values.
+ * A class for writing {@code String} values.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see StringReader
@@ -49,10 +49,9 @@ public class StringWriter
      * Creates a new instance for writing {@link StandardCharsets#UTF_8}-encoded strings in a compressed-manner.
      *
      * @return a new instance.
-     * @see ByteArrayWriter#compressedUtf831()
      */
     public static StringWriter compressedUtf8() {
-        final ByteArrayWriter delegate = ByteArrayWriter.compressedUtf831();
+        final ByteArrayWriter delegate = ByteArrayWriter.compressedUtf8();
         return new StringWriter(delegate, StandardCharsets.UTF_8);
     }
 

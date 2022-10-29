@@ -61,7 +61,7 @@ class ByteArrayTest {
     private void run(final byte[] expected) throws IOException {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final BitOutput output = new ByteOutputAdapter(new StreamByteOutput(baos));
-        final BitWriter<byte[]> writer = new ByteArrayWriter(7, 8);
+        final BitWriter<byte[]> writer = new ByteArrayWriter(8);
         writer.write(output, expected);
         final long padded = output.align(1);
         if (false && expected.length > 0) {
@@ -70,7 +70,7 @@ class ByteArrayTest {
         }
         final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         final BitInput input = new ByteInputAdapter(new StreamByteInput(bais));
-        final BitReader<byte[]> reader = new ByteArrayReader(7, 8);
+        final BitReader<byte[]> reader = new ByteArrayReader(8);
         final byte[] actual = reader.read(input);
         final long discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
