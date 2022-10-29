@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * A value reader for reading filtered values.
@@ -34,26 +35,26 @@ import java.util.Objects;
 public abstract class FilterBitReader<T, U>
         implements BitReader<T> {
 
-//    /**
-//     * Creates a new instance which reads filtered values.
-//     *
-//     * @param delegate a reader for reading original values.
-//     * @param mapper   a mapper for filtering values.
-//     * @param <T>      filtered value type parameter
-//     * @param <U>      original value type parameter
-//     * @return a new instance.
-//     * @see FilterBitWriter#mapping(BitWriter, Function)
-//     */
-//    public static <T, U> FilterBitReader<T, U> mapping(final BitReader<? extends U> delegate,
-//                                                       final Function<? super U, ? extends T> mapper) {
-//        Objects.requireNonNull(mapper, "mapper is null");
-//        return new FilterBitReader<T, U>(delegate) {
-//            @Override
-//            protected T filter(final U value) {
-//                return mapper.apply(value);
-//            }
-//        };
-//    }
+    /**
+     * Creates a new instance which reads filtered values.
+     *
+     * @param delegate a reader for reading original values.
+     * @param mapper   a mapper for filtering values.
+     * @param <T>      filtered value type parameter
+     * @param <U>      original value type parameter
+     * @return a new instance.
+     * @see FilterBitWriter#mapping(BitWriter, Function)
+     */
+    public static <T, U> FilterBitReader<T, U> mapping(final BitReader<? extends U> delegate,
+                                                       final Function<? super U, ? extends T> mapper) {
+        Objects.requireNonNull(mapper, "mapper is null");
+        return new FilterBitReader<T, U>(delegate) {
+            @Override
+            protected T filter(final U value) {
+                return mapper.apply(value);
+            }
+        };
+    }
 
     static final class Nullable<T>
             extends FilterBitReader<T, T> {
@@ -70,11 +71,10 @@ public abstract class FilterBitReader<T, U>
         @Override
         public T read(final BitInput input) throws IOException {
             Objects.requireNonNull(input, "input is null");
-            final boolean nonnull = input.readBoolean();
-            if (nonnull) {
-                return super.read(input);
+            if (input.readBoolean()) { // null
+                return null;
             }
-            return null;
+            return super.read(input);
         }
 
         @Override
