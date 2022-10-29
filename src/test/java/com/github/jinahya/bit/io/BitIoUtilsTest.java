@@ -234,10 +234,10 @@ class BitIoUtilsTest {
     @Nested
     class CompressedCountTest {
 
-        @DisplayName("writeCompressedCount(expeccted) -> readCompressedCount()expected")
+        @DisplayName("writeCompressedCount(expected) -> readCompressedCount()expected")
         @ValueSource(ints = {0, 2, 3, 4, 5, 6, 7, 8, 9})
         @ParameterizedTest
-        void _Expected_(final int expected) throws IOException {
+        void _Written_(final int expected) throws IOException {
             final int actual = BitIoTestUtils.wr1u(o -> {
                 BitIoUtils.writeCountCompressed(o, expected);
                 return BitIoUtils::readCountCompressed;

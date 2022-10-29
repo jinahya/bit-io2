@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ListReader
  */
-class ListWriter<T>
+public class ListWriter<T>
         implements BitWriter<List<T>> {
 
     /**

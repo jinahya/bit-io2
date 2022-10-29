@@ -20,63 +20,37 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.RandomStringGenerator;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ThreadLocalRandom;
 
-import static java.util.concurrent.ThreadLocalRandom.current;
-
+@Getter
 @EqualsAndHashCode
 @ToString
 @RequiredArgsConstructor
 @Slf4j
-class User {
+public class User {
 
-    private static final int NAME_LENGTH_SIZE = 9;
-
-    private static final boolean AGE_UNSIGNED = true;
-
-    private static final int AGE_SIZE = 7;
-
-    static class Reader
-            implements BitReader<User> {
-
-        @Override
-        public User read(final BitInput input) throws IOException {
-            final String name = nameReader.read(input);
-            final int age = input.readInt(AGE_UNSIGNED, AGE_SIZE);
-            return new User(name, age);
-        }
-
-        final BitReader<String> nameReader
-                = new StringReader(ByteArrayReader.compressedUtf8(), StandardCharsets.UTF_8);
-    }
-
-    static class Writer
-            implements BitWriter<User> {
-
-        @Override
-        public void write(final BitOutput output, final User value) throws IOException {
-            nameWriter.write(output, value.name);
-            output.writeInt(AGE_UNSIGNED, AGE_SIZE, value.age);
-        }
-
-        final BitWriter<String> nameWriter
-                = new StringWriter(ByteArrayWriter.compressedUtf8(), StandardCharsets.UTF_8);
-    }
-
-    static User newRandomInstance() {
-        final String name = new RandomStringGenerator.Builder().build().generate(current().nextInt(128));
-        final int age = current().nextInt(128);
+    public static User newRandomInstance() {
+        final String name = new RandomStringGenerator.Builder().build().generate(
+                ThreadLocalRandom.current().nextInt(128)
+        );
+        final int age = ThreadLocalRandom.current().nextInt(128);
         return new User(name, age);
     }
 
-    final String name;
+    @NotBlank
+    private final String name;
 
-    final int age;
+    @Max(127)
+    @PositiveOrZero
+    private final int age;
 }
