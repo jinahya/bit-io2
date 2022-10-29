@@ -20,6 +20,24 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-class UserTest {
+import org.junit.jupiter.api.RepeatedTest;
 
+import java.io.IOException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class User_Wr_Test {
+
+    @RepeatedTest(1)
+    void wr__single() throws IOException {
+        BitIoTestUtils.wr1u(o -> {
+            final var expected = User.newRandomInstance();
+            new UserWriter().write(o, expected);
+            return i -> {
+                final var actual = new UserReader().read(i);
+                assertThat(actual).isEqualTo(expected);
+                return null;
+            };
+        });
+    }
 }

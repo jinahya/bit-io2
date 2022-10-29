@@ -25,32 +25,35 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.RandomStringGenerator;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+@Setter
 @Getter
 @EqualsAndHashCode
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Slf4j
 public class User {
 
     public static User newRandomInstance() {
-        final String name = new RandomStringGenerator.Builder().build().generate(
+        final var instance = new User();
+        instance.setName(new RandomStringGenerator.Builder().build().generate(
                 ThreadLocalRandom.current().nextInt(128)
-        );
-        final int age = ThreadLocalRandom.current().nextInt(128);
-        return new User(name, age);
+        ));
+        instance.setAge(ThreadLocalRandom.current().nextInt(128));
+        return instance;
     }
 
     @NotBlank
-    private final String name;
+    private String name;
 
     @Max(127)
     @PositiveOrZero
-    private final int age;
+    private int age;
 }

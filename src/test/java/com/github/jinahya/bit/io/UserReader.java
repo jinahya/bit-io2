@@ -7,9 +7,10 @@ public class UserReader
 
     @Override
     public User read(final BitInput input) throws IOException {
-        final String name = nameReader.read(input);
-        final int age = input.readInt(true, 7);
-        return new User(name, age);
+        final var value = new User();
+        value.setName(nameReader.read(input));
+        value.setAge(input.readInt(true, 7));
+        return value;
     }
 
     private final BitReader<String> nameReader = StringReader.compressedUtf8();
