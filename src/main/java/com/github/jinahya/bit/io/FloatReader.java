@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -210,24 +211,28 @@ public class FloatReader
     public static class CompressedSubnormal
             implements BitReader<Float> {
 
-        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
+//        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
+//
+//        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
 
-        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-
-        static BitReader<Float> getCachedInstance(final int significandSize) {
-            return CACHED_INSTANCES.computeIfAbsent(
-                    FloatCacheKey.of(significandSize),
-                    k -> new CompressedSubnormal(k.getSignificandSize()) {
-                        @Override
-                        public BitReader<Float> nullable() {
-                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    FloatCacheKey.copyOf(k),
-                                    k2 -> super.nullable()
-                            );
-                        }
-                    }
-            );
-        }
+//        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new HashMap<>();
+//
+//        private static final _Cache<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new _Cache<>(
+//                k -> new CompressedSubnormal(k.getSignificandSize()) {
+//                    @Override
+//                    public BitReader<Float> nullable() {
+//                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(k, k2 -> super.nullable());
+//                    }
+//                }
+//        );
+//
+//        static {
+//            CACHED_INSTANCES.setConsumer(CACHED_INSTANCES_NULLABLE::remove);
+//        }
+//
+//        static BitReader<Float> getCachedInstance(final int significandSize) {
+//            return CACHED_INSTANCES.get(FloatCacheKey.of(significandSize));
+//        }
 
         /**
          * Creates a new instance with specified number bits for the {@code significand} part.
@@ -265,24 +270,24 @@ public class FloatReader
     public static class CompressedNaN
             implements BitReader<Float> {
 
-        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
-
-        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-
-        static BitReader<Float> getCachedInstance(final int significandSize) {
-            return CACHED_INSTANCES.computeIfAbsent(
-                    FloatCacheKey.of(significandSize),
-                    k -> new CompressedNaN(k.getSignificandSize()) {
-                        @Override
-                        public BitReader<Float> nullable() {
-                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-                                    FloatCacheKey.copyOf(k),
-                                    k2 -> super.nullable()
-                            );
-                        }
-                    }
-            );
-        }
+//        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
+//
+//        private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
+//
+//        static BitReader<Float> getCachedInstance(final int significandSize) {
+//            return CACHED_INSTANCES.computeIfAbsent(
+//                    FloatCacheKey.of(significandSize),
+//                    k -> new CompressedNaN(k.getSignificandSize()) {
+//                        @Override
+//                        public BitReader<Float> nullable() {
+//                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
+//                                    FloatCacheKey.copyOf(k),
+//                                    k2 -> super.nullable()
+//                            );
+//                        }
+//                    }
+//            );
+//        }
 
         /**
          * Creates a new instance with specified number bits for the {@code significand} part.

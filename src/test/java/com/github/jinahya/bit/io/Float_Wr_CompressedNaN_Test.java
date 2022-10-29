@@ -52,40 +52,21 @@ class Float_Wr_CompressedNaN_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__(final Float value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new FloatWriter.CompressedNaN(FloatConstants.SIZE_SIGNIFICAND).write(o, value);
-                return i -> new FloatReader.CompressedNaN(FloatConstants.SIZE_SIGNIFICAND).read(i);
-            });
-            assertThat(actual).isNaN();
-        }
-        {
-            final var actual = wr1u(o -> {
-                FloatWriter.CompressedNaN.getCachedInstance(FloatConstants.SIZE_SIGNIFICAND).write(o, value);
-                return i -> FloatReader.CompressedNaN.getCachedInstance(FloatConstants.SIZE_SIGNIFICAND).read(i);
-            });
-            assertThat(actual).isNaN();
-        }
+        final var actual = wr1u(o -> {
+            new FloatWriter.CompressedNaN(FloatConstants.SIZE_SIGNIFICAND).write(o, value);
+            return i -> new FloatReader.CompressedNaN(FloatConstants.SIZE_SIGNIFICAND).read(i);
+        });
+        assertThat(actual).isNaN();
     }
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__Nullable(final Float value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new FloatWriter.CompressedNaN(FloatConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
-                return i -> new FloatReader.CompressedNaN(FloatConstants.SIZE_SIGNIFICAND).nullable().read(i);
-            });
-            assertThat(actual).isNaN();
-        }
-        {
-            final var actual = wr1u(o -> {
-                FloatWriter.CompressedNaN.getCachedInstance(FloatConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
-                return i -> FloatReader.CompressedNaN.getCachedInstance(FloatConstants.SIZE_SIGNIFICAND).nullable()
-                        .read(i);
-            });
-            assertThat(actual).isNaN();
-        }
+        final var actual = wr1u(o -> {
+            new FloatWriter.CompressedNaN(FloatConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
+            return i -> new FloatReader.CompressedNaN(FloatConstants.SIZE_SIGNIFICAND).nullable().read(i);
+        });
+        assertThat(actual).isNaN();
     }
 
     @Test

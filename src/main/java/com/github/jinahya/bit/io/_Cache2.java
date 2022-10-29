@@ -6,35 +6,30 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 // https://stackoverflow.com/a/16991188/330457
-final class _Cache<K, V> {
+final class _Cache2<K, V> {
 
-    _Cache(final Function<? super K, ? extends V> mapper) {
+    _Cache2() {
         super();
-        this.mapper = Objects.requireNonNull(mapper, "valueMapper is null");
     }
 
     private Reference<V> reference(final V referent) {
         return new SoftReference<>(referent, queue);
     }
 
-    V get(final K key) {
+    V get(final K key, final Function<? super K, ? extends V> mapper) {
         Objects.requireNonNull(key, "key is null");
+        Objects.requireNonNull(mapper, "mapper is null");
         synchronized (this) {
             if (thread == null) {
                 thread = new Thread(() -> {
                     while (true) {
                         try {
-                            final Reference<? extends V> reference = queue.remove();
+                            final Reference<? extends V> dequeuedValueReference = queue.remove();
                             synchronized (references) {
-                                final K removed = keys.remove(reference);
-                                if (consumer != null) {
-                                    consumer.accept(removed);
-                                }
-                                references.remove(removed);
+                                references.remove(keys.remove(dequeuedValueReference));
                             }
                         } catch (final InterruptedException e) {
                             Thread.currentThread().interrupt();
@@ -60,14 +55,6 @@ final class _Cache<K, V> {
         }
         return holder[0];
     }
-
-    void setConsumer(final Consumer<? super K> consumer) {
-        this.consumer = consumer;
-    }
-
-    private final Function<? super K, ? extends V> mapper;
-
-    private Consumer<? super K> consumer;
 
     final Map<K, Reference<V>> references = new HashMap<>();
 

@@ -63,7 +63,7 @@ class ByteArray_Wr_CompressedUtf8_Test {
         final var discarded = input.align(1);
         assertThat(actual).isEqualTo(expected);
         assertThat(discarded).isEqualTo(padded);
-        if (true) {
+        if (false) {
             final var given = expected.length + Integer.BYTES;
             final var written = baos.size();
             final double ratio = (written / (double) given) * 100.0d;

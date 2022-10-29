@@ -51,40 +51,20 @@ class Double_Wr_CompressedNaN_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__(final Double value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new DoubleWriter.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).write(o, value);
-                return i -> new DoubleReader.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).read(i);
-            });
-            assertThat(actual).isNaN();
-        }
-        {
-            final var actual = wr1u(o -> {
-                DoubleWriter.CompressedNaN.getCachedInstance(DoubleConstants.SIZE_SIGNIFICAND).write(o, value);
-                return i -> DoubleReader.CompressedNaN.getCachedInstance(DoubleConstants.SIZE_SIGNIFICAND).read(i);
-            });
-            assertThat(actual).isNaN();
-        }
+        final var actual = wr1u(o -> {
+            new DoubleWriter.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).write(o, value);
+            return i -> new DoubleReader.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).read(i);
+        });
+        assertThat(actual).isNaN();
     }
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__Nullable(final Double value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new DoubleWriter.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
-                return i -> new DoubleReader.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).nullable().read(i);
-            });
-            assertThat(actual).isNaN();
-        }
-        {
-            final var actual = wr1u(o -> {
-                DoubleWriter.CompressedNaN.getCachedInstance(DoubleConstants.SIZE_SIGNIFICAND).nullable()
-                        .write(o, value);
-                return i -> DoubleReader.CompressedNaN.getCachedInstance(DoubleConstants.SIZE_SIGNIFICAND).nullable()
-                        .read(i);
-            });
-            assertThat(actual).isNaN();
-        }
+        final var actual = wr1u(o -> {
+            new DoubleWriter.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
+            return i -> new DoubleReader.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).nullable().read(i);
+        });
+        assertThat(actual).isNaN();
     }
 }

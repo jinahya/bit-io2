@@ -68,7 +68,7 @@ class _CacheTest {
                 } catch (final InterruptedException ie) {
                     throw new RuntimeException(ie);
                 }
-                final int size = cache.valueReferences.size();
+                final int size = cache.references.size();
                 System.err.printf("size: %1$d\n", size);
                 if (size == 0 && latch.getCount() == 0L) {
                     break;

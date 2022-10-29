@@ -50,40 +50,20 @@ class Float_Wr_CompressedSubnormal_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__(final Float value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new FloatWriter.CompressedSubnormal(FloatConstants.SIZE_SIGNIFICAND).write(o, value);
-                return i -> new FloatReader.CompressedSubnormal(FloatConstants.SIZE_SIGNIFICAND).read(i);
-            });
-            verify(value, actual);
-        }
-        {
-            final var actual = wr1u(o -> {
-                FloatWriter.CompressedSubnormal.getCachedInstance(FloatConstants.SIZE_SIGNIFICAND).write(o, value);
-                return i -> FloatReader.CompressedSubnormal.getCachedInstance(FloatConstants.SIZE_SIGNIFICAND).read(i);
-            });
-            verify(value, actual);
-        }
+        final var actual = wr1u(o -> {
+            new FloatWriter.CompressedSubnormal(FloatConstants.SIZE_SIGNIFICAND).write(o, value);
+            return i -> new FloatReader.CompressedSubnormal(FloatConstants.SIZE_SIGNIFICAND).read(i);
+        });
+        verify(value, actual);
     }
 
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__Nullable(final Float value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new FloatWriter.CompressedSubnormal(FloatConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
-                return i -> new FloatReader.CompressedSubnormal(FloatConstants.SIZE_SIGNIFICAND).nullable().read(i);
-            });
-            verify(value, actual);
-        }
-        {
-            final var actual = wr1u(o -> {
-                FloatWriter.CompressedSubnormal.getCachedInstance(FloatConstants.SIZE_SIGNIFICAND).nullable()
-                        .write(o, value);
-                return i -> FloatReader.CompressedSubnormal.getCachedInstance(FloatConstants.SIZE_SIGNIFICAND).nullable()
-                        .read(i);
-            });
-            verify(value, actual);
-        }
+        final var actual = wr1u(o -> {
+            new FloatWriter.CompressedSubnormal(FloatConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
+            return i -> new FloatReader.CompressedSubnormal(FloatConstants.SIZE_SIGNIFICAND).nullable().read(i);
+        });
+        verify(value, actual);
     }
 }

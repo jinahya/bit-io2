@@ -54,20 +54,11 @@ class Double_Wr_CompressedSubnormal_Test {
     @MethodSource({"valueStream"})
     @ParameterizedTest
     void wr__(final Double value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new DoubleWriter.CompressedSubnormal(DoubleConstants.SIZE_SIGNIFICAND).write(o, value);
-                return i -> new DoubleReader.CompressedSubnormal(DoubleConstants.SIZE_SIGNIFICAND).read(i);
-            });
-            verify(value, actual);
-        }
-        {
-            final var actual = wr1u(o -> {
-                DoubleWriter.CompressedSubnormal.getCachedInstance(DoubleConstants.SIZE_SIGNIFICAND).write(o, value);
-                return i -> DoubleReader.CompressedSubnormal.getCachedInstance(DoubleConstants.SIZE_SIGNIFICAND).read(i);
-            });
-            verify(value, actual);
-        }
+        final var actual = wr1u(o -> {
+            new DoubleWriter.CompressedSubnormal(DoubleConstants.SIZE_SIGNIFICAND).write(o, value);
+            return i -> new DoubleReader.CompressedSubnormal(DoubleConstants.SIZE_SIGNIFICAND).read(i);
+        });
+        verify(value, actual);
     }
 
     @MethodSource({"valueStream"})
@@ -78,20 +69,11 @@ class Double_Wr_CompressedSubnormal_Test {
                 DoubleConstants.SIZE_SIGNIFICAND - Long.numberOfTrailingZeros(significandBits),
                 DoubleConstants.SIZE_MIN_SIGNIFICAND
         );
-        {
-            final var actual = wr1u(o -> {
-                new DoubleWriter.CompressedSubnormal(significandSize).write(o, value);
-                return i -> new DoubleReader.CompressedSubnormal(significandSize).read(i);
-            });
-            verify(value, actual);
-        }
-        {
-            final var actual = wr1u(o -> {
-                DoubleWriter.CompressedSubnormal.getCachedInstance(significandSize).write(o, value);
-                return i -> DoubleReader.CompressedSubnormal.getCachedInstance(significandSize).read(i);
-            });
-            verify(value, actual);
-        }
+        final var actual = wr1u(o -> {
+            new DoubleWriter.CompressedSubnormal(significandSize).write(o, value);
+            return i -> new DoubleReader.CompressedSubnormal(significandSize).read(i);
+        });
+        verify(value, actual);
     }
 
     @Nested
@@ -104,22 +86,11 @@ class Double_Wr_CompressedSubnormal_Test {
         @MethodSource({"valueStream_"})
         @ParameterizedTest
         void wr__(final Double value) throws IOException {
-            {
-                final var actual = wr1u(o -> {
-                    new DoubleWriter.CompressedSubnormal(DoubleConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
-                    return i -> new DoubleReader.CompressedSubnormal(DoubleConstants.SIZE_SIGNIFICAND).nullable().read(i);
-                });
-                verify(value, actual);
-            }
-            {
-                final var actual = wr1u(o -> {
-                    DoubleWriter.CompressedSubnormal.getCachedInstance(DoubleConstants.SIZE_SIGNIFICAND)
-                            .nullable().write(o, value);
-                    return i -> DoubleReader.CompressedSubnormal.getCachedInstance(DoubleConstants.SIZE_SIGNIFICAND)
-                            .nullable().read(i);
-                });
-                verify(value, actual);
-            }
+            final var actual = wr1u(o -> {
+                new DoubleWriter.CompressedSubnormal(DoubleConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
+                return i -> new DoubleReader.CompressedSubnormal(DoubleConstants.SIZE_SIGNIFICAND).nullable().read(i);
+            });
+            verify(value, actual);
         }
 
         @MethodSource({"valueStream_"})
@@ -130,40 +101,22 @@ class Double_Wr_CompressedSubnormal_Test {
                     DoubleConstants.SIZE_SIGNIFICAND - Long.numberOfTrailingZeros(significandBits),
                     DoubleConstants.SIZE_MIN_SIGNIFICAND
             );
-            {
-                final var actual = wr1u(o -> {
-                    new DoubleWriter.CompressedSubnormal(significandSize).nullable().write(o, value);
-                    return i -> new DoubleReader.CompressedSubnormal(significandSize).nullable().read(i);
-                });
-                verify(value, actual);
-            }
-            {
-                final var actual = wr1u(o -> {
-                    DoubleWriter.CompressedSubnormal.getCachedInstance(significandSize).nullable().write(o, value);
-                    return i -> DoubleReader.CompressedSubnormal.getCachedInstance(significandSize).nullable().read(i);
-                });
-                verify(value, actual);
-            }
+            final var actual = wr1u(o -> {
+                new DoubleWriter.CompressedSubnormal(significandSize).nullable().write(o, value);
+                return i -> new DoubleReader.CompressedSubnormal(significandSize).nullable().read(i);
+            });
+            verify(value, actual);
         }
 
         @DisplayName("nullable().write(null) -> nullable().read()null")
         @Test
         void wr_Null_Nullable() throws IOException {
             final int significand = DoubleConstants.SIZE_SIGNIFICAND;
-            {
-                final var actual = wr1u(o -> {
-                    new DoubleWriter.CompressedSubnormal(significand).nullable().write(o, null);
-                    return i -> new DoubleReader.CompressedSubnormal(significand).nullable().read(i);
-                });
-                assertThat(actual).isNull();
-            }
-            {
-                final var actual = wr1u(o -> {
-                    DoubleWriter.CompressedSubnormal.getCachedInstance(significand).nullable().write(o, null);
-                    return i -> DoubleReader.CompressedSubnormal.getCachedInstance(significand).nullable().read(i);
-                });
-                assertThat(actual).isNull();
-            }
+            final var actual = wr1u(o -> {
+                new DoubleWriter.CompressedSubnormal(significand).nullable().write(o, null);
+                return i -> new DoubleReader.CompressedSubnormal(significand).nullable().read(i);
+            });
+            assertThat(actual).isNull();
         }
     }
 }
