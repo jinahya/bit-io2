@@ -276,18 +276,21 @@ public class FloatWriter
         /**
          * Replaces current value of {@code significandOnly} property with specified value.
          *
-         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for not reading the
-         *                        sign bit; {@code false} for reading the sign bit.
+         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for writing the
+         *                        <em>significand</em> part only; {@code false} for including the <em>sign bit</em>.
          */
         public void setSignificandOnly(final boolean significandOnly) {
             this.significandOnly = significandOnly;
         }
 
         /**
-         * Invokes the {@link #setSignificandOnly(boolean)} method with specified argument and returns this object.
+         * Sets the {@code significandOnly} property with specified value.
          *
-         * @param significandOnly the value for the {@code significand} argument.
+         * @param significandOnly new value for the {@code significand} property; {@code true} for not writing the sign
+         *                        bit, {@code false} otherwise.
          * @return this object.
+         * @implSpec This method invokes the {@link #setSignificandOnly(boolean)} method with {@code significandOnly},
+         * and returns this object.
          */
         public CompressedNaN significandOnly(final boolean significandOnly) {
             setSignificandOnly(significandOnly);
@@ -295,7 +298,7 @@ public class FloatWriter
         }
 
         /**
-         * Configures this writer not to write the sign bit.
+         * Configures this writer to write the <em>significand</em> part only.
          *
          * @return this object.
          * @implSpec This method invokes the {@link #significandOnly(boolean)} method with {@code true}, and returns the
