@@ -21,8 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * A reader for reading {@code Double} values.
@@ -210,25 +208,6 @@ public class DoubleReader
     public static class CompressedSubnormal
             implements BitReader<Double> {
 
-//        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
-//
-//        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-//
-//        static BitReader<Double> getCachedInstance(final int significandSize) {
-//            return CACHED_INSTANCES.computeIfAbsent(
-//                    DoubleCacheKey.of(significandSize),
-//                    k -> new CompressedSubnormal(k.getSignificandSize()) {
-//                        @Override
-//                        public BitReader<Double> nullable() {
-//                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-//                                    DoubleCacheKey.copyOf(k),
-//                                    k2 -> super.nullable()
-//                            );
-//                        }
-//                    }
-//            );
-//        }
-
         /**
          * Returns the instance for specified significand size.
          *
@@ -258,25 +237,6 @@ public class DoubleReader
 
     public static class CompressedNaN
             implements BitReader<Double> {
-
-//        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
-//
-//        private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-//
-//        static BitReader<Double> getCachedInstance(final int significandSize) {
-//            return CACHED_INSTANCES.computeIfAbsent(
-//                    DoubleCacheKey.of(significandSize),
-//                    k -> new CompressedNaN(k.getSignificandSize()) {
-//                        @Override
-//                        public BitReader<Double> nullable() {
-//                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-//                                    DoubleCacheKey.copyOf(k),
-//                                    k2 -> super.nullable()
-//                            );
-//                        }
-//                    }
-//            );
-//        }
 
         /**
          * Returns the instance for specified significand size.
@@ -343,22 +303,6 @@ public class DoubleReader
                 | (input.readLong(true, significandSize) << (DoubleConstants.SIZE_SIGNIFICAND - significandSize))
         );
     }
-
-//    private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES = new WeakHashMap<>();
-//
-//    private static final Map<DoubleCacheKey, BitReader<Double>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-//
-//    static BitReader<Double> getCachedInstance(final int exponentSize, final int significandSize) {
-//        return CACHED_INSTANCES.computeIfAbsent(
-//                DoubleCacheKey.of(exponentSize, significandSize),
-//                k -> new DoubleReader(k.getExponentSize(), k.getSignificandSize()) {
-//                    @Override
-//                    public BitReader<Double> nullable() {
-//                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(DoubleCacheKey.copyOf(k), k2 -> super.nullable());
-//                    }
-//                }
-//        );
-//    }
 
     /**
      * Creates a new instance specified sizes of the exponent part and significand part, respectively.

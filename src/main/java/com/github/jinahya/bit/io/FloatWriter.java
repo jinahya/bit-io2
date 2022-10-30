@@ -219,25 +219,6 @@ public class FloatWriter
     public static class CompressedSubnormal
             implements BitWriter<Float> {
 
-//        private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCES = new WeakHashMap<>();
-//
-//        private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-//
-//        static BitWriter<Float> getCachedInstance(final int significandSize) {
-//            return CACHED_INSTANCES.computeIfAbsent(
-//                    FloatCacheKey.of(significandSize),
-//                    k -> new CompressedSubnormal(k.getSignificandSize()) {
-//                        @Override
-//                        public BitWriter<Float> nullable() {
-//                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-//                                    FloatCacheKey.copyOf(k),
-//                                    k2 -> super.nullable()
-//                            );
-//                        }
-//                    }
-//            );
-//        }
-
         public CompressedSubnormal(final int significandSize) {
             super();
             significandOnly = new SignificandOnly(significandSize);
@@ -267,25 +248,6 @@ public class FloatWriter
      */
     public static class CompressedNaN
             implements BitWriter<Float> {
-
-//        private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCES = new WeakHashMap<>();
-//
-//        private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-//
-//        static BitWriter<Float> getCachedInstance(final int significandSize) {
-//            return CACHED_INSTANCES.computeIfAbsent(
-//                    FloatCacheKey.of(significandSize),
-//                    k -> new CompressedNaN(k.getSignificandSize()) {
-//                        @Override
-//                        public BitWriter<Float> nullable() {
-//                            return CACHED_INSTANCES_NULLABLE.computeIfAbsent(
-//                                    FloatCacheKey.copyOf(k),
-//                                    k2 -> super.nullable()
-//                            );
-//                        }
-//                    }
-//            );
-//        }
 
         public CompressedNaN(final int significandSize) {
             super();
