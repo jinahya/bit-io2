@@ -31,6 +31,8 @@ final class BitIoConstants {
 
     static final String MESSAGE_UNSUPPORTED_ALREADY_NULLABLE = "unsupported; already nullable";
 
+    static final String MESSAGE_UNSUPPORTED_NOT_SUPPOSED_TO_BE_INVOKED = "unsupported; not supposed to be invoked";
+
     private BitIoConstants() {
         throw new AssertionError(MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }

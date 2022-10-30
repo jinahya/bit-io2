@@ -36,9 +36,9 @@ public class ListReader<T>
         implements BitReader<List<T>> {
 
     /**
-     * Creates a new instance for reading lists of specified element type.
+     * Creates a new instance for reading lists of specified element type using specified element reader.
      *
-     * @param elementReader the reader for reading each element.
+     * @param elementReader the reader for reading elements.
      */
     public ListReader(final BitReader<? extends T> elementReader) {
         super();
@@ -57,7 +57,7 @@ public class ListReader<T>
     }
 
     /**
-     * The reader for reading each element.
+     * The reader for reading elements.
      */
     private final BitReader<? extends T> elementReader;
 }

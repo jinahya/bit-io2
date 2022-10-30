@@ -39,6 +39,6 @@ final class TestUtils {
     }
 
     private TestUtils() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

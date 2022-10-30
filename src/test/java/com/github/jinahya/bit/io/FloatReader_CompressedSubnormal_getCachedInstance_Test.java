@@ -23,13 +23,6 @@ package com.github.jinahya.bit.io;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.github.jinahya.bit.io.FloatConstants.SIZE_MIN_SIGNIFICAND;
-import static com.github.jinahya.bit.io.FloatConstants.SIZE_SIGNIFICAND;
-import static org.assertj.core.api.Assertions.assertThat;
-
 @Slf4j
 class FloatReader_CompressedSubnormal_getCachedInstance_Test {
 

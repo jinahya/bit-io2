@@ -51,9 +51,23 @@
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
     <version.maven-surefire>3.0.0-M7</version.maven-surefire>
-    <version.org.junit.jupiter>5.9.1</version.org.junit.jupiter>
+    <version.org.junit>5.9.1</version.org.junit>
+    <version.org.junit.jupiter>${version.org.junit}</version.org.junit.jupiter>
+    <version.org.junit.platform>1.9.1</version.org.junit.platform>
     <version.org.mockito>4.8.1</version.org.mockito>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+<!--      <dependency>-->
+<!--        <groupId>org.junit</groupId>-->
+<!--        <artifactId>junit-bom</artifactId>-->
+<!--        <version>${version.org.junit.jupiter}</version>-->
+<!--        <type>pom</type>-->
+<!--        <scope>import</scope>-->
+<!--      </dependency>-->
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
@@ -104,12 +118,24 @@
       <version>4.2.0</version>
       <scope>test</scope>
     </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.junit.platform</groupId>-->
+    <!--      <artifactId>junit-platform-commons</artifactId>-->
+    <!--      <version>${version.org.junit.platform}</version>-->
+    <!--      <scope>test</scope>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${version.org.junit.jupiter}</version>
       <scope>test</scope>
     </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.junit-pioneer</groupId>-->
+    <!--      <artifactId>junit-pioneer</artifactId>-->
+    <!--      <version>1.7.1</version>-->
+    <!--      <scope>test</scope>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-inline</artifactId>

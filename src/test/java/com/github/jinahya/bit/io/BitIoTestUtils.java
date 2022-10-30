@@ -37,7 +37,6 @@ import static java.util.concurrent.ThreadLocalRandom.current;
 
 public final class BitIoTestUtils {
 
-    // ------------------------------------------------------------------------------------------------------------ byte
     static int getRandomSizeForByte(final boolean unsigned) {
         final var size = current().nextInt(1, Byte.SIZE + (unsigned ? 0 : 1));
         return BitIoConstraints.requireValidSizeForByte(unsigned, size);
@@ -97,7 +96,6 @@ public final class BitIoTestUtils {
         );
     }
 
-    // ----------------------------------------------------------------------------------------------------------- short
     static int getRandomSizeForShort(final boolean unsigned) {
         final int size = current().nextInt(1, Short.SIZE + (unsigned ? 0 : 1));
         return BitIoConstraints.requireValidSizeForShort(unsigned, size);
@@ -155,7 +153,6 @@ public final class BitIoTestUtils {
         );
     }
 
-    // ------------------------------------------------------------------------------------------------------------- int
     static int getRandomSizeForInt(final boolean unsigned) {
         final var size = current().nextInt(1, Integer.SIZE + (unsigned ? 0 : 1));
         return BitIoConstraints.requireValidSizeForInt(unsigned, size);
@@ -211,7 +208,6 @@ public final class BitIoTestUtils {
         );
     }
 
-    // ------------------------------------------------------------------------------------------------------------ long
     static int getRandomSizeForLong(final boolean unsigned) {
         final var size = current().nextInt(1, Long.SIZE + (unsigned ? 0 : 1));
         return BitIoConstraints.requireValidSizeForLong(unsigned, size);
@@ -272,7 +268,6 @@ public final class BitIoTestUtils {
         );
     }
 
-    // ------------------------------------------------------------------------------------------------------------ char
     static int getRandomSizeForChar() {
         final int size = current().nextInt(1, Character.SIZE + 1);
         return BitIoConstraints.requireValidSizeForChar(size);
@@ -314,7 +309,6 @@ public final class BitIoTestUtils {
         return applyRandomValueForChar(s -> v -> function.unchecked().apply(s).unchecked().apply(v));
     }
 
-    // ----------------------------------------------------------------------------------------------------------- float
     static int getRandomExponentSizeForFloat() {
         return FloatConstraints.requireValidExponentSize(
                 ThreadLocalRandom.current().nextInt(
@@ -372,7 +366,6 @@ public final class BitIoTestUtils {
                 .apply(valueBits);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
     static <R> R w1(final Function<? super BitOutput, Function<? super byte[], ? extends R>> f1)
             throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
@@ -469,6 +462,6 @@ public final class BitIoTestUtils {
     }
 
     private BitIoTestUtils() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

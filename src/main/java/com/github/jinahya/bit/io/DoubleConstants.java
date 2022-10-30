@@ -28,8 +28,6 @@ package com.github.jinahya.bit.io;
  */
 final class DoubleConstants {
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     static final int SIZE_MIN_SIGNIFICAND = 1;
 
     static final int SIZE_SIGNIFICAND = 52;
@@ -42,8 +40,6 @@ final class DoubleConstants {
     static final long MASK_SIGNIFICAND_LEFT_MOST_BIT
             = 0b0__00000000_000__10000000_00000000_00000000_00000000_00000000_00000000_0000L;
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     static final int SIZE_MIN_EXPONENT = 1;
 
     static final int SIZE_EXPONENT = 11;
@@ -51,10 +47,9 @@ final class DoubleConstants {
     static final long MASK_EXPONENT
             = 0b0__11111111_111__00000000_00000000_00000000_00000000_00000000_00000000_0000L;
 
-    // -----------------------------------------------------------------------------------------------------------------
     static final int SHIFT_SIGN_BIT = Long.SIZE - 1;
 
     private DoubleConstants() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

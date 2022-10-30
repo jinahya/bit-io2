@@ -38,18 +38,15 @@ final class FloatConstants {
 
     static final int MASK_SIGNIFICAND_LEFT_MOST_BIT = 0b0__00000000__10000000_00000000_0000_000;
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     static final int SIZE_MIN_EXPONENT = 1;
 
     static final int SIZE_EXPONENT = 8;
 
     static final int MASK_EXPONENT = 0b0__11111111__00000000_00000000_0000_000;
 
-    // -----------------------------------------------------------------------------------------------------------------
     static final int SHIFT_SIGN_BIT = SIZE_SIGNIFICAND + SIZE_EXPONENT;
 
     private FloatConstants() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

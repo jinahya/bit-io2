@@ -37,6 +37,14 @@ import java.util.stream.Stream;
 @Slf4j
 final class DoubleTestParameters {
 
+    static IntStream exponentSizeStream() {
+        return IntStream.rangeClosed(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_EXPONENT);
+    }
+
+    static IntStream significandSizeStream() {
+        return IntStream.rangeClosed(DoubleConstants.SIZE_MIN_SIGNIFICAND, DoubleConstants.SIZE_SIGNIFICAND);
+    }
+
     static Stream<Arguments> sizesArgumentsStream() {
         return Stream.concat(
                 IntStream.range(0, 16)
@@ -69,19 +77,30 @@ final class DoubleTestParameters {
         );
     }
 
+    static LongStream bitsStreamNonZeroSignificand() {
+        return bitsStream()
+                .filter(b -> (b & DoubleConstants.MASK_SIGNIFICAND) > 0L)
+                ;
+    }
+
     static Stream<Double> valueStream() {
         return Stream.concat(
                 bitsStream().mapToObj(Double::longBitsToDouble),
                 Stream.of(
                         Double.NEGATIVE_INFINITY,
-                        +.5d,
                         -.5d,
+                        +.5d,
                         Double.POSITIVE_INFINITY
                 )
         );
     }
 
+    static Stream<Double> valueStreamNonZeroSignificand() {
+        return valueStream()
+                .filter(v -> (Double.doubleToRawLongBits(v) & DoubleConstants.MASK_SIGNIFICAND) > 0L);
+    }
+
     private DoubleTestParameters() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

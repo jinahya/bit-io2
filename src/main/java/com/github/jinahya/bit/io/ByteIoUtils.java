@@ -23,6 +23,6 @@ package com.github.jinahya.bit.io;
 final class ByteIoUtils {
 
     private ByteIoUtils() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

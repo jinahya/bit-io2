@@ -294,6 +294,17 @@ public class FloatWriter
             return this;
         }
 
+        /**
+         * Configures this writer not to write the sign bit.
+         *
+         * @return this object.
+         * @implSpec This method invokes the {@link #significandOnly(boolean)} method with {@code true}, and returns the
+         * result.
+         */
+        public CompressedNaN significandOnly() {
+            return significandOnly(true);
+        }
+
         private final CompressedSubnormal compressedSubnormal;
 
         private boolean significandOnly;

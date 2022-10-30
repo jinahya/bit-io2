@@ -80,14 +80,20 @@ final class FloatTestParameters {
                 bitsStream().mapToObj(Float::intBitsToFloat),
                 Stream.of(
                         Float.NEGATIVE_INFINITY,
-                        +.5f,
                         -.5f,
+                        +.5f,
                         Float.POSITIVE_INFINITY
                 )
         );
     }
 
+    static Stream<Float> valueStreamNonZeroSignificand() {
+        return valueStream()
+                .filter(v -> (Float.floatToRawIntBits(v) & FloatConstants.MASK_SIGNIFICAND) > 0)
+                ;
+    }
+
     private FloatTestParameters() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

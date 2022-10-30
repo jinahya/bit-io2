@@ -26,22 +26,22 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A class for testing {@link DoubleReader.CompressedZero}.
+ * A class for testing {@link DoubleReader.CompressedInfinity}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @Slf4j
-class DoubleReader_CompressedZero_Test
-        extends BitReaderTest<DoubleReader.CompressedZero, Double> {
+class DoubleReader_CompressedInfinity_Test
+        extends BitReaderTest<DoubleReader.CompressedInfinity, Double> {
 
-    DoubleReader_CompressedZero_Test() {
-        super(DoubleReader.CompressedZero.class, Double.class);
+    DoubleReader_CompressedInfinity_Test() {
+        super(DoubleReader.CompressedInfinity.class, Double.class);
     }
 
     @Test
     void nullable__() {
-        assertThat(DoubleReader.CompressedZero.getInstance().nullable())
+        assertThat(DoubleReader.CompressedInfinity.getInstance().nullable())
                 .isNotNull()
-                .isSameAs(DoubleReader.CompressedZero.getInstanceNullable());
+                .isSameAs(DoubleReader.CompressedInfinity.getInstanceNullable());
     }
 }

@@ -20,28 +20,12 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.util.function.Supplier;
-
 /**
  * Constraints for bit-io.
  *
  * @author Jin Kwon &lt;jinahya_at_gmail.com&gt;
  */
 final class BitIoConstraints {
-
-    static int requirePositive(final int value, final Supplier<String> messageSupplier) {
-        if (value <= 0) {
-            throw new IllegalArgumentException(messageSupplier == null ? null : messageSupplier.get());
-        }
-        return value;
-    }
-
-    static int requirePositive(final int value, final String message) {
-        if (value <= 0) {
-            throw new IllegalArgumentException(message);
-        }
-        return value;
-    }
 
     static int requirePositive(final int value) {
         if (value <= 0) {
@@ -52,7 +36,7 @@ final class BitIoConstraints {
 
     static int requireValidSizeForByte(final boolean unsigned, final int size) {
         if (requirePositive(size) > Byte.SIZE) {
-            throw new IllegalArgumentException("size(" + size + ") > " + Byte.SIZE);
+            throw new IllegalArgumentException("byte size(" + size + ") > " + Byte.SIZE);
         }
         if (size == Byte.SIZE && unsigned) {
             throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned byte");
@@ -62,7 +46,7 @@ final class BitIoConstraints {
 
     static int requireValidSizeForShort(final boolean unsigned, final int size) {
         if (requirePositive(size) > Short.SIZE) {
-            throw new IllegalArgumentException("size(" + size + ") > " + Short.SIZE);
+            throw new IllegalArgumentException("short size(" + size + ") > " + Short.SIZE);
         }
         if (size == Short.SIZE && unsigned) {
             throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned short");
@@ -72,7 +56,7 @@ final class BitIoConstraints {
 
     static int requireValidSizeForInt(final boolean unsigned, final int size) {
         if (requirePositive(size) > Integer.SIZE) {
-            throw new IllegalArgumentException("size(" + size + ") > " + Integer.SIZE);
+            throw new IllegalArgumentException("int size(" + size + ") > " + Integer.SIZE);
         }
         if (size == Integer.SIZE && unsigned) {
             throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned int");
@@ -82,7 +66,7 @@ final class BitIoConstraints {
 
     static int requireValidSizeForLong(final boolean unsigned, final int size) {
         if (requirePositive(size) > Long.SIZE) {
-            throw new IllegalArgumentException("size(" + size + ") > " + Long.SIZE);
+            throw new IllegalArgumentException("long size(" + size + ") > " + Long.SIZE);
         }
         if (size == Long.SIZE && unsigned) {
             throw new IllegalArgumentException("invalid size(" + size + ") for an unsigned long");
@@ -99,7 +83,7 @@ final class BitIoConstraints {
      */
     static int requireValidSizeForChar(final int size) {
         if (requirePositive(size) > Character.SIZE) {
-            throw new IllegalArgumentException("size(" + size + ") > " + Character.SIZE);
+            throw new IllegalArgumentException("char size(" + size + ") > " + Character.SIZE);
         }
         return size;
     }
@@ -108,6 +92,6 @@ final class BitIoConstraints {
      * Creates a new instance.
      */
     private BitIoConstraints() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

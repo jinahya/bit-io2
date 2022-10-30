@@ -30,61 +30,6 @@ import java.util.Arrays;
  */
 final class BitIoUtils {
 
-    // https://stackoverflow.com/a/680040/330457
-    private static int log2(final long value) {
-        if (value <= 0) {
-            throw new IllegalArgumentException("value(" + value + ") is not positive");
-        }
-        final int result = Long.SIZE - Long.numberOfLeadingZeros(value);
-        assert result > 0;
-        return result;
-    }
-
-    /**
-     * Returns the number of required bits for specified value.
-     *
-     * @param value the value whose size is calculated.
-     * @return the number of required bits for {@code value}; always positive.
-     */
-    public static int size(final long value) {
-        if (value < 0) {
-            return size(~value) + 1;
-        }
-        if (value == 0L) {
-            return 1;
-        }
-        return log2(value);
-    }
-
-    /**
-     * Reads an unsigned value of specified number of bits for a count.
-     *
-     * @param input a bit-input from a value is read.
-     * @param size  the number of bits.
-     * @return an unsigned value of {@code size} bits.
-     * @throws IOException if an I/O error occurs.
-     */
-    static int readCount(final BitInput input, final int size) throws IOException {
-        assert input != null;
-        return input.readInt(true, size);
-    }
-
-    /**
-     * Writes specified unsigned value of specified number of bits for a count.
-     *
-     * @param output a bit-output to which the value is written.
-     * @param size   the number of bits.
-     * @param value  an unsigned value of {@code size} bits.
-     * @return the {@value} right-shifted by {@code size}.
-     * @throws IOException if an I/O error occurs.
-     */
-    static int writeCount(final BitOutput output, final int size, final int value) throws IOException {
-        assert output != null;
-        assert value >= 0;
-        output.writeInt(true, size, value);
-        return value & (-1 >>> (Integer.SIZE - size));
-    }
-
     private static final int SIZE_COUNT = 31;
 
     static void writeCount(final BitOutput output, final int count) throws IOException {
@@ -182,6 +127,6 @@ final class BitIoUtils {
     }
 
     private BitIoUtils() {
-        throw new AssertionError("instantiation is not allowed");
+        throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }
 }

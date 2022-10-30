@@ -39,7 +39,7 @@ public class DoubleReader
             super(DoubleConstants.SIZE_MIN_EXPONENT, DoubleConstants.SIZE_MIN_SIGNIFICAND);
         }
 
-        long readBits(final BitInput input) throws IOException {
+        private long readBits(final BitInput input) throws IOException {
             return input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT;
         }
 
@@ -98,6 +98,12 @@ public class DoubleReader
             super();
         }
 
+        /**
+         * Returns the instance handling {@code null} values.
+         *
+         * @return the instance handling {@code null} values.
+         * @implSpec The {@code nullable()} method returns the value of {@link #getInstanceNullable()}.
+         */
         @Override
         public BitReader<Double> nullable() {
             return getInstanceNullable();
@@ -160,6 +166,12 @@ public class DoubleReader
             super();
         }
 
+        /**
+         * Returns the instance handles {@code null} values.
+         *
+         * @return the instance handles {@code null} values.
+         * @implSpec The {@code nullable()} method returns the result of {@link #getInstanceNullable()} method.
+         */
         @Override
         public BitReader<Double> nullable() {
             return getInstanceNullable();
@@ -176,11 +188,6 @@ public class DoubleReader
     private static final class SignificandOnly
             implements BitReader<Double> {
 
-        /**
-         * Returns the instance for specified significand size.
-         *
-         * @param significandSize the number of bits for the significand part.
-         */
         private SignificandOnly(final int significandSize) {
             super();
             this.significandSize = DoubleConstraints.requireValidSignificandSize(significandSize);
@@ -197,7 +204,7 @@ public class DoubleReader
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            throw new UnsupportedOperationException("shouldn't be used");
+            throw new UnsupportedOperationException(BitIoConstants.MESSAGE_UNSUPPORTED_NOT_SUPPOSED_TO_BE_INVOKED);
         }
 
         private final int significandSize;
@@ -205,13 +212,20 @@ public class DoubleReader
         private final int shift;
     }
 
+    /**
+     * A reader for reading <em>subnormal</em> values in a compressed manner.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
     public static class CompressedSubnormal
             implements BitReader<Double> {
 
         /**
          * Returns the instance for specified significand size.
          *
-         * @param significandSize the number of bits for the significand part.
+         * @param significandSize the number of left-most bits of the significand part to read; between
+         *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
          */
         public CompressedSubnormal(final int significandSize) {
             super();
@@ -219,29 +233,33 @@ public class DoubleReader
         }
 
         private long readBits(final BitInput input) throws IOException {
-            final long signBits = signBitReader.readBits(input);
-            final long significandBits = significandOnly.readBits(input);
-            return signBits | significandBits;
+            return signBitOnly.readBits(input) | significandOnly.readBits(input);
         }
 
         @Override
         public Double read(final BitInput input) throws IOException {
-            final long bits = readBits(input);
-            return Double.longBitsToDouble(bits);
+            return Double.longBitsToDouble(readBits(input));
         }
 
-        private final SignBitOnly signBitReader = new SignBitOnly();
+        private final SignBitOnly signBitOnly = new SignBitOnly();
 
         private final SignificandOnly significandOnly;
     }
 
+    /**
+     * A reader for reading <em>NaN</em>s in a compressed manner.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
     public static class CompressedNaN
             implements BitReader<Double> {
 
         /**
          * Returns the instance for specified significand size.
          *
-         * @param significandSize the number of bits for the significand part.
+         * @param significandSize the number of left-most bits of the significand part to read; between
+         *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
          */
         public CompressedNaN(final int significandSize) {
             super();
@@ -252,9 +270,13 @@ public class DoubleReader
         public Double read(final BitInput input) throws IOException {
             if (significandOnly) {
                 return Double.longBitsToDouble(
-                        compressedSubnormal.significandOnly.readBits(input) | DoubleConstants.MASK_EXPONENT);
+                        compressedSubnormal.significandOnly.readBits(input)
+                        | DoubleConstants.MASK_EXPONENT);
             }
-            return Double.longBitsToDouble(compressedSubnormal.readBits(input) | DoubleConstants.MASK_EXPONENT);
+            return Double.longBitsToDouble(
+                    compressedSubnormal.readBits(input)
+                    | DoubleConstants.MASK_EXPONENT
+            );
         }
 
         /**
@@ -288,6 +310,17 @@ public class DoubleReader
             return this;
         }
 
+        /**
+         * Configures this reader to not read the sign bit.
+         *
+         * @return this object.
+         * @implSpec This method invokes the {@link #significandOnly(boolean)} method with {@code ture}, and returns the
+         * result.
+         */
+        public CompressedNaN significandOnly() {
+            return significandOnly(true);
+        }
+
         final CompressedSubnormal compressedSubnormal;
 
         private boolean significandOnly;
@@ -307,8 +340,12 @@ public class DoubleReader
     /**
      * Creates a new instance specified sizes of the exponent part and significand part, respectively.
      *
-     * @param exponentSize    the number of bits for the exponent part.
-     * @param significandSize the number of bits for the significand part.
+     * @param exponentSize    the number of lower bits of the exponent part; between
+     *                        {@value DoubleConstants#SIZE_MIN_EXPONENT} and {@value DoubleConstants#SIZE_EXPONENT},
+     *                        both inclusive.
+     * @param significandSize the number of left-most bits of the significand part to read; between
+     *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
+     *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
      */
     public DoubleReader(final int exponentSize, final int significandSize) {
         super(exponentSize, significandSize);

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A writer for reading arrays of bytes.
+ * A writer for writing lists of specific element type.
  *
  * @param <T> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -35,9 +35,9 @@ public class ListWriter<T>
         implements BitWriter<List<T>> {
 
     /**
-     * Creates a new instance for reading array of specified element type using specified element writer.
+     * Creates a new instance for writing lists of specified element type using specified element writer.
      *
-     * @param elementWriter the writer for reading each element.
+     * @param elementWriter the writer for reading elements.
      */
     public ListWriter(final BitWriter<? super T> elementWriter) {
         super();
@@ -55,7 +55,7 @@ public class ListWriter<T>
     }
 
     /**
-     * The writer for writing array elements
+     * The writer for writing elements
      */
     private final BitWriter<? super T> elementWriter;
 }

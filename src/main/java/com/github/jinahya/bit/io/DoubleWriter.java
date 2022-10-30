@@ -196,7 +196,7 @@ public class DoubleWriter
 
         @Override
         public void write(final BitOutput output, final Double value) throws IOException {
-            throw new UnsupportedOperationException("shouldn't be used");
+            writeBits(output, Double.doubleToRawLongBits(value));
         }
 
         private final int significandSize;
@@ -273,22 +273,36 @@ public class DoubleWriter
         /**
          * Replaces current value of {@code significandOnly} property with specified value.
          *
-         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for not reading the
-         *                        sign bit; {@code false} for reading the sign bit.
+         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for not writing the
+         *                        sign bit; {@code false} otherwise.
          */
         public void setSignificandOnly(final boolean significandOnly) {
             this.significandOnly = significandOnly;
         }
 
         /**
-         * Invokes the {@link #setSignificandOnly(boolean)} method with specified argument and returns this object.
+         * Replaces current value of {@code significandOnly} property with specified value.
          *
-         * @param significandOnly the value for the {@code significand} argument.
+         * @param significandOnly new value for the {@code significandOnly} property; {@code true} for not reading the
+         *                        sign bit; {@code false} for reading the sign bit.
          * @return this object.
+         * @implSpec This method invokes the {@link #setSignificandOnly(boolean)} method with given arguments, and
+         * returns this object.
          */
         public CompressedNaN significandOnly(final boolean significandOnly) {
             setSignificandOnly(significandOnly);
             return this;
+        }
+
+        /**
+         * Sets this writer to write the <em>significand</em> part only.
+         *
+         * @return this writer.
+         * @implSpec The {@code significandOnly()} method invokes the {@link #significandOnly(boolean)} method with
+         * {@code true} and returns the result.
+         */
+        public CompressedNaN significandOnly() {
+            return significandOnly(true);
         }
 
         final CompressedSubnormal compressedSubnormal;

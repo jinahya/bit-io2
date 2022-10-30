@@ -33,7 +33,6 @@ import org.junit.jupiter.params.converter.ArgumentConverter;
 class ByteOutput2BitOutputConverter
         implements ArgumentConverter {
 
-    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public Object convert(final Object source, final ParameterContext context) throws ArgumentConversionException {
         if (!(source instanceof ByteOutput)) {

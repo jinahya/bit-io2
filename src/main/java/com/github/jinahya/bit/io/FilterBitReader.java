@@ -36,10 +36,11 @@ public abstract class FilterBitReader<T, U>
         implements BitReader<T> {
 
     /**
-     * Creates a new instance which reads filtered values.
+     * Creates a new instance which reads value of {@link U} and returns a value of {@link T} mapped by specified
+     * mapper.
      *
-     * @param delegate a reader for reading original values.
-     * @param mapper   a mapper for filtering values.
+     * @param delegate a reader for reading original values of {@link U}.
+     * @param mapper   a mapper for mapping values to {@link T}.
      * @param <T>      filtered value type parameter
      * @param <U>      original value type parameter
      * @return a new instance.

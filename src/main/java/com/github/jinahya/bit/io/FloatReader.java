@@ -133,12 +133,12 @@ public class FloatReader
                 private static final BitReader<Float> INSTANCE = new FilterBitReader.Nullable<>(Holder.INSTANCE);
 
                 private Nullable() {
-                    throw new AssertionError("instantiation is not allowed");
+                    throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
                 }
             }
 
             private Holder() {
-                throw new AssertionError("instantiation is not allowed");
+                throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
             }
         }
 
@@ -296,6 +296,17 @@ public class FloatReader
         public CompressedNaN significandOnly(final boolean readSignBit) {
             setSignificandOnly(readSignBit);
             return this;
+        }
+
+        /**
+         * Configures this reader not to read the sign bit.
+         *
+         * @return this object.
+         * @implSpec This method invokes the {@link #significandOnly(boolean)} method with {@code true}, and returns the
+         * result.
+         */
+        public CompressedNaN significandOnly() {
+            return significandOnly(true);
         }
 
         private final CompressedSubnormal compressedSubnormal;
