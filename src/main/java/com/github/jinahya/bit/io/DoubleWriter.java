@@ -54,10 +54,11 @@ public class DoubleWriter
     }
 
     /**
-     * A bit writer for writing {@code ±.0d}.
+     * A writer for writing {@code ±.0d}.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see DoubleReader.CompressedZero
+     * @see FloatWriter.CompressedZero
      */
     public static final class CompressedZero
             implements BitWriter<Double> {
@@ -113,10 +114,11 @@ public class DoubleWriter
     }
 
     /**
-     * A bit writer for values representing infinities.
+     * A writer for values representing infinities.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see DoubleReader.CompressedInfinity
+     * @see FloatWriter.CompressedInfinity
      */
     public static final class CompressedInfinity
             implements BitWriter<Double> {
@@ -210,6 +212,8 @@ public class DoubleWriter
      * A writer for writing {@code subnormal} values in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleReader.CompressedSubnormal
+     * @see FloatWriter.CompressedSubnormal
      */
     public static class CompressedSubnormal
             implements BitWriter<Double> {
@@ -235,6 +239,8 @@ public class DoubleWriter
      * A class for writing {@code NaN}s in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleReader.CompressedNaN
+     * @see FloatWriter.CompressedNaN
      */
     public static class CompressedNaN
             implements BitWriter<Double> {
