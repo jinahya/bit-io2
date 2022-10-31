@@ -110,5 +110,5 @@ public abstract class FilterBitReader<T, U>
     /**
      * The reader for reading original values.
      */
-    protected final BitReader<? extends U> delegate;
+    final BitReader<? extends U> delegate;
 }

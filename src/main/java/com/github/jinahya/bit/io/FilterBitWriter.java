@@ -108,5 +108,5 @@ public abstract class FilterBitWriter<T, U>
     /**
      * The writer for writing filtered values.
      */
-    protected final BitWriter<? super U> delegate;
+    final BitWriter<? super U> delegate;
 }
