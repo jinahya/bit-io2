@@ -30,11 +30,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForByte;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForChar;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForInt;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForLong;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForShort;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -58,7 +53,7 @@ class BitInput_Mock_Test {
         @ValueSource(booleans = {true, false})
         @ParameterizedTest(name = "[{index}] readByte(unsigned: {0})")
         void readByte__(final boolean unsigned) throws IOException {
-            final var size = getRandomSizeForByte(unsigned);
+            final var size = BitIoRandom.nextSizeForByte(unsigned);
             final var value = input.readByte(unsigned, size);
             verify(input, times(1))
                     .readInt(unsigned, size);
@@ -71,7 +66,7 @@ class BitInput_Mock_Test {
         @ValueSource(booleans = {true, false})
         @ParameterizedTest(name = "[{index}] readShort(unsigned: {0})")
         void readShort__(final boolean unsigned) throws IOException {
-            final var size = getRandomSizeForShort(unsigned);
+            final var size = BitIoRandom.nextSizeForShort(unsigned);
             assertThatCode(() -> input.readShort(unsigned, size))
                     .doesNotThrowAnyException();
             verify(input, times(1))
@@ -85,7 +80,7 @@ class BitInput_Mock_Test {
         @ValueSource(booleans = {true, false})
         @ParameterizedTest(name = "[{index}] readInt(unsigned: {0})")
         void readInt__(final boolean unsigned) {
-            final var size = getRandomSizeForInt(unsigned);
+            final var size = BitIoRandom.nextSizeForInt(unsigned);
             assertThatCode(() -> input.readInt(unsigned, size))
                     .doesNotThrowAnyException();
         }
@@ -97,7 +92,7 @@ class BitInput_Mock_Test {
         @ValueSource(booleans = {true, false})
         @ParameterizedTest(name = "[{index}] readLong(unsigned: {0})")
         void readLong__(final boolean unsigned) {
-            final var size = getRandomSizeForLong(unsigned);
+            final var size = BitIoRandom.nextSizeForLong(unsigned);
             assertThatCode(() -> input.readLong(unsigned, size))
                     .doesNotThrowAnyException();
         }
@@ -108,7 +103,7 @@ class BitInput_Mock_Test {
 
         @Test
         void readChar__() throws IOException {
-            final var size = getRandomSizeForChar();
+            final var size = BitIoRandom.nextSizeForChar();
             assertThatCode(() -> input.readChar(size))
                     .doesNotThrowAnyException();
             verify(input, times(1))

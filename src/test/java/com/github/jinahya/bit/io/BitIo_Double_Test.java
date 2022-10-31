@@ -30,26 +30,27 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 
 @Slf4j
 class BitIo_Double_Test {
 
-    private static Stream<Arguments> sizesArgumentsStream() {
-        return DoubleTestParameters.sizesArgumentsStream();
+    private static Stream<Arguments> getExponentSizeAndSignificandSizeArgumentsStream() {
+        return DoubleTestParameters.getExponentSizeAndSignificandSizeArgumentsStream();
     }
 
-    @MethodSource({"sizesArgumentsStream"})
+    @MethodSource({"getExponentSizeAndSignificandSizeArgumentsStream"})
     @ParameterizedTest
-    void wr__(final int exponentSize, final int significandSize) throws IOException {
+    void wr__(final int exponentSize, final int significandSize, final double expected) throws IOException {
         try (MockedStatic<DoubleConstraints> doubleConstraints
                      = Mockito.mockStatic(DoubleConstraints.class, Mockito.CALLS_REAL_METHODS)) {
-            final var expected = BitIoRandom.nextValueForDouble(exponentSize, significandSize);
-            final var actual = wr1u(o -> {
+            final var actual = BitIoTestUtils.wr1au(o -> {
                 o.writeDouble(exponentSize, significandSize, expected);
-                return i -> i.readDouble(exponentSize, significandSize);
+                return (a, i) -> {
+                    assertThat(a).hasSizeLessThanOrEqualTo(Double.BYTES);
+                    return i.readDouble(exponentSize, significandSize);
+                };
             });
             if (Double.isNaN(expected)) {
                 assertThat(actual).isNaN();

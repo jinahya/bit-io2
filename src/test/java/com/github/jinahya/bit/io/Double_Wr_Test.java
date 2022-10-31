@@ -48,7 +48,7 @@ class Double_Wr_Test {
     }
 
     static Stream<Arguments> sizesAndValuesArgumentsStream() {
-        return DoubleTestParameters.sizesAndValuesArgumentsStream();
+        return DoubleTestParameters.getExponentSizeAndSignificandSizeArgumentsStream();
     }
 
     @DisplayName("write(nonnull) -> read()expected")

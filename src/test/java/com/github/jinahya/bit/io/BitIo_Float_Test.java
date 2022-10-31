@@ -30,30 +30,31 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 
 @Slf4j
 class BitIo_Float_Test {
 
-    private static Stream<Arguments> sizesArgumentsStream() {
-        return FloatTestParameters.sizesArgumentsStream();
+    private static Stream<Arguments> getExponentSizeAndSignificandSizeArgumentsStream() {
+        return FloatTestParameters.getExponentSizeAndSignificandSizeArgumentsStream();
     }
 
-    private static Stream<Arguments> sizesAndValuesArgumentsStream() {
-        return FloatTestParameters.sizesAndValuesArgumentsStream();
+    private static Stream<Arguments> getExponentSizeAndSignificandSizeAndValueArgumentsStream() {
+        return FloatTestParameters.getExponentSizeAndSignificandSizeAndValueArgumentsStream();
     }
 
-    @MethodSource({"sizesArgumentsStream"})
+    @MethodSource({"getExponentSizeAndSignificandSizeAndValueArgumentsStream"})
     @ParameterizedTest
-    void wr__(final int exponentSize, final int significandSize) throws IOException {
+    void wr__(final int exponentSize, final int significandSize, final float expected) throws IOException {
         try (MockedStatic<FloatConstraints> floatConstraints
                      = Mockito.mockStatic(FloatConstraints.class, Mockito.CALLS_REAL_METHODS)) {
-            final var expected = BitIoRandom.nextValueForFloat(exponentSize, significandSize);
-            final var actual = wr1u(o -> {
+            final var actual = BitIoTestUtils.wr1au(o -> {
                 o.writeFloat(exponentSize, significandSize, expected);
-                return i -> i.readFloat(exponentSize, significandSize);
+                return (a, i) -> {
+                    assertThat(a).hasSizeLessThanOrEqualTo(Float.BYTES);
+                    return i.readFloat(exponentSize, significandSize);
+                };
             });
             if (Float.isNaN(expected)) {
                 assertThat(actual).isNaN();
@@ -63,19 +64,5 @@ class BitIo_Float_Test {
             floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(exponentSize), times(2));
             floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(significandSize), times(2));
         }
-    }
-
-    @MethodSource({"sizesAndValuesArgumentsStream"})
-    @ParameterizedTest
-    void wr__(final int exponentSize, final int significandSize, final float expected) throws IOException {
-        final var actual = wr1u(o -> {
-            o.writeFloat(exponentSize, significandSize, expected);
-            return i -> i.readFloat(exponentSize, significandSize);
-        });
-        if (Float.isNaN(expected)) {
-            assertThat(actual).isNaN();
-            return;
-        }
-        assertThat(actual).isEqualTo(expected);
     }
 }

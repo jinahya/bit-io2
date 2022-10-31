@@ -31,16 +31,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForByte;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForChar;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForInt;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForLong;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomSizeForShort;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForByte;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForChar;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForInt;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForLong;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForShort;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.times;
@@ -66,8 +56,8 @@ class BitOutput_Mock_Test {
         @ValueSource(booleans = {true, false})
         @ParameterizedTest(name = "[{index}] writeBoolean(unsigned: {0})")
         void writeByte__(final boolean unsigned) throws IOException {
-            final var size = getRandomSizeForByte(unsigned);
-            final var value = getRandomValueForByte(unsigned, size);
+            final var size = BitIoRandom.nextSizeForByte(unsigned);
+            final var value = BitIoRandom.nextValueForByte(unsigned, size);
             assertThatCode(() -> output.writeByte(unsigned, size, value))
                     .doesNotThrowAnyException();
             verify(output, times(1))
@@ -81,8 +71,8 @@ class BitOutput_Mock_Test {
         @ValueSource(booleans = {true, false})
         @ParameterizedTest(name = "[{index}] writeShort(unsigned: {0})")
         void writeShort__(final boolean unsigned) throws IOException {
-            final var size = getRandomSizeForShort(unsigned);
-            final var value = getRandomValueForShort(unsigned, size);
+            final var size = BitIoRandom.nextSizeForShort(unsigned);
+            final var value = BitIoRandom.nextValueForShort(unsigned, size);
             assertThatCode(() -> output.writeShort(unsigned, size, value))
                     .doesNotThrowAnyException();
             verify(output, times(1))
@@ -96,8 +86,8 @@ class BitOutput_Mock_Test {
         @ValueSource(booleans = {true, false})
         @ParameterizedTest(name = "[{index}] writeInt(unsigned: {0})")
         void writeInt__(final boolean unsigned) throws IOException {
-            final var size = getRandomSizeForInt(unsigned);
-            final var value = getRandomValueForInt(unsigned, size);
+            final var size = BitIoRandom.nextSizeForInt(unsigned);
+            final var value = BitIoRandom.nextValueForInt(unsigned, size);
             assertThatCode(() -> output.writeInt(unsigned, size, value))
                     .doesNotThrowAnyException();
         }
@@ -109,8 +99,8 @@ class BitOutput_Mock_Test {
         @ValueSource(booleans = {true, false})
         @ParameterizedTest(name = "[{index}] writeLong(unsigned: {0})")
         void writeLong__(final boolean unsigned) throws IOException {
-            final var size = getRandomSizeForLong(unsigned);
-            final var value = getRandomValueForLong(unsigned, size);
+            final var size = BitIoRandom.nextSizeForLong(unsigned);
+            final var value = BitIoRandom.nextValueForLong(unsigned, size);
             assertThatCode(() -> output.writeLong(unsigned, size, value))
                     .doesNotThrowAnyException();
         }
@@ -121,8 +111,8 @@ class BitOutput_Mock_Test {
 
         @Test
         void writeChar__() throws IOException {
-            final var size = getRandomSizeForChar();
-            final var value = getRandomValueForChar(size);
+            final var size = BitIoRandom.nextSizeForChar();
+            final var value = BitIoRandom.nextValueForChar(size);
             assertThatCode(() -> output.writeChar(size, value))
                     .doesNotThrowAnyException();
             verify(output, times(1))

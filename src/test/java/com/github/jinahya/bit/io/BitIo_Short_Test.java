@@ -21,54 +21,55 @@ package com.github.jinahya.bit.io;
  */
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.DefaultArgumentsAccessor;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.applyRandomSizeAndValueForShortUnchecked;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForShort;
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForShort;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class BitIo_Short_Test {
 
-    @ValueSource(booleans = {true, false})
-    @ParameterizedTest
-    void random__(final boolean unsigned) {
-        applyRandomSizeAndValueForShortUnchecked(
-                unsigned,
-                s -> v -> wr1u(o -> {
-                    final var expected = v.shortValue();
-                    o.writeShort(unsigned, s, expected);
-                    return i -> {
-                        final var actual = i.readShort(unsigned, s);
-                        assertThat(actual).isEqualTo(expected);
-                        return null;
-                    };
-                })
-        );
+    private static Stream<Arguments> getRandomUnsignedAndSizeArgumentsStream() {
+        return Stream.of(Boolean.TRUE, Boolean.FALSE)
+                .flatMap(u -> IntStream.range(0, 16)
+                        .map(i -> BitIoRandom.nextSizeForShort(u))
+                        .mapToObj(s -> Arguments.of(u, s))
+                );
     }
 
-    private static Stream<Arguments> getUnsignedAndSizeArgumentsStream() {
-        return Stream.of(
-                Arguments.of(true, 1),
-                Arguments.of(true, Short.SIZE - 1),
-                Arguments.of(false, 1),
-                Arguments.of(false, Short.SIZE)
-        );
+    private static Stream<Arguments> getRandomUnsignedSizeAndValueArgumentsStream() {
+        return getRandomUnsignedAndSizeArgumentsStream()
+                .map(a -> {
+                    final var accessor = new DefaultArgumentsAccessor(a.get());
+                    final var unsigned = accessor.get(0, Boolean.class);
+                    final var size = accessor.get(1, Integer.class);
+                    return Arguments.of(unsigned, size, BitIoRandom.nextValueForShort(unsigned, size));
+                });
     }
 
-    @MethodSource({"getUnsignedAndSizeArgumentsStream"})
+    @MethodSource({"getRandomUnsignedSizeAndValueArgumentsStream"})
     @ParameterizedTest
-    void fixed__(final boolean unsigned, final int size) throws IOException {
-        final var expected = getRandomValueForShort(unsigned, size);
-        final var actual = wr1u(o -> {
-            o.writeShort(unsigned, size, expected);
-            return i -> i.readShort(unsigned, size);
-        });
-        assertThat(actual).isEqualTo(expected);
+    void wr__(final boolean unsigned, final int size, final short expected) throws IOException {
+        try (MockedStatic<BitIoConstraints> constraints
+                     = mockStatic(BitIoConstraints.class, Mockito.CALLS_REAL_METHODS)) {
+            final var actual = BitIoTestUtils.wr1au(o -> {
+                o.writeShort(unsigned, size, expected);
+                return (a, i) -> {
+                    assertThat(a).hasSizeLessThanOrEqualTo(Short.SIZE);
+                    return i.readShort(unsigned, size);
+                };
+            });
+            assertThat(actual).isEqualTo(expected);
+            constraints.verify(() -> requireValidSizeForShort(unsigned, size), times(2));
+        }
     }
 }

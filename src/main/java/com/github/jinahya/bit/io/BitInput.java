@@ -145,6 +145,8 @@ public interface BitInput {
      * @see BitOutput#writeFloat(int, int, float)
      */
     default float readFloat(final int exponentSize, final int significandSize) throws IOException {
+        FloatConstraints.requireValidExponentSize(exponentSize);
+        FloatConstraints.requireValidSignificandSize(significandSize);
         return FloatReader.read(this, exponentSize, significandSize);
     }
 
@@ -162,6 +164,8 @@ public interface BitInput {
      * @see BitOutput#writeDouble(int, int, double)
      */
     default double readDouble(final int exponentSize, final int significandSize) throws IOException {
+        DoubleConstraints.requireValidExponentSize(exponentSize);
+        DoubleConstraints.requireValidSignificandSize(significandSize);
         return DoubleReader.read(this, exponentSize, significandSize);
     }
 
