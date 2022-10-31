@@ -34,7 +34,6 @@ import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForLong;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.internal.verification.VerificationModeFactory.atMost;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @Slf4j
