@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.ObjIntConsumer;
 
 /**
  * A writer for writing lists of specific element type.
@@ -32,7 +33,8 @@ import java.util.Objects;
  * @see ListReader
  */
 public class ListWriter<T>
-        implements BitWriter<List<T>> {
+        implements BitWriter<List<T>>,
+                   _HasLengthWriter<ListWriter<T>> {
 
     /**
      * Creates a new instance for writing lists of specified element type using specified element writer.
@@ -48,14 +50,21 @@ public class ListWriter<T>
     public void write(final BitOutput output, final List<T> value) throws IOException {
         Objects.requireNonNull(output, "output is null");
         Objects.requireNonNull(value, "value is null");
-        BitIoUtils.writeCountCompressed(output, value.size());
+        lengthWriter.accept(output, value.size());
         for (final T element : value) {
             elementWriter.write(output, element);
         }
+    }
+
+    @Override
+    public void setLengthWriter(final ObjIntConsumer<? super BitOutput> lengthWriter) {
+        this.lengthWriter = Objects.requireNonNull(lengthWriter, "lengthWriter is null");
     }
 
     /**
      * The writer for writing elements
      */
     private final BitWriter<? super T> elementWriter;
+
+    private ObjIntConsumer<? super BitOutput> lengthWriter = BitIoConstants.COUNT_WRITER_COMPRESSED;
 }

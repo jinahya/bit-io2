@@ -210,6 +210,7 @@ public class FloatReader
 
     /**
      * A reader for reading {@code subnormal} values in a compressed manner.
+     *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see FloatWriter.CompressedSubnormal
      * @see DoubleReader.CompressedSubnormal
@@ -249,6 +250,7 @@ public class FloatReader
 
     /**
      * A reader for reading {@code NaN} values in a compressed manner.
+     *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see FloatWriter.CompressedNaN
      * @see DoubleReader.CompressedNaN
