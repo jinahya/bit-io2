@@ -21,54 +21,53 @@ package com.github.jinahya.bit.io;
  */
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.DefaultArgumentsAccessor;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.applyRandomSizeAndValueForByteUnchecked;
-import static com.github.jinahya.bit.io.BitIoTestUtils.getRandomValueForByte;
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class BitIo_Byte_Test {
 
-    @ValueSource(booleans = {true, false})
-    @ParameterizedTest
-    void random__(final boolean unsigned) {
-        applyRandomSizeAndValueForByteUnchecked(
-                unsigned,
-                s -> v -> wr1u(o -> {
-                    final var expected = v.byteValue();
-                    o.writeByte(unsigned, s, expected);
-                    return i -> {
-                        final var actual = i.readByte(unsigned, s);
-                        assertThat(actual).isEqualTo(expected);
-                        return null;
-                    };
-                })
-        );
-    }
-
     private static Stream<Arguments> getUnsignedAndSizeArgumentsStream() {
-        return Stream.of(
-                Arguments.of(true, 1),
-                Arguments.of(true, Byte.SIZE - 1),
-                Arguments.of(false, 1),
-                Arguments.of(false, Byte.SIZE)
-        );
+        return Stream.of(Boolean.TRUE, Boolean.FALSE)
+                .flatMap(u -> IntStream.range(0, 16)
+                        .map(i -> BitIoRandom.nextSizeForByte(u))
+                        .mapToObj(s -> Arguments.of(u, s))
+                );
     }
 
-    @MethodSource({"getUnsignedAndSizeArgumentsStream"})
+    private static Stream<Arguments> getUnsignedSizeAndValueArgumentsStream() {
+        return getUnsignedAndSizeArgumentsStream()
+                .map(a -> {
+                    final var accessor = new DefaultArgumentsAccessor(a.get());
+                    final var unsigned = accessor.get(0, Boolean.class);
+                    final var size = accessor.get(1, Integer.class);
+                    return Arguments.of(unsigned, size, BitIoRandom.nextValueForByte(unsigned, size));
+                });
+    }
+
+    @MethodSource({"getUnsignedSizeAndValueArgumentsStream"})
     @ParameterizedTest
-    void fixed__(final boolean unsigned, final int size) throws IOException {
-        final var expected = getRandomValueForByte(unsigned, size);
-        final var actual = wr1u(o -> {
-            o.writeByte(unsigned, size, expected);
-            return i -> i.readByte(unsigned, size);
-        });
-        assertThat(actual).isEqualTo(expected);
+    void wr__(final boolean unsigned, final int size, final byte expected) throws IOException {
+        try (MockedStatic<BitIoConstraints> constraints
+                     = Mockito.mockStatic(BitIoConstraints.class, Mockito.CALLS_REAL_METHODS)) {
+            final var actual = BitIoTestUtils.wr1au(o -> {
+                o.writeByte(unsigned, size, expected);
+                return (a, i) -> {
+                    assertThat(a).hasSizeLessThanOrEqualTo(Byte.SIZE);
+                    return i.readByte(unsigned, size);
+                };
+            });
+            assertThat(actual).isEqualTo(expected);
+            constraints.verify(() -> BitIoConstraints.requireValidSizeForByte(unsigned, size), times(2));
+        }
     }
 }

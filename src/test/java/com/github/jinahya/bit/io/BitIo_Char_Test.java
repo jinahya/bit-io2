@@ -21,41 +21,47 @@ package com.github.jinahya.bit.io;
  */
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.applyRandomValueForCharUnchecked;
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
-import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BitIo_Char_Test {
 
-    @Test
-    void test() {
-        applyRandomValueForCharUnchecked(
-                s -> v -> wr1u(o -> {
-                    final var expected = (char) v.intValue();
-                    o.writeChar(s, expected);
-                    return i -> {
-                        final var actual = i.readChar(s);
-                        assertThat(actual).isEqualTo(expected);
-                        return null;
-                    };
-                })
-        );
+    private static Stream<Arguments> sizeAndValueArgumentsStream() {
+        return IntStream.range(0, 16)
+                .map(i -> BitIoRandom.nextSizeForChar())
+                .mapToObj(s -> Arguments.of(s, BitIoRandom.nextValueForChar(s)));
+    }
+
+    @MethodSource({"sizeAndValueArgumentsStream"})
+    @ParameterizedTest
+    void wr__(final int size, final char expected) throws IOException {
+        final char actual = BitIoTestUtils.wr1au(o -> {
+            o.writeChar(size, expected);
+            return (a, i) -> {
+                assertThat(a.length).isLessThanOrEqualTo(Character.BYTES);
+                return i.readChar(size);
+            };
+        });
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void __SIZE() throws IOException {
-        wr2u(o -> {
-            final var expected = (char) current().nextInt(Character.MAX_VALUE + 1);
+    void wr__SIZE() throws IOException {
+        final var expected = BitIoRandom.nextValueForChar(Character.SIZE);
+        final var actual = BitIoTestUtils.wr1au(o -> {
             o.writeChar(Character.SIZE, expected);
-            return i -> {
-                final var actual = i.readChar(Character.SIZE);
-                assertThat(actual).isEqualTo(expected);
+            return (a, i) -> {
+                assertThat(a.length).isLessThanOrEqualTo(Character.BYTES);
+                return i.readChar(Character.SIZE);
             };
         });
+        assertThat(actual).isEqualTo(expected);
     }
 }

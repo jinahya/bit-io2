@@ -22,12 +22,14 @@ package com.github.jinahya.bit.io;
 
 import io.vavr.CheckedConsumer;
 import io.vavr.CheckedFunction1;
+import io.vavr.CheckedFunction2;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -413,6 +415,32 @@ public final class BitIoTestUtils {
             final CheckedFunction1<? super BitOutput, ? extends CheckedFunction1<? super BitInput, ? extends R>> f1)
             throws IOException {
         return wr1(o -> f1.unchecked().apply(o).unchecked());
+    }
+
+    static <R> R wr1a(final Function<? super BitOutput, ? extends BiFunction<? super byte[], ? super BitInput, ? extends R>> f1)
+            throws IOException {
+        Objects.requireNonNull(f1, "f1 is null");
+        return w1(o -> {
+            final BiFunction<? super byte[], ? super BitInput, ? extends R> f2 = f1.apply(o);
+            assert f2 != null : "f2 is null";
+            return a -> {
+                final BitInput input = BitInputFactory.from(new ByteArrayInputStream(a));
+                final R result = f2.apply(a, input);
+                try {
+                    final long discarded = input.align(1);
+                    assert discarded >= 0L;
+                    return result;
+                } catch (final IOException ioe) {
+                    throw new RuntimeException(ioe);
+                }
+            };
+        });
+    }
+
+    public static <R> R wr1au(
+            final CheckedFunction1<? super BitOutput, ? extends CheckedFunction2<byte[], ? super BitInput, ? extends R>> f1)
+            throws IOException {
+        return wr1a(o -> f1.unchecked().apply(o).unchecked());
     }
 
     static void w2(final Function<? super BitOutput, Consumer<? super byte[]>> f1) throws IOException {

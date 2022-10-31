@@ -43,7 +43,7 @@ final class FloatTestParameters {
                 .flatMap(s -> s);
     }
 
-    static Stream<Arguments> sizesArgumentsStream() {
+    static Stream<Arguments> getExponentSizeAndSignificandSizeArgumentsStream() {
         return Stream.concat(
                 IntStream.range(0, 16)
                         .mapToObj(i -> Arguments.of(BitIoRandom.nextExponentSizeForFloat(),
@@ -52,8 +52,8 @@ final class FloatTestParameters {
         );
     }
 
-    static Stream<Arguments> sizesAndValuesArgumentsStream() {
-        return sizesArgumentsStream()
+    static Stream<Arguments> getExponentSizeAndSignificandSizeAndValueArgumentsStream() {
+        return getExponentSizeAndSignificandSizeArgumentsStream()
                 .map(a -> {
                     final var argumentsAccessor = new DefaultArgumentsAccessor(a.get());
                     final var exponentSize = argumentsAccessor.getInteger(0);

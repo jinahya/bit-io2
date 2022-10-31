@@ -46,11 +46,11 @@ import static org.mockito.Mockito.atMost;
 class Float_Wr_Test {
 
     static Stream<Arguments> sizesArgumentsStream() {
-        return FloatTestParameters.sizesArgumentsStream();
+        return FloatTestParameters.getExponentSizeAndSignificandSizeArgumentsStream();
     }
 
     static Stream<Arguments> sizesAndValuesArgumentsStream() {
-        return FloatTestParameters.sizesAndValuesArgumentsStream();
+        return FloatTestParameters.getExponentSizeAndSignificandSizeAndValueArgumentsStream();
     }
 
     private static Stream<Float> valueStream() {

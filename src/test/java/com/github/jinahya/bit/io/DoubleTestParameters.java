@@ -54,7 +54,7 @@ final class DoubleTestParameters {
         );
     }
 
-    static Stream<Arguments> sizesAndValuesArgumentsStream() {
+    static Stream<Arguments> getExponentSizeAndSignificandSizeArgumentsStream() {
         return sizesArgumentsStream()
                 .map(a -> {
                     final var daa = new DefaultArgumentsAccessor(a.get());
