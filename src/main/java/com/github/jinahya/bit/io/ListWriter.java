@@ -34,7 +34,7 @@ import java.util.function.ObjIntConsumer;
  */
 public class ListWriter<T>
         implements BitWriter<List<T>>,
-                   _HasLengthWriter<ListWriter<T>> {
+                   WritesCount<ListWriter<T>> {
 
     /**
      * Creates a new instance for writing lists of specified element type using specified element writer.
@@ -50,15 +50,15 @@ public class ListWriter<T>
     public void write(final BitOutput output, final List<T> value) throws IOException {
         Objects.requireNonNull(output, "output is null");
         Objects.requireNonNull(value, "value is null");
-        lengthWriter.accept(output, value.size());
+        countWriter.accept(output, value.size());
         for (final T element : value) {
             elementWriter.write(output, element);
         }
     }
 
     @Override
-    public void setLengthWriter(final ObjIntConsumer<? super BitOutput> lengthWriter) {
-        this.lengthWriter = Objects.requireNonNull(lengthWriter, "lengthWriter is null");
+    public void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
+        this.countWriter = Objects.requireNonNull(countWriter, "countWriter is null");
     }
 
     /**
@@ -66,5 +66,5 @@ public class ListWriter<T>
      */
     private final BitWriter<? super T> elementWriter;
 
-    private ObjIntConsumer<? super BitOutput> lengthWriter = BitIoConstants.COUNT_WRITER_COMPRESSED;
+    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_COMPRESSED;
 }

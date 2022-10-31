@@ -32,7 +32,7 @@ import java.util.function.ObjIntConsumer;
  */
 public class ByteArrayWriter
         implements BitWriter<byte[]>,
-                   _HasLengthWriter<ByteArrayWriter> {
+                   WritesCount<ByteArrayWriter> {
 
     static class Unsigned
             extends ByteArrayWriter {
@@ -185,7 +185,7 @@ public class ByteArrayWriter
     @Override
     public void write(final BitOutput output, final byte[] value) throws IOException {
         Objects.requireNonNull(value, "value is null");
-        lengthWriter.accept(output, value.length);
+        countWriter.accept(output, value.length);
         writeElements(output, value);
     }
 
@@ -200,11 +200,11 @@ public class ByteArrayWriter
     }
 
     @Override
-    public void setLengthWriter(final ObjIntConsumer<? super BitOutput> lengthWriter) {
-        this.lengthWriter = Objects.requireNonNull(lengthWriter, "lengthWriter is null");
+    public void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
+        this.countWriter = Objects.requireNonNull(countWriter, "countWriter is null");
     }
 
     final int elementSize;
 
-    private ObjIntConsumer<? super BitOutput> lengthWriter = BitIoConstants.COUNT_WRITER_COMPRESSED;
+    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_COMPRESSED;
 }

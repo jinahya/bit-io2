@@ -35,7 +35,7 @@ import java.util.function.ToIntFunction;
  */
 public class ListReader<T>
         implements BitReader<List<T>>,
-                   _HasLengthReader<ListReader<T>> {
+                   ReadsCount<ListReader<T>> {
 
     /**
      * Creates a new instance for reading lists of specified element type using specified element reader.
@@ -50,7 +50,7 @@ public class ListReader<T>
     @Override
     public List<T> read(final BitInput input) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        final int count = lengthReader.applyAsInt(input);
+        final int count = countReader.applyAsInt(input);
         final List<T> value = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             value.add(elementReader.read(input));
@@ -59,8 +59,8 @@ public class ListReader<T>
     }
 
     @Override
-    public void setLengthReader(final ToIntFunction<? super BitInput> lengthReader) {
-        this.lengthReader = Objects.requireNonNull(lengthReader, "lengthReader is null");
+    public void setCountReader(final ToIntFunction<? super BitInput> countReader) {
+        this.countReader = Objects.requireNonNull(countReader, "countReader is null");
     }
 
     /**
@@ -68,5 +68,5 @@ public class ListReader<T>
      */
     private final BitReader<? extends T> elementReader;
 
-    private ToIntFunction<? super BitInput> lengthReader = BitIoConstants.COUNT_READER_COMPRESSED;
+    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER_COMPRESSED;
 }

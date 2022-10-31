@@ -32,7 +32,7 @@ import java.util.function.ToIntFunction;
  */
 public class ByteArrayReader
         implements BitReader<byte[]>,
-                   _HasLengthReader<ByteArrayReader> {
+                   ReadsCount<ByteArrayReader> {
 
     private static class Unsigned
             extends ByteArrayReader {
@@ -168,7 +168,7 @@ public class ByteArrayReader
 
     @Override
     public byte[] read(final BitInput input) throws IOException {
-        final int length = lengthReader.applyAsInt(input);
+        final int length = countReader.applyAsInt(input);
         final byte[] value = new byte[length];
         readElements(input, value);
         return value;
@@ -185,11 +185,11 @@ public class ByteArrayReader
     }
 
     @Override
-    public void setLengthReader(final ToIntFunction<? super BitInput> lengthReader) {
-        this.lengthReader = Objects.requireNonNull(lengthReader, "lengthReader is null");
+    public void setCountReader(final ToIntFunction<? super BitInput> countReader) {
+        this.countReader = Objects.requireNonNull(countReader, "countReader is null");
     }
 
     final int elementSize;
 
-    private ToIntFunction<? super BitInput> lengthReader = BitIoConstants.COUNT_READER_COMPRESSED;
+    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER_COMPRESSED;
 }

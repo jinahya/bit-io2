@@ -225,6 +225,13 @@ public class FloatWriter
     public static class CompressedSubnormal
             implements BitWriter<Float> {
 
+        /**
+         * Creates a new instance with specified significand size.
+         *
+         * @param significandSize the number of left-most significand bits to write; between
+         *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
         public CompressedSubnormal(final int significandSize) {
             super();
             significandOnly = new SignificandOnly(significandSize);
@@ -238,8 +245,7 @@ public class FloatWriter
         @Override
         public void write(final BitOutput output, final Float value) throws IOException {
             final int bits = Float.floatToRawIntBits(value);
-            signBitOnly.writeBits(output, bits);
-            significandOnly.writeBits(output, bits);
+            writeBits(output, bits);
         }
 
         private final SignBitOnly signBitOnly = new SignBitOnly();
@@ -257,6 +263,13 @@ public class FloatWriter
     public static class CompressedNaN
             implements BitWriter<Float> {
 
+        /**
+         * Creates a new instance with specified significand size.
+         *
+         * @param significandSize the number of left-most significand bits to write; between
+         *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
         public CompressedNaN(final int significandSize) {
             super();
             compressedSubnormal = new CompressedSubnormal(significandSize);

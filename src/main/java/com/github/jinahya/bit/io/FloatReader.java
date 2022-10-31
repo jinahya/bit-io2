@@ -238,9 +238,7 @@ public class FloatReader
 
         @Override
         public Float read(final BitInput input) throws IOException {
-            final int signBitOnlyBits = signBitOnly.readBits(input);
-            final int significandBits = significandOnly.readBits(input);
-            return Float.intBitsToFloat(signBitOnlyBits | significandBits);
+            return Float.intBitsToFloat(readBits(input));
         }
 
         private final SignBitOnly signBitOnly = new SignBitOnly();

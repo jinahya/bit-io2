@@ -129,12 +129,15 @@ public interface BitOutput {
     /**
      * Writes specified {@code float} value with specified {@code exponent} size and {@code significand} size.
      *
-     * @param exponentSize    the number of bit for wring the {@code exponent} part of the {@code value}; between
-     *                        {@code 1} and {@value FloatConstants#SIZE_EXPONENT}, both inclusive.
-     * @param significandSize the number of bit for writing the {@code significand} part of the {@code value}; between
-     *                        {@code 1} and {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+     * @param exponentSize    the number of lower exponent bits to write; between
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
+     *                        inclusive.
+     * @param significandSize the number of left-most significand bits to write; between
+     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
+     *                        both inclusive.
      * @param value           the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readFloat(int, int)
      */
     default void writeFloat(final int exponentSize, final int significandSize, final float value) throws IOException {
         FloatConstraints.requireValidExponentSize(exponentSize);
@@ -145,12 +148,15 @@ public interface BitOutput {
     /**
      * Writes specified {@code float} value with specified {@code exponent} size and {@code significand} size.
      *
-     * @param exponentSize    the number of bit for wring the {@code exponent} part of the {@code value}; between
-     *                        {@code 1} and {@value DoubleConstants#SIZE_EXPONENT}, both inclusive.
-     * @param significandSize the number of bit for writing the {@code significand} part of the {@code value}; between
-     *                        {@code 1} and {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
+     * @param exponentSize    the number of lower exponent bits to write; between
+     *                        {@value DoubleConstants#SIZE_MIN_EXPONENT} and {@value DoubleConstants#SIZE_EXPONENT},
+     *                        both inclusive.
+     * @param significandSize the number of left-most significand bits to write; between
+     *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
+     *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
      * @param value           the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readDouble(int, int)
      */
     default void writeDouble(final int exponentSize, final int significandSize, final double value) throws IOException {
         DoubleConstraints.requireValidExponentSize(exponentSize);

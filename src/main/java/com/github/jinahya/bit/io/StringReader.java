@@ -33,7 +33,7 @@ import java.util.function.ToIntFunction;
  */
 public class StringReader
         extends FilterBitReader<String, byte[]>
-        implements _HasLengthReader<StringReader> {
+        implements ReadsCount<StringReader> {
 
     /**
      * Creates a new instance for reading {@link StandardCharsets#US_ASCII} decoded strings in a compressed-manner.
@@ -76,8 +76,8 @@ public class StringReader
     }
 
     @Override
-    public void setLengthReader(final ToIntFunction<? super BitInput> lengthReader) {
-        ((_HasLengthReader<?>) delegate).setLengthReader(lengthReader);
+    public void setCountReader(final ToIntFunction<? super BitInput> countReader) {
+        ((ReadsCount<?>) delegate).setCountReader(countReader);
     }
 
     private final Charset charset;

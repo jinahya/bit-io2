@@ -98,7 +98,7 @@ class BitOutput_Mock_Test {
         void writeInt__(final boolean unsigned) throws IOException {
             final var size = getRandomSizeForInt(unsigned);
             final var value = getRandomValueForInt(unsigned, size);
-            assertThatCode(() -> output.writeInt(false, size, value))
+            assertThatCode(() -> output.writeInt(unsigned, size, value))
                     .doesNotThrowAnyException();
         }
     }
@@ -111,7 +111,7 @@ class BitOutput_Mock_Test {
         void writeLong__(final boolean unsigned) throws IOException {
             final var size = getRandomSizeForLong(unsigned);
             final var value = getRandomValueForLong(unsigned, size);
-            assertThatCode(() -> output.writeLong(true, size, value))
+            assertThatCode(() -> output.writeLong(unsigned, size, value))
                     .doesNotThrowAnyException();
         }
     }
