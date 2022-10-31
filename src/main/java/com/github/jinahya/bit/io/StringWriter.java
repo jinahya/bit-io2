@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.function.ObjIntConsumer;
 
 /**
  * A class for writing {@code String} values.
@@ -31,7 +32,8 @@ import java.util.Objects;
  * @see StringReader
  */
 public class StringWriter
-        extends FilterBitWriter<String, byte[]> {
+        extends FilterBitWriter<String, byte[]>
+        implements WritesCount<StringWriter> {
 
     /**
      * Creates a new instance for writing {@link StandardCharsets#US_ASCII}-encoded strings in a compressed-manner.
@@ -69,6 +71,11 @@ public class StringWriter
     @Override
     protected byte[] filter(final String value) {
         return value.getBytes(charset);
+    }
+
+    @Override
+    public void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
+        ((WritesCount<?>) delegate).setCountWriter(countWriter);
     }
 
     private final Charset charset;

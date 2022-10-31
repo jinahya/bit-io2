@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.ToIntFunction;
 
 /**
  * A reader for reading lists of specific element type.
@@ -33,7 +34,8 @@ import java.util.Objects;
  * @see ListWriter
  */
 public class ListReader<T>
-        implements BitReader<List<T>> {
+        implements BitReader<List<T>>,
+                   ReadsCount<ListReader<T>> {
 
     /**
      * Creates a new instance for reading lists of specified element type using specified element reader.
@@ -48,7 +50,7 @@ public class ListReader<T>
     @Override
     public List<T> read(final BitInput input) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        final int count = BitIoUtils.readCountCompressed(input);
+        final int count = countReader.applyAsInt(input);
         final List<T> value = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             value.add(elementReader.read(input));
@@ -56,8 +58,15 @@ public class ListReader<T>
         return value;
     }
 
+    @Override
+    public void setCountReader(final ToIntFunction<? super BitInput> countReader) {
+        this.countReader = Objects.requireNonNull(countReader, "countReader is null");
+    }
+
     /**
      * The reader for reading elements.
      */
     private final BitReader<? extends T> elementReader;
+
+    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER_COMPRESSED;
 }

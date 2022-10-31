@@ -54,10 +54,11 @@ public class DoubleWriter
     }
 
     /**
-     * A bit writer for writing {@code ±.0d}.
+     * A writer for writing {@code ±.0d}.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see DoubleReader.CompressedZero
+     * @see FloatWriter.CompressedZero
      */
     public static final class CompressedZero
             implements BitWriter<Double> {
@@ -113,10 +114,11 @@ public class DoubleWriter
     }
 
     /**
-     * A bit writer for values representing infinities.
+     * A writer for values representing infinities.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see DoubleReader.CompressedInfinity
+     * @see FloatWriter.CompressedInfinity
      */
     public static final class CompressedInfinity
             implements BitWriter<Double> {
@@ -210,10 +212,19 @@ public class DoubleWriter
      * A writer for writing {@code subnormal} values in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleReader.CompressedSubnormal
+     * @see FloatWriter.CompressedSubnormal
      */
     public static class CompressedSubnormal
             implements BitWriter<Double> {
 
+        /**
+         * Creates a new instance with specified significand size.
+         *
+         * @param significandSize the number of left-most significand bits to write; between
+         *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
         public CompressedSubnormal(final int significandSize) {
             super();
             this.significandOnly = new SignificandOnly(significandSize);
@@ -235,6 +246,8 @@ public class DoubleWriter
      * A class for writing {@code NaN}s in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleReader.CompressedNaN
+     * @see FloatWriter.CompressedNaN
      */
     public static class CompressedNaN
             implements BitWriter<Double> {
@@ -242,7 +255,7 @@ public class DoubleWriter
         /**
          * Creates a new instance with specified size of the significand part.
          *
-         * @param significandSize the number of bits for the significand part; between
+         * @param significandSize the number of left-most significand bits to write; between
          *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
          *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
          */
@@ -326,11 +339,12 @@ public class DoubleWriter
     /**
      * Creates a new instance with specified size of the exponent part and the significand part, respectively.
      *
-     * @param exponentSize    the number of bits for the export part; between {@value DoubleConstants#SIZE_MIN_EXPONENT}
-     *                        and {@value DoubleConstants#SIZE_EXPONENT}, both inclusive.
-     * @param significandSize the number of bits for the significand part; between
-     *                        {@value DoubleConstants#SIZE_SIGNIFICAND} and {@value DoubleConstants#SIZE_SIGNIFICAND},
+     * @param exponentSize    the number of lower exponent bits to write; between
+     *                        {@value DoubleConstants#SIZE_MIN_EXPONENT} and {@value DoubleConstants#SIZE_EXPONENT},
      *                        both inclusive.
+     * @param significandSize the number of left-most significand bits to write; between
+     *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
+     *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
      */
     public DoubleWriter(final int exponentSize, final int significandSize) {
         super(exponentSize, significandSize);

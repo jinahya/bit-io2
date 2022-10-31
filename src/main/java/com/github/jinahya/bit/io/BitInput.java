@@ -134,13 +134,15 @@ public interface BitInput {
     /**
      * Reads a {@code float} value.
      *
-     * @param exponentSize    a number of bits for the exponent part; between {@value FloatConstants#SIZE_MIN_EXPONENT}
-     *                        and {@value FloatConstants#SIZE_EXPONENT}, both inclusive.
-     * @param significandSize a number of bits for the significand part; between
+     * @param exponentSize    the number of lower exponent bits to read; between
+     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
+     *                        inclusive.
+     * @param significandSize the number of left-most significand bits to read; between
      *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
      *                        both inclusive.
      * @return the {@code float} value read.
      * @throws IOException if a I/O error occurs.
+     * @see BitOutput#writeFloat(int, int, float)
      */
     default float readFloat(final int exponentSize, final int significandSize) throws IOException {
         return FloatReader.read(this, exponentSize, significandSize);
@@ -149,13 +151,15 @@ public interface BitInput {
     /**
      * Reads a {@code double} value.
      *
-     * @param exponentSize    a number of bits for the exponent part; between {@value DoubleConstants#SIZE_MIN_EXPONENT}
-     *                        and {@value DoubleConstants#SIZE_EXPONENT}, both inclusive.
-     * @param significandSize a number of bits for the significand part; between
+     * @param exponentSize    the number of lower exponent bits to read; between
+     *                        {@value DoubleConstants#SIZE_MIN_EXPONENT} and {@value DoubleConstants#SIZE_EXPONENT},
+     *                        both inclusive.
+     * @param significandSize the number of left-most significand bits to read; between
      *                        {@value DoubleConstants#SIZE_MIN_SIGNIFICAND} and
      *                        {@value DoubleConstants#SIZE_SIGNIFICAND}, both inclusive.
      * @return the {@code double} value read.
      * @throws IOException if a I/O error occurs.
+     * @see BitOutput#writeDouble(int, int, double)
      */
     default double readDouble(final int exponentSize, final int significandSize) throws IOException {
         return DoubleReader.read(this, exponentSize, significandSize);

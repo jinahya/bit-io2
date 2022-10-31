@@ -20,6 +20,10 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import java.io.IOException;
+import java.util.function.ObjIntConsumer;
+import java.util.function.ToIntFunction;
+
 /**
  * Defines constants for bit-io.
  *
@@ -32,6 +36,40 @@ final class BitIoConstants {
     static final String MESSAGE_UNSUPPORTED_ALREADY_NULLABLE = "unsupported; already nullable";
 
     static final String MESSAGE_UNSUPPORTED_NOT_SUPPOSED_TO_BE_INVOKED = "unsupported; not supposed to be invoked";
+
+    private static final int SIZE_COUNT = 31;
+
+    static final ToIntFunction<? super BitInput> COUNT_READER = i -> {
+        try {
+            return i.readInt(true, SIZE_COUNT);
+        } catch (final IOException ioe) {
+            throw new RuntimeException("failed to read a (compressed) count", ioe);
+        }
+    };
+
+    static final ObjIntConsumer<? super BitOutput> COUNT_WRITER = (o, c) -> {
+        try {
+            o.writeInt(true, SIZE_COUNT, c);
+        } catch (final IOException ioe) {
+            throw new RuntimeException("failed to write a (compressed) count", ioe);
+        }
+    };
+
+    static final ToIntFunction<? super BitInput> COUNT_READER_COMPRESSED = i -> {
+        try {
+            return BitIoUtils.readCountCompressed(i);
+        } catch (final IOException ioe) {
+            throw new RuntimeException("failed to read a (compressed) count", ioe);
+        }
+    };
+
+    static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_COMPRESSED = (o, c) -> {
+        try {
+            BitIoUtils.writeCountCompressed(o, c);
+        } catch (final IOException ioe) {
+            throw new RuntimeException("failed to write a (compressed) count", ioe);
+        }
+    };
 
     private BitIoConstants() {
         throw new AssertionError(MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);

@@ -21,6 +21,8 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.ToIntFunction;
 
 /**
  * A reader for reading arrays of bytes.
@@ -29,7 +31,8 @@ import java.io.IOException;
  * @see ByteArrayWriter
  */
 public class ByteArrayReader
-        implements BitReader<byte[]> {
+        implements BitReader<byte[]>,
+                   ReadsCount<ByteArrayReader> {
 
     private static class Unsigned
             extends ByteArrayReader {
@@ -165,7 +168,7 @@ public class ByteArrayReader
 
     @Override
     public byte[] read(final BitInput input) throws IOException {
-        final int length = BitIoUtils.readCountCompressed(input);
+        final int length = countReader.applyAsInt(input);
         final byte[] value = new byte[length];
         readElements(input, value);
         return value;
@@ -181,5 +184,12 @@ public class ByteArrayReader
         return input.readByte(false, elementSize); // signed elementSize-bit byte
     }
 
+    @Override
+    public void setCountReader(final ToIntFunction<? super BitInput> countReader) {
+        this.countReader = Objects.requireNonNull(countReader, "countReader is null");
+    }
+
     final int elementSize;
+
+    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER_COMPRESSED;
 }

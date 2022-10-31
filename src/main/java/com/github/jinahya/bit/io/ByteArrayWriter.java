@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.ObjIntConsumer;
 
 /**
  * A value write for writing arrays of bytes.
@@ -30,7 +31,8 @@ import java.util.Objects;
  * @see ByteArrayReader
  */
 public class ByteArrayWriter
-        implements BitWriter<byte[]> {
+        implements BitWriter<byte[]>,
+                   WritesCount<ByteArrayWriter> {
 
     static class Unsigned
             extends ByteArrayWriter {
@@ -183,7 +185,7 @@ public class ByteArrayWriter
     @Override
     public void write(final BitOutput output, final byte[] value) throws IOException {
         Objects.requireNonNull(value, "value is null");
-        BitIoUtils.writeCountCompressed(output, value.length);
+        countWriter.accept(output, value.length);
         writeElements(output, value);
     }
 
@@ -197,5 +199,12 @@ public class ByteArrayWriter
         output.writeByte(false, elementSize, element);
     }
 
+    @Override
+    public void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
+        this.countWriter = Objects.requireNonNull(countWriter, "countWriter is null");
+    }
+
     final int elementSize;
+
+    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_COMPRESSED;
 }

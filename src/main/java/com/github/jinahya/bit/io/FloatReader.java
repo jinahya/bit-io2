@@ -56,6 +56,8 @@ public class FloatReader
      * @implSpec The implementation read only {@code 1} bit for the <em>sign bit</em> and returns either
      * <code>0b<strong>0</strong>__00000000__00000000_00000000_0000_000<sub>2</sub></code> or
      * <code>0b<strong>1</strong>__00000000__00000000_00000000_0000_000<sub>2</sub></code>.
+     * @see FloatWriter.CompressedZero
+     * @see DoubleReader.CompressedZero
      */
     public static final class CompressedZero
             implements BitReader<Float> {
@@ -120,6 +122,8 @@ public class FloatReader
      * @implSpec This reader reads {@code 1} bit for the <em>sign bit</em>, and returns either
      * <code>0b<strong>0</strong>__11111111__00000000_00000000_0000_000<sub>2</sub></code> or
      * <code>0b<strong>1</strong>__11111111__00000000_00000000_0000_000<sub>2</sub></code>.
+     * @see FloatWriter.CompressedInfinity
+     * @see DoubleReader.CompressedInfinity
      */
     public static final class CompressedInfinity
             implements BitReader<Float> {
@@ -206,6 +210,10 @@ public class FloatReader
 
     /**
      * A reader for reading {@code subnormal} values in a compressed manner.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see FloatWriter.CompressedSubnormal
+     * @see DoubleReader.CompressedSubnormal
      */
     public static class CompressedSubnormal
             implements BitReader<Float> {
@@ -230,9 +238,7 @@ public class FloatReader
 
         @Override
         public Float read(final BitInput input) throws IOException {
-            final int signBitOnlyBits = signBitOnly.readBits(input);
-            final int significandBits = significandOnly.readBits(input);
-            return Float.intBitsToFloat(signBitOnlyBits | significandBits);
+            return Float.intBitsToFloat(readBits(input));
         }
 
         private final SignBitOnly signBitOnly = new SignBitOnly();
@@ -242,6 +248,10 @@ public class FloatReader
 
     /**
      * A reader for reading {@code NaN} values in a compressed manner.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see FloatWriter.CompressedNaN
+     * @see DoubleReader.CompressedNaN
      */
     public static class CompressedNaN
             implements BitReader<Float> {

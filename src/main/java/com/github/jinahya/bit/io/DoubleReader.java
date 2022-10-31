@@ -54,6 +54,7 @@ public class DoubleReader
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see DoubleWriter.CompressedZero
+     * @see FloatReader.CompressedZero
      */
     public static final class CompressedZero
             implements BitReader<Double> {
@@ -122,6 +123,7 @@ public class DoubleReader
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see DoubleWriter.CompressedInfinity
+     * @see FloatReader.CompressedInfinity
      */
     public static final class CompressedInfinity
             implements BitReader<Double> {
@@ -216,6 +218,8 @@ public class DoubleReader
      * A reader for reading <em>subnormal</em> values in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleWriter.CompressedSubnormal
+     * @see FloatReader.CompressedSubnormal
      */
     public static class CompressedSubnormal
             implements BitReader<Double> {
@@ -250,6 +254,8 @@ public class DoubleReader
      * A reader for reading <em>NaN</em>s in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see DoubleWriter.CompressedNaN
+     * @see FloatReader.CompressedNaN
      */
     public static class CompressedNaN
             implements BitReader<Double> {

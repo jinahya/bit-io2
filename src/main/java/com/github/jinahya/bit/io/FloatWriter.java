@@ -55,9 +55,11 @@ public class FloatWriter
     }
 
     /**
-     * A bit writer for writing {@code ±0.0f} in a compressed manner.
+     * A writer for writing {@code ±0.0f} in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see FloatReader.CompressedZero
+     * @see FloatWriter.CompressedZero
      */
     public static final class CompressedZero
             implements BitWriter<Float> {
@@ -118,9 +120,11 @@ public class FloatWriter
     }
 
     /**
-     * A bit writer for writing either {@link Float#NEGATIVE_INFINITY} or {@link Float#POSITIVE_INFINITY}.
+     * A writer for writing either {@link Float#NEGATIVE_INFINITY} or {@link Float#POSITIVE_INFINITY}.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see FloatReader.CompressedInfinity
+     * @see DoubleWriter.CompressedInfinity
      */
     public static final class CompressedInfinity
             implements BitWriter<Float> {
@@ -215,10 +219,19 @@ public class FloatWriter
      * A writer for writing {@code subnormal} values in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see FloatReader.CompressedSubnormal
+     * @see DoubleWriter.CompressedSubnormal
      */
     public static class CompressedSubnormal
             implements BitWriter<Float> {
 
+        /**
+         * Creates a new instance with specified significand size.
+         *
+         * @param significandSize the number of left-most significand bits to write; between
+         *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
         public CompressedSubnormal(final int significandSize) {
             super();
             significandOnly = new SignificandOnly(significandSize);
@@ -232,8 +245,7 @@ public class FloatWriter
         @Override
         public void write(final BitOutput output, final Float value) throws IOException {
             final int bits = Float.floatToRawIntBits(value);
-            signBitOnly.writeBits(output, bits);
-            significandOnly.writeBits(output, bits);
+            writeBits(output, bits);
         }
 
         private final SignBitOnly signBitOnly = new SignBitOnly();
@@ -245,10 +257,19 @@ public class FloatWriter
      * A writer for writing {@code NaN} values in a compressed manner.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see FloatReader.CompressedNaN
+     * @see DoubleWriter.CompressedNaN
      */
     public static class CompressedNaN
             implements BitWriter<Float> {
 
+        /**
+         * Creates a new instance with specified significand size.
+         *
+         * @param significandSize the number of left-most significand bits to write; between
+         *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and
+         *                        {@value FloatConstants#SIZE_SIGNIFICAND}, both inclusive.
+         */
         public CompressedNaN(final int significandSize) {
             super();
             compressedSubnormal = new CompressedSubnormal(significandSize);

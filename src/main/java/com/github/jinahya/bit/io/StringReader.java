@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.function.ToIntFunction;
 
 /**
  * A value reader for reading {@code String} values.
@@ -31,7 +32,8 @@ import java.util.Objects;
  * @see StringWriter
  */
 public class StringReader
-        extends FilterBitReader<String, byte[]> {
+        extends FilterBitReader<String, byte[]>
+        implements ReadsCount<StringReader> {
 
     /**
      * Creates a new instance for reading {@link StandardCharsets#US_ASCII} decoded strings in a compressed-manner.
@@ -71,6 +73,11 @@ public class StringReader
     @Override
     protected String filter(final byte[] value) {
         return new String(value, charset);
+    }
+
+    @Override
+    public void setCountReader(final ToIntFunction<? super BitInput> countReader) {
+        ((ReadsCount<?>) delegate).setCountReader(countReader);
     }
 
     private final Charset charset;
