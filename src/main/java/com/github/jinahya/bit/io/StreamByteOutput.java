@@ -46,8 +46,8 @@ public class StreamByteOutput
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @implSpec The {@code write(int)} method of {@code StreamByteOutput} class invokes {@link OutputStream#write(int)}
-     * method on the {@link #target} with specified value.
+     * @implSpec The {@code write(int)} method of {@code StreamByteOutput} class invokes
+     * {@link OutputStream#write(int) write(int)} method on the {@link #target} with specified value.
      * @see OutputStream#write(int)
      */
     @Override

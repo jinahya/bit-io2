@@ -30,7 +30,10 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.stream.Stream;
 
+import static com.github.jinahya.bit.io.DoubleConstraints.requireValidExponentSize;
+import static com.github.jinahya.bit.io.DoubleConstraints.requireValidSignificandSize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 
 @Slf4j
@@ -44,7 +47,7 @@ class BitIo_Double_Test {
     @ParameterizedTest
     void wr__(final int exponentSize, final int significandSize, final double expected) throws IOException {
         try (MockedStatic<DoubleConstraints> doubleConstraints
-                     = Mockito.mockStatic(DoubleConstraints.class, Mockito.CALLS_REAL_METHODS)) {
+                     = mockStatic(DoubleConstraints.class, Mockito.CALLS_REAL_METHODS)) {
             final var actual = BitIoTestUtils.wr1au(o -> {
                 o.writeDouble(exponentSize, significandSize, expected);
                 return (a, i) -> {
@@ -57,8 +60,8 @@ class BitIo_Double_Test {
                 return;
             }
             assertThat(actual).isEqualTo(expected);
-            doubleConstraints.verify(() -> DoubleConstraints.requireValidExponentSize(exponentSize), times(2));
-            doubleConstraints.verify(() -> DoubleConstraints.requireValidSignificandSize(significandSize), times(2));
+            doubleConstraints.verify(() -> requireValidExponentSize(exponentSize), times(2));
+            doubleConstraints.verify(() -> requireValidSignificandSize(significandSize), times(2));
         }
     }
 }

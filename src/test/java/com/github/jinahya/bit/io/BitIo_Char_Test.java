@@ -24,41 +24,52 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.github.jinahya.bit.io.BitIoConstraints.requireValidSizeForChar;
+import static com.github.jinahya.bit.io.BitIoRandom.nextValueForChar;
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1au;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class BitIo_Char_Test {
 
     private static Stream<Arguments> sizeAndValueArgumentsStream() {
         return IntStream.range(0, 16)
                 .map(i -> BitIoRandom.nextSizeForChar())
-                .mapToObj(s -> Arguments.of(s, BitIoRandom.nextValueForChar(s)));
+                .mapToObj(s -> Arguments.of(s, nextValueForChar(s)));
     }
 
     @MethodSource({"sizeAndValueArgumentsStream"})
     @ParameterizedTest
     void wr__(final int size, final char expected) throws IOException {
-        final char actual = BitIoTestUtils.wr1au(o -> {
-            o.writeChar(size, expected);
-            return (a, i) -> {
-                assertThat(a.length).isLessThanOrEqualTo(Character.BYTES);
-                return i.readChar(size);
-            };
-        });
-        assertThat(actual).isEqualTo(expected);
+        try (MockedStatic<BitIoConstraints> constraints
+                     = mockStatic(BitIoConstraints.class, Mockito.CALLS_REAL_METHODS)) {
+            final char actual = wr1au(o -> {
+                o.writeChar(size, expected);
+                return (a, i) -> {
+                    assertThat(a).hasSizeLessThanOrEqualTo(Character.BYTES);
+                    return i.readChar(size);
+                };
+            });
+            assertThat(actual).isEqualTo(expected);
+            constraints.verify(() -> requireValidSizeForChar(size), times(2));
+        }
     }
 
     @Test
     void wr__SIZE() throws IOException {
-        final var expected = BitIoRandom.nextValueForChar(Character.SIZE);
-        final var actual = BitIoTestUtils.wr1au(o -> {
+        final var expected = nextValueForChar(Character.SIZE);
+        final var actual = wr1au(o -> {
             o.writeChar(Character.SIZE, expected);
             return (a, i) -> {
-                assertThat(a.length).isLessThanOrEqualTo(Character.BYTES);
+                assertThat(a).hasSizeLessThanOrEqualTo(Character.BYTES);
                 return i.readChar(Character.SIZE);
             };
         });

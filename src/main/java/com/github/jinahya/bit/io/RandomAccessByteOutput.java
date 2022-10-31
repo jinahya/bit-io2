@@ -47,7 +47,7 @@ class RandomAccessByteOutput
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
      * @implSpec The {@code write(int)} method of {@code RandomAccessFileByteOutput} class invokes
-     * {@link RandomAccessFile#write(int)} method on the {@link #target} with {@code value}.
+     * {@link RandomAccessFile#write(int) write(int)} method on the {@link #target} with {@code value}.
      * @see RandomAccessFile#write(int)
      */
     @Override

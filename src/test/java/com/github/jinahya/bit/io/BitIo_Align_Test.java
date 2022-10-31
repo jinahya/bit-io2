@@ -33,8 +33,8 @@ class BitIo_Align_Test {
     @RepeatedTest(16)
     void align__() throws IOException {
         wr2u(o -> {
-            final var bits = current().nextInt(1, 128);
             final var skip = current().nextBoolean();
+            final var bits = current().nextInt(1, 128);
             if (skip) {
                 o.skip(bits);
             }

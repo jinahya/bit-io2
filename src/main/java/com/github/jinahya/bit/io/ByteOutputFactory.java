@@ -26,7 +26,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 
 /**
- * A factory class for creating instance of {@link ByteOutput}.
+ * A factory class for creating instances of {@link ByteOutput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ByteInputFactory

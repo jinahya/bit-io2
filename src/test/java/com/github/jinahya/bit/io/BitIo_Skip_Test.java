@@ -31,10 +31,10 @@ class BitIo_Skip_Test {
 
     @Test
     void skip__() throws IOException {
+        final var expected = current().nextInt(1, 1024);
         wr2u(o -> {
-            final var bits = current().nextInt(1, 128);
-            o.skip(bits);
-            return i -> i.skip(bits);
+            o.skip(expected);
+            return i -> i.skip(expected);
         });
     }
 }

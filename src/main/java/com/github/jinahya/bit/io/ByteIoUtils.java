@@ -20,6 +20,11 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+/**
+ * Utilities for Bit-Io.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 final class ByteIoUtils {
 
     private ByteIoUtils() {

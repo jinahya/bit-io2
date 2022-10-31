@@ -27,9 +27,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 
 /**
- * A factory class for creating instance from various sources.
+ * A factory class for creating instances of {@link ByteInput}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see ByteOutputFactory
  */
 public final class ByteInputFactory {
 
