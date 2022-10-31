@@ -23,7 +23,7 @@ package com.github.jinahya.bit.io;
 import java.util.Objects;
 
 /**
- * An abstract byte input for reading bytes from byte sources of specific type.
+ * An abstract byte input for reading bytes from sources of specific type.
  *
  * @param <T> byte source type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
