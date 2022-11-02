@@ -16,8 +16,8 @@ public interface WritesCount<T extends WritesCount<T>> {
     /**
      * Configures this writer to use specified consumer for writing the count of elements.
      *
-     * @param countWriter the consumer accepts an {@code output} and an {@code count}, and writes the {@code count} to
-     *                    the {@code output}. count value.
+     * @param countWriter the consumer accepts an {@code output} and a {@code count}, and writes the {@code count} to
+     *                    the {@code output}.
      */
     default void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
         Objects.requireNonNull(countWriter, "countWriter is null");
@@ -35,8 +35,8 @@ public interface WritesCount<T extends WritesCount<T>> {
     /**
      * Configures this writer to use specified consumer for writing the count of elements, and returns this object.
      *
-     * @param countWriter the consumer accepts an {@code output} and an {@code count}, and writes the {@code count} to
-     *                    the {@code output}. count value.
+     * @param countWriter the consumer accepts an {@code output} and a {@code count}, and writes the {@code count} to
+     *                    the {@code output}.
      * @return this object.
      */
     @SuppressWarnings({"unchecked"})

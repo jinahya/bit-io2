@@ -49,8 +49,8 @@ public class StreamByteInput
      * @throws EOFException when the {@link #source source stream}'s {@link InputStream#read() read()} method returns
      *                      {@code -1}.
      * @throws IOException  {@inheritDoc}
-     * @implSpec The {@code read()} method of {@code StreamByteInput} class invokes {@link InputStream#read()} method on
-     * the {@link #source}, and returns the result.
+     * @implSpec The {@code read()} method of {@code StreamByteInput} class invokes {@link InputStream#read() read()}
+     * method on the {@link #source}, and returns the result.
      * @see InputStream#read()
      */
     @Override

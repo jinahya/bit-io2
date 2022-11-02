@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.function.ToIntFunction;
 
 /**
- * An interface for reader need to read element count.
+ * An interface for readers need to read element count.
  *
  * @param <T> self type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -16,7 +16,7 @@ public interface ReadsCount<T extends ReadsCount<T>> {
     /**
      * Configures to use specified function for reading the {@code count} of elements.
      *
-     * @param countReader the function applies with a {@code input} and reads the {@code count}.
+     * @param countReader the function applies with an {@code input} and reads the {@code count}.
      */
     default void setCountReader(final ToIntFunction<? super BitInput> countReader) {
         Objects.requireNonNull(countReader, "countReader is null");
@@ -34,7 +34,7 @@ public interface ReadsCount<T extends ReadsCount<T>> {
     /**
      * Configures to use specified function for reading the {@code count} of elements, and returns this object.
      *
-     * @param countReader the function applies with a {@code input} and reads the {@code count}.
+     * @param countReader the function applies with an {@code input} and reads the {@code count}.
      * @return this object.
      */
     @SuppressWarnings({"unchecked"})
