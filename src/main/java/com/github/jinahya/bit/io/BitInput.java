@@ -37,7 +37,7 @@ public interface BitInput {
      * @return the value read.
      * @throws IOException if an I/O error occurs.
      * @implSpec The default implementation reads a {@code 1}-bit unsigned {@code int} value, and returns {@code true}
-     * for {@code 0b1} and {@code false} for {@code 0b0}
+     * for {@code 0b1} and {@code false} for {@code 0b0}.
      */
     default boolean readBoolean() throws IOException {
         return readInt(true, 1) == 0x01;
@@ -49,10 +49,10 @@ public interface BitInput {
      * @param unsigned a flag for indicating an unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Byte#SIZE} -
      *                 ({@code unsigned ? 1 : 0})), both inclusive.
-     * @return a {@code byte} value of specified {@code size}.
+     * @return a {@code byte} value of {@code size} bits.
      * @throws IOException if an I/O error occurs.
      * @implSpec The default implementation invokes {@link #readInt(boolean, int)} method with given arguments, and
-     * returns the result as a {@code byte} value.
+     * returns the result cast as a {@code byte} value.
      */
     default byte readByte(final boolean unsigned, final int size) throws IOException {
         BitIoConstraints.requireValidSizeForByte(unsigned, size);
@@ -65,10 +65,10 @@ public interface BitInput {
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Short#SIZE} - (unsigned ?
      *                 {@code 1} : {@code 0})), both inclusive.
-     * @return a {@code short} value of specified {@code size}.
+     * @return a {@code short} value of {@code size} bits.
      * @throws IOException if an I/O error occurs.
      * @implSpec The default implementation invokes {@link #readInt(boolean, int)} method with given arguments, and
-     * returns the result as a {@code short} value.
+     * returns the result cast as a {@code short} value.
      */
     default short readShort(final boolean unsigned, final int size) throws IOException {
         BitIoConstraints.requireValidSizeForShort(unsigned, size);
@@ -81,7 +81,7 @@ public interface BitInput {
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Integer#SIZE} -
      *                 ({@code unsigned ? 1: 0})), both inclusive.
-     * @return an {@code int} value of specified {@code size}.
+     * @return an {@code int} value of {@code size} bits.
      * @throws IOException if an I/O error occurs.
      */
     int readInt(boolean unsigned, int size) throws IOException;
@@ -92,7 +92,7 @@ public interface BitInput {
      * @param unsigned a flag for indicating unsigned value; {@code true} for unsigned, {@code false} for signed.
      * @param size     the number of bits to read; between {@code 1} and ({@value java.lang.Long#SIZE} -
      *                 ({@code unsigned ? 1: 0})), both inclusive.
-     * @return a {@code long} value of specified {@code size}.
+     * @return a {@code long} value of {@code size} bits.
      * @throws IOException if an I/O error occurs.
      */
     default long readLong(final boolean unsigned, int size) throws IOException {
@@ -121,10 +121,10 @@ public interface BitInput {
      * Reads a {@code char} value of specified number of bits.
      *
      * @param size the number of bits to read; between {@code 1} and {@value java.lang.Character#SIZE}, both inclusive.
-     * @return a {@code char} value of specified {@code size}.
+     * @return a {@code char} value of {@code size} bits.
      * @throws IOException if an I/O error occurs.
-     * @implSpec The default implementation invokes {@link #readInt(boolean, int)} method with {@code true} and given
-     * {@code size}, and returns the result as a {@code char}.
+     * @implSpec The default implementation invokes {@link #readInt(boolean, int)} method with {@code true} and
+     * {@code size}, and returns the result cast as a {@code char}.
      */
     default char readChar(final int size) throws IOException {
         BitIoConstraints.requireValidSizeForChar(size);

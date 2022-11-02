@@ -25,11 +25,11 @@ import java.util.function.ObjIntConsumer;
 import java.util.function.ToIntFunction;
 
 /**
- * Defines constants for bit-io.
+ * Constants defined for reading/writing bits.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;\
  */
-final class BitIoConstants {
+public final class BitIoConstants {
 
     static final String MESSAGE_INSTANTIATION_IS_NOT_ALLOWED = "instantiation is not allowed";
 
@@ -37,25 +37,38 @@ final class BitIoConstants {
 
     static final String MESSAGE_UNSUPPORTED_NOT_SUPPOSED_TO_BE_INVOKED = "unsupported; not supposed to be invoked";
 
-    private static final int SIZE_COUNT = 31;
-
-    static final ToIntFunction<? super BitInput> COUNT_READER = i -> {
+    /**
+     * A function for reading a {@code 31}-bit unsigned count value.
+     *
+     * @see BitIoUtils#readCount(BitInput)
+     */
+    public static final ToIntFunction<? super BitInput> COUNT_READER = i -> {
         try {
-            return i.readInt(true, SIZE_COUNT);
+            return BitIoUtils.readCount(i);
         } catch (final IOException ioe) {
             throw new _RuntimeException("failed to read an uncompressed count", ioe);
         }
     };
 
-    static final ObjIntConsumer<? super BitOutput> COUNT_WRITER = (o, c) -> {
+    /**
+     * A consumer for writing a {@code 31}-bit unsigned count value.
+     *
+     * @see BitIoUtils#writeCount(BitOutput, int)
+     */
+    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER = (o, c) -> {
         try {
-            o.writeInt(true, SIZE_COUNT, c);
+            BitIoUtils.writeCount(o, c);
         } catch (final IOException ioe) {
             throw new _RuntimeException("failed to write an uncompressed count", ioe);
         }
     };
 
-    static final ToIntFunction<? super BitInput> COUNT_READER_COMPRESSED = i -> {
+    /**
+     * A function reads an unsigned count value in a compressed manner.
+     *
+     * @see BitIoUtils#readCountCompressed(BitInput)
+     */
+    public static final ToIntFunction<? super BitInput> COUNT_READER_COMPRESSED = i -> {
         try {
             return BitIoUtils.readCountCompressed(i);
         } catch (final IOException ioe) {
@@ -63,7 +76,12 @@ final class BitIoConstants {
         }
     };
 
-    static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_COMPRESSED = (o, c) -> {
+    /**
+     * A consumer writes given count value in a compressed manner.
+     *
+     * @see BitIoUtils#writeCountCompressed(BitOutput, int)
+     */
+    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_COMPRESSED = (o, c) -> {
         try {
             BitIoUtils.writeCountCompressed(o, c);
         } catch (final IOException ioe) {

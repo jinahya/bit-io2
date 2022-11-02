@@ -22,32 +22,58 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
- * Utilities for bit-io.
+ * Utilities for reading/writing bits.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-final class BitIoUtils {
+public final class BitIoUtils {
 
     private static final int SIZE_COUNT = 31;
 
-    static void writeCount(final BitOutput output, final int count) throws IOException {
-        assert output != null;
-        assert count >= 0;
+    /**
+     * Writes specified count value as a {@code 31}-bit unsigned value to specified output.
+     *
+     * @param output the output to which the {@code count} is written.
+     * @param count  the value to write.
+     * @throws IOException if an I/O error occurs.
+     */
+    public static void writeCount(final BitOutput output, final int count) throws IOException {
+        Objects.requireNonNull(output, "output is null");
+        if (count < 0) {
+            throw new IllegalArgumentException("negative count: " + count);
+        }
         output.writeInt(true, SIZE_COUNT, count);
     }
 
-    static int readCount(final BitInput input) throws IOException {
-        assert input != null;
+    /**
+     * Reads a {@code 31}-bit unsigned count value from specified input.
+     *
+     * @param input the input from which the count value is read.
+     * @return a count value read.
+     * @throws IOException if an I/O error occurs.
+     */
+    public static int readCount(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
         return input.readInt(true, SIZE_COUNT);
     }
 
     private static final int SIZE_SIZE_COUNT_COMPRESSED = 4;
 
-    static void writeCountCompressed(final BitOutput output, final int count) throws IOException {
-        assert output != null;
-        assert count >= 0;
+    /**
+     * Writes specified count value to specified output, in a compressed manner.
+     *
+     * @param output the output to which the {@code count} value is written.
+     * @param count  the value to write.
+     * @throws IOException if an I/O error occurs.
+     */
+    public static void writeCountCompressed(final BitOutput output, final int count) throws IOException {
+        Objects.requireNonNull(output, "output is null");
+        if (count < 0) {
+            throw new IllegalArgumentException("negative count: " + count);
+        }
         if (count == 0) {
             output.writeBoolean(true); // zero
             return;
@@ -65,7 +91,15 @@ final class BitIoUtils {
         writeCount(output, count);
     }
 
-    static int readCountCompressed(final BitInput input) throws IOException {
+    /**
+     * Reads a count value from specified input, in a compressed-manner.
+     *
+     * @param input the input from which the count value is read.
+     * @return the count value read.
+     * @throws IOException if an I/O error occurs.
+     */
+    public static int readCountCompressed(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
         if (input.readBoolean()) { // zero
             return 0;
         }
