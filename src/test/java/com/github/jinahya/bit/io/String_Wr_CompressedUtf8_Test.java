@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class String_Wr_CompressedUtf8_Test {
 
     private static Stream<String> randomValueStream() {
-        return ByteArray_Wr_CompressedUtf8_Test.randomBytesStream()
+        return ByteArray_Wr_CompressedUtf8_Test.randomValueStream()
                 .map(v -> new String(v, StandardCharsets.UTF_8))
                 ;
     }

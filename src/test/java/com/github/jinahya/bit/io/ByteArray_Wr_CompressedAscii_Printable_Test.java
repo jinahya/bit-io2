@@ -50,7 +50,7 @@ class ByteArray_Wr_CompressedAscii_Printable_Test {
         return randomize(new byte[length]);
     }
 
-    static Stream<byte[]> randomBytesStream() {
+    static Stream<byte[]> randomValueStream() {
         return IntStream.range(0, 16)
                 .mapToObj(i -> randomBytes())
                 ;
@@ -77,7 +77,7 @@ class ByteArray_Wr_CompressedAscii_Printable_Test {
         assertThat(discarded).isEqualTo(padded);
     }
 
-    @MethodSource({"randomBytesStream"})
+    @MethodSource({"randomValueStream"})
     @ParameterizedTest
     void test(final byte[] randomBytes) throws IOException {
         run(randomBytes);

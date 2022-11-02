@@ -45,7 +45,7 @@ class ByteArray_Wr_CompressedUtf8_Test {
         return new RandomStringGenerator.Builder().build().generate(length).getBytes(StandardCharsets.UTF_8);
     }
 
-    static Stream<byte[]> randomBytesStream() {
+    static Stream<byte[]> randomValueStream() {
         return IntStream.range(0, 16)
                 .mapToObj(i -> randomBytes());
     }
@@ -71,7 +71,7 @@ class ByteArray_Wr_CompressedUtf8_Test {
         }
     }
 
-    @MethodSource({"randomBytesStream"})
+    @MethodSource({"randomValueStream"})
     @ParameterizedTest
     void __random(final byte[] expected) throws IOException {
         run(expected);
