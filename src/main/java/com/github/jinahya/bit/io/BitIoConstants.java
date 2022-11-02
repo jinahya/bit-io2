@@ -43,7 +43,7 @@ final class BitIoConstants {
         try {
             return i.readInt(true, SIZE_COUNT);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to read a (compressed) count", ioe);
+            throw new _RuntimeException("failed to read an uncompressed count", ioe);
         }
     };
 
@@ -51,7 +51,7 @@ final class BitIoConstants {
         try {
             o.writeInt(true, SIZE_COUNT, c);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to write a (compressed) count", ioe);
+            throw new _RuntimeException("failed to write an uncompressed count", ioe);
         }
     };
 
@@ -59,7 +59,7 @@ final class BitIoConstants {
         try {
             return BitIoUtils.readCountCompressed(i);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to read a (compressed) count", ioe);
+            throw new _RuntimeException("failed to read a compressed count", ioe);
         }
     };
 
@@ -67,7 +67,7 @@ final class BitIoConstants {
         try {
             BitIoUtils.writeCountCompressed(o, c);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to write a (compressed) count", ioe);
+            throw new _RuntimeException("failed to write a compressed count", ioe);
         }
     };
 

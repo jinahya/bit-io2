@@ -47,6 +47,7 @@ public abstract class FilterBitWriter<T, U>
      */
     public static <T, U> FilterBitWriter<T, U> mapping(final BitWriter<? super U> delegate,
                                                        final Function<? super T, ? extends U> mapper) {
+        Objects.requireNonNull(delegate, "delegate is null");
         Objects.requireNonNull(mapper, "mapper is null");
         return new FilterBitWriter<T, U>(delegate) {
             @Override
@@ -98,9 +99,9 @@ public abstract class FilterBitWriter<T, U>
     }
 
     /**
-     * Filters specified original value for writing to the {@link #delegate}.
+     * Maps specified original value.
      *
-     * @param value the value to filter.
+     * @param value the original value to filter.
      * @return a filter value.
      */
     protected abstract U filter(final T value);

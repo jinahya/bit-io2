@@ -48,6 +48,7 @@ public abstract class FilterBitReader<T, U>
      */
     public static <T, U> FilterBitReader<T, U> mapping(final BitReader<? extends U> delegate,
                                                        final Function<? super U, ? extends T> mapper) {
+        Objects.requireNonNull(delegate, "delegate is null");
         Objects.requireNonNull(mapper, "mapper is null");
         return new FilterBitReader<T, U>(delegate) {
             @Override
@@ -100,7 +101,7 @@ public abstract class FilterBitReader<T, U>
     }
 
     /**
-     * Maps specified original value read from the {@link #delegate}.
+     * Maps specified original value.
      *
      * @param value the value to map.
      * @return a mapped value.
