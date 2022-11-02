@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -29,42 +28,47 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 class String_Wr_CompressedUtf8_Test {
 
-    static Stream<String> randomValueStream() {
+    private static Stream<String> randomValueStream() {
         return ByteArray_Wr_CompressedUtf8_Test.randomBytesStream()
                 .map(v -> new String(v, StandardCharsets.UTF_8))
                 ;
     }
 
+    private static Stream<String> randomValueStreamWithNull() {
+        return Stream.concat(randomValueStream(), Stream.of(new String[]{null}));
+    }
+
     @MethodSource({"randomValueStream"})
     @ParameterizedTest
-    void test(final String expected) throws IOException {
-        wr2u(o -> {
+    void wr__(final String expected) throws IOException {
+        final var actual = wr1u(o -> {
             final var writer = StringWriter.compressedUtf8();
             o.writeObject(writer, expected);
             return i -> {
                 final var reader = StringReader.compressedUtf8();
-                final var actual = i.readObject(reader);
-                assertThat(actual).isEqualTo(expected);
+                return i.readObject(reader);
             };
         });
+        assertThat(actual).isEqualTo(expected);
     }
 
-    @Test
-    void nullable() throws IOException {
-        wr2u(o -> {
-            final var writer = StringWriter.compressedUtf8().nullable();
-            o.writeObject(writer, null);
-            return i -> {
-                final var reader = StringReader.compressedUtf8().nullable();
-                final var actual = i.readObject(reader);
-                assertThat(actual).isNull();
-            };
+    @MethodSource({"randomValueStreamWithNull"})
+    @ParameterizedTest
+    void wr__nullable(final String expected) throws IOException {
+        final var actual = wr1u(o -> {
+            StringWriter.compressedUtf8().nullable().write(o, expected);
+            return i -> StringReader.compressedUtf8().nullable().read(i);
         });
+        if (expected == null) {
+            assertThat(actual).isNull();
+        } else {
+            assertThat(actual).isEqualTo(expected);
+        }
     }
 }

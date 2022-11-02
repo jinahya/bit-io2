@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -29,44 +28,49 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
+import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 class String_Wr_CompressedAscii_Test {
 
-    static Stream<String> randomValueStream() {
+    private static Stream<String> randomValueStream() {
         return ByteArray_Wr_CompressedAscii_Test.randomBytesStream()
                 .map(b -> new String(b, StandardCharsets.US_ASCII))
                 ;
+    }
+
+    private static Stream<String> randomValueStreamWithNull() {
+        return Stream.concat(randomValueStream(), Stream.of(new String[]{null}));
     }
 
     @MethodSource({"randomValueStream"})
     @ParameterizedTest
     void test(final String expected) throws IOException {
         final var printable = false;
-        wr2u(o -> {
+        final var actual = wr1u(o -> {
             final var writer = StringWriter.compressedAscii(printable);
             o.writeObject(writer, expected);
             return i -> {
                 final var reader = StringReader.compressedAscii(printable);
-                final var actual = i.readObject(reader);
-                assertThat(actual).isEqualTo(expected);
+                return i.readObject(reader);
             };
         });
+        assertThat(actual).isEqualTo(expected);
     }
 
-    @Test
-    void nullable() throws IOException {
+    @MethodSource({"randomValueStreamWithNull"})
+    @ParameterizedTest
+    void nullable(final String expected) throws IOException {
         final var printable = false;
-        wr2u(o -> {
-            final var writer = StringWriter.compressedAscii(printable).nullable();
-            o.writeObject(writer, null);
-            return i -> {
-                final var reader = StringReader.compressedAscii(printable).nullable();
-                final var actual = i.readObject(reader);
-                assertThat(actual).isNull();
-            };
+        final var actual = wr1u(o -> {
+            StringWriter.compressedAscii(printable).nullable().write(o, expected);
+            return StringReader.compressedAscii(printable).nullable()::read;
         });
+        if (expected == null) {
+            assertThat(actual).isNull();
+        } else {
+            assertThat(actual).isEqualTo(expected);
+        }
     }
 }

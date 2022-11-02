@@ -47,6 +47,7 @@ public interface BitReader<T> {
      * @param input the input from which the value is read.
      * @return a value read.
      * @throws IOException if an I/O error occurs.
+     * @see BitInput#readObject(BitReader)
      */
     T read(BitInput input) throws IOException;
 }

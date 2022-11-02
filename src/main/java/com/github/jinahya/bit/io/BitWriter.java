@@ -47,6 +47,7 @@ public interface BitWriter<T> {
      * @param output the output to which the value is written.
      * @param value  the value to write.
      * @throws IOException if an I/O error occurs.
+     * @see BitOutput#writeObject(BitWriter, Object)
      */
     void write(BitOutput output, T value) throws IOException;
 }

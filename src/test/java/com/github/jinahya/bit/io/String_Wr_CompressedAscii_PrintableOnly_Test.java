@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -41,32 +40,35 @@ class String_Wr_CompressedAscii_PrintableOnly_Test {
                 ;
     }
 
+    private static Stream<String> randomValueStreamWithNull() {
+        return Stream.concat(randomValueStream(), Stream.of(new String[]{null}));
+    }
+
     @MethodSource({"randomValueStream"})
     @ParameterizedTest
     void test(final String expected) throws IOException {
-        wr1u(o -> {
+        final var actual = wr1u(o -> {
             final var writer = StringWriter.compressedAscii(true);
             o.writeObject(writer, expected);
             return i -> {
                 final var reader = StringReader.compressedAscii(true);
-                final var actual = i.readObject(reader);
-                assertThat(actual).isEqualTo(expected);
-                return null;
+                return i.readObject(reader);
             };
         });
+        assertThat(actual).isEqualTo(expected);
     }
 
-    @Test
-    void nullable() throws IOException {
-        wr1u(o -> {
-            final var writer = StringWriter.compressedAscii(true).nullable();
-            o.writeObject(writer, null);
-            return i -> {
-                final var reader = StringReader.compressedAscii(true).nullable();
-                final var actual = i.readObject(reader);
-                assertThat(actual).isNull();
-                return null;
-            };
+    @MethodSource({"randomValueStreamWithNull"})
+    @ParameterizedTest
+    void nullable(final String expected) throws IOException {
+        final var actual = wr1u(o -> {
+            StringWriter.compressedAscii(true).nullable().write(o, expected);
+            return StringReader.compressedAscii(true).nullable()::read;
         });
+        if (expected == null) {
+            assertThat(actual).isNull();
+        } else {
+            assertThat(actual).isEqualTo(expected);
+        }
     }
 }
