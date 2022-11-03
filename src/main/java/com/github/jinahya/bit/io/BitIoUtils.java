@@ -79,12 +79,15 @@ public final class BitIoUtils {
             return;
         }
         output.writeBoolean(false); // not zero
-        if (count < 65536) { // 21 bits in maximum; 1 + 4 + 16
+        if (count <= 65536) {
             output.writeBoolean(true); // compressed
-            final int size = Integer.SIZE - Integer.numberOfLeadingZeros(count);
-            assert size > 0 && size <= Short.SIZE; // [1..16]
+            int size = Integer.SIZE - Integer.numberOfLeadingZeros(count - 1);
+            if (size == 0) {
+                size++;
+            }
+            assert size <= (Short.SIZE + 1); // [1..16]
             output.writeInt(true, SIZE_SIZE_COUNT_COMPRESSED, size - 1); // 4 bits for [0..15]
-            output.writeInt(true, size, count); // 16 bits in maximum
+            output.writeInt(true, size, count - 1); // 16 bits in maximum
             return;
         }
         output.writeBoolean(false); // uncompressed
@@ -106,9 +109,9 @@ public final class BitIoUtils {
         if (input.readBoolean()) { // compressed
             final int size = input.readInt(true, SIZE_SIZE_COUNT_COMPRESSED) + 1; // [0..15] + 1 -> [1..16]
             assert size > 0 && size <= 16;
-            final int count = input.readInt(true, size);
+            final int count = input.readInt(true, size) + 1;
             assert count > 0;
-            assert count < 65536;
+            assert count <= 65536;
             return count;
         }
         return readCount(input);
