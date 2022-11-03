@@ -19,14 +19,18 @@ public interface WritesCount<T extends WritesCount<T>> {
      * @param countWriter the consumer accepts an {@code output} and a {@code count}, and writes the {@code count} to
      *                    the {@code output}.
      */
+    @SuppressWarnings({
+            "java:S1874", // isAccessible
+            "java:S3011" // setAccessible
+    })
     default void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
         Objects.requireNonNull(countWriter, "countWriter is null");
         try {
             final Field field = getClass().getDeclaredField("countWriter");
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
+            if (!field.isAccessible()) { // NOSONAR
+                field.setAccessible(true); // NOSONAR
             }
-            field.set(this, countWriter);
+            field.set(this, countWriter); // NOSONAR
         } catch (final ReflectiveOperationException roe) {
             throw new RuntimeException("failed to set 'countWriter", roe); // NOSONAR
         }
