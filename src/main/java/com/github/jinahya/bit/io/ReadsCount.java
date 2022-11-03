@@ -27,7 +27,7 @@ public interface ReadsCount<T extends ReadsCount<T>> {
             }
             field.set(this, countReader);
         } catch (final ReflectiveOperationException roe) {
-            throw new _RuntimeException("failed to set 'countReader", roe);
+            throw new RuntimeException("failed to set 'countReader", roe); // NOSONAR
         }
     }
 

@@ -28,7 +28,7 @@ public interface WritesCount<T extends WritesCount<T>> {
             }
             field.set(this, countWriter);
         } catch (final ReflectiveOperationException roe) {
-            throw new _RuntimeException("failed to set 'countWriter", roe);
+            throw new RuntimeException("failed to set 'countWriter", roe); // NOSONAR
         }
     }
 
