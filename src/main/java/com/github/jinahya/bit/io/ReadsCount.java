@@ -18,14 +18,18 @@ public interface ReadsCount<T extends ReadsCount<T>> {
      *
      * @param countReader the function applies with an {@code input} and reads the {@code count}.
      */
+    @SuppressWarnings({
+            "java:S1874", // isAccessible
+            "java:S3011" // setAccessible, set
+    })
     default void setCountReader(final ToIntFunction<? super BitInput> countReader) {
         Objects.requireNonNull(countReader, "countReader is null");
         try {
             final Field field = getClass().getDeclaredField("countReader");
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
+            if (!field.isAccessible()) { // NOSONAR
+                field.setAccessible(true); // NOSONAR
             }
-            field.set(this, countReader);
+            field.set(this, countReader); // NOSONAR
         } catch (final ReflectiveOperationException roe) {
             throw new RuntimeException("failed to set 'countReader", roe); // NOSONAR
         }

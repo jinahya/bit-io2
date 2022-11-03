@@ -21,7 +21,7 @@ public interface WritesCount<T extends WritesCount<T>> {
      */
     @SuppressWarnings({
             "java:S1874", // isAccessible
-            "java:S3011" // setAccessible
+            "java:S3011" // setAccessible, set
     })
     default void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
         Objects.requireNonNull(countWriter, "countWriter is null");
