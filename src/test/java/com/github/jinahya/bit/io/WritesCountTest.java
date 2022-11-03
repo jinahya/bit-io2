@@ -13,7 +13,7 @@ class WritesCountTest {
     }
 
     @Test
-    void countWriteer__() {
+    void countWriter__() {
         new WritesCountImpl().countWriter((o, c) -> {
         });
     }
