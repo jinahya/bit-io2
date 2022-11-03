@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
+import static com.github.jinahya.bit.io.BitIoConstants.COUNT_READER;
+import static com.github.jinahya.bit.io.BitIoConstants.COUNT_WRITER;
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,6 +45,8 @@ class String_Wr_CompressedAscii_Test {
     private static Stream<String> randomValueStreamWithNull() {
         return Stream.concat(randomValueStream(), Stream.of(new String[]{null}));
     }
+
+    private static final boolean PRINTABLE_ONLY = false;
 
     @MethodSource({"randomValueStream"})
     @ParameterizedTest
@@ -72,5 +76,15 @@ class String_Wr_CompressedAscii_Test {
         } else {
             assertThat(actual).isEqualTo(expected);
         }
+    }
+
+    @MethodSource({"randomValueStream"})
+    @ParameterizedTest
+    void wr__UncompressedCount(final String expected) throws IOException {
+        final String actual = BitIoTestUtils.wr1u(o -> {
+            StringWriter.compressedAscii(PRINTABLE_ONLY).countWriter(COUNT_WRITER).write(o, expected);
+            return i -> StringReader.compressedAscii(PRINTABLE_ONLY).countReader(COUNT_READER).read(i);
+        });
+        assertThat(actual).isEqualTo(expected);
     }
 }

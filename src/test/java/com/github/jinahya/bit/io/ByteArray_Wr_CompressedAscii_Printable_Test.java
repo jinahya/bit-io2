@@ -33,6 +33,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.github.jinahya.bit.io.BitIoConstants.COUNT_READER;
+import static com.github.jinahya.bit.io.BitIoConstants.COUNT_WRITER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -51,9 +53,10 @@ class ByteArray_Wr_CompressedAscii_Printable_Test {
     }
 
     static Stream<byte[]> randomValueStream() {
-        return IntStream.range(0, 16)
-                .mapToObj(i -> randomBytes())
-                ;
+        return Stream.concat(
+                IntStream.range(0, 16).mapToObj(i -> randomBytes()),
+                Stream.of(new byte[0])
+        );
     }
 
     private static final boolean PRINTABLE_ONLY = true;
@@ -103,5 +106,15 @@ class ByteArray_Wr_CompressedAscii_Printable_Test {
         final var discarded = input.align(1);
         assertThat(actual).isNull();
         assertThat(discarded).isEqualTo(padded);
+    }
+
+    @MethodSource({"randomValueStream"})
+    @ParameterizedTest
+    void wr__UncompressedCount(final byte[] expected) throws IOException {
+        final byte[] actual = BitIoTestUtils.wr1u(o -> {
+            ByteArrayWriter.compressedAscii(PRINTABLE_ONLY).countWriter(COUNT_WRITER).write(o, expected);
+            return i -> ByteArrayReader.compressedAscii(PRINTABLE_ONLY).countReader(COUNT_READER).read(i);
+        });
+        assertThat(actual).isEqualTo(expected);
     }
 }
