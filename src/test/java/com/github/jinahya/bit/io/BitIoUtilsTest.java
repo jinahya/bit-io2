@@ -29,18 +29,70 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 class BitIoUtilsTest {
 
     @Nested
+    class WriteCountTest {
+
+        @DisplayName("writeCount(, negative) -> IllegalArgumentException")
+        @Test
+        void _IllegalArgumentException_CountIsNegative() {
+            final var count = ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE;
+            assertThatThrownBy(() -> BitIoUtils.writeCount(Mockito.mock(BitOutput.class), count))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    class ReadCountTest {
+
+    }
+
+    @Nested
+    class WriteCountCompressedTest {
+
+        @DisplayName("writeCountCompressed(, negative) -> IllegalArgumentException")
+        @Test
+        void _IllegalArgumentException_CountIsNegative() {
+            final var count = ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE;
+            assertThatThrownBy(() -> BitIoUtils.writeCountCompressed(Mockito.mock(BitOutput.class), count))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    class ReadCountCompressedTest {
+
+    }
+
+    @Nested
     class BitMaskSingleTest {
+
+        @DisplayName("bitMaskSingle(negative) -> IllegalArgumentException")
+        @Test
+        void _IllegalArgumentException_SizeNegative() {
+            final var size = ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE;
+            assertThatThrownBy(() -> BitIoUtils.bitMaskSingle(size))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("bitMaskSingle(> Integer.SIZE) -> IllegalArgumentException")
+        @Test
+        void _IllegalArgumentException_SizeGtIntegerSize() {
+            final var size = (ThreadLocalRandom.current().nextInt() & Integer.MAX_VALUE) + Integer.SIZE;
+            assertThatThrownBy(() -> BitIoUtils.bitMaskSingle(size))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
 
         @DisplayName("bitMaskSingle(1) -> 0x00000001")
         @Test
@@ -84,6 +136,22 @@ class BitIoUtilsTest {
 
     @Nested
     class BitMaskDoubleTest {
+
+        @DisplayName("bitMaskDouble(negative) -> IllegalArgumentException")
+        @Test
+        void _IllegalArgumentException_SizeNegative() {
+            final var size = ThreadLocalRandom.current().nextInt() | Integer.MIN_VALUE;
+            assertThatThrownBy(() -> BitIoUtils.bitMaskDouble(size))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("bitMaskDouble(> Long.SIZE) -> IllegalArgumentException")
+        @Test
+        void _IllegalArgumentException_SizeGtLongSize() {
+            final var size = (ThreadLocalRandom.current().nextInt() & Integer.MAX_VALUE) + Long.SIZE;
+            assertThatThrownBy(() -> BitIoUtils.bitMaskDouble(size))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
 
         @DisplayName("bitMaskDouble(1) -> 0x0000000000000001")
         @Test
