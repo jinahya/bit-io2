@@ -31,11 +31,41 @@ import java.util.function.ToIntFunction;
  */
 public final class BitIoConstants {
 
+    static final String MESSAGE_INPUT_IS_NULL = "input is null";
+
+    static final String MESSAGE_OUTPUT_IS_NULL = "output is null";
+
     static final String MESSAGE_INSTANTIATION_IS_NOT_ALLOWED = "instantiation is not allowed";
 
     static final String MESSAGE_UNSUPPORTED_ALREADY_NULLABLE = "unsupported; already nullable";
 
     static final String MESSAGE_UNSUPPORTED_NOT_SUPPOSED_TO_BE_INVOKED = "unsupported; not supposed to be invoked";
+
+    /**
+     * A function for reading a {@value Short#SIZE}-bit unsigned count value.
+     *
+     * @see BitIoUtils#readCountShort(BitInput)
+     */
+    public static final ToIntFunction<? super BitInput> COUNT_READER_SHORT = i -> {
+        try {
+            return BitIoUtils.readCountShort(i);
+        } catch (final IOException ioe) {
+            throw new RuntimeException("failed to read an uncompressed count", ioe); // NOSONAR
+        }
+    };
+
+    /**
+     * A consumer for writing a {@value Short#SIZE}-bit unsigned count value.
+     *
+     * @see BitIoUtils#writeCount(BitOutput, int)
+     */
+    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_SHORT = (o, c) -> {
+        try {
+            BitIoUtils.writeCountShort(o, c);
+        } catch (final IOException ioe) {
+            throw new RuntimeException("failed to write an uncompressed count", ioe); // NOSONAR
+        }
+    };
 
     /**
      * A function for reading a {@code 31}-bit unsigned count value.

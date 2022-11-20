@@ -67,7 +67,6 @@
 <!--      </dependency>-->
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>

@@ -31,7 +31,43 @@ import java.util.Objects;
  */
 public final class BitIoUtils {
 
+    /**
+     * Reads a {@value Short#SIZE}-bit unsigned count value from specified input.
+     *
+     * @param input the input from which the count value is read.
+     * @return a count value read.
+     * @throws IOException if an I/O error occurs.
+     */
+    public static int readCountShort(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, BitIoConstants.MESSAGE_INPUT_IS_NULL);
+        return input.readInt(true, Short.SIZE);
+    }
+
+    /**
+     * Writes specified count value as a {@value Short#SIZE}-bit unsigned value to specified output.
+     *
+     * @param output the output to which the {@code count} is written.
+     * @param count  the value to write.
+     * @throws IOException if an I/O error occurs.
+     */
+    public static void writeCountShort(final BitOutput output, final int count) throws IOException {
+        Objects.requireNonNull(output, BitIoConstants.MESSAGE_OUTPUT_IS_NULL);
+        output.writeInt(true, Short.SIZE, count);
+    }
+
     private static final int SIZE_COUNT = 31;
+
+    /**
+     * Reads a {@code 31}-bit unsigned count value from specified input.
+     *
+     * @param input the input from which the count value is read.
+     * @return a count value read.
+     * @throws IOException if an I/O error occurs.
+     */
+    public static int readCount(final BitInput input) throws IOException {
+        Objects.requireNonNull(input, "input is null");
+        return input.readInt(true, SIZE_COUNT);
+    }
 
     /**
      * Writes specified count value as a {@code 31}-bit unsigned value to specified output.
@@ -46,18 +82,6 @@ public final class BitIoUtils {
             throw new IllegalArgumentException("negative count: " + count);
         }
         output.writeInt(true, SIZE_COUNT, count);
-    }
-
-    /**
-     * Reads a {@code 31}-bit unsigned count value from specified input.
-     *
-     * @param input the input from which the count value is read.
-     * @return a count value read.
-     * @throws IOException if an I/O error occurs.
-     */
-    public static int readCount(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        return input.readInt(true, SIZE_COUNT);
     }
 
     private static final int SIZE_SIZE_COUNT_COMPRESSED = 4;
