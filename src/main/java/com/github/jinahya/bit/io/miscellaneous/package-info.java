@@ -1,4 +1,4 @@
-package com.github.jinahya.bit.io;
+package com.github.jinahya.bit.io.miscellaneous;
 
 /*-
  * #%L
@@ -19,21 +19,3 @@ package com.github.jinahya.bit.io;
  * limitations under the License.
  * #L%
  */
-
-import org.junit.jupiter.api.Test;
-
-import java.util.function.ToIntFunction;
-
-class ReadsCountTest {
-
-    private static class ReadsCountImpl
-            implements ReadsCount<ReadsCountImpl> {
-
-        private ToIntFunction<? super BitInput> countReader;
-    }
-
-    @Test
-    void countReader__() {
-        new ReadsCountImpl().countReader(i -> 0);
-    }
-}

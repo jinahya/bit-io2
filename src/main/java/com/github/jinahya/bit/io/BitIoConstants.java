@@ -20,7 +20,11 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import com.github.jinahya.bit.io.miscellaneous.VlqReader;
+import com.github.jinahya.bit.io.miscellaneous.VlqWriter;
+
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToIntFunction;
 
@@ -31,11 +35,67 @@ import java.util.function.ToIntFunction;
  */
 public final class BitIoConstants {
 
+    static final String MESSAGE_INPUT_IS_NULL = "input is null";
+
+    static final String MESSAGE_OUTPUT_IS_NULL = "output is null";
+
     static final String MESSAGE_INSTANTIATION_IS_NOT_ALLOWED = "instantiation is not allowed";
 
     static final String MESSAGE_UNSUPPORTED_ALREADY_NULLABLE = "unsupported; already nullable";
 
     static final String MESSAGE_UNSUPPORTED_NOT_SUPPOSED_TO_BE_INVOKED = "unsupported; not supposed to be invoked";
+
+    /**
+     * A function for reading a VLQ-encoded value.
+     *
+     * @see #COUNT_WRITER_VLQ
+     */
+    public static final ToIntFunction<? super BitInput> COUNT_READER_VLQ = i -> {
+        try {
+            return VlqReader.getInstance().readInt(i);
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException("failed to read a count value from input(" + i + ")", ioe);
+        }
+    };
+
+    /**
+     * A consumer for writing a VLQ-encoded value.
+     *
+     * @see #COUNT_READER_VLQ
+     */
+    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_VLQ = (o, c) -> {
+        try {
+            VlqWriter.getInstance().writeInt(o, c);
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException("failed to write the count(" + c + ") to output(" + o + ")", ioe);
+        }
+    };
+
+    /**
+     * A function for reading a {@value Short#SIZE}-bit unsigned count value.
+     *
+     * @see BitIoUtils#readCountShort(BitInput)
+     */
+    public static final ToIntFunction<? super BitInput> COUNT_READER_SHORT = i -> {
+        try {
+            return BitIoUtils.readCountShort(i);
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException("failed to read a short count from input(" + i + ")", ioe);
+        }
+    };
+
+    /**
+     * A consumer for writing a {@value Short#SIZE}-bit unsigned count value.
+     *
+     * @see BitIoUtils#writeCount(BitOutput, int)
+     */
+    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_SHORT = (o, c) -> {
+        try {
+            BitIoUtils.writeCountShort(o, c);
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException("failed to write the short count(" + c + ") to output(" + o + ")", ioe);
+        }
+    };
 
     /**
      * A function for reading a {@code 31}-bit unsigned count value.
@@ -46,7 +106,7 @@ public final class BitIoConstants {
         try {
             return BitIoUtils.readCount(i);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to read an uncompressed count", ioe); // NOSONAR
+            throw new UncheckedIOException("failed to read a count from the input(" + i + ")", ioe);
         }
     };
 
@@ -59,7 +119,7 @@ public final class BitIoConstants {
         try {
             BitIoUtils.writeCount(o, c);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to write an uncompressed count", ioe); // NOSONAR
+            throw new UncheckedIOException("failed to write the count(" + c + ") to the output(" + o + ")", ioe);
         }
     };
 
@@ -72,7 +132,7 @@ public final class BitIoConstants {
         try {
             return BitIoUtils.readCountCompressed(i);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to read a compressed count", ioe); // NOSONAR
+            throw new UncheckedIOException("failed to read a compressed count from the input(" + i + ")", ioe);
         }
     };
 
@@ -85,7 +145,8 @@ public final class BitIoConstants {
         try {
             BitIoUtils.writeCountCompressed(o, c);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to write a compressed count", ioe); // NOSONAR
+            throw new UncheckedIOException(
+                    "failed to write the compressed count(" + c + ") to the output(" + o + ")", ioe);
         }
     };
 

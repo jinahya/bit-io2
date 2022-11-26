@@ -29,30 +29,30 @@ import java.util.function.ToIntFunction;
 /**
  * A reader for reading lists of specific element type.
  *
- * @param <T> element type parameter
+ * @param <E> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ListWriter
  */
-public class ListReader<T>
-        implements BitReader<List<T>>,
-                   ReadsCount<ListReader<T>> {
+public class ListReader<E>
+        implements BitReader<List<E>>,
+                   ReadsCount<ListReader<E>> {
 
     /**
      * Creates a new instance for reading lists of specified element type using specified element reader.
      *
      * @param elementReader the reader for reading elements.
      */
-    public ListReader(final BitReader<? extends T> elementReader) {
+    public ListReader(final BitReader<? extends E> elementReader) {
         super();
         this.elementReader = Objects.requireNonNull(elementReader, "elementReader is null");
     }
 
     @Override
-    public List<T> read(final BitInput input) throws IOException {
+    public List<E> read(final BitInput input) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        final int count = countReader.applyAsInt(input);
-        final List<T> value = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
+        final int size = countReader.applyAsInt(input);
+        final List<E> value = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
             value.add(elementReader.read(input));
         }
         return value;
@@ -63,10 +63,7 @@ public class ListReader<T>
         this.countReader = Objects.requireNonNull(countReader, "countReader is null");
     }
 
-    /**
-     * The reader for reading elements.
-     */
-    private final BitReader<? extends T> elementReader;
+    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER_VLQ;
 
-    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER_COMPRESSED;
+    private final BitReader<? extends E> elementReader;
 }

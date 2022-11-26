@@ -4,7 +4,7 @@ package com.github.jinahya.bit.io;
  * #%L
  * bit-io2
  * %%
- * Copyright (C) 2020 - 2022 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,20 +20,23 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import java.io.IOException;
 
-import java.util.function.ToIntFunction;
+/**
+ * An interface for reading {@code int} values.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see IntWriter
+ */
+@FunctionalInterface
+public interface IntReader {
 
-class ReadsCountTest {
-
-    private static class ReadsCountImpl
-            implements ReadsCount<ReadsCountImpl> {
-
-        private ToIntFunction<? super BitInput> countReader;
-    }
-
-    @Test
-    void countReader__() {
-        new ReadsCountImpl().countReader(i -> 0);
-    }
+    /**
+     * Reads a value from specified input.
+     *
+     * @param input the input from which the value is read.
+     * @return a value read.
+     * @throws IOException if an I/O error occurs.
+     */
+    int readInt(BitInput input) throws IOException;
 }

@@ -32,10 +32,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.LongFunction;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 
-final class BitIoRandom {
+public final class BitIoRandom {
 
     static int nextSizeForByte(final boolean unsigned) {
         final var size = current().nextInt(1, Byte.SIZE + (unsigned ? 0 : 1));
@@ -493,6 +495,62 @@ final class BitIoRandom {
                 return null;
             };
         });
+    }
+
+    public static int nextUnsignedInt() {
+        return ThreadLocalRandom.current().nextInt() & Integer.MAX_VALUE;
+    }
+
+    public static int[] nextUnsignedIntArray(final int length) {
+        return IntStream.range(0, length)
+                .map(i -> nextUnsignedInt())
+                .toArray();
+    }
+
+    public static int[] nextUnsignedIntArray() {
+        return nextUnsignedIntArray(ThreadLocalRandom.current().nextInt(0, 128));
+    }
+
+    public static long nextUnsignedLong() {
+        return ThreadLocalRandom.current().nextLong() & Long.MAX_VALUE;
+    }
+
+    public static long[] nextUnsignedLongArray(final int length) {
+        return LongStream.range(0, length)
+                .map(i -> nextUnsignedLong())
+                .toArray();
+    }
+
+    public static long[] nextUnsignedLongArray() {
+        return nextUnsignedLongArray(ThreadLocalRandom.current().nextInt(0, 128));
+    }
+
+    public static int nextSignedInt() {
+        return ThreadLocalRandom.current().nextInt();
+    }
+
+    public static int[] nextSignedIntArray(final int length) {
+        return IntStream.range(0, length)
+                .map(i -> nextSignedInt())
+                .toArray();
+    }
+
+    public static int[] nextSignedIntArray() {
+        return nextSignedIntArray(ThreadLocalRandom.current().nextInt(0, 128));
+    }
+
+    public static long nextSignedLong() {
+        return ThreadLocalRandom.current().nextLong();
+    }
+
+    public static long[] nextSignedLongArray(final int length) {
+        return LongStream.range(0, length)
+                .map(i -> nextSignedLong())
+                .toArray();
+    }
+
+    public static long[] nextSignedLongArray() {
+        return nextSignedLongArray(ThreadLocalRandom.current().nextInt(0, 128));
     }
 
     private BitIoRandom() {

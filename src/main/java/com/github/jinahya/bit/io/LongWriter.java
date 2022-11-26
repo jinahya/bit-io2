@@ -4,7 +4,7 @@ package com.github.jinahya.bit.io;
  * #%L
  * bit-io2
  * %%
- * Copyright (C) 2020 - 2022 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,20 +20,23 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import java.io.IOException;
 
-import java.util.function.ToIntFunction;
+/**
+ * An interface for writing {@code int} values.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see LongReader
+ */
+@FunctionalInterface
+public interface LongWriter {
 
-class ReadsCountTest {
-
-    private static class ReadsCountImpl
-            implements ReadsCount<ReadsCountImpl> {
-
-        private ToIntFunction<? super BitInput> countReader;
-    }
-
-    @Test
-    void countReader__() {
-        new ReadsCountImpl().countReader(i -> 0);
-    }
+    /**
+     * Writes specified value to specified output.
+     *
+     * @param output the output to which the value is written.
+     * @param value  the value to write.
+     * @throws IOException if an I/O error occurs.
+     */
+    void writeLong(BitOutput output, long value) throws IOException;
 }

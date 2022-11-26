@@ -28,30 +28,30 @@ import java.util.function.ObjIntConsumer;
 /**
  * A writer for writing lists of specific element type.
  *
- * @param <T> element type parameter
+ * @param <E> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ListReader
  */
-public class ListWriter<T>
-        implements BitWriter<List<T>>,
-                   WritesCount<ListWriter<T>> {
+public class ListWriter<E>
+        implements BitWriter<List<E>>,
+                   WritesCount<ListWriter<E>> {
 
     /**
      * Creates a new instance for writing lists of specified element type using specified element writer.
      *
      * @param elementWriter the writer for reading elements.
      */
-    public ListWriter(final BitWriter<? super T> elementWriter) {
+    public ListWriter(final BitWriter<? super E> elementWriter) {
         super();
         this.elementWriter = Objects.requireNonNull(elementWriter, "elementWriter is null");
     }
 
     @Override
-    public void write(final BitOutput output, final List<T> value) throws IOException {
+    public void write(final BitOutput output, final List<E> value) throws IOException {
         Objects.requireNonNull(output, "output is null");
         Objects.requireNonNull(value, "value is null");
         countWriter.accept(output, value.size());
-        for (final T element : value) {
+        for (final E element : value) {
             elementWriter.write(output, element);
         }
     }
@@ -61,10 +61,7 @@ public class ListWriter<T>
         this.countWriter = Objects.requireNonNull(countWriter, "countWriter is null");
     }
 
-    /**
-     * The writer for writing elements
-     */
-    private final BitWriter<? super T> elementWriter;
+    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_VLQ;
 
-    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_COMPRESSED;
+    private final BitWriter<? super E> elementWriter;
 }

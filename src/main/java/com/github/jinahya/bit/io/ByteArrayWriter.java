@@ -37,7 +37,10 @@ public class ByteArrayWriter
     static class Unsigned
             extends ByteArrayWriter {
 
-        private static final boolean UNSIGNED = true;
+        @SuppressWarnings({
+                "java:S1700" // UNSIGNED <> Unsigned
+        })
+        private static final boolean UNSIGNED = true; // NOSONAR
 
         Unsigned(final int elementSize) {
             super(BitIoConstraints.requireValidSizeForByte(UNSIGNED, elementSize));
@@ -45,7 +48,7 @@ public class ByteArrayWriter
 
         @Override
         void writeElement(final BitOutput output, final byte value) throws IOException {
-            output.writeInt(UNSIGNED, elementSize, value);
+            output.writeInt(UNSIGNED, getElementSize(), value);
         }
     }
 
@@ -89,7 +92,7 @@ public class ByteArrayWriter
 
         @Override
         void writeElement(final BitOutput output, final byte value) throws IOException {
-            output.writeByte(true, elementSize, value);
+            output.writeByte(true, getElementSize(), value);
         }
     }
 
@@ -199,12 +202,16 @@ public class ByteArrayWriter
         output.writeByte(false, elementSize, element);
     }
 
+    int getElementSize() {
+        return elementSize;
+    }
+
     @Override
     public void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
         this.countWriter = Objects.requireNonNull(countWriter, "countWriter is null");
     }
 
-    final int elementSize;
+    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_VLQ;
 
-    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_COMPRESSED;
+    private final int elementSize;
 }
