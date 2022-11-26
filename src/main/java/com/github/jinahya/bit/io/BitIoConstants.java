@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToIntFunction;
 
@@ -50,7 +51,7 @@ public final class BitIoConstants {
         try {
             return BitIoUtils.readCountShort(i);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to read an uncompressed count", ioe); // NOSONAR
+            throw new UncheckedIOException("failed to read a short count from input(" + i + ")", ioe);
         }
     };
 
@@ -63,7 +64,7 @@ public final class BitIoConstants {
         try {
             BitIoUtils.writeCountShort(o, c);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to write an uncompressed count", ioe); // NOSONAR
+            throw new UncheckedIOException("failed to write the short count(" + c + ") to output(" + o + ")", ioe);
         }
     };
 
@@ -76,7 +77,7 @@ public final class BitIoConstants {
         try {
             return BitIoUtils.readCount(i);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to read an uncompressed count", ioe); // NOSONAR
+            throw new UncheckedIOException("failed to read a count from the input(" + i + ")", ioe);
         }
     };
 
@@ -89,7 +90,7 @@ public final class BitIoConstants {
         try {
             BitIoUtils.writeCount(o, c);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to write an uncompressed count", ioe); // NOSONAR
+            throw new UncheckedIOException("failed to write the count(" + c + ") to the output(" + o + ")", ioe);
         }
     };
 
@@ -102,7 +103,7 @@ public final class BitIoConstants {
         try {
             return BitIoUtils.readCountCompressed(i);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to read a compressed count", ioe); // NOSONAR
+            throw new UncheckedIOException("failed to read a compressed count from the input(" + i + ")", ioe);
         }
     };
 
@@ -115,7 +116,8 @@ public final class BitIoConstants {
         try {
             BitIoUtils.writeCountCompressed(o, c);
         } catch (final IOException ioe) {
-            throw new RuntimeException("failed to write a compressed count", ioe); // NOSONAR
+            throw new UncheckedIOException(
+                    "failed to write the compressed count(" + c + ") to the output(" + o + ")", ioe);
         }
     };
 
