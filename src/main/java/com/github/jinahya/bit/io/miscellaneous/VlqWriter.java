@@ -37,7 +37,7 @@ public class VlqWriter
 
     private static final class InstanceHolder {
 
-        static final VlqWriter INSTANCE = new VlqWriter();
+        private static final VlqWriter INSTANCE = new VlqWriter();
 
         private InstanceHolder() {
             throw new AssertionError("instantiation is not allowed");
