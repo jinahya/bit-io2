@@ -30,23 +30,23 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Leb128_Wr_Unsigned_Test {
+class Vlq_Wr_Test {
 
-    private static int[] unsignedIntArray() {
+    private static int[] intArray() {
         return BitIoRandom.nextUnsignedIntArray();
     }
 
-    private static long[] unsignedLongArray() {
+    private static long[] longArray() {
         return BitIoRandom.nextUnsignedLongArray();
     }
 
     @Test
     void wr__0() throws IOException {
         final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeInt(o, 0);
+            new Leb128Writer.OfSigned().writeInt(o, 0);
             return (a, i) -> {
                 assertThat(a).hasSize(1).contains(0x00);
-                return new Leb128Reader.OfUnsigned().readInt(i);
+                return new Leb128Reader.OfSigned().readInt(i);
             };
         });
         assertThat(actual).isZero();
@@ -55,57 +55,57 @@ class Leb128_Wr_Unsigned_Test {
     @Test
     void wr__0L() throws IOException {
         final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeLong(o, 0L);
+            new Leb128Writer.OfSigned().writeLong(o, 0L);
             return (a, i) -> {
                 assertThat(a).hasSize(1).contains(0x00);
-                return new Leb128Reader.OfUnsigned().readLong(i);
+                return new Leb128Reader.OfSigned().readLong(i);
             };
         });
         assertThat(actual).isZero();
     }
 
     @Test
-    void wr__0b1001_10000111_01100101() throws IOException {
-        final int expected = 0b1001_10000111_01100101;
+    void vlq__106903() throws IOException {
+        final int expected = 106903;
         final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeInt(o, expected);
+            new VlqWriter().writeInt(o, expected);
             return (a, i) -> {
-                assertThat(a).hasSize(3).contains(0xE5, 0x8E, 0x26);
-                return new Leb128Reader.OfUnsigned().readInt(i);
+                assertThat(a).contains(134, 195, 23);
+                return new VlqReader().readInt(i);
             };
         });
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void wr__0b1001_10000111_01100101L() throws IOException {
-        final long expected = 0b1001_10000111_01100101L;
+    void vlqLong__106903() throws IOException {
+        final long expected = 106903L;
         final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeLong(o, expected);
+            new VlqWriter().writeLong(o, expected);
             return (a, i) -> {
-                assertThat(a).hasSize(3).contains(0xE5, 0x8E, 0x26);
-                return new Leb128Reader.OfUnsigned().readLong(i);
+                assertThat(a).contains(134, 195, 23);
+                return new VlqReader().readLong(i);
             };
         });
         assertThat(actual).isEqualTo(expected);
     }
 
-    @MethodSource({"unsignedIntArray"})
+    @MethodSource({"intArray"})
     @ParameterizedTest
     void wr__Int(final int expected) throws IOException {
         final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeInt(o, expected);
-            return (a, i) -> new Leb128Reader.OfUnsigned().readInt(i);
+            new VlqWriter().writeInt(o, expected);
+            return (a, i) -> new VlqReader().readInt(i);
         });
         assertThat(actual).isEqualTo(expected);
     }
 
-    @MethodSource({"unsignedLongArray"})
+    @MethodSource({"longArray"})
     @ParameterizedTest
     void wr__Long(final long expected) throws IOException {
         final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeLong(o, expected);
-            return (a, i) -> new Leb128Reader.OfUnsigned().readLong(i);
+            new VlqWriter().writeLong(o, expected);
+            return (a, i) -> new VlqReader().readLong(i);
         });
         assertThat(actual).isEqualTo(expected);
     }

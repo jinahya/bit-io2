@@ -1,5 +1,25 @@
 package com.github.jinahya.bit.io.miscellaneous;
 
+/*-
+ * #%L
+ * bit-io2
+ * %%
+ * Copyright (C) 2020 - 2022 Jinahya, Inc.
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import com.github.jinahya.bit.io.BitOutput;
 import com.github.jinahya.bit.io.IntWriter;
 import com.github.jinahya.bit.io.LongWriter;
@@ -51,13 +71,11 @@ public abstract class Leb128Writer
         @Override
         public void writeLong(final BitOutput output, long value) throws IOException {
             Objects.requireNonNull(output, "output is null");
-            if (value < 0L) {
-                throw new IllegalArgumentException("negative value: " + value);
-            }
             while (true) {
                 final int group = (int) (value & 0x7FL);
                 value >>= 7;
-                if ((value == 0 && (group & 0x40) == 0) || (value == -1 && (group & 0x40) != 0)) {
+                final boolean clear = (group & 0x40) == 0;
+                if ((value == 0 && clear) || (value == -1 && !clear)) {
                     output.writeInt(true, Byte.SIZE, group);
                     return;
                 }
@@ -71,11 +89,8 @@ public abstract class Leb128Writer
     }
 
     @Override
-    public void writeInt(BitOutput output, final int value) throws IOException {
+    public void writeInt(final BitOutput output, final int value) throws IOException {
         Objects.requireNonNull(output, "output is null");
-        if (value < 0) {
-            throw new IllegalArgumentException("negative value: " + value);
-        }
         writeLong(output, value);
     }
 }

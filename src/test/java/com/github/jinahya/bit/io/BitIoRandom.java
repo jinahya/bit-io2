@@ -525,6 +525,34 @@ public final class BitIoRandom {
         return nextUnsignedLongArray(ThreadLocalRandom.current().nextInt(0, 128));
     }
 
+    public static int nextSignedInt() {
+        return ThreadLocalRandom.current().nextInt();
+    }
+
+    public static int[] nextSignedIntArray(final int length) {
+        return IntStream.range(0, length)
+                .map(i -> nextSignedInt())
+                .toArray();
+    }
+
+    public static int[] nextSignedIntArray() {
+        return nextSignedIntArray(ThreadLocalRandom.current().nextInt(0, 128));
+    }
+
+    public static long nextSignedLong() {
+        return ThreadLocalRandom.current().nextLong();
+    }
+
+    public static long[] nextSignedLongArray(final int length) {
+        return LongStream.range(0, length)
+                .map(i -> nextSignedLong())
+                .toArray();
+    }
+
+    public static long[] nextSignedLongArray() {
+        return nextSignedLongArray(ThreadLocalRandom.current().nextInt(0, 128));
+    }
+
     private BitIoRandom() {
         throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }

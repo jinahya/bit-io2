@@ -30,23 +30,23 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Leb128_Wr_Unsigned_Test {
+class Leb128_Wr_Signed_Test {
 
-    private static int[] unsignedIntArray() {
-        return BitIoRandom.nextUnsignedIntArray();
+    private static int[] intArray() {
+        return BitIoRandom.nextSignedIntArray();
     }
 
-    private static long[] unsignedLongArray() {
-        return BitIoRandom.nextUnsignedLongArray();
+    private static long[] longArray() {
+        return BitIoRandom.nextSignedLongArray();
     }
 
     @Test
     void wr__0() throws IOException {
         final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeInt(o, 0);
+            new Leb128Writer.OfSigned().writeInt(o, 0);
             return (a, i) -> {
                 assertThat(a).hasSize(1).contains(0x00);
-                return new Leb128Reader.OfUnsigned().readInt(i);
+                return new Leb128Reader.OfSigned().readInt(i);
             };
         });
         assertThat(actual).isZero();
@@ -55,57 +55,81 @@ class Leb128_Wr_Unsigned_Test {
     @Test
     void wr__0L() throws IOException {
         final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeLong(o, 0L);
+            new Leb128Writer.OfSigned().writeLong(o, 0L);
             return (a, i) -> {
                 assertThat(a).hasSize(1).contains(0x00);
-                return new Leb128Reader.OfUnsigned().readLong(i);
+                return new Leb128Reader.OfSigned().readLong(i);
             };
         });
         assertThat(actual).isZero();
     }
 
     @Test
-    void wr__0b1001_10000111_01100101() throws IOException {
-        final int expected = 0b1001_10000111_01100101;
+    void wr__M1() throws IOException {
         final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeInt(o, expected);
+            new Leb128Writer.OfSigned().writeInt(o, -1);
             return (a, i) -> {
-                assertThat(a).hasSize(3).contains(0xE5, 0x8E, 0x26);
-                return new Leb128Reader.OfUnsigned().readInt(i);
+//                assertThat(a).hasSize(1).contains(0x00);
+                return new Leb128Reader.OfSigned().readInt(i);
+            };
+        });
+        assertThat(actual).isEqualTo(-1);
+    }
+
+    @Test
+    void wr__M1L() throws IOException {
+        final long actual = BitIoTestUtils.wr1au(o -> {
+            new Leb128Writer.OfSigned().writeLong(o, -1L);
+            return (a, i) -> {
+//                assertThat(a).hasSize(1).contains(0x00);
+                return new Leb128Reader.OfSigned().readLong(i);
+            };
+        });
+        assertThat(actual).isEqualTo(-1L);
+    }
+
+    @Test
+    void wr__1_11100010_01000000() throws IOException {
+        final int expected = 0b1_11100010_01000000;
+        final int actual = BitIoTestUtils.wr1au(o -> {
+            new Leb128Writer.OfSigned().writeInt(o, expected);
+            return (a, i) -> {
+//                assertThat(a).hasSize(3).contains(0xE5, 0x8E, 0x26);
+                return new Leb128Reader.OfSigned().readInt(i);
             };
         });
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void wr__0b1001_10000111_01100101L() throws IOException {
-        final long expected = 0b1001_10000111_01100101L;
+    void wr__1_11100010_01000000L() throws IOException {
+        final long expected = 0b1_11100010_01000000L;
         final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeLong(o, expected);
+            new Leb128Writer.OfSigned().writeLong(o, expected);
             return (a, i) -> {
-                assertThat(a).hasSize(3).contains(0xE5, 0x8E, 0x26);
-                return new Leb128Reader.OfUnsigned().readLong(i);
+//                assertThat(a).hasSize(3).contains(0xE5, 0x8E, 0x26);
+                return new Leb128Reader.OfSigned().readLong(i);
             };
         });
         assertThat(actual).isEqualTo(expected);
     }
 
-    @MethodSource({"unsignedIntArray"})
+    @MethodSource({"intArray"})
     @ParameterizedTest
     void wr__Int(final int expected) throws IOException {
         final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeInt(o, expected);
-            return (a, i) -> new Leb128Reader.OfUnsigned().readInt(i);
+            new Leb128Writer.OfSigned().writeInt(o, expected);
+            return (a, i) -> new Leb128Reader.OfSigned().readInt(i);
         });
         assertThat(actual).isEqualTo(expected);
     }
 
-    @MethodSource({"unsignedLongArray"})
+    @MethodSource({"longArray"})
     @ParameterizedTest
     void wr__Long(final long expected) throws IOException {
         final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfUnsigned().writeLong(o, expected);
-            return (a, i) -> new Leb128Reader.OfUnsigned().readLong(i);
+            new Leb128Writer.OfSigned().writeLong(o, expected);
+            return (a, i) -> new Leb128Reader.OfSigned().readLong(i);
         });
         assertThat(actual).isEqualTo(expected);
     }
