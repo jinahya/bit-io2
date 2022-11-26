@@ -63,7 +63,7 @@ public class ListReader<E>
         this.countReader = Objects.requireNonNull(countReader, "countReader is null");
     }
 
-    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER;
+    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER_VLQ;
 
     private final BitReader<? extends E> elementReader;
 }

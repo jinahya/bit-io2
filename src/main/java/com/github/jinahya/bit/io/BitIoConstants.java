@@ -43,6 +43,32 @@ public final class BitIoConstants {
     static final String MESSAGE_UNSUPPORTED_NOT_SUPPOSED_TO_BE_INVOKED = "unsupported; not supposed to be invoked";
 
     /**
+     * A function for reading a {@code count} using {@link BitIoUtils#readVlq(BitInput) VLQ}.
+     *
+     * @see BitIoUtils#readVlq(BitInput)
+     */
+    public static final ToIntFunction<? super BitInput> COUNT_READER_VLQ = i -> {
+        try {
+            return BitIoUtils.readVlq(i);
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException("failed to read a count value from input(" + i + ")", ioe);
+        }
+    };
+
+    /**
+     * A consumer for writing a {@code count} value using {@link BitIoUtils#writeVlq(BitOutput, int) VLQ}.
+     *
+     * @see BitIoUtils#writeVlq(BitOutput, int)
+     */
+    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_VLQ = (o, c) -> {
+        try {
+            BitIoUtils.writeVlq(o, c);
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException("failed to write the count(" + c + ") to output(" + o + ")", ioe);
+        }
+    };
+
+    /**
      * A function for reading a {@value Short#SIZE}-bit unsigned count value.
      *
      * @see BitIoUtils#readCountShort(BitInput)

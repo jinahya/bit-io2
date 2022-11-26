@@ -186,6 +186,100 @@ public final class BitIoUtils {
         return (bitMaskDouble(size - Integer.SIZE) << Integer.SIZE) | bitMaskDouble(Integer.SIZE);
     }
 
+    /**
+     * Writes specified value, as VLC-encoded, to specified output.
+     *
+     * @param output the output to which encoded octets are written.
+     * @param value  the value to write; must be non-negative.
+     * @throws IOException if an I/O error occurs.
+     * @see <a href="https://en.wikipedia.org/wiki/Variable-length_quantity">Variable-length quantity</a> (Wikipedia)
+     * @see #readVlq(BitInput)
+     * @see #writeVlqLong(BitOutput, long)
+     */
+    public static void writeVlq(final BitOutput output, int value) throws IOException {
+        if (value < 0) {
+            throw new IllegalArgumentException("value(" + value + ") negative");
+        }
+        writeVlqLong(output, value);
+    }
+
+    /**
+     * Reads a VLC-encoded value from specified input.
+     *
+     * @param input the input from which value is read.
+     * @return the value read from the {@code input}; not negative, always.
+     * @throws IOException if an I/O error occurs.
+     * @see <a href="https://en.wikipedia.org/wiki/Variable-length_quantity">Variable-length quantity</a> (Wikipedia)
+     * @see #writeVlq(BitOutput, int)
+     * @see #readVlqLong(BitInput)
+     */
+    public static int readVlq(final BitInput input) throws IOException {
+        return Math.toIntExact(readVlqLong(input));
+    }
+
+    /**
+     * Writes specified value, as VLC-encoded, to specified output.
+     *
+     * @param output the output to which encoded octets are written.
+     * @param value  the value to write; must be non-negative.
+     * @throws IOException if an I/O error occurs.
+     * @see <a href="https://en.wikipedia.org/wiki/Variable-length_quantity">Variable-length quantity</a> (Wikipedia)
+     * @see #readVlqLong(BitInput)
+     * @see #writeVlq(BitOutput, int)
+     */
+    public static void writeVlqLong(final BitOutput output, long value) throws IOException {
+        if (value < 0L) {
+            throw new IllegalArgumentException("value(" + value + ") negative");
+        }
+        if (value == 0L) {
+            output.writeLong(true, Byte.SIZE, 0L);
+            return;
+        }
+        final int ones = Long.SIZE - Long.numberOfLeadingZeros(value);
+        final int quotient = ones / 7;
+        final int remainder = ones % 7;
+        final byte[] bytes = new byte[quotient + (remainder > 0 ? 1 : 0)];
+        int index = 0;
+        if (quotient > 0) {
+            bytes[index++] = (byte) (value & 0x7FL); // last octet
+            value >>= 7;
+        }
+        for (int i = 1; i < quotient; i++) {
+            bytes[index++] = (byte) (0x80L | (value & 0x7FL)); // intermediate octets
+            value >>= 7;
+        }
+        if (remainder > 0) {
+            bytes[index++] = (byte) ((quotient > 0 ? 0x80L : 0x00L) | (value & 0x7FL)); // first octet
+        }
+        assert index == bytes.length;
+        for (int i = index - 1; i >= 0; i--) {
+            output.writeInt(true, Byte.SIZE, bytes[i]);
+        }
+    }
+
+    /**
+     * Reads a VLC-encoded value from specified input.
+     *
+     * @param input the input from which value is read.
+     * @return the value read from the {@code input}; not negative, always.
+     * @throws IOException if an I/O error occurs.
+     * @see <a href="https://en.wikipedia.org/wiki/Variable-length_quantity">Variable-length quantity</a> (Wikipedia)
+     * @see #writeVlqLong(BitOutput, long)
+     * @see #readVlq(BitInput)
+     */
+    public static long readVlqLong(final BitInput input) throws IOException {
+        long value = 0L;
+        while (true) {
+            final int last = input.readInt(true, 1);
+            value <<= 7;
+            value |= input.readLong(true, 7);
+            if (last == 0) {
+                break;
+            }
+        }
+        return value;
+    }
+
     private BitIoUtils() {
         throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }

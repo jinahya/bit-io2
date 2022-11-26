@@ -61,7 +61,7 @@ public class ListWriter<E>
         this.countWriter = Objects.requireNonNull(countWriter, "countWriter is null");
     }
 
-    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER;
+    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_VLQ;
 
     private final BitWriter<? super E> elementWriter;
 }
