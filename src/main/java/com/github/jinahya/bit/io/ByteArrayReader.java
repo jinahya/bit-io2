@@ -196,7 +196,7 @@ public class ByteArrayReader
         this.countReader = Objects.requireNonNull(countReader, "countReader is null");
     }
 
-    private final int elementSize;
-
     private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER;
+
+    private final int elementSize;
 }
