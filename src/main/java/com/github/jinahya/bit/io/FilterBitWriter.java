@@ -57,10 +57,10 @@ public abstract class FilterBitWriter<T, U>
         };
     }
 
-    static final class Nullable<T>
+    private static final class Nullable<T>
             extends FilterBitWriter<T, T> {
 
-        Nullable(final BitWriter<? super T> delegate) {
+        private Nullable(final BitWriter<? super T> delegate) {
             super(delegate);
         }
 
@@ -81,6 +81,22 @@ public abstract class FilterBitWriter<T, U>
         protected T filter(final T value) {
             return value;
         }
+    }
+
+    /**
+     * Returns a new writer handles {@code null} values on the behalf of specified writer.
+     *
+     * @param writer the writer; must be not {@code null} nor already a <em>nullable</em>.
+     * @param <T>    value type parameter
+     * @return a new writer handles {@code null} values.
+     * @throws IllegalArgumentException if {@code writer} is already a <em>nullable</em>.
+     */
+    public static <T> BitWriter<T> nullable(final BitWriter<? super T> writer) {
+        if (BitIoObjects.requireNonNullWriter(writer) instanceof Nullable) {
+            throw new IllegalArgumentException(
+                    BitIoConstants.MESSAGE_ILLEGAL_ARGUMENT_ALREADY_NULLABLE + "; " + writer);
+        }
+        return new Nullable<>(writer);
     }
 
     /**

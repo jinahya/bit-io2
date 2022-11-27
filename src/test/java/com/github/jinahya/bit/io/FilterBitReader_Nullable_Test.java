@@ -22,25 +22,17 @@ package com.github.jinahya.bit.io;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 class FilterBitReader_Nullable_Test {
 
     @Test
-    void create__() {
-//        @SuppressWarnings({"unchecked"})
-        final var nullable = new FilterBitReader.Nullable<Object>(mock(BitReader.class));
-        assertThat(nullable).isNotNull();
-    }
-
-    @Test
-    void nullable_Throw_AlreadyNullable() {
-//        @SuppressWarnings({"unchecked"})
-        final var nullable = new FilterBitReader.Nullable<Object>(mock(BitReader.class));
+    void nullable__() {
+        final BitReader<String> nullable = FilterBitReader.nullable(StringReader.compressedAscii(true));
         assertThatThrownBy(nullable::nullable)
                 .isInstanceOf(UnsupportedOperationException.class)
                 .hasMessage(BitIoConstants.MESSAGE_UNSUPPORTED_ALREADY_NULLABLE);
+        assertThatThrownBy(() -> FilterBitReader.nullable(nullable))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

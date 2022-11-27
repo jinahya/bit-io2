@@ -4,7 +4,7 @@ package com.github.jinahya.bit.io;
  * #%L
  * bit-io2
  * %%
- * Copyright (C) 2020 - 2022 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,23 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.function.ToLongFunction;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+class CountReader
+        implements LongReader {
 
-class FilterBitWriter_Nullable_Test {
-
-    @Test
-    void nullable__() {
-        final BitWriter<String> nullable = FilterBitWriter.nullable(StringWriter.compressedAscii(true));
-        assertThat(nullable).isNotNull();
-        assertThatThrownBy(nullable::nullable).isInstanceOf(UnsupportedOperationException.class);
-        assertThatThrownBy(() -> FilterBitWriter.nullable(nullable)).isInstanceOf(IllegalArgumentException.class);
+    public CountReader(final ToLongFunction<? super BitInput> function) {
+        super();
+        this.function = Objects.requireNonNull(function, "function is null");
     }
+
+    @Override
+    public long readLong(final BitInput input) throws IOException {
+        BitIoObjects.requireNonNullInput(input);
+        return function.applyAsLong(input);
+    }
+
+    private final ToLongFunction<? super BitInput> function;
 }

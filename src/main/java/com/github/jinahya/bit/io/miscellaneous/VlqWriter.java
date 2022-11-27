@@ -56,7 +56,7 @@ public class VlqWriter
     /**
      * Creates a new instance.
      */
-    protected VlqWriter() {
+    private VlqWriter() {
         super();
     }
 

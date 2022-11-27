@@ -1,15 +1,10 @@
-/**
- * Defines miscellaneous classes.
- *
- * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- */
 package com.github.jinahya.bit.io.miscellaneous;
 
 /*-
  * #%L
  * bit-io2
  * %%
- * Copyright (C) 2020 - 2022 Jinahya, Inc.
+ * Copyright (C) 2020 Jinahya, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,3 +19,17 @@ package com.github.jinahya.bit.io.miscellaneous;
  * limitations under the License.
  * #L%
  */
+
+final class BitIoMiscellaneousConstants {
+
+    static final String MESSAGE_INPUT_IS_NULL = BitIoMiscellaneousConstantsHelper.getString("MESSAGE_INPUT_IS_NULL");
+
+    static final String MESSAGE_OUTPUT_IS_NULL = BitIoMiscellaneousConstantsHelper.getString("MESSAGE_OUTPUT_IS_NULL");
+
+    static final String MESSAGE_INSTANTIATION_IS_NOT_ALLOWED
+            = BitIoMiscellaneousConstantsHelper.getString("MESSAGE_INSTANTIATION_IS_NOT_ALLOWED");
+
+    private BitIoMiscellaneousConstants() {
+        throw new AssertionError(MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+    }
+}

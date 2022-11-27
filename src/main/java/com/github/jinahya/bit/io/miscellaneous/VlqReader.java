@@ -56,7 +56,7 @@ public class VlqReader
     /**
      * Creates a new instance.
      */
-    protected VlqReader() {
+    private VlqReader() {
         super();
     }
 

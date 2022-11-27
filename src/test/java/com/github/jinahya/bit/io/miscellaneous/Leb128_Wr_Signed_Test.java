@@ -22,6 +22,9 @@ package com.github.jinahya.bit.io.miscellaneous;
 
 import com.github.jinahya.bit.io.BitIoRandom;
 import com.github.jinahya.bit.io.BitIoTestUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,107 +33,131 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 class Leb128_Wr_Signed_Test {
 
-    private static int[] intArray() {
-        return BitIoRandom.nextSignedIntArray();
+    @DisplayName("0")
+    @Nested
+    class _0 {
+
+        @Test
+        void __int() throws IOException {
+            final int actual = BitIoTestUtils.wr1au(o -> {
+                Leb128Writer.getInstanceSigned().writeInt(o, 0);
+                return (a, i) -> {
+                    assertThat(a).containsExactly(0x00);
+                    return Leb128Reader.getInstanceSigned().readInt(i);
+                };
+            });
+            assertThat(actual).isZero();
+        }
+
+        @Test
+        void __long() throws IOException {
+            final long actual = BitIoTestUtils.wr1au(o -> {
+                Leb128Writer.getInstanceSigned().writeLong(o, 0L);
+                return (a, i) -> {
+                    assertThat(a).containsExactly(0x00);
+                    return Leb128Reader.getInstanceSigned().readLong(i);
+                };
+            });
+            assertThat(actual).isZero();
+        }
     }
 
-    private static long[] longArray() {
-        return BitIoRandom.nextSignedLongArray();
+    @DisplayName("-1")
+    @Nested
+    class __1 {
+
+        @Test
+        void __int() throws IOException {
+            final int actual = BitIoTestUtils.wr1au(o -> {
+                Leb128Writer.getInstanceSigned().writeInt(o, -1);
+                return (a, i) -> {
+                    return Leb128Reader.getInstanceSigned().readInt(i);
+                };
+            });
+            assertThat(actual).isEqualTo(-1);
+        }
+
+        @Test
+        void __long() throws IOException {
+            final long actual = BitIoTestUtils.wr1au(o -> {
+                Leb128Writer.getInstanceSigned().writeLong(o, -1L);
+                return (a, i) -> {
+                    return Leb128Reader.getInstanceSigned().readLong(i);
+                };
+            });
+            assertThat(actual).isEqualTo(-1L);
+        }
     }
 
-    @Test
-    void wr__0() throws IOException {
-        final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfSigned().writeInt(o, 0);
-            return (a, i) -> {
-                assertThat(a).hasSize(1).contains(0x00);
-                return new Leb128Reader.OfSigned().readInt(i);
-            };
-        });
-        assertThat(actual).isZero();
+    @DisplayName("-123456 (Wikipedia)")
+    @Nested
+    class __123456 {
+
+        @Test
+        void __int() throws IOException {
+            final int expected = -123456;
+            final int actual = BitIoTestUtils.wr1au(o -> {
+                Leb128Writer.getInstanceSigned().writeInt(o, expected);
+                return (a, i) -> {
+                    assertThat(a).containsExactly(0xC0, 0xBB, 0x78);
+                    return Leb128Reader.getInstanceSigned().readInt(i);
+                };
+            });
+            assertThat(actual).isEqualTo(expected);
+        }
+
+        @Test
+        void __long() throws IOException {
+            final long expected = -123456L;
+            final long actual = BitIoTestUtils.wr1au(o -> {
+                Leb128Writer.getInstanceSigned().writeLong(o, expected);
+                return (a, i) -> {
+                    assertThat(a).containsExactly(0xC0, 0xBB, 0x78);
+                    return Leb128Reader.getInstanceSigned().readLong(i);
+                };
+            });
+            assertThat(actual).isEqualTo(expected);
+        }
     }
 
-    @Test
-    void wr__0L() throws IOException {
-        final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfSigned().writeLong(o, 0L);
-            return (a, i) -> {
-                assertThat(a).hasSize(1).contains(0x00);
-                return new Leb128Reader.OfSigned().readLong(i);
-            };
-        });
-        assertThat(actual).isZero();
-    }
+    @Nested
+    class Random {
 
-    @Test
-    void wr__M1() throws IOException {
-        final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfSigned().writeInt(o, -1);
-            return (a, i) -> {
-//                assertThat(a).hasSize(1).contains(0x00);
-                return new Leb128Reader.OfSigned().readInt(i);
-            };
-        });
-        assertThat(actual).isEqualTo(-1);
-    }
+        private static int[] _ints() {
+            return BitIoRandom.nextSignedIntArray();
+        }
 
-    @Test
-    void wr__M1L() throws IOException {
-        final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfSigned().writeLong(o, -1L);
-            return (a, i) -> {
-//                assertThat(a).hasSize(1).contains(0x00);
-                return new Leb128Reader.OfSigned().readLong(i);
-            };
-        });
-        assertThat(actual).isEqualTo(-1L);
-    }
+        private static long[] _longs() {
+            return BitIoRandom.nextSignedLongArray();
+        }
 
-    @Test
-    void wr__1_11100010_01000000() throws IOException {
-        final int expected = 0b1_11100010_01000000;
-        final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfSigned().writeInt(o, expected);
-            return (a, i) -> {
-//                assertThat(a).hasSize(3).contains(0xE5, 0x8E, 0x26);
-                return new Leb128Reader.OfSigned().readInt(i);
-            };
-        });
-        assertThat(actual).isEqualTo(expected);
-    }
+        @MethodSource({"_ints"})
+        @ParameterizedTest
+        void __int(final int expected) throws IOException {
+            final int actual = BitIoTestUtils.wr1au(o -> {
+                Leb128Writer.getInstanceSigned().writeInt(o, expected);
+                return (a, i) -> {
+//                    log.debug("{} -> {}", String.format("%11d", expected), HexFormat.ofDelimiter(" ").formatHex(a));
+                    return Leb128Reader.getInstanceSigned().readInt(i);
+                };
+            });
+            assertThat(actual).isEqualTo(expected);
+        }
 
-    @Test
-    void wr__1_11100010_01000000L() throws IOException {
-        final long expected = 0b1_11100010_01000000L;
-        final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfSigned().writeLong(o, expected);
-            return (a, i) -> {
-//                assertThat(a).hasSize(3).contains(0xE5, 0x8E, 0x26);
-                return new Leb128Reader.OfSigned().readLong(i);
-            };
-        });
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @MethodSource({"intArray"})
-    @ParameterizedTest
-    void wr__Int(final int expected) throws IOException {
-        final int actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfSigned().writeInt(o, expected);
-            return (a, i) -> new Leb128Reader.OfSigned().readInt(i);
-        });
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @MethodSource({"longArray"})
-    @ParameterizedTest
-    void wr__Long(final long expected) throws IOException {
-        final long actual = BitIoTestUtils.wr1au(o -> {
-            new Leb128Writer.OfSigned().writeLong(o, expected);
-            return (a, i) -> new Leb128Reader.OfSigned().readLong(i);
-        });
-        assertThat(actual).isEqualTo(expected);
+        @MethodSource({"_longs"})
+        @ParameterizedTest
+        void __long(final long expected) throws IOException {
+            final long actual = BitIoTestUtils.wr1au(o -> {
+                Leb128Writer.getInstanceSigned().writeLong(o, expected);
+                return (a, i) -> {
+//                    log.debug("{} -> {}", String.format("%20d", expected), HexFormat.ofDelimiter(" ").formatHex(a));
+                    return Leb128Reader.getInstanceSigned().readLong(i);
+                };
+            });
+            assertThat(actual).isEqualTo(expected);
+        }
     }
 }

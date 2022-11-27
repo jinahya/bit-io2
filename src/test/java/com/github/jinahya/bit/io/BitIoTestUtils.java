@@ -83,7 +83,8 @@ public final class BitIoTestUtils {
         return wr1(o -> f1.unchecked().apply(o).unchecked());
     }
 
-    static <R> R wr1a(final Function<? super BitOutput, ? extends BiFunction<? super byte[], ? super BitInput, ? extends R>> f1)
+    static <R> R wr1a(
+            final Function<? super BitOutput, ? extends BiFunction<? super byte[], ? super BitInput, ? extends R>> f1)
             throws IOException {
         Objects.requireNonNull(f1, "f1 is null");
         return w1(o -> {

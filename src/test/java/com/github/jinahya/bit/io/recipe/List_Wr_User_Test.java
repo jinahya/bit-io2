@@ -26,6 +26,7 @@ import com.github.jinahya.bit.io.ListWriter;
 import com.github.jinahya.bit.io.User;
 import com.github.jinahya.bit.io.UserReader;
 import com.github.jinahya.bit.io.UserWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -37,6 +38,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 class List_Wr_User_Test {
 
     private static Stream<List<User>> randomValueStream() {
@@ -50,16 +52,11 @@ class List_Wr_User_Test {
     @MethodSource({"randomValueStream"})
     @ParameterizedTest
     void wr__(final List<User> expected) throws IOException {
-        final var actual = BitIoTestUtils.wr1u(o -> {
+        final var actual = BitIoTestUtils.wr1au(o -> {
             new ListWriter<>(new UserWriter()).write(o, expected);
-            final var padded = o.align(1);
-            return i -> {
-                try {
-                    return new ListReader<>(new UserReader()).read(i);
-                } finally {
-                    final var discarded = i.align(1);
-                    assert discarded == padded;
-                }
+            return (a, i) -> {
+                log.debug("a.length: {}", a.length);
+                return new ListReader<>(new UserReader()).read(i);
             };
         });
         assertThat(actual).isEqualTo(expected);

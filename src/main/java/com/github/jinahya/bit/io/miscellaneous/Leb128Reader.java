@@ -27,16 +27,43 @@ import com.github.jinahya.bit.io.LongReader;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * A reader for reading values using <a href="https://en.wikipedia.org/wiki/LEB128">LEB128</a>.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public abstract class Leb128Reader
         implements IntReader, LongReader {
 
+    /**
+     * A reader for reading values using <a href="https://en.wikipedia.org/wiki/LEB128#Unsigned_LEB128">Unsigned
+     * LEB128</a>.
+     */
     public static class OfUnsigned
             extends Leb128Reader {
+
+        private static final class InstanceHolder {
+
+            private static final OfUnsigned INSTANCE = new OfUnsigned();
+
+            private InstanceHolder() {
+                throw new AssertionError(BitIoMiscellaneousConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+            }
+        }
+
+        /**
+         * Returns the instance of this class. The {@code OfUnsigned} class is singleton.
+         *
+         * @return the instance.
+         */
+        public static OfUnsigned getInstance() {
+            return InstanceHolder.INSTANCE;
+        }
 
         /**
          * Creates a new instance.
          */
-        public OfUnsigned() {
+        private OfUnsigned() {
             super();
         }
 
@@ -55,13 +82,35 @@ public abstract class Leb128Reader
         }
     }
 
+    /**
+     * A writer for writing values using <a href="https://en.wikipedia.org/wiki/LEB128#Signed_LEB128">Signed
+     * LEB128</a>.
+     */
     public static class OfSigned
             extends Leb128Reader {
+
+        private static final class InstanceHolder {
+
+            private static final OfSigned INSTANCE = new OfSigned();
+
+            private InstanceHolder() {
+                throw new AssertionError(BitIoMiscellaneousConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+            }
+        }
+
+        /**
+         * Returns the instance of this class. The {@code OfSigned} class is singleton.
+         *
+         * @return the instance.
+         */
+        public static OfSigned getInstance() {
+            return InstanceHolder.INSTANCE;
+        }
 
         /**
          * Creates a new instance.
          */
-        public OfSigned() {
+        private OfSigned() {
             super();
         }
 
@@ -82,6 +131,24 @@ public abstract class Leb128Reader
             }
             return value;
         }
+    }
+
+    /**
+     * Returns the instance of {@link OfUnsigned} class.
+     *
+     * @return the instance of {@link OfUnsigned} class.
+     */
+    public static Leb128Reader getInstanceUnsigned() {
+        return OfUnsigned.getInstance();
+    }
+
+    /**
+     * Returns the instance of {@link OfSigned} class.
+     *
+     * @return the instance of {@link OfSigned} class.
+     */
+    public static Leb128Reader getInstanceSigned() {
+        return OfSigned.getInstance();
     }
 
     protected Leb128Reader() {

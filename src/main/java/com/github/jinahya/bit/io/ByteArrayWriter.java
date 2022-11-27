@@ -211,7 +211,7 @@ public class ByteArrayWriter
         this.countWriter = Objects.requireNonNull(countWriter, "countWriter is null");
     }
 
-    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER_VLQ;
-
     private final int elementSize;
+
+    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER;
 }

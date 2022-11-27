@@ -27,22 +27,49 @@ import com.github.jinahya.bit.io.LongWriter;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * A writer for writing values using <a href="https://en.wikipedia.org/wiki/LEB128">LEB128</a>.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public abstract class Leb128Writer
         implements IntWriter, LongWriter {
 
+    /**
+     * A writer for writing values using <a href="https://en.wikipedia.org/wiki/LEB128#Unsigned_LEB128">Unsigned
+     * LEB128</a>.
+     */
     public static class OfUnsigned
             extends Leb128Writer {
+
+        private static final class InstanceHolder {
+
+            private static final OfUnsigned INSTANCE = new OfUnsigned();
+
+            private InstanceHolder() {
+                throw new AssertionError(BitIoMiscellaneousConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+            }
+        }
+
+        /**
+         * Returns the instance of this class. The {@code OfUnsigned} class is singleton.
+         *
+         * @return the instance.
+         */
+        public static OfUnsigned getInstance() {
+            return InstanceHolder.INSTANCE;
+        }
 
         /**
          * Creates a new instance.
          */
-        public OfUnsigned() {
+        private OfUnsigned() {
             super();
         }
 
         @Override
         public void writeLong(final BitOutput output, long value) throws IOException {
-            Objects.requireNonNull(output, "output is null");
+            Objects.requireNonNull(output, BitIoMiscellaneousConstants.MESSAGE_OUTPUT_IS_NULL);
             if (value < 0L) {
                 throw new IllegalArgumentException("negative value: " + value);
             }
@@ -58,19 +85,41 @@ public abstract class Leb128Writer
         }
     }
 
+    /**
+     * A writer for writing values using <a href="https://en.wikipedia.org/wiki/LEB128#Signed_LEB128">Signed
+     * LEB128</a>.
+     */
     public static class OfSigned
             extends Leb128Writer {
+
+        private static final class InstanceHolder {
+
+            private static final OfSigned INSTANCE = new OfSigned();
+
+            private InstanceHolder() {
+                throw new AssertionError(BitIoMiscellaneousConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
+            }
+        }
+
+        /**
+         * Returns the instance of this class. The {@code OfSigned} class is singleton.
+         *
+         * @return the instance.
+         */
+        public static OfSigned getInstance() {
+            return InstanceHolder.INSTANCE;
+        }
 
         /**
          * Creates a new instance.
          */
-        public OfSigned() {
+        private OfSigned() {
             super();
         }
 
         @Override
         public void writeLong(final BitOutput output, long value) throws IOException {
-            Objects.requireNonNull(output, "output is null");
+            Objects.requireNonNull(output, BitIoMiscellaneousConstants.MESSAGE_OUTPUT_IS_NULL);
             while (true) {
                 final int group = (int) (value & 0x7FL);
                 value >>= 7;
@@ -84,13 +133,34 @@ public abstract class Leb128Writer
         }
     }
 
+    /**
+     * Returns the instance of {@link OfUnsigned} class.
+     *
+     * @return the instance of {@link OfUnsigned} class.
+     */
+    public static Leb128Writer getInstanceUnsigned() {
+        return OfUnsigned.getInstance();
+    }
+
+    /**
+     * Returns the instance of {@link OfSigned} class.
+     *
+     * @return the instance of {@link OfSigned} class.
+     */
+    public static Leb128Writer getInstanceSigned() {
+        return OfSigned.getInstance();
+    }
+
+    /**
+     * Creates a new instance.
+     */
     protected Leb128Writer() {
         super();
     }
 
     @Override
     public void writeInt(final BitOutput output, final int value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
+        Objects.requireNonNull(output, BitIoMiscellaneousConstants.MESSAGE_OUTPUT_IS_NULL);
         writeLong(output, value);
     }
 }

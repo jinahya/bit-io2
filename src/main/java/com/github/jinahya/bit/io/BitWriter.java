@@ -38,7 +38,7 @@ public interface BitWriter<T> {
      * @return a new instance handles {@code null} values.
      */
     default BitWriter<T> nullable() {
-        return new FilterBitWriter.Nullable<>(this);
+        return FilterBitWriter.nullable(this);
     }
 
     /**
