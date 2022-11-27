@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.util.Objects;
 
 /**
  * A factory class for creating instances from various byte sources.
@@ -41,6 +42,7 @@ public final class BitOutputFactory {
      * @return a new instance.
      */
     public static BitOutput from(final OutputStream stream) {
+        Objects.requireNonNull(stream, "stream is null");
         return new ByteOutputAdapter(ByteOutputFactory.from(stream));
     }
 
@@ -51,6 +53,7 @@ public final class BitOutputFactory {
      * @return a new instance.
      */
     public static BitOutput from(final DataOutput output) {
+        Objects.requireNonNull(output, "output is null");
         return new ByteOutputAdapter(ByteOutputFactory.from(output));
     }
 
@@ -61,6 +64,7 @@ public final class BitOutputFactory {
      * @return a new instance.
      */
     public static BitOutput from(final RandomAccessFile file) {
+        Objects.requireNonNull(file, "file is null");
         return new ByteOutputAdapter(ByteOutputFactory.from(file));
     }
 
@@ -71,6 +75,7 @@ public final class BitOutputFactory {
      * @return a new instance.
      */
     public static BitOutput from(final ByteBuffer buffer) {
+        Objects.requireNonNull(buffer, "buffer is null");
         return new ByteOutputAdapter(ByteOutputFactory.from(buffer));
     }
 

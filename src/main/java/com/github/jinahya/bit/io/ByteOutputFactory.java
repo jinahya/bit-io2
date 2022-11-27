@@ -22,8 +22,10 @@ package com.github.jinahya.bit.io;
 
 import java.io.DataOutput;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.util.Objects;
 
 /**
  * A factory class for creating instances of {@link ByteOutput}.
@@ -40,6 +42,7 @@ final class ByteOutputFactory {
      * @return a new instance.
      */
     static ByteOutput from(final OutputStream stream) {
+        Objects.requireNonNull(stream, "stream is null");
         return new StreamByteOutput(stream);
     }
 
@@ -50,7 +53,19 @@ final class ByteOutputFactory {
      * @return a new instance.
      */
     static ByteOutput from(final DataOutput output) {
+        Objects.requireNonNull(output, "output is null");
         return new DataByteOutput(output);
+    }
+
+    /**
+     * Creates a new instance on top of specified file.
+     *
+     * @param file the file to which bytes are written.
+     * @return a new instance.
+     */
+    static ByteOutput from(final RandomAccessFile file) {
+        Objects.requireNonNull(file, "file is null");
+        return new RandomAccessByteOutput(file);
     }
 
     /**
@@ -60,6 +75,7 @@ final class ByteOutputFactory {
      * @return a new instance.
      */
     static ByteOutput from(final ByteBuffer buffer) {
+        Objects.requireNonNull(buffer, "buffer is null");
         return new BufferByteOutput(buffer);
     }
 

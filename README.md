@@ -19,16 +19,16 @@ Add this module as a dependency. Check the [central](https://search.maven.org/se
 ```
 
 ```java
-OutputStream stream = open();
+OutputStream stream = outputStream();
 BitOutput output = BitOutputFactory.from(stream);
-output.writeBoolean(true);       // 1 bit   1
-output.writeInt(true, 3, 1);     // 3 bits  4
-output writeLong(false, 37, 0L); // 37 bits 41        
+output.writeBoolean(true);           // 1 bit   1
+output.writeInt(true, 3, 1);         // 3 bits  4
+output.writeLong(false, 37, 0L);     // 37 bits 41        
 long padded = output.align(1);
 assert padded == 7L;
 assert (padded + 41) % Byte.SIZE == 0;
 
-InputStream stream = open();
+InputStream stream = inputStream();
 BitInput input = BitInputFactory.from(stream);
 boolean v1 = input.readBoolean();    // 1 bit   1
 int v2 = input.readInt(true, 3);     // 3 bits  4

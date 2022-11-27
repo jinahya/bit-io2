@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Objects;
 
 /**
  * A factory class for creating instances of {@link ByteInput}.
@@ -41,6 +42,7 @@ public final class ByteInputFactory {
      * @return a new instance.
      */
     public static ByteInput from(final InputStream stream) {
+        Objects.requireNonNull(stream, "stream is null");
         return new StreamByteInput(stream);
     }
 
@@ -51,6 +53,7 @@ public final class ByteInputFactory {
      * @return a new instance.
      */
     public static ByteInput from(final DataInput input) {
+        Objects.requireNonNull(input, "input is null");
         return new DataByteInput(input);
     }
 
@@ -61,6 +64,7 @@ public final class ByteInputFactory {
      * @return a new instance.
      */
     public static ByteInput from(final RandomAccessFile file) {
+        Objects.requireNonNull(file, "file is null");
         return new RandomAccessByteInput(file);
     }
 
@@ -71,6 +75,7 @@ public final class ByteInputFactory {
      * @return a new instance.
      */
     public static ByteInput from(final ByteBuffer buffer) {
+        Objects.requireNonNull(buffer, "buffer is null");
         return new BufferByteInput(buffer);
     }
 
@@ -81,6 +86,7 @@ public final class ByteInputFactory {
      * @return a new instance.
      */
     public static ByteInput from(final ReadableByteChannel channel) {
+        Objects.requireNonNull(channel, "channel is null");
         return new ChannelByteInput(channel);
     }
 

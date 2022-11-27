@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io.miscellaneous;
  */
 
 import com.github.jinahya.bit.io.BitOutput;
-import com.github.jinahya.bit.io.IntWriter;
 import com.github.jinahya.bit.io.LongWriter;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public abstract class Leb128Writer
-        implements IntWriter, LongWriter {
+        implements LongWriter {
 
     /**
      * A writer for writing values using <a href="https://en.wikipedia.org/wiki/LEB128#Unsigned_LEB128">Unsigned
@@ -156,11 +155,5 @@ public abstract class Leb128Writer
      */
     protected Leb128Writer() {
         super();
-    }
-
-    @Override
-    public void writeInt(final BitOutput output, final int value) throws IOException {
-        Objects.requireNonNull(output, BitIoMiscellaneousConstants.MESSAGE_OUTPUT_IS_NULL);
-        writeLong(output, value);
     }
 }

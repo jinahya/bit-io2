@@ -29,7 +29,8 @@ import java.io.IOException;
  * @see LongWriter
  */
 @FunctionalInterface
-public interface LongReader {
+public interface LongReader
+        extends IntReader {
 
     /**
      * Reads a value from specified input.
@@ -39,4 +40,19 @@ public interface LongReader {
      * @throws IOException if an I/O error occurs.
      */
     long readLong(BitInput input) throws IOException;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param input the input from which the value is read.
+     * @return {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     * @apiNote Default implementation invokes {@link #readLong(BitInput)} with {@code input}, and returns the result
+     * {@link Math#toIntExact(long) as an int}.
+     * @see Math#toIntExact(long)
+     */
+    @Override
+    default int readInt(final BitInput input) throws IOException {
+        return Math.toIntExact(readLong(input));
+    }
 }

@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io.miscellaneous;
  */
 
 import com.github.jinahya.bit.io.BitInput;
-import com.github.jinahya.bit.io.IntReader;
 import com.github.jinahya.bit.io.LongReader;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public abstract class Leb128Reader
-        implements IntReader, LongReader {
+        implements LongReader {
 
     /**
      * A reader for reading values using <a href="https://en.wikipedia.org/wiki/LEB128#Unsigned_LEB128">Unsigned
@@ -151,12 +150,10 @@ public abstract class Leb128Reader
         return OfSigned.getInstance();
     }
 
+    /**
+     * Creates a new instance.
+     */
     protected Leb128Reader() {
         super();
-    }
-
-    @Override
-    public int readInt(final BitInput input) throws IOException {
-        return Math.toIntExact(readLong(input));
     }
 }

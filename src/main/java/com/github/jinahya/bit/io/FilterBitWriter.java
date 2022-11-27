@@ -71,8 +71,9 @@ public abstract class FilterBitWriter<T, U>
 
         @Override
         public void write(final BitOutput output, final T value) throws IOException {
-            output.writeBoolean(value == null);
-            if (value != null) {
+            final boolean flag = value == null;
+            output.writeInt(true, 1, flag ? 0 : 1);
+            if (!flag) {
                 super.write(output, value);
             }
         }

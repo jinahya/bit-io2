@@ -29,7 +29,8 @@ import java.io.IOException;
  * @see LongReader
  */
 @FunctionalInterface
-public interface LongWriter {
+public interface LongWriter
+        extends IntWriter {
 
     /**
      * Writes specified value to specified output.
@@ -39,4 +40,18 @@ public interface LongWriter {
      * @throws IOException if an I/O error occurs.
      */
     void writeLong(BitOutput output, long value) throws IOException;
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param output the output to which the value is written.
+     * @param value  the value to write.
+     * @throws IOException {@inheritDoc}
+     * @apiNote Default implementation invokes {@link #writeLong(BitOutput, long)} method with {@code output} and
+     * {@code value}.
+     */
+    @Override
+    default void writeInt(final BitOutput output, final int value) throws IOException {
+        writeLong(output, value);
+    }
 }
