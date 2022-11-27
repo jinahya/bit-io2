@@ -37,7 +37,7 @@ public class VlqReader
 
     private static final class InstanceHolder {
 
-        static final VlqReader INSTANCE = new VlqReader();
+        private static final VlqReader INSTANCE = new VlqReader();
 
         private InstanceHolder() {
             throw new AssertionError("instantiation is not allowed");
@@ -56,7 +56,7 @@ public class VlqReader
     /**
      * Creates a new instance.
      */
-    protected VlqReader() {
+    private VlqReader() {
         super();
     }
 

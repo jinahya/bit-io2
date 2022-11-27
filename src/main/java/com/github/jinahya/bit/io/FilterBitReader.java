@@ -58,10 +58,10 @@ public abstract class FilterBitReader<T, U>
         };
     }
 
-    static final class Nullable<T>
+    private static final class Nullable<T>
             extends FilterBitReader<T, T> {
 
-        Nullable(final BitReader<? extends T> delegate) {
+        private Nullable(final BitReader<? extends T> delegate) {
             super(delegate);
         }
 
@@ -83,6 +83,22 @@ public abstract class FilterBitReader<T, U>
         protected T filter(final T value) {
             return value;
         }
+    }
+
+    /**
+     * Returns a new reader handles {@code null} values on the behalf of specified reader.
+     *
+     * @param reader the reader; must be not {@code null} nor already a <em>nullable</em>.
+     * @param <T>    value type parameter
+     * @return a new reader handles {@code null} values.
+     * @throws IllegalArgumentException if {@code reader} is already a <em>nullable</em>.
+     */
+    public static <T> BitReader<T> nullable(final BitReader<? extends T> reader) {
+        if (BitIoObjects.requireNonNullReader(reader) instanceof Nullable) {
+            throw new IllegalArgumentException(
+                    BitIoConstants.MESSAGE_ILLEGAL_ARGUMENT_ALREADY_NULLABLE + "; " + reader);
+        }
+        return new Nullable<>(reader);
     }
 
     /**

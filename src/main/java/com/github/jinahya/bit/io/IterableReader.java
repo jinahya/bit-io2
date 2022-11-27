@@ -24,46 +24,36 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.ToIntFunction;
 
 /**
  * A reader for reading lists of specific element type.
  *
  * @param <E> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ListWriter
+ * @see IterableWriter
  */
-public class ListReader<E>
-        implements BitReader<List<E>>,
-                   ReadsCount<ListReader<E>> {
+class IterableReader<E>
+        implements BitReader<Iterable<? extends E>> {
 
     /**
      * Creates a new instance for reading lists of specified element type using specified element reader.
      *
      * @param elementReader the reader for reading elements.
      */
-    public ListReader(final BitReader<? extends E> elementReader) {
+    public IterableReader(final BitReader<? extends E> elementReader) {
         super();
         this.elementReader = Objects.requireNonNull(elementReader, "elementReader is null");
     }
 
     @Override
-    public List<E> read(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        final int size = countReader.applyAsInt(input);
-        final List<E> value = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
+    public Iterable<? extends E> read(final BitInput input) throws IOException {
+        BitIoObjects.requireNonNullInput(input);
+        final List<E> value = new ArrayList<>();
+        while (input.readInt(true, 1) == 1) {
             value.add(elementReader.read(input));
         }
         return value;
     }
 
-    @Override
-    public void setCountReader(final ToIntFunction<? super BitInput> countReader) {
-        this.countReader = Objects.requireNonNull(countReader, "countReader is null");
-    }
-
     private final BitReader<? extends E> elementReader;
-
-    private ToIntFunction<? super BitInput> countReader = BitIoConstants.COUNT_READER;
 }

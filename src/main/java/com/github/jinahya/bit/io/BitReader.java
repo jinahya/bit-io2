@@ -38,7 +38,7 @@ public interface BitReader<T> {
      * @return a new instance handles {@code null} values.
      */
     default BitReader<T> nullable() {
-        return new FilterBitReader.Nullable<>(this);
+        return FilterBitReader.nullable(this);
     }
 
     /**

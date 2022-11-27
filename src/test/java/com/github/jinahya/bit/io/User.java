@@ -50,6 +50,13 @@ public class User {
         return instance;
     }
 
+    public static User newRandomInstanceWithFixedNameLength() {
+        final var instance = new User();
+        instance.setName(new RandomStringGenerator.Builder().build().generate(128));
+        instance.setAge(ThreadLocalRandom.current().nextInt(128));
+        return instance;
+    }
+
     @NotBlank
     private String name;
 

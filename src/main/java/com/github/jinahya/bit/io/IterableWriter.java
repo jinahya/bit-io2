@@ -21,47 +21,38 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.ObjIntConsumer;
 
 /**
- * A writer for writing lists of specific element type.
+ * A writer for writing iterables of specific element type.
  *
  * @param <E> element type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ListReader
+ * @see IterableReader
  */
-public class ListWriter<E>
-        implements BitWriter<List<E>>,
-                   WritesCount<ListWriter<E>> {
+class IterableWriter<E>
+        implements BitWriter<Iterable<? extends E>> {
 
     /**
      * Creates a new instance for writing lists of specified element type using specified element writer.
      *
      * @param elementWriter the writer for reading elements.
      */
-    public ListWriter(final BitWriter<? super E> elementWriter) {
+    public IterableWriter(final BitWriter<? super E> elementWriter) {
         super();
         this.elementWriter = Objects.requireNonNull(elementWriter, "elementWriter is null");
     }
 
     @Override
-    public void write(final BitOutput output, final List<E> value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        Objects.requireNonNull(value, "value is null");
-        countWriter.accept(output, value.size());
-        for (final E element : value) {
-            elementWriter.write(output, element);
+    public void write(final BitOutput output, final Iterable<? extends E> value) throws IOException {
+        BitIoObjects.requireNonNullOutput(output);
+        BitIoObjects.requireNonNullValue(value);
+        for (final E e : value) {
+            output.writeInt(true, 1, 1);
+            elementWriter.write(output, e);
         }
-    }
-
-    @Override
-    public void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
-        this.countWriter = Objects.requireNonNull(countWriter, "countWriter is null");
+        output.writeInt(true, 1, 0);
     }
 
     private final BitWriter<? super E> elementWriter;
-
-    private ObjIntConsumer<? super BitOutput> countWriter = BitIoConstants.COUNT_WRITER;
 }

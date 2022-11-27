@@ -70,7 +70,7 @@ public class FloatWriter
 
             private static final class Nullable {
 
-                private static final BitWriter<Float> INSTANCE = new FilterBitWriter.Nullable<>(Holder.INSTANCE);
+                private static final BitWriter<Float> INSTANCE = FilterBitWriter.nullable(Holder.INSTANCE);
 
                 private Nullable() {
                     throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
@@ -135,7 +135,7 @@ public class FloatWriter
 
             private static final class Nullable {
 
-                private static final BitWriter<Float> INSTANCE = new FilterBitWriter.Nullable<>(Holder.INSTANCE);
+                private static final BitWriter<Float> INSTANCE = FilterBitWriter.nullable(Holder.INSTANCE);
 
                 private Nullable() {
                     throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);

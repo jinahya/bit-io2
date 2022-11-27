@@ -39,7 +39,15 @@ public final class BitIoConstants {
 
     static final String MESSAGE_OUTPUT_IS_NULL = "output is null";
 
+    static final String MESSAGE_READER_IS_NULL = "reader is null";
+
+    static final String MESSAGE_WRITER_IS_NULL = "writer is null";
+
+    static final String MESSAGE_VALUE_IS_NULL = "value is null";
+
     static final String MESSAGE_INSTANTIATION_IS_NOT_ALLOWED = "instantiation is not allowed";
+
+    static final String MESSAGE_ILLEGAL_ARGUMENT_ALREADY_NULLABLE = "illegal argument; already nullable";
 
     static final String MESSAGE_UNSUPPORTED_ALREADY_NULLABLE = "unsupported; already nullable";
 

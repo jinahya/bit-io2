@@ -68,7 +68,7 @@ public class FloatReader
 
             private static final class Nullable {
 
-                private static final BitReader<Float> INSTANCE = new FilterBitReader.Nullable<>(Holder.INSTANCE);
+                private static final BitReader<Float> INSTANCE = FilterBitReader.nullable(Holder.INSTANCE);
 
                 private Nullable() {
                     throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
@@ -134,7 +134,7 @@ public class FloatReader
 
             private static final class Nullable {
 
-                private static final BitReader<Float> INSTANCE = new FilterBitReader.Nullable<>(Holder.INSTANCE);
+                private static final BitReader<Float> INSTANCE = FilterBitReader.nullable(Holder.INSTANCE);
 
                 private Nullable() {
                     throw new AssertionError(BitIoConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
