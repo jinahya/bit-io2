@@ -31,7 +31,10 @@ import java.util.Objects;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public abstract class Leb128Reader
+@SuppressWarnings({
+        "java:S1610" // empty abstract class
+})
+public abstract class Leb128Reader // NOSONAR
         implements LongReader {
 
     /**
