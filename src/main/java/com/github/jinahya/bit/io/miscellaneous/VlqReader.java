@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io.miscellaneous;
  */
 
 import com.github.jinahya.bit.io.BitInput;
-import com.github.jinahya.bit.io.BitIoConstants;
 import com.github.jinahya.bit.io.IntReader;
 import com.github.jinahya.bit.io.LongReader;
 

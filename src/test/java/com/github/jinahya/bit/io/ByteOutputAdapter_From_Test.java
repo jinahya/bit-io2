@@ -30,8 +30,6 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
  * A class for testing factory methods defined in {@link BitOutput} interface.
  *

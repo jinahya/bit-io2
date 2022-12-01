@@ -26,7 +26,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class BitIo_Boolean_Test {
 

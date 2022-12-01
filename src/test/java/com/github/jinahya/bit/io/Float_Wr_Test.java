@@ -34,7 +34,6 @@ import java.util.stream.Stream;
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
 import static com.github.jinahya.bit.io.FloatConstants.SIZE_EXPONENT;
 import static com.github.jinahya.bit.io.FloatConstants.SIZE_SIGNIFICAND;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.atMost;
 
 /**

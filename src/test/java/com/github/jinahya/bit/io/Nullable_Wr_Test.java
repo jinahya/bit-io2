@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A class for testing nullable instances.

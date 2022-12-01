@@ -23,8 +23,6 @@ package com.github.jinahya.bit.io;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
  * A class for testing {@link FloatWriter.CompressedZero#getInstance()}.
  *

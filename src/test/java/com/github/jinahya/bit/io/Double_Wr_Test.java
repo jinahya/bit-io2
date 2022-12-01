@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 
 /**

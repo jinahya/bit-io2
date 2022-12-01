@@ -24,8 +24,6 @@ import org.junit.jupiter.api.RepeatedTest;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class User_Wr_Test {
 
     @RepeatedTest(1)
