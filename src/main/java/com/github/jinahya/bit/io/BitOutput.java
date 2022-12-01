@@ -102,7 +102,6 @@ public interface BitOutput {
             }
             return;
         }
-        assert unsigned; // NOSONAR
         if (size >= Integer.SIZE) {
             writeInt(false, Integer.SIZE, (int) (value >> (size - Integer.SIZE)));
             size -= Integer.SIZE;

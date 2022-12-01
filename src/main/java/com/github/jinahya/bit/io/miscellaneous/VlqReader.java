@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io.miscellaneous;
  */
 
 import com.github.jinahya.bit.io.BitInput;
+import com.github.jinahya.bit.io.BitIoConstants;
 import com.github.jinahya.bit.io.IntReader;
 import com.github.jinahya.bit.io.LongReader;
 
@@ -40,7 +41,7 @@ public class VlqReader
         private static final VlqReader INSTANCE = new VlqReader();
 
         private InstanceHolder() {
-            throw new AssertionError("instantiation is not allowed");
+            throw new AssertionError(BitIoMiscellaneousConstants.MESSAGE_INPUT_IS_NULL);
         }
     }
 
