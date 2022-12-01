@@ -74,8 +74,8 @@ class Float_Wr_Test {
 //            log.debug("w: {}", FloatTestUtils.formatBinary(value));
 //            log.debug("r: {}", FloatTestUtils.formatBinary(actual));
             assertThat(actual).isEqualTo(value);
-            floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(SIZE_EXPONENT), atMost(2));
-            floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(SIZE_SIGNIFICAND), atMost(2));
+            floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(SIZE_EXPONENT), atMost(4));
+            floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(SIZE_SIGNIFICAND), atMost(4));
         }
         try (MockedStatic<FloatConstraints> floatConstraints
                      = Mockito.mockStatic(FloatConstraints.class, Mockito.CALLS_REAL_METHODS)) {

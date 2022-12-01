@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 /**
@@ -324,17 +325,6 @@ public class FloatReader
         private boolean significandOnly;
     }
 
-    static float read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
-        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
-            return Float.intBitsToFloat(input.readInt(false, Integer.SIZE));
-        }
-        return Float.intBitsToFloat(
-                (input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
-                | (input.readInt(true, exponentSize) << FloatConstants.SIZE_SIGNIFICAND)
-                | (input.readInt(true, significandSize) << (FloatConstants.SIZE_SIGNIFICAND - significandSize))
-        );
-    }
-
     private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
 
     private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
@@ -378,6 +368,7 @@ public class FloatReader
 
     @Override
     public Float read(final BitInput input) throws IOException {
-        return read(input, exponentSize, significandSize);
+        Objects.requireNonNull(input, "input is null");
+        return input.readFloat(exponentSize, significandSize);
     }
 }

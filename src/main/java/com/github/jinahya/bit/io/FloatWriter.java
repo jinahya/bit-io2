@@ -22,6 +22,7 @@ package com.github.jinahya.bit.io;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 /**
@@ -334,18 +335,6 @@ public class FloatWriter
         private boolean significandOnly;
     }
 
-    static void write(final BitOutput output, final int exponentSize, final int significandSize, final float value)
-            throws IOException {
-        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
-            output.writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
-            return;
-        }
-        final int bits = Float.floatToRawIntBits(value);
-        output.writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
-        output.writeInt(true, exponentSize, (bits & FloatConstants.MASK_EXPONENT) >> FloatConstants.SIZE_SIGNIFICAND);
-        output.writeInt(true, significandSize, bits >> (FloatConstants.SIZE_SIGNIFICAND - significandSize));
-    }
-
     private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCE = new WeakHashMap<>();
 
     private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCE_NULLABLE = new WeakHashMap<>();
@@ -389,6 +378,8 @@ public class FloatWriter
 
     @Override
     public void write(final BitOutput output, final Float value) throws IOException {
-        write(output, exponentSize, significandSize, value);
+        Objects.requireNonNull(output, "output is null");
+        Objects.requireNonNull(value, "value is null");
+        output.writeFloat(exponentSize, significandSize, value);
     }
 }

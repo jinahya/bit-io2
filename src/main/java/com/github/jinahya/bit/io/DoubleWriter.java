@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A writer for writing {@code double} values.
@@ -323,19 +324,6 @@ public class DoubleWriter
         private boolean significandOnly;
     }
 
-    static void write(final BitOutput output, final int exponentSize, final int significandSize, final double value)
-            throws IOException {
-        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
-            output.writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
-            return;
-        }
-        final long bits = Double.doubleToRawLongBits(value);
-        output.writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
-        output.writeLong(true, exponentSize,
-                         (bits & DoubleConstants.MASK_EXPONENT) >> DoubleConstants.SIZE_SIGNIFICAND);
-        output.writeLong(true, significandSize, bits >> (DoubleConstants.SIZE_SIGNIFICAND - significandSize));
-    }
-
     /**
      * Creates a new instance with specified size of the exponent part and the significand part, respectively.
      *
@@ -352,6 +340,8 @@ public class DoubleWriter
 
     @Override
     public void write(final BitOutput output, final Double value) throws IOException {
-        write(output, exponentSize, significandSize, value);
+        Objects.requireNonNull(output, "output is null");
+        Objects.requireNonNull(value, "value is null");
+        output.writeDouble(exponentSize, significandSize, value);
     }
 }

@@ -47,7 +47,7 @@ class BitIo_Float_Test {
     @MethodSource({"getExponentSizeAndSignificandSizeAndValueArgumentsStream"})
     @ParameterizedTest
     void wr__(final int exponentSize, final int significandSize, final float expected) throws IOException {
-        try (MockedStatic<FloatConstraints> floatConstraints
+        try (MockedStatic<FloatConstraints> constraints
                      = Mockito.mockStatic(FloatConstraints.class, Mockito.CALLS_REAL_METHODS)) {
             final var actual = BitIoTestUtils.wr1au(o -> {
                 o.writeFloat(exponentSize, significandSize, expected);
@@ -61,8 +61,8 @@ class BitIo_Float_Test {
                 return;
             }
             assertThat(actual).isEqualTo(expected);
-            floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(exponentSize), times(2));
-            floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(significandSize), times(2));
+            constraints.verify(() -> FloatConstraints.requireValidExponentSize(exponentSize), times(2));
+            constraints.verify(() -> FloatConstraints.requireValidSignificandSize(significandSize), times(2));
         }
     }
 }
