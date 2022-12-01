@@ -21,9 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
-import java.util.WeakHashMap;
 
 /**
  * A reader for reading {@code float} values.
@@ -323,33 +321,6 @@ public class FloatReader
         private final CompressedSubnormal compressedSubnormal;
 
         private boolean significandOnly;
-    }
-
-    private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
-
-    private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-
-    /**
-     * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
-     *
-     * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
-     *                        inclusive.
-     * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
-     *                        both inclusive.
-     * @return a cached instance.
-     */
-    static BitReader<Float> getCachedInstance(final int exponentSize, final int significandSize) {
-        return CACHED_INSTANCES.computeIfAbsent(
-                FloatCacheKey.of(exponentSize, significandSize),
-                k -> new FloatReader(k.getExponentSize(), k.getSignificandSize()) {
-                    @Override
-                    public BitReader<Float> nullable() {
-                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(FloatCacheKey.copyOf(k), k2 -> super.nullable());
-                    }
-                }
-        );
     }
 
     /**
