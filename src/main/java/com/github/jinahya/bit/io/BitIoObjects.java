@@ -32,7 +32,7 @@ final class BitIoObjects {
     }
 
     public static long requireNonNegativeValue(final long value) {
-        if (value < 0) {
+        if (value < 0L) {
             throw new IllegalArgumentException("negative value: " + value);
         }
         return value;

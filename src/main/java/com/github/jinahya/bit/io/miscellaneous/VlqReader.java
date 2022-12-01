@@ -39,7 +39,7 @@ public class VlqReader
         private static final VlqReader INSTANCE = new VlqReader();
 
         private InstanceHolder() {
-            throw new AssertionError("instantiation is not allowed");
+            throw new AssertionError(BitIoMiscellaneousConstants.MESSAGE_INPUT_IS_NULL);
         }
     }
 

@@ -80,32 +80,6 @@ public final class BitIoConstants {
     };
 
     /**
-     * A function for reading a {@value Short#SIZE}-bit unsigned count value.
-     *
-     * @see BitIoUtils#readCountShort(BitInput)
-     */
-    public static final ToIntFunction<? super BitInput> COUNT_READER_SHORT = i -> {
-        try {
-            return BitIoUtils.readCountShort(i);
-        } catch (final IOException ioe) {
-            throw new UncheckedIOException("failed to read a short count from input(" + i + ")", ioe);
-        }
-    };
-
-    /**
-     * A consumer for writing a {@value Short#SIZE}-bit unsigned count value.
-     *
-     * @see BitIoUtils#writeCount(BitOutput, int)
-     */
-    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_SHORT = (o, c) -> {
-        try {
-            BitIoUtils.writeCountShort(o, c);
-        } catch (final IOException ioe) {
-            throw new UncheckedIOException("failed to write the short count(" + c + ") to output(" + o + ")", ioe);
-        }
-    };
-
-    /**
      * A function for reading a {@code 31}-bit unsigned count value.
      *
      * @see BitIoUtils#readCount(BitInput)

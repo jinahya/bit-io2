@@ -102,7 +102,6 @@ public interface BitOutput {
             }
             return;
         }
-        assert unsigned; // NOSONAR
         if (size >= Integer.SIZE) {
             writeInt(false, Integer.SIZE, (int) (value >> (size - Integer.SIZE)));
             size -= Integer.SIZE;
@@ -142,7 +141,14 @@ public interface BitOutput {
     default void writeFloat(final int exponentSize, final int significandSize, final float value) throws IOException {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
-        FloatWriter.write(this, exponentSize, significandSize, value);
+        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
+            writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
+            return;
+        }
+        final int bits = Float.floatToRawIntBits(value);
+        writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
+        writeInt(true, exponentSize, (bits & FloatConstants.MASK_EXPONENT) >> FloatConstants.SIZE_SIGNIFICAND);
+        writeInt(true, significandSize, bits >> (FloatConstants.SIZE_SIGNIFICAND - significandSize));
     }
 
     /**
@@ -161,7 +167,14 @@ public interface BitOutput {
     default void writeDouble(final int exponentSize, final int significandSize, final double value) throws IOException {
         DoubleConstraints.requireValidExponentSize(exponentSize);
         DoubleConstraints.requireValidSignificandSize(significandSize);
-        DoubleWriter.write(this, exponentSize, significandSize, value);
+        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
+            writeLong(false, Long.SIZE, Double.doubleToRawLongBits(value));
+            return;
+        }
+        final long bits = Double.doubleToRawLongBits(value);
+        writeLong(true, 1, bits >> DoubleConstants.SHIFT_SIGN_BIT);
+        writeLong(true, exponentSize, (bits & DoubleConstants.MASK_EXPONENT) >> DoubleConstants.SIZE_SIGNIFICAND);
+        writeLong(true, significandSize, bits >> (DoubleConstants.SIZE_SIGNIFICAND - significandSize));
     }
 
     /**

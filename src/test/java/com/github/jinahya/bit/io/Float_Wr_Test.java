@@ -74,20 +74,6 @@ class Float_Wr_Test {
 //            log.debug("w: {}", FloatTestUtils.formatBinary(value));
 //            log.debug("r: {}", FloatTestUtils.formatBinary(actual));
             assertThat(actual).isEqualTo(value);
-            floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(SIZE_EXPONENT), atMost(2));
-            floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(SIZE_SIGNIFICAND), atMost(2));
-        }
-        try (MockedStatic<FloatConstraints> floatConstraints
-                     = Mockito.mockStatic(FloatConstraints.class, Mockito.CALLS_REAL_METHODS)) {
-            final var actual = wr1u(o -> {
-                FloatWriter.getCachedInstance(SIZE_EXPONENT, SIZE_SIGNIFICAND).write(o, value);
-                return i -> FloatReader.getCachedInstance(SIZE_EXPONENT, SIZE_SIGNIFICAND).read(i);
-            });
-            if (value.isNaN()) {
-                assertThat(actual).isNaN();
-                return;
-            }
-            assertThat(actual).isEqualTo(value);
             floatConstraints.verify(() -> FloatConstraints.requireValidExponentSize(SIZE_EXPONENT), atMost(4));
             floatConstraints.verify(() -> FloatConstraints.requireValidSignificandSize(SIZE_SIGNIFICAND), atMost(4));
         }
@@ -97,75 +83,40 @@ class Float_Wr_Test {
     @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest
     void wr__(final int exponentSize, final int significandSize, final Float value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new FloatWriter(exponentSize, significandSize).write(o, value);
-                return i -> new FloatReader(exponentSize, significandSize).read(i);
-            });
-            if (value.isNaN()) {
-                assertThat(actual).isNaN();
-                return;
-            }
-            assertThat(actual).isEqualTo(value);
+        final var actual = wr1u(o -> {
+            new FloatWriter(exponentSize, significandSize).write(o, value);
+            return i -> new FloatReader(exponentSize, significandSize).read(i);
+        });
+        if (value.isNaN()) {
+            assertThat(actual).isNaN();
+            return;
         }
-        {
-            final var actual = wr1u(o -> {
-                FloatWriter.getCachedInstance(exponentSize, significandSize).write(o, value);
-                return i -> FloatReader.getCachedInstance(exponentSize, significandSize).read(i);
-            });
-            if (value.isNaN()) {
-                assertThat(actual).isNaN();
-                return;
-            }
-            assertThat(actual).isEqualTo(value);
-        }
+        assertThat(actual).isEqualTo(value);
     }
 
     @DisplayName("nullable().write(, , value) -> nullable().read(, )value")
     @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest
     void wr__Nullable(final int exponentSize, final int significandSize, final Float value) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new FloatWriter(exponentSize, significandSize).nullable().write(o, value);
-                return i -> new FloatReader(exponentSize, significandSize).nullable().read(i);
-            });
-            if (value.isNaN()) {
-                assertThat(actual).isNaN();
-                return;
-            }
-            assertThat(actual).isEqualTo(value);
+        final var actual = wr1u(o -> {
+            new FloatWriter(exponentSize, significandSize).nullable().write(o, value);
+            return i -> new FloatReader(exponentSize, significandSize).nullable().read(i);
+        });
+        if (value.isNaN()) {
+            assertThat(actual).isNaN();
+            return;
         }
-        {
-            final var actual = wr1u(o -> {
-                FloatWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, value);
-                return i -> FloatReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
-            });
-            if (value.isNaN()) {
-                assertThat(actual).isNaN();
-                return;
-            }
-            assertThat(actual).isEqualTo(value);
-        }
+        assertThat(actual).isEqualTo(value);
     }
 
     @DisplayName("nullable().write(null) -> nullable().read()null")
     @MethodSource({"sizesArgumentsStream"})
     @ParameterizedTest
     void wr_Null_Nullable(final int exponentSize, final int significandSize) throws IOException {
-        {
-            final var actual = wr1u(o -> {
-                new FloatWriter(exponentSize, significandSize).nullable().write(o, null);
-                return i -> new FloatReader(exponentSize, significandSize).nullable().read(i);
-            });
-            assertThat(actual).isNull();
-        }
-        {
-            final var actual = wr1u(o -> {
-                FloatWriter.getCachedInstance(exponentSize, significandSize).nullable().write(o, null);
-                return i -> FloatReader.getCachedInstance(exponentSize, significandSize).nullable().read(i);
-            });
-            assertThat(actual).isNull();
-        }
+        final var actual = wr1u(o -> {
+            new FloatWriter(exponentSize, significandSize).nullable().write(o, null);
+            return i -> new FloatReader(exponentSize, significandSize).nullable().read(i);
+        });
+        assertThat(actual).isNull();
     }
 }

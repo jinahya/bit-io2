@@ -39,7 +39,7 @@ public class VlqWriter
         private static final VlqWriter INSTANCE = new VlqWriter();
 
         private InstanceHolder() {
-            throw new AssertionError("instantiation is not allowed");
+            throw new AssertionError(BitIoMiscellaneousConstants.MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
         }
     }
 

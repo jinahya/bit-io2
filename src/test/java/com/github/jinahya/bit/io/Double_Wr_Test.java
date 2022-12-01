@@ -55,7 +55,7 @@ class Double_Wr_Test {
     @MethodSource({"sizesAndValuesArgumentsStream"})
     @ParameterizedTest(name = "[{index}] exponentSize: {0}, significandSize: {1}, value: {2}")
     void rw__(final int exponentSize, final int significandSize, final Double value) throws IOException {
-        try (MockedStatic<DoubleConstraints> doubleConstraints
+        try (MockedStatic<DoubleConstraints> constraints
                      = Mockito.mockStatic(DoubleConstraints.class, Mockito.CALLS_REAL_METHODS)) {
             final var actual = wr1u(o -> {
                 new DoubleWriter(exponentSize, significandSize).write(o, value);
@@ -66,8 +66,8 @@ class Double_Wr_Test {
                 return;
             }
             assertThat(actual).isEqualTo(value);
-            doubleConstraints.verify(() -> DoubleConstraints.requireValidExponentSize(exponentSize), times(2));
-            doubleConstraints.verify(() -> DoubleConstraints.requireValidSignificandSize(significandSize), times(2));
+            constraints.verify(() -> DoubleConstraints.requireValidExponentSize(exponentSize), times(4));
+            constraints.verify(() -> DoubleConstraints.requireValidSignificandSize(significandSize), times(4));
         }
     }
 

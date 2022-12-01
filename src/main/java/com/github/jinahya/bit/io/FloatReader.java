@@ -21,8 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.Objects;
 
 /**
  * A reader for reading {@code float} values.
@@ -324,44 +323,6 @@ public class FloatReader
         private boolean significandOnly;
     }
 
-    static float read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
-        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
-            return Float.intBitsToFloat(input.readInt(false, Integer.SIZE));
-        }
-        return Float.intBitsToFloat(
-                (input.readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
-                | (input.readInt(true, exponentSize) << FloatConstants.SIZE_SIGNIFICAND)
-                | (input.readInt(true, significandSize) << (FloatConstants.SIZE_SIGNIFICAND - significandSize))
-        );
-    }
-
-    private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES = new WeakHashMap<>();
-
-    private static final Map<FloatCacheKey, BitReader<Float>> CACHED_INSTANCES_NULLABLE = new WeakHashMap<>();
-
-    /**
-     * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
-     *
-     * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
-     *                        inclusive.
-     * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
-     *                        both inclusive.
-     * @return a cached instance.
-     */
-    static BitReader<Float> getCachedInstance(final int exponentSize, final int significandSize) {
-        return CACHED_INSTANCES.computeIfAbsent(
-                FloatCacheKey.of(exponentSize, significandSize),
-                k -> new FloatReader(k.getExponentSize(), k.getSignificandSize()) {
-                    @Override
-                    public BitReader<Float> nullable() {
-                        return CACHED_INSTANCES_NULLABLE.computeIfAbsent(FloatCacheKey.copyOf(k), k2 -> super.nullable());
-                    }
-                }
-        );
-    }
-
     /**
      * Creates a new instance with specified sizes of the exponent part and the significand part.
      *
@@ -378,6 +339,7 @@ public class FloatReader
 
     @Override
     public Float read(final BitInput input) throws IOException {
-        return read(input, exponentSize, significandSize);
+        Objects.requireNonNull(input, "input is null");
+        return input.readFloat(exponentSize, significandSize);
     }
 }

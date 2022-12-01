@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -29,7 +30,6 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A class for testing {@link DoubleWriter.CompressedNaN} and {@link DoubleReader.CompressedNaN}.
@@ -55,7 +55,7 @@ class Double_Wr_CompressedNaN_Test {
             new DoubleWriter.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).write(o, value);
             return i -> new DoubleReader.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).read(i);
         });
-        assertThat(actual).isNaN();
+        Assertions.assertThat(actual).isNaN();
     }
 
     @MethodSource({"valueStream"})
@@ -65,6 +65,6 @@ class Double_Wr_CompressedNaN_Test {
             new DoubleWriter.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).nullable().write(o, value);
             return i -> new DoubleReader.CompressedNaN(DoubleConstants.SIZE_SIGNIFICAND).nullable().read(i);
         });
-        assertThat(actual).isNaN();
+        Assertions.assertThat(actual).isNaN();
     }
 }

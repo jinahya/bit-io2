@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * A reader for reading {@code Double} values.
@@ -332,17 +333,6 @@ public class DoubleReader
         private boolean significandOnly;
     }
 
-    static double read(final BitInput input, final int exponentSize, final int significandSize) throws IOException {
-        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
-            return Double.longBitsToDouble(input.readLong(false, Long.SIZE));
-        }
-        return Double.longBitsToDouble(
-                (input.readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
-                | (input.readLong(true, exponentSize) << DoubleConstants.SIZE_SIGNIFICAND)
-                | (input.readLong(true, significandSize) << (DoubleConstants.SIZE_SIGNIFICAND - significandSize))
-        );
-    }
-
     /**
      * Creates a new instance specified sizes of the exponent part and significand part, respectively.
      *
@@ -359,6 +349,7 @@ public class DoubleReader
 
     @Override
     public Double read(final BitInput input) throws IOException {
-        return read(input, exponentSize, significandSize);
+        Objects.requireNonNull(input, "input is null");
+        return input.readDouble(exponentSize, significandSize);
     }
 }

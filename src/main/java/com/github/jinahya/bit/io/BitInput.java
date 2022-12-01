@@ -147,7 +147,14 @@ public interface BitInput {
     default float readFloat(final int exponentSize, final int significandSize) throws IOException {
         FloatConstraints.requireValidExponentSize(exponentSize);
         FloatConstraints.requireValidSignificandSize(significandSize);
-        return FloatReader.read(this, exponentSize, significandSize);
+        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
+            return Float.intBitsToFloat(readInt(false, Integer.SIZE));
+        }
+        return Float.intBitsToFloat(
+                (readInt(true, 1) << FloatConstants.SHIFT_SIGN_BIT)
+                | (readInt(true, exponentSize) << FloatConstants.SIZE_SIGNIFICAND)
+                | (readInt(true, significandSize) << (FloatConstants.SIZE_SIGNIFICAND - significandSize))
+        );
     }
 
     /**
@@ -166,7 +173,14 @@ public interface BitInput {
     default double readDouble(final int exponentSize, final int significandSize) throws IOException {
         DoubleConstraints.requireValidExponentSize(exponentSize);
         DoubleConstraints.requireValidSignificandSize(significandSize);
-        return DoubleReader.read(this, exponentSize, significandSize);
+        if (exponentSize == DoubleConstants.SIZE_EXPONENT && significandSize == DoubleConstants.SIZE_SIGNIFICAND) {
+            return Double.longBitsToDouble(readLong(false, Long.SIZE));
+        }
+        return Double.longBitsToDouble(
+                (readLong(true, 1) << DoubleConstants.SHIFT_SIGN_BIT)
+                | (readLong(true, exponentSize) << DoubleConstants.SIZE_SIGNIFICAND)
+                | (readLong(true, significandSize) << (DoubleConstants.SIZE_SIGNIFICAND - significandSize))
+        );
     }
 
     /**

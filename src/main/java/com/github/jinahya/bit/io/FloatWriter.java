@@ -21,8 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.Objects;
 
 /**
  * A writer for writing {@code float} values.
@@ -334,45 +333,6 @@ public class FloatWriter
         private boolean significandOnly;
     }
 
-    static void write(final BitOutput output, final int exponentSize, final int significandSize, final float value)
-            throws IOException {
-        if (exponentSize == FloatConstants.SIZE_EXPONENT && significandSize == FloatConstants.SIZE_SIGNIFICAND) {
-            output.writeInt(false, Integer.SIZE, Float.floatToRawIntBits(value));
-            return;
-        }
-        final int bits = Float.floatToRawIntBits(value);
-        output.writeInt(true, 1, bits >> FloatConstants.SHIFT_SIGN_BIT);
-        output.writeInt(true, exponentSize, (bits & FloatConstants.MASK_EXPONENT) >> FloatConstants.SIZE_SIGNIFICAND);
-        output.writeInt(true, significandSize, bits >> (FloatConstants.SIZE_SIGNIFICAND - significandSize));
-    }
-
-    private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCE = new WeakHashMap<>();
-
-    private static final Map<FloatCacheKey, BitWriter<Float>> CACHED_INSTANCE_NULLABLE = new WeakHashMap<>();
-
-    /**
-     * Returns a cached instance for specified sizes of exponent part and significand part, respectively.
-     *
-     * @param exponentSize    the number of bits for the exponent part; between
-     *                        {@value FloatConstants#SIZE_MIN_EXPONENT} and {@value FloatConstants#SIZE_EXPONENT}, both
-     *                        inclusive.
-     * @param significandSize the number of bits for the significand part; between
-     *                        {@value FloatConstants#SIZE_MIN_SIGNIFICAND} and {@value FloatConstants#SIZE_SIGNIFICAND},
-     *                        both inclusive.
-     * @return a cached instance.
-     */
-    static BitWriter<Float> getCachedInstance(final int exponentSize, final int significandSize) {
-        return CACHED_INSTANCE.computeIfAbsent(
-                FloatCacheKey.of(exponentSize, significandSize),
-                k -> new FloatWriter(k.getExponentSize(), k.getSignificandSize()) {
-                    @Override
-                    public BitWriter<Float> nullable() {
-                        return CACHED_INSTANCE_NULLABLE.computeIfAbsent(FloatCacheKey.copyOf(k), k2 -> super.nullable());
-                    }
-                }
-        );
-    }
-
     /**
      * Creates a new instance with specified exponent size and significand size.
      *
@@ -389,6 +349,8 @@ public class FloatWriter
 
     @Override
     public void write(final BitOutput output, final Float value) throws IOException {
-        write(output, exponentSize, significandSize, value);
+        Objects.requireNonNull(output, "output is null");
+        Objects.requireNonNull(value, "value is null");
+        output.writeFloat(exponentSize, significandSize, value);
     }
 }
