@@ -85,7 +85,6 @@ public class VlqWriter
         if (remainder > 0) {
             bytes[index++] = (byte) ((quotient > 0 ? 0x80L : 0x00L) | (value & 0x7FL)); // first octet
         }
-        assert index == bytes.length;
         for (int i = index - 1; i >= 0; i--) {
             output.writeInt(true, Byte.SIZE, bytes[i]);
         }

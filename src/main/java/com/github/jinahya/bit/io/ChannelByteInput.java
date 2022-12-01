@@ -44,30 +44,12 @@ public class ChannelByteInput
         delegate = new BufferByteInput(ByteBuffer.allocate(1)) {
             @Override
             public int read() throws IOException {
-                {
-                    assert source.capacity() == 1;
-                    assert source.limit() == source.capacity();
-                    assert source.position() == 0;
-                    assert source.remaining() == 1;
-                }
                 while (source.hasRemaining()) {
                     if (ChannelByteInput.this.source.read(source) == -1) {
                         throw new EOFException("reached to an end");
                     }
                 }
-                {
-                    assert source.capacity() == 1;
-                    assert source.limit() == source.capacity();
-                    assert source.position() == source.limit();
-                    assert source.remaining() == 0;
-                }
                 source.flip(); // limit -> position, position -> zero
-                {
-                    assert source.capacity() == 1;
-                    assert source.limit() == source.capacity();
-                    assert source.position() == 0;
-                    assert source.remaining() == 1;
-                }
                 return super.read();
             }
         };

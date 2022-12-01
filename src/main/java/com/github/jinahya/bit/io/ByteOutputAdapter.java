@@ -72,7 +72,6 @@ public class ByteOutputAdapter
             bits += available;
             writeInt(true, available, 0x00);
         }
-        assert available == Byte.SIZE;
         if (bytes == 1) {
             return bits;
         }
@@ -80,7 +79,6 @@ public class ByteOutputAdapter
             writeInt(true, Byte.SIZE, 0x00);
             bits += Byte.SIZE;
         }
-        assert (count % bytes) == 0L;
         return bits;
     }
 
@@ -92,12 +90,9 @@ public class ByteOutputAdapter
      * @throws IOException if an I/O error occurs.
      */
     private void unsigned8(final int size, final int value) throws IOException {
-        assert size > 0 && size <= Byte.SIZE;
         if (size == Byte.SIZE && available == Byte.SIZE) { // write, a full 8-bit octet, directly to the output
             output.write(value);
             count++;
-            assert octet == 0x00 : "'octet' should be remained as 0x00";
-            assert available == Byte.SIZE : "'available' should be remained as Byte.SIZE";
             return;
         }
         final int required = size - available;
@@ -110,7 +105,6 @@ public class ByteOutputAdapter
         octet |= value & BitIoUtils.bitMaskSingle(size);
         available -= size;
         if (available == 0) {
-            assert octet >= 0 && octet < 256;
             output.write(octet);
             count++;
             octet = 0x00;

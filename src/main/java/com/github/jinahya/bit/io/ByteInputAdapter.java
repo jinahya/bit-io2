@@ -75,7 +75,6 @@ public class ByteInputAdapter
             bits += available; // must be prior to the below
             readInt(true, available);
         }
-        assert available == 0;
         if (bytes == 1) {
             return bits;
         }
@@ -83,7 +82,6 @@ public class ByteInputAdapter
             readInt(true, Byte.SIZE);
             bits += Byte.SIZE;
         }
-        assert (count % bytes) == 0L;
         return bits;
     }
 
@@ -95,10 +93,8 @@ public class ByteInputAdapter
      * @throws IOException if an I/O error occurs.
      */
     private int unsigned8(final int size) throws IOException {
-        assert size > 0 && size <= Byte.SIZE;
         if (available == 0) {
             octet = input.read();
-            assert octet >= 0 && octet < 256;
             count++;
             available = Byte.SIZE;
         }

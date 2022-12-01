@@ -154,7 +154,6 @@ public class ByteArrayWriter
                     output.writeInt(true, 6, value[++i] & 0xFF);
                     continue;
                 }
-                assert (b & 0b1111_0111) == b;
                 output.writeInt(true, 2, 0b11);
                 output.writeInt(true, 3, b);
                 output.writeInt(true, 6, value[++i] & 0xFF);

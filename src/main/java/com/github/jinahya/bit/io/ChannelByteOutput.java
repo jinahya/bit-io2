@@ -43,27 +43,9 @@ public class ChannelByteOutput
         delegate = new BufferByteOutput(ByteBuffer.allocate(1)) {
             @Override
             public void write(final int value) throws IOException {
-                {
-                    assert target.capacity() == 1;
-                    assert target.limit() == 1;
-                    assert target.position() == 0;
-                    assert target.remaining() == 1;
-                }
                 super.write(value);
-                {
-                    assert target.capacity() == 1;
-                    assert target.limit() == 1;
-                    assert target.position() == 1;
-                    assert target.remaining() == 0;
-                }
                 for (target.flip(); target.hasRemaining(); ) {
                     ChannelByteOutput.this.target.write(target);
-                }
-                {
-                    assert target.capacity() == 1;
-                    assert target.limit() == 1;
-                    assert target.position() == 1;
-                    assert target.remaining() == 0;
                 }
             }
         };
