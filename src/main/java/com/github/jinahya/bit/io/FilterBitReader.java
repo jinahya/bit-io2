@@ -73,7 +73,8 @@ public abstract class FilterBitReader<T, U>
         @Override
         public T read(final BitInput input) throws IOException {
             Objects.requireNonNull(input, "input is null");
-            if (input.readBoolean()) { // null
+            final int flag = input.readInt(true, 1);
+            if (flag == 0) {
                 return null;
             }
             return super.read(input);

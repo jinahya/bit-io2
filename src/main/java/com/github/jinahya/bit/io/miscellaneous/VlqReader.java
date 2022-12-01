@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io.miscellaneous;
  */
 
 import com.github.jinahya.bit.io.BitInput;
-import com.github.jinahya.bit.io.IntReader;
 import com.github.jinahya.bit.io.LongReader;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public class VlqReader
-        implements IntReader, LongReader {
+        implements LongReader {
 
     private static final class InstanceHolder {
 
@@ -73,11 +72,5 @@ public class VlqReader
             }
         }
         return value;
-    }
-
-    @Override
-    public int readInt(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
-        return Math.toIntExact(readLong(input));
     }
 }

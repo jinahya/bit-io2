@@ -21,7 +21,6 @@ package com.github.jinahya.bit.io.miscellaneous;
  */
 
 import com.github.jinahya.bit.io.BitOutput;
-import com.github.jinahya.bit.io.IntWriter;
 import com.github.jinahya.bit.io.LongWriter;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public class VlqWriter
-        implements IntWriter, LongWriter {
+        implements LongWriter {
 
     private static final class InstanceHolder {
 
@@ -90,14 +89,5 @@ public class VlqWriter
         for (int i = index - 1; i >= 0; i--) {
             output.writeInt(true, Byte.SIZE, bytes[i]);
         }
-    }
-
-    @Override
-    public void writeInt(final BitOutput output, final int value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
-        if (value < 0) {
-            throw new IllegalArgumentException("negative value: " + value);
-        }
-        writeLong(output, value);
     }
 }
