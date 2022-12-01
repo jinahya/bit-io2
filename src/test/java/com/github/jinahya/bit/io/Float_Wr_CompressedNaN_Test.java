@@ -30,6 +30,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr1u;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * A class for testing {@link FloatWriter.CompressedInfinity} and {@link FloatReader.CompressedInfinity}.

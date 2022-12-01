@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import static com.github.jinahya.bit.io.BitIoTestUtils.wr2u;
 import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BitIo_Align_Test {
 

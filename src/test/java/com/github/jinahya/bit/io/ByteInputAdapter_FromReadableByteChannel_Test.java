@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.channels.ReadableByteChannel;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**

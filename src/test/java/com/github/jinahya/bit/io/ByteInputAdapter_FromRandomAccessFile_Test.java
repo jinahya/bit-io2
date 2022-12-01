@@ -25,6 +25,8 @@ import org.mockito.Mockito;
 
 import java.io.RandomAccessFile;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * A class for testing factory method defined in {@link BitInput} interface.
  *
