@@ -30,11 +30,9 @@ assert (padded + 41) % Byte.SIZE == 0;
 
 InputStream stream = inputStream();
 BitInput input = BitInputFactory.from(stream);
-boolean v1 = input.readBoolean();    // 1 bit   1
-int v2 = input.readInt(true, 3);     // 3 bits  4
-assert v2 == 1;
-long v3 = input.readLong(false, 37); // 37 bits 41
-assert v3 == 0L;        
+assert input.readBoolean();             // 1 bit   1
+assert 1 == input.readInt(true, 3);     // 3 bits  4
+assert 0L == input.readLong(false, 37); // 37 bits 41
 long discarded = input.align(1);
 assert discarded == 7L;
 assert (discarded + 41) % Byte.SIZE == 0;
