@@ -73,13 +73,23 @@ public class ByteOutputAdapter
             skip(available);
         }
         if (bytes == 1) {
+            assert available == Byte.SIZE;
             return bits;
         }
         for (int i = (bytes - (int) (this.count % bytes)); i > 0; i--) {
             skip(Byte.SIZE);
             bits += Byte.SIZE;
         }
+        assert available == Byte.SIZE;
         return bits;
+    }
+
+    @Override
+    public void reset() {
+        if (available < Byte.SIZE) {
+            throw new IllegalStateException("not aligned yet");
+        }
+        count = 0L;
     }
 
     /**

@@ -221,4 +221,11 @@ public interface BitOutput {
      * @throws IOException              if an I/O error occurs.
      */
     long align(int bytes) throws IOException;
+
+    /**
+     * Resets the total number of bytes written so far to {@code 0}.
+     *
+     * @throws IllegalStateException if this input is not {@link #align(int) aligned}.
+     */
+    void reset();
 }

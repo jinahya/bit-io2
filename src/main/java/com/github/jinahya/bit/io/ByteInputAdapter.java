@@ -76,13 +76,23 @@ public class ByteInputAdapter
             skip(available);
         }
         if (bytes == 1) {
+            assert available == 0;
             return bits;
         }
         for (int i = (bytes - (int) (this.count % bytes)); i > 0L; i--) {
             skip(Byte.SIZE);
             bits += Byte.SIZE;
         }
+        assert available == 0;
         return bits;
+    }
+
+    @Override
+    public void reset() {
+        if (available > 0) {
+            throw new IllegalStateException("not aligned yet");
+        }
+        count = 0L;
     }
 
     /**
