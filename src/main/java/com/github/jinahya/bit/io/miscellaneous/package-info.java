@@ -1,5 +1,5 @@
 /**
- * Defines miscellaneous classes.
+ * Defines miscellaneous classes for reading/writing bits.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

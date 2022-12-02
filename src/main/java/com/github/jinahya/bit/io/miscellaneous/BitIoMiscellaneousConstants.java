@@ -29,6 +29,8 @@ final class BitIoMiscellaneousConstants {
     static final String MESSAGE_INSTANTIATION_IS_NOT_ALLOWED
             = BitIoMiscellaneousConstantsHelper.getString("MESSAGE_INSTANTIATION_IS_NOT_ALLOWED");
 
+    static final int SIZE_NIBBLE = Byte.SIZE >> 1;
+
     private BitIoMiscellaneousConstants() {
         throw new AssertionError(MESSAGE_INSTANTIATION_IS_NOT_ALLOWED);
     }

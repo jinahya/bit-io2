@@ -9,7 +9,7 @@ class MiscellaneousBitInput {
 
     public static int readNibble(final BitInput input, final boolean unsigned) throws IOException {
         Objects.requireNonNull(input, "input is null");
-        return input.readInt(unsigned, 4);
+        return input.readInt(unsigned, BitIoMiscellaneousConstants.SIZE_NIBBLE);
     }
 
     public static int readNibbleUnsigned(final BitInput input) throws IOException {
