@@ -73,13 +73,13 @@ public class ByteInputAdapter
         long bits = 0L; // the number of discarded bits
         if (available > 0) {
             bits += available; // must be prior to the below
-            readInt(true, available);
+            skip(available);
         }
         if (bytes == 1) {
             return bits;
         }
         for (int i = (bytes - (int) (this.count % bytes)); i > 0L; i--) {
-            readInt(true, Byte.SIZE);
+            skip(Byte.SIZE);
             bits += Byte.SIZE;
         }
         return bits;

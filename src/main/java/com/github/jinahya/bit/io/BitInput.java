@@ -199,15 +199,16 @@ public interface BitInput {
     }
 
     /**
-     * Skips by reading (and discarding) specified number of bits.
+     * Reads (and discards) specified number of bits.
      *
-     * @param bits the number of bits to skip; must be positive.
+     * @param bits the number of bits to read; must be positive.
      * @throws IllegalArgumentException if {@code bits} is not positive.
      * @throws IOException              if an I/O error occurs.
+     * @see BitOutput#skip(int)
      */
     default void skip(int bits) throws IOException {
         if (bits <= 0) {
-            throw new IllegalArgumentException("bits(" + bits + ") is not positive");
+            throw new IllegalArgumentException("not positive; bits: " + bits);
         }
         for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
             readInt(false, Integer.SIZE);

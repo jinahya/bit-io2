@@ -70,13 +70,13 @@ public class ByteOutputAdapter
         long bits = 0L; // the number of padded bits
         if (available < Byte.SIZE) {
             bits += available;
-            writeInt(true, available, 0x00);
+            skip(available);
         }
         if (bytes == 1) {
             return bits;
         }
         for (int i = (bytes - (int) (this.count % bytes)); i > 0; i--) {
-            writeInt(true, Byte.SIZE, 0x00);
+            skip(Byte.SIZE);
             bits += Byte.SIZE;
         }
         return bits;

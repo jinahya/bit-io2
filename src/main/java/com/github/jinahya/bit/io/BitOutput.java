@@ -193,15 +193,16 @@ public interface BitOutput {
     }
 
     /**
-     * Skips by writing specified number of zero-bits.
+     * Writes specified number of zero-bits.
      *
-     * @param bits the number of bit to skip; must be positive.
+     * @param bits the number of zero bits to write; must be positive.
      * @throws IllegalArgumentException if {@code bits} is not positive.
      * @throws IOException              if an I/O error occurs.
+     * @see BitInput#skip(int)
      */
     default void skip(int bits) throws IOException {
         if (bits <= 0) {
-            throw new IllegalArgumentException("bits(" + bits + ") is not positive");
+            throw new IllegalArgumentException("not positive; bits: " + bits);
         }
         for (; bits >= Integer.SIZE; bits -= Integer.SIZE) {
             writeInt(false, Integer.SIZE, 0);
