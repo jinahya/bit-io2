@@ -20,12 +20,20 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 abstract class AbstractByteInputTest<T extends AbstractByteInput<?>> {
 
@@ -34,15 +42,36 @@ abstract class AbstractByteInputTest<T extends AbstractByteInput<?>> {
         this.inputClass = Objects.requireNonNull(inputClass, "inputClass is null");
     }
 
-    protected abstract T newWhiteInstance();
+    protected abstract T newInstance(final int size) throws IOException;
 
     @Test
     void read__() throws IOException {
-        final int value = newWhiteInstance().read();
-        assertThat(value)
-                .isNotNegative()
-                .isLessThan(255);
+        final var size = ThreadLocalRandom.current().nextInt(128);
+        final var instance = newInstance(size);
+        for (var i = 0; i < size; i++) {
+            final int value = instance.read();
+            assertThat(value).isNotNegative().isLessThan(256);
+        }
+        assertThatThrownBy(instance::read).isInstanceOf(IOException.class);
+    }
+
+    protected File tempFile(final int size) throws IOException {
+        final var tempFile = File.createTempFile("tmp", "tmp", tempDir);
+        try (var stream = new FileOutputStream(tempFile)) {
+            stream.write(new byte[size]);
+            stream.flush();
+        }
+        return tempFile;
+    }
+
+    protected File tempFile() throws IOException {
+        return tempFile(0);
     }
 
     protected final Class<T> inputClass;
+
+    @TempDir
+    @Accessors(fluent = true)
+    @Getter(AccessLevel.PROTECTED)
+    private File tempDir;
 }

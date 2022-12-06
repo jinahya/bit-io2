@@ -20,40 +20,43 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
-abstract class AbstractByteOutputTest<T extends AbstractByteOutput<U>, U> {
+abstract class AbstractByteOutputTest<T extends AbstractByteOutput<?>> {
 
-    protected AbstractByteOutputTest(final Class<T> outputClass, final Class<U> targetClass) {
+    protected AbstractByteOutputTest(final Class<T> outputClass) {
         super();
         this.outputClass = Objects.requireNonNull(outputClass, "outputClass is null");
-        this.targetClass = Objects.requireNonNull(targetClass, "targetClass is null");
     }
 
-    protected U newTarget() {
-        return Mockito.mock(targetClass);
-    }
-
-    protected T newOutput() {
-        try {
-            return outputClass.getConstructor(targetClass).newInstance(newTarget());
-        } catch (final ReflectiveOperationException roe) {
-            throw new RuntimeException(roe);
-        }
-    }
+    protected abstract T newInstance(final int size) throws IOException;
 
     @Test
     void write__() throws IOException {
-        final int value = ThreadLocalRandom.current().nextInt(256);
-        newOutput().write(value);
+        final var size = ThreadLocalRandom.current().nextInt(128);
+        final var instance = newInstance(size);
+        for (var i = 0; i < size; i++) {
+            instance.write(ThreadLocalRandom.current().nextInt(256));
+        }
+    }
+
+    protected File tempFile() throws IOException {
+        return File.createTempFile("tmp", "tmp", tempDir);
     }
 
     protected final Class<T> outputClass;
 
-    protected final Class<U> targetClass;
+    @TempDir
+    @Accessors(fluent = true)
+    @Getter(AccessLevel.PROTECTED)
+    private File tempDir;
 }

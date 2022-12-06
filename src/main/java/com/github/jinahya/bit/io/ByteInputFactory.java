@@ -21,10 +21,13 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Objects;
 
 /**
@@ -40,6 +43,7 @@ public final class ByteInputFactory {
      *
      * @param stream the stream from which bytes are read.
      * @return a new instance.
+     * @see ByteOutputFactory#from(OutputStream)
      */
     public static ByteInput from(final InputStream stream) {
         Objects.requireNonNull(stream, "stream is null");
@@ -51,6 +55,7 @@ public final class ByteInputFactory {
      *
      * @param input the input from which bytes are read.
      * @return a new instance.
+     * @see ByteOutputFactory#from(DataOutput)
      */
     public static ByteInput from(final DataInput input) {
         Objects.requireNonNull(input, "input is null");
@@ -62,6 +67,7 @@ public final class ByteInputFactory {
      *
      * @param file the file from which bytes are read.
      * @return a new instance.
+     * @see ByteOutputFactory#from(RandomAccessFile)
      */
     public static ByteInput from(final RandomAccessFile file) {
         Objects.requireNonNull(file, "file is null");
@@ -73,6 +79,7 @@ public final class ByteInputFactory {
      *
      * @param buffer the buffer from which bytes are read.
      * @return a new instance.
+     * @see ByteOutputFactory#from(WritableByteChannel)
      */
     public static ByteInput from(final ByteBuffer buffer) {
         Objects.requireNonNull(buffer, "buffer is null");

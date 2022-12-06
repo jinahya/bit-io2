@@ -20,7 +20,9 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * A class for testing {@link DataByteOutputTest} class.
@@ -29,12 +31,18 @@ import java.io.DataOutput;
  * @see DataByteInputTest
  */
 class DataByteOutputTest
-        extends AbstractByteOutputTest<DataByteOutput, DataOutput> {
+        extends AbstractByteOutputTest<DataByteOutput> {
 
     /**
      * Creates a new instance.
      */
     DataByteOutputTest() {
-        super(DataByteOutput.class, DataOutput.class);
+        super(DataByteOutput.class);
+    }
+
+    @Override
+    protected DataByteOutput newInstance(final int size) throws IOException {
+        final var tempFile = tempFile();
+        return new DataByteOutput(new DataOutputStream(new FileOutputStream(tempFile)));
     }
 }

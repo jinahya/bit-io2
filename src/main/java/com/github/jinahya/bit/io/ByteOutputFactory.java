@@ -33,7 +33,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see ByteInputFactory
  */
-final class ByteOutputFactory {
+public final class ByteOutputFactory {
 
     /**
      * Creates a new instance on top of specified stream.

@@ -20,18 +20,9 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import java.io.DataInput;
 import java.io.DataInputStream;
-import java.io.EOFException;
+import java.io.FileInputStream;
 import java.io.IOException;
-
-import static com.github.jinahya.bit.io.ByteStreams.white;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 /**
  * A class for testing {@link DataByteInput} class.
@@ -40,43 +31,18 @@ import static org.mockito.Mockito.mock;
  * @see DataByteOutputTest
  */
 class DataByteInputTest
-        extends ByteInputAdapterTest<DataByteInput, DataInput> {
+        extends AbstractByteInputTest<DataByteInput> {
 
     /**
      * Creates a new instance.
      */
     DataByteInputTest() {
-        super(DataByteInput.class, DataInput.class);
+        super(DataByteInput.class);
     }
 
-    @Nested
-    class FromTest {
-
-        @Test
-        void from__() throws IOException {
-            final var source = mock(DataInput.class);
-            DataByteInput input = new DataByteInput(source);
-        }
-    }
-
-    /**
-     * Asserts {@link DataByteInput#read()} method throws an {@link IllegalArgumentException} when reached to an end.
-     */
-    @Test
-    void assertReadThrowsEofExceptionWhenReachedToAnEnd() {
-        final DataByteInput input = new DataByteInput(new DataInputStream(white(0L)));
-        assertThrows(EOFException.class, input::read);
-    }
-
-    /**
-     * Asserts {@link DataByteInput#read()} method returns a valid octet.
-     *
-     * @throws IOException if an I/O error occurs.
-     */
-    @Test
-    void testRead() throws IOException {
-        final DataByteInput input = new DataByteInput(new DataInputStream(white(-1L)));
-        final int value = input.read();
-        assertTrue(value >= 0 && value < 256);
+    @Override
+    protected DataByteInput newInstance(final int size) throws IOException {
+        final var tempFile = tempFile(size);
+        return new DataByteInput(new DataInputStream(new FileInputStream(tempFile)));
     }
 }
