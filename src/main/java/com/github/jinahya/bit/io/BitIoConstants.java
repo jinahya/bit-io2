@@ -20,9 +20,6 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import com.github.jinahya.bit.io.miscellaneous.VlqReader;
-import com.github.jinahya.bit.io.miscellaneous.VlqWriter;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.function.ObjIntConsumer;
@@ -52,32 +49,6 @@ public final class BitIoConstants {
     static final String MESSAGE_UNSUPPORTED_ALREADY_NULLABLE = "unsupported; already nullable";
 
     static final String MESSAGE_UNSUPPORTED_NOT_SUPPOSED_TO_BE_INVOKED = "unsupported; not supposed to be invoked";
-
-    /**
-     * A function for reading a VLQ-encoded value.
-     *
-     * @see #COUNT_WRITER_VLQ
-     */
-    public static final ToIntFunction<? super BitInput> COUNT_READER_VLQ = i -> {
-        try {
-            return VlqReader.getInstance().readInt(i);
-        } catch (final IOException ioe) {
-            throw new UncheckedIOException("failed to read a count value from input(" + i + ")", ioe);
-        }
-    };
-
-    /**
-     * A consumer for writing a VLQ-encoded value.
-     *
-     * @see #COUNT_READER_VLQ
-     */
-    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_VLQ = (o, c) -> {
-        try {
-            VlqWriter.getInstance().writeInt(o, c);
-        } catch (final IOException ioe) {
-            throw new UncheckedIOException("failed to write the count(" + c + ") to output(" + o + ")", ioe);
-        }
-    };
 
     /**
      * A function for reading a {@code 31}-bit unsigned count value.
@@ -110,7 +81,7 @@ public final class BitIoConstants {
      *
      * @see BitIoUtils#readCountCompressed(BitInput)
      */
-    public static final ToIntFunction<? super BitInput> COUNT_READER_COMPRESSED = i -> {
+    static final ToIntFunction<? super BitInput> COUNT_READER_COMPRESSED = i -> {
         try {
             return BitIoUtils.readCountCompressed(i);
         } catch (final IOException ioe) {
@@ -123,7 +94,7 @@ public final class BitIoConstants {
      *
      * @see BitIoUtils#writeCountCompressed(BitOutput, int)
      */
-    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_COMPRESSED = (o, c) -> {
+    static final ObjIntConsumer<? super BitOutput> COUNT_WRITER_COMPRESSED = (o, c) -> {
         try {
             BitIoUtils.writeCountCompressed(o, c);
         } catch (final IOException ioe) {

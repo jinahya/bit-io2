@@ -508,7 +508,7 @@ public final class BitIoRandom {
     }
 
     public static int[] nextUnsignedIntArray() {
-        return nextUnsignedIntArray(ThreadLocalRandom.current().nextInt(0, 128));
+        return nextUnsignedIntArray(ThreadLocalRandom.current().nextInt(1, 128));
     }
 
     public static long nextUnsignedLong() {
@@ -522,7 +522,7 @@ public final class BitIoRandom {
     }
 
     public static long[] nextUnsignedLongArray() {
-        return nextUnsignedLongArray(ThreadLocalRandom.current().nextInt(0, 128));
+        return nextUnsignedLongArray(ThreadLocalRandom.current().nextInt(1, 128));
     }
 
     public static int nextSignedInt() {
@@ -536,7 +536,7 @@ public final class BitIoRandom {
     }
 
     public static int[] nextSignedIntArray() {
-        return nextSignedIntArray(ThreadLocalRandom.current().nextInt(0, 128));
+        return nextSignedIntArray(ThreadLocalRandom.current().nextInt(1, 128));
     }
 
     public static long nextSignedLong() {
@@ -550,7 +550,7 @@ public final class BitIoRandom {
     }
 
     public static long[] nextSignedLongArray() {
-        return nextSignedLongArray(ThreadLocalRandom.current().nextInt(0, 128));
+        return nextSignedLongArray(ThreadLocalRandom.current().nextInt(1, 128));
     }
 
     private BitIoRandom() {

@@ -24,20 +24,6 @@ final class BitIoObjects {
         return Objects.requireNonNull(value, BitIoConstants.MESSAGE_VALUE_IS_NULL);
     }
 
-    public static int requireNonNegativeValue(final int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException("negative value: " + value);
-        }
-        return value;
-    }
-
-    public static long requireNonNegativeValue(final long value) {
-        if (value < 0L) {
-            throw new IllegalArgumentException("negative value: " + value);
-        }
-        return value;
-    }
-
     private BitIoObjects() {
         throw new AssertionError("instantiation is not allowed");
     }

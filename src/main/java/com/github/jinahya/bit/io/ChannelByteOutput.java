@@ -44,8 +44,11 @@ public class ChannelByteOutput
             @Override
             public void write(final int value) throws IOException {
                 super.write(value);
-                for (target.flip(); target.hasRemaining(); ) {
-                    ChannelByteOutput.this.target.write(target);
+                if (!target.hasRemaining()) {
+                    for (target.flip(); target.hasRemaining(); ) {
+                        ChannelByteOutput.this.target.write(target);
+                    }
+                    target.clear();
                 }
             }
         };

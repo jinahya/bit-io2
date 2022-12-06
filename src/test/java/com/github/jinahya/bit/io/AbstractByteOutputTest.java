@@ -47,6 +47,11 @@ abstract class AbstractByteOutputTest<T extends AbstractByteOutput<?>> {
         for (var i = 0; i < size; i++) {
             instance.write(ThreadLocalRandom.current().nextInt(256));
         }
+        try {
+            instance.write(0);
+        } catch (final Exception e) {
+            // don't care.
+        }
     }
 
     protected File tempFile() throws IOException {

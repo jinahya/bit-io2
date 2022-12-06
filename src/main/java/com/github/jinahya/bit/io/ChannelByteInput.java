@@ -41,12 +41,16 @@ public class ChannelByteInput
      */
     public ChannelByteInput(final ReadableByteChannel channel) {
         super(channel);
-        delegate = new BufferByteInput(ByteBuffer.allocate(1)) {
+        final ByteBuffer buffer = ByteBuffer.allocate(1);
+        buffer.position(buffer.capacity());
+        delegate = new BufferByteInput(buffer) {
             @Override
             public int read() throws IOException {
-                while (source.hasRemaining()) {
-                    if (ChannelByteInput.this.source.read(source) == -1) {
-                        throw new EOFException("reached to an end");
+                if (!source.hasRemaining()) {
+                    for (source.clear(); source.position() == 0; ) {
+                        if (ChannelByteInput.this.source.read(source) == -1) {
+                            throw new EOFException("reached to an end");
+                        }
                     }
                 }
                 source.flip(); // limit -> position, position -> zero

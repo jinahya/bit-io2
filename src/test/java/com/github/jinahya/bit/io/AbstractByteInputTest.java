@@ -23,6 +23,7 @@ package com.github.jinahya.bit.io;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -35,6 +36,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Slf4j
 abstract class AbstractByteInputTest<T extends AbstractByteInput<?>> {
 
     protected AbstractByteInputTest(final Class<T> inputClass) {

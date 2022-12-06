@@ -21,7 +21,9 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import java.nio.ReadOnlyBufferException;
 
 /**
  * A byte output writes bytes to a {@link ByteBuffer}.
@@ -46,14 +48,20 @@ public class BufferByteOutput
      *
      * @param value {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @apiNote This method may throw an {@link java.nio.BufferOverflowException} when the
-     * {@link #target target buffer}'s current position is not smaller than its limit.
-     * @implSpec The {@code write(int)} method of {@code BufferByteOutput} class invokes {@link ByteBuffer#put(byte)}
-     * method on the {@link #target} with specified value cast as a {@code byte} value.
+     * @implSpec Default implementation invokes {@link ByteBuffer#put(byte)} method, on the {@link #target}, with
+     * {@code value} cast as a {@code byte} value.
+     * @implNote Default implementation throws an {@link IOException} when the {@link ByteBuffer#put(byte)} method
+     * throws either {@link ReadOnlyBufferException} or {@link BufferOverflowException}.
      * @see ByteBuffer#put(byte)
      */
     @Override
     public void write(final int value) throws IOException {
-        target.put((byte) value); // BufferOverflowException, ReadOnlyBufferException
+        try {
+            target.put((byte) value); // BufferOverflowException, ReadOnlyBufferExceptio
+        } catch (final ReadOnlyBufferException robe) {
+            throw new IOException("buffer is read-only; buffer: " + target, robe);
+        } catch (final BufferOverflowException boe) {
+            throw new IOException("buffer is full; buffer: " + target, boe);
+        }
     }
 }

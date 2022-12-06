@@ -21,6 +21,7 @@ package com.github.jinahya.bit.io;
  */
 
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 /**
@@ -46,15 +47,18 @@ public class BufferByteInput
      *
      * @return {@inheritDoc}
      * @throws IOException {@inheritDoc}
-     * @apiNote This method may throw an {@link java.nio.BufferUnderflowException} when the
-     * {@link #source source buffer}'s current position is not smaller than its limit.
-     * @implSpec The {@code read()} method of {@code BufferByteInput} class invokes {@link ByteBuffer#get() get()}
-     * method on the {@link #source}, and returns the result cast as an unsigned {@value java.lang.Byte#SIZE}-bit
-     * {@code int} value.
+     * @implSpec Default implementation invokes {@link ByteBuffer#get() get()} method on the {@link #source}, and
+     * returns the result cast as an unsigned {@value java.lang.Byte#SIZE}-bit {@code int} value;
+     * @implNote Default implementation throws an {@link IOException} when the {@link ByteBuffer#get()} method throws a
+     * {@link BufferUnderflowException}.
      * @see ByteBuffer#get()
      */
     @Override
     public int read() throws IOException {
-        return source.get() & 0xFF; // BufferUnderflowException
+        try {
+            return source.get() & 0xFF;
+        } catch (final BufferUnderflowException bue) {
+            throw new IOException("no bytes in the buffer", bue);
+        }
     }
 }
