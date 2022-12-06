@@ -340,7 +340,7 @@ public class DoubleWriter
 
     @Override
     public void write(final BitOutput output, final Double value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
+        BitIoObjects.requireNonNullOutput(output);
         Objects.requireNonNull(value, "value is null");
         output.writeDouble(exponentSize, significandSize, value);
     }

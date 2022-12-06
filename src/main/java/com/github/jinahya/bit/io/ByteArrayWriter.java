@@ -32,7 +32,7 @@ import java.util.function.ObjIntConsumer;
  */
 public class ByteArrayWriter
         implements BitWriter<byte[]>,
-                   WritesCount<ByteArrayWriter> {
+                   CountWriter<ByteArrayWriter> {
 
     static class Unsigned
             extends ByteArrayWriter {

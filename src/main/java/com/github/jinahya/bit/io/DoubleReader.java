@@ -349,7 +349,7 @@ public class DoubleReader
 
     @Override
     public Double read(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
+        BitIoObjects.requireNonNullInput(input);
         return input.readDouble(exponentSize, significandSize);
     }
 }

@@ -55,7 +55,7 @@ public final class BitIoConstants {
      *
      * @see BitIoUtils#readCount(BitInput)
      */
-    public static final ToIntFunction<? super BitInput> COUNT_READER = i -> {
+    static final ToIntFunction<? super BitInput> COUNT_READER = i -> {
         try {
             return BitIoUtils.readCount(i);
         } catch (final IOException ioe) {
@@ -68,7 +68,7 @@ public final class BitIoConstants {
      *
      * @see BitIoUtils#writeCount(BitOutput, int)
      */
-    public static final ObjIntConsumer<? super BitOutput> COUNT_WRITER = (o, c) -> {
+    static final ObjIntConsumer<? super BitOutput> COUNT_WRITER = (o, c) -> {
         try {
             BitIoUtils.writeCount(o, c);
         } catch (final IOException ioe) {

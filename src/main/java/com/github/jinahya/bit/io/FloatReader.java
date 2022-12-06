@@ -339,7 +339,7 @@ public class FloatReader
 
     @Override
     public Float read(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
+        BitIoObjects.requireNonNullInput(input);
         return input.readFloat(exponentSize, significandSize);
     }
 }

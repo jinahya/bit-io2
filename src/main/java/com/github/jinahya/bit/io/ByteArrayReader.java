@@ -32,7 +32,7 @@ import java.util.function.ToIntFunction;
  */
 public class ByteArrayReader
         implements BitReader<byte[]>,
-                   ReadsCount<ByteArrayReader> {
+                   CountReader<ByteArrayReader> {
 
     private static class Unsigned
             extends ByteArrayReader {

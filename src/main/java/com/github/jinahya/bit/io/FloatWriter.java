@@ -349,7 +349,7 @@ public class FloatWriter
 
     @Override
     public void write(final BitOutput output, final Float value) throws IOException {
-        Objects.requireNonNull(output, "output is null");
+        BitIoObjects.requireNonNullOutput(output);
         Objects.requireNonNull(value, "value is null");
         output.writeFloat(exponentSize, significandSize, value);
     }

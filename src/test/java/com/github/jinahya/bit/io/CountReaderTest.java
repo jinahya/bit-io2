@@ -20,21 +20,20 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.junit.jupiter.api.Test;
+import java.util.Objects;
 
-import java.util.function.ObjIntConsumer;
+/**
+ * An abstract class for testing classes implement {@link CountWriter} interface.
+ *
+ * @param <T> implementation class type parameter.
+ * @see CountWriterTest
+ */
+abstract class CountReaderTest<T extends CountReader<T>> {
 
-class WritesCountTest {
-
-    private static class WritesCountImpl
-            implements WritesCount<WritesCountImpl> {
-
-        private ObjIntConsumer<? super BitOutput> countWriter;
+    CountReaderTest(final Class<T> countReaderClass) {
+        super();
+        this.countReaderClass = Objects.requireNonNull(countReaderClass, "countReaderClass is null");
     }
 
-    @Test
-    void countWriter__() {
-        new WritesCountImpl().countWriter((o, c) -> {
-        });
-    }
+    final Class<T> countReaderClass;
 }

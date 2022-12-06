@@ -41,7 +41,7 @@ public final class BitIoUtils {
      * @throws IOException if an I/O error occurs.
      */
     public static int readCount(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
+        BitIoObjects.requireNonNullInput(input);
         return input.readInt(true, SIZE_COUNT);
     }
 
@@ -53,7 +53,7 @@ public final class BitIoUtils {
      * @throws IOException if an I/O error occurs.
      */
     public static void writeCount(final BitOutput output, final int count) throws IOException {
-        Objects.requireNonNull(output, "output is null");
+        BitIoObjects.requireNonNullOutput(output);
         if (count < 0) {
             throw new IllegalArgumentException("negative count: " + count);
         }
@@ -70,7 +70,7 @@ public final class BitIoUtils {
      * @throws IOException if an I/O error occurs.
      */
     public static void writeCountCompressed(final BitOutput output, final int count) throws IOException {
-        Objects.requireNonNull(output, "output is null");
+        BitIoObjects.requireNonNullOutput(output);
         if (count < 0) {
             throw new IllegalArgumentException("negative count: " + count);
         }
@@ -101,7 +101,7 @@ public final class BitIoUtils {
      * @throws IOException if an I/O error occurs.
      */
     public static int readCountCompressed(final BitInput input) throws IOException {
-        Objects.requireNonNull(input, "input is null");
+        BitIoObjects.requireNonNullInput(input);
         if (input.readBoolean()) { // zero
             return 0;
         }

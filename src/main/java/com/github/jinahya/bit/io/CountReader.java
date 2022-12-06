@@ -22,50 +22,48 @@ package com.github.jinahya.bit.io;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
-import java.util.function.ObjIntConsumer;
+import java.util.function.ToIntFunction;
 
 /**
- * An interface for writers need to write element count.
+ * An interface for readers need to read a number of sub-values.
  *
- * @param <T> self type parameter.
+ * @param <T> self type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
- * @see ReadsCount
+ * @see CountWriter
  */
-public interface WritesCount<T extends WritesCount<T>> {
+public interface CountReader<T extends CountReader<T>> {
 
     /**
-     * Configures this writer to use specified consumer for writing the count of elements.
+     * Configures to use specified function for reading the {@code count} of elements.
      *
-     * @param countWriter the consumer accepts an {@code output} and a {@code count}, and writes the {@code count} to
-     *                    the {@code output}.
+     * @param countReader the function applies with an {@code input} and reads the {@code count}.
      */
     @SuppressWarnings({
             "java:S1874", // isAccessible
             "java:S3011" // setAccessible, set
     })
-    default void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
-        Objects.requireNonNull(countWriter, "countWriter is null");
+    default void setCountReader(final ToIntFunction<? super BitInput> countReader) {
+        Objects.requireNonNull(countReader, "countReader is null");
         try {
-            final Field field = getClass().getDeclaredField("countWriter");
+            final Field field = getClass().getDeclaredField("countReader");
             if (!field.isAccessible()) { // NOSONAR
                 field.setAccessible(true); // NOSONAR
             }
-            field.set(this, countWriter); // NOSONAR
+            field.set(this, countReader); // NOSONAR
         } catch (final ReflectiveOperationException roe) {
-            throw new RuntimeException("failed to set 'countWriter", roe); // NOSONAR
+            throw new RuntimeException("failed to set 'countReader", roe); // NOSONAR
         }
     }
 
     /**
-     * Configures this writer to use specified consumer for writing the count of elements, and returns this object.
+     * Configures to use specified function for reading the {@code count} of elements, and returns this object.
      *
-     * @param countWriter the consumer accepts an {@code output} and a {@code count}, and writes the {@code count} to
-     *                    the {@code output}.
+     * @param countReader the function applies with an {@code input} and reads the {@code count}.
      * @return this object.
      */
     @SuppressWarnings({"unchecked"})
-    default T countWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
-        setCountWriter(countWriter);
+    default T countReader(final ToIntFunction<? super BitInput> countReader) {
+        setCountReader(countReader);
         return (T) this;
     }
 }

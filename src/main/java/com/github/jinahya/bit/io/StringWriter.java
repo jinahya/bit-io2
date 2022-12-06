@@ -33,7 +33,7 @@ import java.util.function.ObjIntConsumer;
  */
 public class StringWriter
         extends FilterBitWriter<String, byte[]>
-        implements WritesCount<StringWriter> {
+        implements CountWriter<StringWriter> {
 
     /**
      * Creates a new instance for writing {@link StandardCharsets#US_ASCII}-encoded strings in a compressed-manner.
@@ -75,7 +75,7 @@ public class StringWriter
 
     @Override
     public void setCountWriter(final ObjIntConsumer<? super BitOutput> countWriter) {
-        ((WritesCount<?>) delegate).setCountWriter(countWriter);
+        ((CountWriter<?>) delegate).setCountWriter(countWriter);
     }
 
     private final Charset charset;
